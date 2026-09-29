@@ -2,7 +2,7 @@
 title: 条件类型
 layout: docs
 permalink: /zh/docs/handbook/2/conditional-types.html
-oneline: "Create types which act like if statements in the type system."
+oneline: 'Create types which act like if statements in the type system.'
 ---
 
 大多数有效程序的核心是，我们必须依据输入做出一些决定。
@@ -11,29 +11,29 @@ _条件类型_ 有助于描述输入和输出类型之间的关系。
 
 ```ts twoslash
 interface Animal {
-  live(): void;
+  live(): void
 }
 interface Dog extends Animal {
-  woof(): void;
+  woof(): void
 }
 
-type Example1 = Dog extends Animal ? number : string;
+type Example1 = Dog extends Animal ? number : string
 //   ^?
 
-type Example2 = RegExp extends Animal ? number : string;
+type Example2 = RegExp extends Animal ? number : string
 //   ^?
 ```
 
 条件类型看起来有点像 JavaScript 中的条件表达式（`条件 ? true 表达式 : false 表达式`）：
 
 ```ts twoslash
-type SomeType = any;
-type OtherType = any;
-type TrueType = any;
-type FalseType = any;
+type SomeType = any
+type OtherType = any
+type TrueType = any
+type FalseType = any
 type Stuff =
   // ---cut---
-  SomeType extends OtherType ? TrueType : FalseType;
+  SomeType extends OtherType ? TrueType : FalseType
 ```
 
 当 `extends` 左边的类型可以赋值给右边的类型时，你将获得第一个分支（"true" 分支）中的类型；否则你将获得后一个分支（"false" 分支）中的类型。
@@ -45,17 +45,17 @@ type Stuff =
 
 ```ts twoslash
 interface IdLabel {
-  id: number /* 一些字段 */;
+  id: number /* 一些字段 */
 }
 interface NameLabel {
-  name: string /* 其它字段 */;
+  name: string /* 其它字段 */
 }
 
-function createLabel(id: number): IdLabel;
-function createLabel(name: string): NameLabel;
-function createLabel(nameOrId: string | number): IdLabel | NameLabel;
+function createLabel(id: number): IdLabel
+function createLabel(name: string): NameLabel
+function createLabel(nameOrId: string | number): IdLabel | NameLabel
 function createLabel(nameOrId: string | number): IdLabel | NameLabel {
-  throw "unimplemented";
+  throw 'unimplemented'
 }
 ```
 
@@ -68,41 +68,41 @@ function createLabel(nameOrId: string | number): IdLabel | NameLabel {
 
 ```ts twoslash
 interface IdLabel {
-  id: number /* 一些字段 */;
+  id: number /* 一些字段 */
 }
 interface NameLabel {
-  name: string /* 其它字段 */;
+  name: string /* 其它字段 */
 }
 // ---cut---
 type NameOrId<T extends number | string> = T extends number
   ? IdLabel
-  : NameLabel;
+  : NameLabel
 ```
 
 然后，我们可以使用该条件类型将重载简化为没有重载的单个函数。
 
 ```ts twoslash
 interface IdLabel {
-  id: number /* 一些字段 */;
+  id: number /* 一些字段 */
 }
 interface NameLabel {
-  name: string /* 其它字段 */;
+  name: string /* 其它字段 */
 }
 type NameOrId<T extends number | string> = T extends number
   ? IdLabel
-  : NameLabel;
+  : NameLabel
 // ---cut---
 function createLabel<T extends number | string>(idOrName: T): NameOrId<T> {
-  throw "unimplemented";
+  throw 'unimplemented'
 }
 
-let a = createLabel("typescript");
+let a = createLabel('typescript')
 //  ^?
 
-let b = createLabel(2.8);
+let b = createLabel(2.8)
 //  ^?
 
-let c = createLabel(Math.random() ? "hello" : 42);
+let c = createLabel(Math.random() ? 'hello' : 42)
 //  ^?
 ```
 
@@ -115,24 +115,24 @@ let c = createLabel(Math.random() ? "hello" : 42);
 
 ```ts twoslash
 // @errors: 2536
-type MessageOf<T> = T["message"];
+type MessageOf<T> = T['message']
 ```
 
 在本例中，TypeScript 产生错误是因为不知道 `T` 有一个名为 `message` 的属性。
 我们可以约束 `T`，TypeScript 也不会再抱怨了：
 
 ```ts twoslash
-type MessageOf<T extends { message: unknown }> = T["message"];
+type MessageOf<T extends { message: unknown }> = T['message']
 
 interface Email {
-  message: string;
+  message: string
 }
 
 interface Dog {
-  bark(): void;
+  bark(): void
 }
 
-type EmailMessageContents = MessageOf<Email>;
+type EmailMessageContents = MessageOf<Email>
 //   ^?
 ```
 
@@ -140,20 +140,20 @@ type EmailMessageContents = MessageOf<Email>;
 我们可以通过移出约束并引入条件类型来实现这一点：
 
 ```ts twoslash
-type MessageOf<T> = T extends { message: unknown } ? T["message"] : never;
+type MessageOf<T> = T extends { message: unknown } ? T['message'] : never
 
 interface Email {
-  message: string;
+  message: string
 }
 
 interface Dog {
-  bark(): void;
+  bark(): void
 }
 
-type EmailMessageContents = MessageOf<Email>;
+type EmailMessageContents = MessageOf<Email>
 //   ^?
 
-type DogMessageContents = MessageOf<Dog>;
+type DogMessageContents = MessageOf<Dog>
 //   ^?
 ```
 
@@ -162,14 +162,14 @@ type DogMessageContents = MessageOf<Dog>;
 作为另一个示例，我们还可以编写一个名为 `Flatten` 的类型，它将数组类型扁平为它们的元素类型，但在其他情况下不会处理它们：
 
 ```ts twoslash
-type Flatten<T> = T extends any[] ? T[number] : T;
+type Flatten<T> = T extends any[] ? T[number] : T
 
 // Extracts out the element type.
-type Str = Flatten<string[]>;
+type Str = Flatten<string[]>
 //   ^?
 
 // Leaves the type alone.
-type Num = Flatten<number>;
+type Num = Flatten<number>
 //   ^?
 ```
 
@@ -185,7 +185,7 @@ type Num = Flatten<number>;
 例如，我们可以在 `Flatten` 中推断元素类型，而不是使用索引访问类型“手动”提取它：
 
 ```ts twoslash
-type Flatten<Type> = Type extends Array<infer Item> ? Item : Type;
+type Flatten<Type> = Type extends Array<infer Item> ? Item : Type
 ```
 
 在这里，我们使用 `infer` 关键字以声明方式引入一个名为 `Item` 的新泛型类型变量，而不是指定如何在 true 分支中检索元素类型 `T`。
@@ -197,26 +197,26 @@ type Flatten<Type> = Type extends Array<infer Item> ? Item : Type;
 ```ts twoslash
 type GetReturnType<Type> = Type extends (...args: never[]) => infer Return
   ? Return
-  : never;
+  : never
 
-type Num = GetReturnType<() => number>;
+type Num = GetReturnType<() => number>
 //   ^?
 
-type Str = GetReturnType<(x: string) => string>;
+type Str = GetReturnType<(x: string) => string>
 //   ^?
 
-type Bools = GetReturnType<(a: boolean, b: boolean) => boolean[]>;
+type Bools = GetReturnType<(a: boolean, b: boolean) => boolean[]>
 //   ^?
 ```
 
 当从具有多个调用签名的类型（如重载函数的类型）进行推断时，将从 _最后一个_ 签名进行推断（这也许是最宽松的万能情况）。无法基于参数类型列表执行重载决议。
 
 ```ts twoslash
-declare function stringOrNum(x: string): number;
-declare function stringOrNum(x: number): string;
-declare function stringOrNum(x: string | number): string | number;
+declare function stringOrNum(x: string): number
+declare function stringOrNum(x: number): string
+declare function stringOrNum(x: string | number): string | number
 
-type T1 = ReturnType<typeof stringOrNum>;
+type T1 = ReturnType<typeof stringOrNum>
 //   ^?
 ```
 
@@ -226,15 +226,15 @@ type T1 = ReturnType<typeof stringOrNum>;
 以下面的例子为例：
 
 ```ts twoslash
-type ToArray<Type> = Type extends any ? Type[] : never;
+type ToArray<Type> = Type extends any ? Type[] : never
 ```
 
 如果我们将联合类型传入 `ToArray`，则条件类型将应用于该联合类型的每个成员。
 
 ```ts twoslash
-type ToArray<Type> = Type extends any ? Type[] : never;
+type ToArray<Type> = Type extends any ? Type[] : never
 
-type StrArrOrNumArr = ToArray<string | number>;
+type StrArrOrNumArr = ToArray<string | number>
 //   ^?
 ```
 
@@ -243,16 +243,16 @@ type StrArrOrNumArr = ToArray<string | number>;
 ```ts twoslash
 type StrArrOrNumArr =
   // ---cut---
-  string | number;
+  string | number
 ```
 
 并在联合类型的每个成员类型上映射到有效的内容：
 
 ```ts twoslash
-type ToArray<Type> = Type extends any ? Type[] : never;
+type ToArray<Type> = Type extends any ? Type[] : never
 type StrArrOrNumArr =
   // ---cut---
-  ToArray<string> | ToArray<number>;
+  ToArray<string> | ToArray<number>
 ```
 
 所以我们得到：
@@ -260,16 +260,16 @@ type StrArrOrNumArr =
 ```ts twoslash
 type StrArrOrNumArr =
   // ---cut---
-  string[] | number[];
+  string[] | number[]
 ```
 
 通常，分布性是所需的行为。
 要避免这种行为，可以用方括号括起 `extends` 关键字的两边。
 
 ```ts twoslash
-type ToArrayNonDist<Type> = [Type] extends [any] ? Type[] : never;
+type ToArrayNonDist<Type> = [Type] extends [any] ? Type[] : never
 
 // 'StrOrNumArr' 不再是一个联合类型
-type StrOrNumArr = ToArrayNonDist<string | number>;
+type StrOrNumArr = ToArrayNonDist<string | number>
 //   ^?
 ```

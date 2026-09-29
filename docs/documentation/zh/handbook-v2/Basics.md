@@ -2,7 +2,7 @@
 title: 基础
 layout: docs
 permalink: /zh/docs/handbook/2/basic-types.html
-oneline: "学习 TypeScript 的第一步：基本类型。"
+oneline: '学习 TypeScript 的第一步：基本类型。'
 preamble: >
   <p>欢迎来到手册的第一页。如果这是你第一次接触到 TypeScript —— 你可能需要先阅读一下'<a href='https://www.typescriptlang.org/docs/handbook/intro.html#get-started'>入门</a>'指南</p>
 ---
@@ -13,10 +13,10 @@ JavaScript 中的每个值会随着我们执行不同的操作表现出一系列
 
 ```js
 // 访问 message 的 toLowerCase 方法并调用它
-message.toLowerCase();
+message.toLowerCase()
 
 // 调用 message 函数
-message();
+message()
 ```
 
 如果我们拆分这个过程，那么第一行代码就是访问了 `message` 的 `toLowerCase` 方法并调用它；
@@ -36,7 +36,7 @@ message();
 假设 `message` 是这样定义的：
 
 ```js
-const message = "Hello World!";
+const message = 'Hello World!'
 ```
 
 你可能很容易猜到，如果执行 `message.toLowerCase()`，我们将会得到一个所有字母都是小写的字符串。
@@ -63,7 +63,7 @@ TypeError: message is not a function
 
 ```js
 function fn(x) {
-  return x.flip();
+  return x.flip()
 }
 ```
 
@@ -103,9 +103,9 @@ JavaScript 只提供了动态类型 —— 执行代码，然后才能知道会�
 
 ```ts twoslash
 // @errors: 2349
-const message = "hello!";
+const message = 'hello!'
 
-message();
+message()
 ```
 
 用 TypeScript 运行上一个例子，它会在我们执行代码之前首先抛出一个错误。
@@ -124,10 +124,10 @@ message();
 
 ```js
 const user = {
-    name: 'Daniel',
-    age: 26,
-};
-user.location;       // 返回 undefined
+  name: 'Daniel',
+  age: 26,
+}
+user.location // 返回 undefined
 ```
 
 最终，我们需要一个静态类型系统来告诉我们，哪些代码在这个系统中被标记为错误的代码 —— 即使它是不会马上引起错误的“有效” JavaScript 代码。
@@ -137,11 +137,11 @@ user.location;       // 返回 undefined
 ```ts twoslash
 // @errors: 2339
 const user = {
-  name: "Daniel",
+  name: 'Daniel',
   age: 26,
-};
+}
 
-user.location;
+user.location
 ```
 
 虽然有时候这意味着你需要在表达的内容上进行权衡，但我们的目的是为了找到程序中更多合法的 bug。
@@ -152,14 +152,14 @@ user.location;
 
 ```ts twoslash
 // @noErrors
-const announcement = "Hello World!";
- 
+const announcement = 'Hello World!'
+
 // 你需要花多久才能注意到拼写错误？
-announcement.toLocaleLowercase();
-announcement.toLocalLowerCase();
- 
+announcement.toLocaleLowercase()
+announcement.toLocalLowerCase()
+
 // 实际上正确的拼写是这样的……
-announcement.toLocaleLowerCase();
+announcement.toLocaleLowerCase()
 ```
 
 未调用的函数：
@@ -169,7 +169,7 @@ announcement.toLocaleLowerCase();
 // @errors: 2365
 function flipCoin() {
   // 应该是 Math.random()
-  return Math.random < 0.5;
+  return Math.random < 0.5
 }
 ```
 
@@ -177,11 +177,11 @@ function flipCoin() {
 
 ```ts twoslash
 // @errors: 2367
-const value = Math.random() < 0.5 ? "a" : "b";
-if (value !== "a") {
+const value = Math.random() < 0.5 ? 'a' : 'b'
+if (value !== 'a') {
   // ...
-} else if (value === "b") {
-// 永远无法到达这个分支
+} else if (value === 'b') {
+  // 永远无法到达这个分支
 }
 ```
 
@@ -200,7 +200,6 @@ TypeScript 可以在我们的代码出现错误时捕获 bug。
 人们经常会谈到 TypeScript 在工具层面的作用，这就是一个典型的例子。
 
 <!-- prettier-ignore -->
-
 ```ts twoslash
 // @noErrors
 // @esModuleInterop
@@ -239,7 +238,7 @@ npm install -g typescript
 
 ```ts twoslash
 // 和世界打个招呼
-console.log('Hello world!');
+console.log('Hello world!')
 ```
 
 注意这行代码没有任何多余的修饰，它看起来就和使用 JavaScript 编写的 “hello world” 程序一模一样。
@@ -268,7 +267,7 @@ tsc hello.ts
 
 ```js
 // 和世界打个招呼
-console.log('Hello world!');
+console.log('Hello world!')
 ```
 
 在这个例子中，TypeScript 几乎没有需要转译的内容，所以转译前后的代码看起来一模一样。
@@ -285,10 +284,10 @@ console.log('Hello world!');
 // @noErrors
 // This is an industrial-grade general-purpose greeter function:
 function greet(person, date) {
-  console.log(`Hello ${person}, today is ${date}!`);
+  console.log(`Hello ${person}, today is ${date}!`)
 }
 
-greet("Brendan");
+greet('Brendan')
 ```
 
 如果我们再次执行 `tsc hello.ts`，那么会注意到命令行抛出了一个错误！
@@ -343,7 +342,7 @@ tsc --noEmitOnError hello.ts
 
 ```ts twoslash
 function greet(person: string, date: Date) {
-  console.log(`Hello ${person}, today is ${date.toDateString()}!`);
+  console.log(`Hello ${person}, today is ${date.toDateString()}!`)
 }
 ```
 
@@ -358,10 +357,10 @@ function greet(person: string, date: Date) {
 ```ts twoslash
 // @errors: 2345
 function greet(person: string, date: Date) {
-  console.log(`Hello ${person}, today is ${date.toDateString()}!`);
+  console.log(`Hello ${person}, today is ${date.toDateString()}!`)
 }
 
-greet("Maddison", Date());
+greet('Maddison', Date())
 ```
 
 哈？
@@ -376,10 +375,10 @@ TypeScript 报错提示第二个参数有问题，但这是为什么呢？
 
 ```ts twoslash {4}
 function greet(person: string, date: Date) {
-  console.log(`Hello ${person}, today is ${date.toDateString()}!`);
+  console.log(`Hello ${person}, today is ${date.toDateString()}!`)
 }
- 
-greet("Maddison", new Date());
+
+greet('Maddison', new Date())
 ```
 
 记住，我们并不总是需要显式地进行类型注解。
@@ -387,7 +386,7 @@ greet("Maddison", new Date());
 在很多情况下，即使省略了类型注解，TypeScript 也可以为我们**推断出**（或者“搞清楚”）类型。
 
 ```ts twoslash
-let msg = "hello there!";
+let msg = 'hello there!'
 //  ^?
 ```
 
@@ -405,10 +404,10 @@ let msg = "hello there!";
 // @showEmit
 // @target: es5
 function greet(person: string, date: Date) {
-  console.log(`Hello ${person}, today is ${date.toDateString()}!`);
+  console.log(`Hello ${person}, today is ${date.toDateString()}!`)
 }
 
-greet("Maddison", new Date());
+greet('Maddison', new Date())
 ```
 
 注意到有两个变化：
@@ -431,13 +430,13 @@ greet("Maddison", new Date());
 上面的另一个变化，就是我们的模板字符串从：
 
 ```js
-`Hello ${person}, today is ${date.toDateString()}!`;
+;`Hello ${person}, today is ${date.toDateString()}!`
 ```
 
 被重写为：
 
 ```js
-"Hello " + person + ", today is " + date.toDateString() + "!";
+'Hello ' + person + ', today is ' + date.toDateString() + '!'
 ```
 
 为什么会这样子呢？
@@ -456,9 +455,9 @@ TypeScript 可以将高版本 ECMAScript 的代码重写为类似 ECMAScript3 �
 
 ```js
 function greet(person, date) {
-  console.log(`Hello ${person}, today is ${date.toDateString()}!`);
+  console.log(`Hello ${person}, today is ${date.toDateString()}!`)
 }
-greet("Maddison", new Date());
+greet('Maddison', new Date())
 ```
 
 > 虽然默认的目标代码采用的是 ES3 语法，但现在浏览器大多数都已经支持 ES2015 了。

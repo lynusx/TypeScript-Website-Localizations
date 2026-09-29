@@ -3,7 +3,7 @@ title: 面向编程初学者的 TypeScript
 short: 面向编程初学者的 TS
 layout: docs
 permalink: /zh/docs/handbook/typescript-from-scratch.html
-oneline: 从零开始学习 TypeScript
+oneline: '从零开始学习 TypeScript'
 ---
 
 恭喜你选择 TypeScript 作为第一门编程语言 —— 你已经做出了明智的决定！
@@ -20,11 +20,10 @@ Web 浏览器开发者通过优化执行引擎（动态编译）和扩展可以�
 
 总之，我们有一种语言，起初专为快速使用而设计，后来发展为功能强大的工具，可以编写具有数百万行的应用程序。每种语言都有它的 _怪异之处_，令人感到古怪或者惊讶。JavaScript 略显简陋的开端使得这种怪异之处 _很多_。 一些例子：
 
-
-- JavaScript 的等于运算符（`==`）会试图 _强制_ 值相等，导致一些意外行为： 
+- JavaScript 的等于运算符（`==`）会试图 _强制_ 值相等，导致一些意外行为：
 
   ```js
-  if ("" == 0) {
+  if ('' == 0) {
     // 他们相等！但是为什么呢？？
   }
   if (1 < x < 3) {
@@ -35,9 +34,9 @@ Web 浏览器开发者通过优化执行引擎（动态编译）和扩展可以�
 - JavaScript 还允许访问不存在的属性：
 
   ```js
-  const obj = { width: 10, height: 15 };
+  const obj = { width: 10, height: 15 }
   // 为什么是 NaN？拼写好难！
-  const area = obj.width * obj.heigth;
+  const area = obj.width * obj.heigth
   ```
 
 大多数编程语言会在发生此类错误时抛出错误提示，有些会在编译期间（在任何代码运行之前）这样做。在编写小型程序时，这种诡异虽表现很烦人，但很容易管理。当编写具有成百上千行代码的应用程序时，这些源源不断的奇怪的错误将是一个严重的问题。
@@ -50,8 +49,8 @@ TypeScript 在执行之前，基于 _值的类型_ 检查程序是否有错误�
 
 ```ts twoslash
 // @errors: 2551
-const obj = { width: 10, height: 15 };
-const area = obj.width * obj.heigth;
+const obj = { width: 10, height: 15 }
+const area = obj.width * obj.heigth
 ```
 
 ### JavaScript 的类型化超集
@@ -76,21 +75,21 @@ TypeScript 不会将任何 JavaScript 代码视为错误。这意味着你可以
 再举一个例子，这段 JavaScript 代码可以在浏览器中运行，它 _会_ 打印一个值：
 
 ```js
-console.log(4 / []);
+console.log(4 / [])
 ```
 
 该语法合法的程序打印出 `Infinity` 。但是，TypeScript 认为将数字除以数组是无意义的操作，并且会报错：
 
 ```ts twoslash
 // @errors: 2363
-console.log(4 / []);
+console.log(4 / [])
 ```
 
 你可能 _真的_ 想将数字除以数组，也许只是想看看会发生什么，但是在大多数时候，这是编程错误。TypeScript 的类型检查器旨在允许正确的程序通过，同时仍然捕获尽可能多的常见错误。（稍后，我们将学习如何配置 TypeScript，从而控制检查代码的严格程度。）
 
 如果将某些代码从 JavaScript 文件移动到 TypeScript 文件，可能会出现 _类型错误_ ，具体取决于代码的编写方式。这些或许是代码真实存在的问题，或者 TypeScript 过于保守。在本指南中，我们将演示如何增添各种 TypeScript 语法来消除此类错误。
 
-#### 运行时行为 
+#### 运行时行为
 
 TypeScript 保留了 JavaScript 的 _运行时行为_ 。例如，在JavaScript 中被零除的结果是 `Infinity`，而不是抛出运行时异常。原则上，TypeScript **绝不** 改变 JavaScript 代码的运行时行为。
 

@@ -3,7 +3,7 @@ title: 为 JavaScript 程序员准备的 TypeScript
 short: 为 JS 程序员准备的 TypeScript
 layout: docs
 permalink: /zh/docs/handbook/typescript-in-5-minutes.html
-oneline: 学习 TypeScript 对 Javascript 的扩展
+oneline: '学习 TypeScript 对 Javascript 的扩展'
 ---
 
 TypeScript 与 JavaScript 有着不同寻常的关系。TypeScript 提供了 JavaScript 的所有功能，并在这些功能之上添加了一层： TypeScript 的类型系统。
@@ -19,7 +19,7 @@ TypeScript 与 JavaScript 有着不同寻常的关系。TypeScript 提供了 Jav
 TypeScript 可以识别 JavaScript 语言，在许多情况下可以推断类型。例如，在创建变量并将其赋值给特定值时， TypeScript 将使用该值作为其类型。
 
 ```ts twoslash
-let helloWorld = "Hello World";
+let helloWorld = 'Hello World'
 //  ^?
 ```
 
@@ -35,17 +35,17 @@ let helloWorld = "Hello World";
 
 ```ts twoslash
 const user = {
-  name: "Hayes",
+  name: 'Hayes',
   id: 0,
-};
+}
 ```
 
 你可以使用 `interface` 关键字声明显式地描述此对象的*内部数据的类型*（译者注：下文可能译为“结构”）：
 
 ```ts twoslash
 interface User {
-  name: string;
-  id: number;
+  name: string
+  id: number
 }
 ```
 
@@ -53,14 +53,14 @@ interface User {
 
 ```ts twoslash
 interface User {
-  name: string;
-  id: number;
+  name: string
+  id: number
 }
 // ---分割线---
 const user: User = {
-  name: "Hayes",
+  name: 'Hayes',
   id: 0,
-};
+}
 ```
 
 如果提供的对象与提供的接口不匹配，TypeScript 将警告：
@@ -68,35 +68,35 @@ const user: User = {
 ```ts twoslash
 // @errors: 2322
 interface User {
-  name: string;
-  id: number;
+  name: string
+  id: number
 }
 
 const user: User = {
-  username: "Hayes",
+  username: 'Hayes',
   id: 0,
-};
+}
 ```
 
 由于 JavaScript 支持类和面向对象编程，TypeScript 也支持。你可以将接口声明与类一起使用：
 
 ```ts twoslash
 interface User {
-  name: string;
-  id: number;
+  name: string
+  id: number
 }
 
 class UserAccount {
-  name: string;
-  id: number;
+  name: string
+  id: number
 
   constructor(name: string, id: number) {
-    this.name = name;
-    this.id = id;
+    this.name = name
+    this.id = id
   }
 }
 
-const user: User = new UserAccount("Murphy", 1);
+const user: User = new UserAccount('Murphy', 1)
 ```
 
 您可以使用接口对参数进行注释，并将值返回给函数：
@@ -104,8 +104,8 @@ const user: User = new UserAccount("Murphy", 1);
 ```ts twoslash
 // @noErrors
 interface User {
-  name: string;
-  id: number;
+  name: string
+  id: number
 }
 // ---分割线---
 function getAdminUser(): User {
@@ -130,24 +130,24 @@ JavaScript 中已经有一些基本类型可用：`boolean`、 `bigint`、 `null
 使用联合，可以声明类型可以是许多类型中的一种。例如，可以将 `boolean` 类型描述为 `true` 或 `false` ：
 
 ```ts twoslash
-type MyBool = true | false;
+type MyBool = true | false
 ```
 
-_注意：_如果将鼠标悬停在上面的 `MyBool` 上，您将看到它被归类为 `boolean`。这是结构化类型系统的一个属性。下面有更加详细的信息。
+*注意：*如果将鼠标悬停在上面的 `MyBool` 上，您将看到它被归类为 `boolean`。这是结构化类型系统的一个属性。下面有更加详细的信息。
 
 联合类型的一个流行用法是描述 `string` 或者 `number` 的[字面量](/docs/handbook/2/everyday-types.html#literal-types)的合法值。
 
 ```ts twoslash
-type WindowStates = "open" | "closed" | "minimized";
-type LockStates = "locked" | "unlocked";
-type PositiveOddNumbersUnderTen = 1 | 3 | 5 | 7 | 9;
+type WindowStates = 'open' | 'closed' | 'minimized'
+type LockStates = 'locked' | 'unlocked'
+type PositiveOddNumbersUnderTen = 1 | 3 | 5 | 7 | 9
 ```
 
 联合也提供了一种处理不同类型的方法。例如，可能有一个函数处理 `array` 或者 `string`：
 
 ```ts twoslash
 function getLength(obj: string | string[]) {
-  return obj.length;
+  return obj.length
 }
 ```
 
@@ -180,9 +180,9 @@ function wrapInArray(obj: string | string[]) {
 泛型为类型提供变量。一个常见的例子是数组。没有泛型的数组可以包含任何内容。带有泛型的数组可以描述数组包含的值。
 
 ```ts
-type StringArray = Array<string>;
-type NumberArray = Array<number>;
-type ObjectWithNameArray = Array<{ name: string }>;
+type StringArray = Array<string>
+type NumberArray = Array<number>
+type ObjectWithNameArray = Array<{ name: string }>
 ```
 
 你可以声明自己使用泛型的类型：
@@ -190,19 +190,19 @@ type ObjectWithNameArray = Array<{ name: string }>;
 ```ts twoslash
 // @errors: 2345
 interface Backpack<Type> {
-  add: (obj: Type) => void;
-  get: () => Type;
+  add: (obj: Type) => void
+  get: () => Type
 }
 
 // 这一行是一个简写，可以告诉 TypeScript 有一个常量，叫做`backpack`，并且不用担心它是从哪
 // 里来的。
-declare const backpack: Backpack<string>;
+declare const backpack: Backpack<string>
 
 // 对象是一个字符串，因为我们在上面声明了它作为 Backpack 的变量部分。
-const object = backpack.get();
+const object = backpack.get()
 
 // 因为 backpack 变量是一个字符串，不能将数字传递给 add 函数。
-backpack.add(23);
+backpack.add(23)
 ```
 
 ## 结构化的类型系统（structural type system）
@@ -213,42 +213,42 @@ TypeScript 的一个核心原则是类型检查基于对象的属性和行为（
 
 ```ts twoslash
 interface Point {
-  x: number;
-  y: number;
+  x: number
+  y: number
 }
 
 function logPoint(p: Point) {
-  console.log(`${p.x}, ${p.y}`);
+  console.log(`${p.x}, ${p.y}`)
 }
 
 // 打印 "12, 26"
-const point = { x: 12, y: 26 };
-logPoint(point);
+const point = { x: 12, y: 26 }
+logPoint(point)
 ```
 
- `point` 变量从未声明为 `Point` 类型。 但是，在类型检查中，TypeScript 将 `point` 的结构与 `Point`的结构进行比较。它们的结构相同，所以代码通过了。
+`point` 变量从未声明为 `Point` 类型。 但是，在类型检查中，TypeScript 将 `point` 的结构与 `Point`的结构进行比较。它们的结构相同，所以代码通过了。
 
 结构匹配只需要匹配对象字段的子集。
 
 ```ts twoslash
 // @errors: 2345
 interface Point {
-  x: number;
-  y: number;
+  x: number
+  y: number
 }
 
 function logPoint(p: Point) {
-  console.log(`${p.x}, ${p.y}`);
+  console.log(`${p.x}, ${p.y}`)
 }
 // ---cut---
-const point3 = { x: 12, y: 26, z: 89 };
-logPoint(point3); // 打印 "12, 26"
+const point3 = { x: 12, y: 26, z: 89 }
+logPoint(point3) // 打印 "12, 26"
 
-const rect = { x: 33, y: 3, width: 30, height: 80 };
-logPoint(rect); // 打印 "33, 3"
+const rect = { x: 33, y: 3, width: 30, height: 80 }
+logPoint(rect) // 打印 "33, 3"
 
-const color = { hex: "#187ABF" };
-logPoint(color);
+const color = { hex: '#187ABF' }
+logPoint(color)
 ```
 
 类和对象确定结构的方式没有区别：
@@ -256,26 +256,26 @@ logPoint(color);
 ```ts twoslash
 // @errors: 2345
 interface Point {
-  x: number;
-  y: number;
+  x: number
+  y: number
 }
 
 function logPoint(p: Point) {
-  console.log(`${p.x}, ${p.y}`);
+  console.log(`${p.x}, ${p.y}`)
 }
 // ---分割线---
 class VirtualPoint {
-  x: number;
-  y: number;
+  x: number
+  y: number
 
   constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
+    this.x = x
+    this.y = y
   }
 }
 
-const newVPoint = new VirtualPoint(13, 56);
-logPoint(newVPoint); // 打印 "13, 56"
+const newVPoint = new VirtualPoint(13, 56)
+logPoint(newVPoint) // 打印 "13, 56"
 ```
 
 如果对象或类具有所有必需的属性，则 TypeScript 将表示是它们匹配的，而不关注其实现细节。
@@ -286,4 +286,3 @@ logPoint(newVPoint); // 打印 "13, 56"
 
 - 阅读完整手册[由始至终](/docs/handbook/intro.html) （30 分钟）
 - 探索 [Playground 上的示例](/play#show-examples)
-

@@ -57,7 +57,7 @@ JavaScript 项目可以使用 `jsconfig.json` 文件，它的作用与 `tsconfig
 
 - 使用 `"include"` 和 `"exclude"` 属性
 
-  ```json  tsconfig
+  ```json tsconfig
   {
     "compilerOptions": {
       "module": "system",

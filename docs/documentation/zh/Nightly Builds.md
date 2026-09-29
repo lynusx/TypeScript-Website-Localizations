@@ -2,7 +2,7 @@
 title: 每日构建
 layout: docs
 permalink: /zh/docs/handbook/nightly-builds.html
-oneline: 如何使用TypeScript的每日构建版本
+oneline: '如何使用TypeScript的每日构建版本'
 translatable: true
 ---
 
