@@ -42,7 +42,7 @@ function greeter(fn: GreetFunction) {
 
 ```ts twoslash
 type DescribableFunction = {
-  description: string;
+  description: string
   (someArg: number): boolean
 }
 function doSomething(fn: DescribableFunction) {

@@ -1,7 +1,7 @@
 ---
 title: 索引访问类型
 layout: docs
-permalink: /docs/handbook/2/indexed-access-types.html
+permalink: /zh/docs/handbook/2/indexed-access-types.html
 oneline: "使用 Type['a'] 语法访问类型的子集。"
 ---
 

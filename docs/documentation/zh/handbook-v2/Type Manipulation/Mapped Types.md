@@ -1,7 +1,7 @@
 ---
 title: 映射类型
 layout: docs
-permalink: /docs/handbook/2/mapped-types.html
+permalink: /zh/docs/handbook/2/mapped-types.html
 oneline: '通过复用现有类型来生成类型。'
 ---
 
@@ -97,7 +97,9 @@ type MappedTypeWithNewProperties<Type> = {
 
 ```ts twoslash
 type Getters<Type> = {
-  [Property in keyof Type as `get${Capitalize<string & Property>}`]: () => Type[Property]
+  [
+    Property in keyof Type as `get${Capitalize<string & Property>}`
+  ]: () => Type[Property]
 }
 
 interface Person {
