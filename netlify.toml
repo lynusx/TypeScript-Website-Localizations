@@ -1,6 +1,6 @@
 # Site configuration → Build & deploy → Branches 将 Production branch 设为 main）
 [build]
-  command = "git clone https://github.com/lynusx/TypeScript-Website.git website && cd website && pnpm install && pnpm docs-sync pull lynusx/TypeScript-Website-localizations#main 1 --force && pnpm bootstrap && pnpm run --filter=typescriptlang-org setup-playground-cache-bust && pnpm build && pnpm build-site"
+  command = "git clone --branch fix/eslint-plugin-flowtype https://github.com/lynusx/TypeScript-Website.git website && cd website && pnpm install && pnpm docs-sync pull lynusx/TypeScript-Website-localizations#main 1 --force && pnpm bootstrap && pnpm run --filter=typescriptlang-org setup-playground-cache-bust && pnpm build && pnpm build-site"
   publish = "website/packages/typescriptlang-org/public"
 
 [build.environment]
