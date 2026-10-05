@@ -1,11 +1,11 @@
 ---
 display: 'Preserve Value Imports'
-oneline: 'Preserve unused imported values in the JavaScript output that would otherwise be removed.'
+oneline: '在 JavaScript 输出中保留未使用的导入值（否则这些值会被移除）。'
 ---
 
-Deprecated in favor of [`verbatimModuleSyntax`](#verbatimModuleSyntax).
+已废弃，请改用 [`verbatimModuleSyntax`](#verbatimModuleSyntax)。
 
-There are some cases where TypeScript can't detect that you're using an import. For example, take the following code:
+在某些情况下，TypeScript 无法检测到你正在使用某个导入。例如，考虑以下代码：
 
 ```ts
 import { Animal } from './animal.js'
@@ -13,6 +13,6 @@ import { Animal } from './animal.js'
 eval('console.log(new Animal().isDangerous())')
 ```
 
-or code using 'Compiles to HTML' languages like Svelte or Vue. `preserveValueImports` will prevent TypeScript from removing the import, even if it appears unused.
+或者使用如 Svelte、Vue 这类“编译为 HTML”的语言编写的代码。`preserveValueImports` 将阻止 TypeScript 移除该导入，即便它看起来未被使用。
 
-When combined with [`isolatedModules`](#isolatedModules): imported types _must_ be marked as type-only because compilers that process single files at a time have no way of knowing whether imports are values that appear unused, or a type that must be removed in order to avoid a runtime crash.
+当与 [`isolatedModules`](#isolatedModules) 结合使用时：导入的类型必须（_must_）被显式标记为仅类型（type-only），因为每次仅处理单个文件的编译器无法知道导入项是表面上未使用的值，还是为了避免运行时崩溃而必须移除的类型。

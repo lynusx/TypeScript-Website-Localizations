@@ -1,8 +1,8 @@
 ---
 display: 'Disable Solution Searching'
-oneline: 'Opt a project out of multi-project reference checking when editing.'
+oneline: '在编辑时让项目不参与多项目引用检查。'
 ---
 
-When working with [composite TypeScript projects](/docs/handbook/project-references.html), this option provides a way to declare that you do not want a project to be included when using features like _find all references_ or _jump to definition_ in an editor.
+在处理 [TypeScript 组合项目](/docs/handbook/project-references.html)时，该选项允许声明在编辑器中使用诸如“查找所有引用”（_find all references_）或“跳转到定义”（_jump to definition_）等功能时不包含该项目。
 
-This flag is something you can use to increase responsiveness in large composite projects.
+你可以使用此标志来提升大型组合项目在编辑器中的响应速度。

@@ -1,13 +1,13 @@
 ---
 display: 'JSX Import Source'
-oneline: 'Specify module specifier used to import the JSX factory functions when using `jsx: react-jsx*`.'
+oneline: '在使用 `jsx: react-jsx*` 时，指定用于导入 JSX 工厂函数的模块标识符。'
 ---
 
-Declares the module specifier to be used for importing the `jsx` and `jsxs` factory functions when using [`jsx`](#jsx) as `"react-jsx"` or `"react-jsxdev"` which were introduced in TypeScript 4.1.
+当 [`jsx`](#jsx) 设置为 TypeScript 4.1 引入的 `"react-jsx"` 或 `"react-jsxdev"` 时，声明用于导入 `jsx` 和 `jsxs` 工厂函数的模块标识符。
 
-With [React 17](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html) the library supports a new form of JSX transformation via a separate import.
+从 [React 17](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html) 开始，该库支持通过独立导入的新形式 JSX 转换。
 
-For example with this code:
+例如，对于以下代码：
 
 ```tsx
 import React from 'react'
@@ -17,7 +17,7 @@ function App() {
 }
 ```
 
-Using this TSConfig:
+使用如下 TSConfig：
 
 ```json tsconfig
 {
@@ -29,7 +29,7 @@ Using this TSConfig:
 }
 ```
 
-The emitted JavaScript from TypeScript is:
+TypeScript 生成的 JavaScript 输出为：
 
 ```tsx twoslash
 // @showEmit
@@ -50,7 +50,7 @@ function App() {
 }
 ```
 
-For example if you wanted to use `"jsxImportSource": "preact"`, you need a tsconfig like:
+例如，如果你想要使用 `"jsxImportSource": "preact"`，你需要如下的 tsconfig：
 
 ```json tsconfig
 {
@@ -64,7 +64,7 @@ For example if you wanted to use `"jsxImportSource": "preact"`, you need a tscon
 }
 ```
 
-Which generates code like:
+这将生成类似如下的代码：
 
 ```tsx twoslash
 // @showEmit
@@ -80,7 +80,7 @@ export function App() {
 }
 ```
 
-Alternatively, you can use a per-file pragma to set this option, for example:
+此外，你也可以使用文件级 pragma 注释来设置此选项，例如：
 
 ```tsx
 /** @jsxImportSource preact */
@@ -90,6 +90,6 @@ export function App() {
 }
 ```
 
-Would add `preact/jsx-runtime` as an import for the `_jsx` factory.
+这会为 `_jsx` 工厂函数添加 `preact/jsx-runtime` 导入。
 
-_Note:_ In order for this to work like you would expect, your `tsx` file must include an `export` or `import` so that it is considered a module.
+*注意：* 为了使其按预期工作，你的 `tsx` 文件必须包含 `export` 或 `import`，以便被视为一个模块。

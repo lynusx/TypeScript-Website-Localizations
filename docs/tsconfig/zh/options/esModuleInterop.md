@@ -1,22 +1,21 @@
 ---
 display: 'ES Module Interop'
-oneline: 'Emit additional JavaScript to ease support for importing CommonJS modules. This enables [`allowSyntheticDefaultImports`](#allowSyntheticDefaultImports) for type compatibility.'
+oneline: '生成额外的 JavaScript 代码以更轻松地支持导入 CommonJS 模块。这同时会启用 [`allowSyntheticDefaultImports`](#allowSyntheticDefaultImports) 以实现类型兼容。'
 ---
 
-By default (with `esModuleInterop` false or not set) TypeScript treats CommonJS/AMD/UMD modules similar to ES6 modules. In doing this, there are two parts in particular which turned out to be flawed assumptions:
+默认情况下（当 `esModuleInterop` 为 false 或未设置时），TypeScript 将 CommonJS/AMD/UMD 模块视作与 ES6 模块类似。在此过程中，有两个特别的假设后来被证明是有缺陷的：
 
-- a namespace import like `import * as moment from "moment"` acts the same as `const moment = require("moment")`
+- 类似于 `import * as moment from "moment"` 的命名空间导入，其行为等同于 `const moment = require("moment")`
 
-- a default import like `import moment from "moment"` acts the same as `const moment = require("moment").default`
+- 类似于 `import moment from "moment"` 的默认导入，其行为等同于 `const moment = require("moment").default`
 
-This mis-match causes these two issues:
+这种不匹配导致了以下两个问题：
 
-- the ES6 modules spec states that a namespace import (`import * as x`) can only be an object, by having TypeScript
-  treating it the same as `= require("x")` then TypeScript allowed for the import to be treated as a function and be callable. That's not valid according to the spec.
+- ES6 模块规范规定命名空间导入（`import * as x`）只能是一个对象。TypeScript 将其视为等同于 `= require("x")`，使得该导入可以被当作函数直接调用。根据规范，这是不合法的。
 
-- while accurate to the ES6 modules spec, most libraries with CommonJS/AMD/UMD modules didn't conform as strictly as TypeScript's implementation.
+- 尽管符合 ES6 模块规范，但大多数基于 CommonJS/AMD/UMD 模块的库并没有像 TypeScript 的实现那样严格遵循该规范。
 
-Turning on `esModuleInterop` will fix both of these problems in the code transpiled by TypeScript. The first changes the behavior in the compiler, the second is fixed by two new helper functions which provide a shim to ensure compatibility in the emitted JavaScript:
+开启 `esModuleInterop` 将在 TypeScript 转译后的代码中修复这两个问题。第一点改变了编译器的行为，第二点则通过两个新的辅助函数进行修复，这些辅助函数提供了垫片（shim）以确保输出的 JavaScript 具备兼容性：
 
 ```ts
 import * as fs from 'fs'
@@ -26,7 +25,7 @@ fs.readFileSync('file.txt', 'utf8')
 _.chunk(['a', 'b', 'c', 'd'], 2)
 ```
 
-With `esModuleInterop` disabled:
+禁用 `esModuleInterop` 时：
 
 ```ts twoslash
 // @noErrors
@@ -40,7 +39,7 @@ fs.readFileSync('file.txt', 'utf8')
 _.chunk(['a', 'b', 'c', 'd'], 2)
 ```
 
-With `esModuleInterop` set to `true`:
+将 `esModuleInterop` 设置为 `true` 时：
 
 ```ts twoslash
 // @noErrors
@@ -54,9 +53,9 @@ fs.readFileSync('file.txt', 'utf8')
 _.chunk(['a', 'b', 'c', 'd'], 2)
 ```
 
-_Note_: The namespace import `import * as fs from "fs"` only accounts for properties which [are owned](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty) (basically properties set on the object and not via the prototype chain) on the imported object. If the module you're importing defines its API using inherited properties, you need to use the default import form (`import fs from "fs"`), or disable `esModuleInterop`.
+_注意_：命名空间导入 `import * as fs from "fs"` 仅包含被导入对象[自身拥有的属性](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty)（基本上是在该对象自身上设置的属性，而非通过原型链继承的属性）。如果你导入的模块使用继承属性来定义其 API，则需要使用默认导入形式（`import fs from "fs"`），或者禁用 `esModuleInterop`。
 
-_Note_: You can make JS emit terser by enabling [`importHelpers`](#importHelpers):
+_注意_：你可以通过启用 [`importHelpers`](#importHelpers) 让生成的 JS 代码更加精简：
 
 ```ts twoslash
 // @noErrors
@@ -71,4 +70,4 @@ fs.readFileSync('file.txt', 'utf8')
 _.chunk(['a', 'b', 'c', 'd'], 2)
 ```
 
-Enabling `esModuleInterop` will also enable [`allowSyntheticDefaultImports`](#allowSyntheticDefaultImports).
+启用 `esModuleInterop` 还会同时启用 [`allowSyntheticDefaultImports`](#allowSyntheticDefaultImports).

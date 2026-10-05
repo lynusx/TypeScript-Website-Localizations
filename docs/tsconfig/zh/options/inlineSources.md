@@ -1,21 +1,21 @@
 ---
 display: 'Inline Sources'
-oneline: 'Include source code in the sourcemaps inside the emitted JavaScript.'
+oneline: '将源代码作为内联内容包含在生成的 JavaScript 中的 source map 内。'
 ---
 
-When set, TypeScript will include the original content of the `.ts` file as an embedded string in the source map (using the source map's `sourcesContent` property).
-This is often useful in the same cases as [`inlineSourceMap`](#inlineSourceMap).
+设置后，TypeScript 会将 `.ts` 文件的原始内容作为嵌入字符串包含在 source map 中（使用 source map 的 `sourcesContent` 属性）。
+这在与 [`inlineSourceMap`](#inlineSourceMap) 类似的场景下通常非常有用。
 
-Requires either [`sourceMap`](#sourceMap) or [`inlineSourceMap`](#inlineSourceMap) to be set.
+需要同时设置 [`sourceMap`](#sourceMap) 或 [`inlineSourceMap`](#inlineSourceMap)。
 
-For example, with this TypeScript:
+例如，对于以下 TypeScript 代码：
 
 ```ts twoslash
 const helloWorld = 'hi'
 console.log(helloWorld)
 ```
 
-By default converts to this JavaScript:
+默认会转换为如下 JavaScript：
 
 ```ts twoslash
 // @showEmit
@@ -23,9 +23,8 @@ const helloWorld = 'hi'
 console.log(helloWorld)
 ```
 
-Then enable building it with `inlineSources` and [`inlineSourceMap`](#inlineSourceMap) enabled there is a comment at the bottom of the file which includes
-a source-map for the file.
-Note that the end is different from the example in [`inlineSourceMap`](#inlineSourceMap) because the source-map now contains the original source code also.
+启用 `inlineSources` 以及 [`inlineSourceMap`](#inlineSourceMap) 进行构建后，文件底部会包含一段携带 source map 的注释。
+请注意，结尾部分与 [`inlineSourceMap`](#inlineSourceMap) 中的示例有所不同，因为此时 source map 还包含了原始源代码。
 
 ```ts twoslash
 // @inlineSources

@@ -1,6 +1,6 @@
 ---
 display: 'Clean'
-oneline: 'Delete the outputs of all projects.'
+oneline: '删除所有项目的输出内容。'
 ---
 
-Delete the outputs of all projects
+删除所有项目的输出内容。

@@ -1,7 +1,7 @@
 ---
 display: 'Disable Source Project Reference Redirect'
-oneline: 'Disable preferring source files instead of declaration files when referencing composite projects.'
+oneline: '在引用组合项目时，禁用优先使用源文件而非声明文件的行为。'
 ---
 
-When working with [composite TypeScript projects](/docs/handbook/project-references.html), this option provides a way to go [back to the pre-3.7](/docs/handbook/release-notes/typescript-3-7.html#build-free-editing-with-project-references) behavior where d.ts files were used to as the boundaries between modules.
-In 3.7 the source of truth is now your TypeScript files.
+在处理 [TypeScript 组合项目](/docs/handbook/project-references.html)时，该选项提供了一种[回退到 3.7 之前版本](/docs/handbook/release-notes/typescript-3-7.html#build-free-editing-with-project-references)行为的方式，即使用 d.ts 文件作为模块间的边界。
+而在 3.7 版本中，单一事实来源已转变为你的 TypeScript 文件。

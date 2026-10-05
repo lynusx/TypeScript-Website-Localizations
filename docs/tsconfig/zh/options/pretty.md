@@ -1,7 +1,6 @@
 ---
 display: 'Pretty'
-oneline: "Enable color and formatting in TypeScript's output to make compiler errors easier to read."
+oneline: "在 TypeScript 输出中启用颜色和格式化，使编译器错误更易于阅读。"
 ---
 
-Stylize errors and messages using color and context, this is on by default &mdash; offers you a chance to have less terse,
-single colored messages from the compiler.
+使用颜色和上下文为错误及消息赋予样式，该选项默认开启 —— 使编译器的消息不再单调生硬或纯单色显示。

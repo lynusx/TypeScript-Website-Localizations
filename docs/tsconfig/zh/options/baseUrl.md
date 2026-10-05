@@ -1,9 +1,9 @@
 ---
 display: 'Base URL'
-oneline: 'Specify the base directory to resolve bare specifier module names.'
+oneline: '指定用于解析裸模块说明符的基础目录。'
 ---
 
-Sets a base directory from which to resolve bare specifier module names. For example, in the directory structure:
+设置一个基础目录，用于解析裸模块说明符（bare specifier）的模块名。例如，在以下目录结构中：
 
 ```
 project
@@ -13,7 +13,7 @@ project
 └── tsconfig.json
 ```
 
-With `"baseUrl": "./"`, TypeScript will look for files starting at the same folder as the `tsconfig.json`:
+当设置 `"baseUrl": "./"` 时，TypeScript 将从 `tsconfig.json` 所在的目录开始查找文件：
 
 ```ts
 import { helloWorld } from 'hello/world'
@@ -21,6 +21,6 @@ import { helloWorld } from 'hello/world'
 console.log(helloWorld)
 ```
 
-This resolution has higher priority than lookups from `node_modules`.
+这种解析方式的优先级高于从 `node_modules` 中查找。
 
-This feature was designed for use in conjunction with AMD module loaders in the browser, and is not recommended in any other context. As of TypeScript 4.1, `baseUrl` is no longer required to be set when using [`paths`](#paths).
+该功能最初是为浏览器中配合 AMD 模块加载器使用而设计的，不建议在其他场景中使用。从 TypeScript 4.1 开始，使用 [`paths`](#paths) 时不再要求设置 `baseUrl`。

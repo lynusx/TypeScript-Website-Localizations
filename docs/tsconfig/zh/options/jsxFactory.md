@@ -1,12 +1,12 @@
 ---
 display: 'JSX Factory'
-oneline: "Specify the JSX factory function used when targeting React JSX emit, e.g. 'React.createElement' or 'h'."
+oneline: "指定生成 React JSX 代码时使用的 JSX 工厂函数，例如 'React.createElement' 或 'h'。"
 ---
 
-Changes the function called in `.js` files when compiling JSX Elements using the classic JSX runtime.
-The most common change is to use `"h"` or `"preact.h"` instead of the default `"React.createElement"` if using `preact`.
+更改使用经典 JSX 运行时编译 JSX 元素时在 `.js` 文件中调用的函数。
+最常见的更改是在使用 `preact` 时，使用 `"h"` 或 `"preact.h"` 代替默认的 `"React.createElement"`。
 
-For example, this TSX file:
+例如，此 TSX 文件：
 
 ```tsx
 import { h } from 'preact'
@@ -14,7 +14,7 @@ import { h } from 'preact'
 const HelloWorld = () => <div>Hello</div>
 ```
 
-With `jsxFactory: "h"` looks like:
+在配置 `jsxFactory: "h"` 时的输出如下：
 
 ```tsx twoslash
 // @showEmit
@@ -29,7 +29,7 @@ import { h, Fragment } from 'preact'
 const HelloWorld = () => <div>Hello</div>
 ```
 
-This option can be used on a per-file basis too similar to [Babel's `/** @jsx h */` directive](https://babeljs.io/docs/en/babel-plugin-transform-react-jsx#custom).
+该选项也可以像 [Babel 的 `/** @jsx h */` 指令](https://babeljs.io/docs/en/babel-plugin-transform-react-jsx#custom) 一样在每个文件级别单独使用。
 
 ```tsx twoslash
 /** @jsx h */
@@ -38,6 +38,6 @@ import { h } from 'preact'
 const HelloWorld = () => <div>Hello</div>
 ```
 
-The factory chosen will also affect where the `JSX` namespace is looked up (for type checking information) before falling back to the global one.
+所选的工厂函数还会影响编译器在回退到全局命名空间之前，在何处查找 `JSX` 命名空间（以获取类型检查信息）。
 
-If the factory is defined as `React.createElement` (the default), the compiler will check for `React.JSX` before checking for a global `JSX`. If the factory is defined as `h`, it will check for `h.JSX` before a global `JSX`.
+如果工厂函数定义为 `React.createElement`（默认值），编译器会在检查全局 `JSX` 之前先检查 `React.JSX`。如果工厂函数定义为 `h`，它会在检查全局 `JSX` 之前先检查 `h.JSX`。

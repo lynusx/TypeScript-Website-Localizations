@@ -1,11 +1,11 @@
 ---
 display: 'Disable Filename Based Type Acquisition'
-oneline: 'Disables inference for type acquisition by looking at filenames in a project.'
+oneline: '禁用基于项目中文件名进行推断的类型获取。'
 ---
 
-TypeScript's type acquisition can infer what types should be added based on filenames in a project. This means that having a file like `jquery.js` in your project would automatically download the types for JQuery from DefinitelyTyped.
+TypeScript 的类型获取功能可以根据项目中的文件名推断应该添加哪些类型定义。这意味着如果你的项目中存在像 `jquery.js` 这样的文件，它将自动从 DefinitelyTyped 下载 jQuery 的类型定义。
 
-You can disable this via `disableFilenameBasedTypeAcquisition`.
+你可以通过 `disableFilenameBasedTypeAcquisition` 禁用此行为。
 
 ```json
 {

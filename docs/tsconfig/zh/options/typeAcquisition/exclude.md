@@ -1,9 +1,9 @@
 ---
 display: 'Exclude'
-oneline: 'Specify a list of modules which to exclude from type acquisition.'
+oneline: '指定从类型获取中排除的模块列表。'
 ---
 
-Offers a config for disabling the type-acquisition for a certain module in JavaScript projects. This can be useful for projects which include other libraries in testing infrastructure which aren't needed in the main application.
+提供了一项配置，用于在 JavaScript 项目中禁用特定模块的类型获取（type-acquisition）。对于在测试基础设施中引入了主应用程序中不需要的其他库的项目，这非常有用。
 
 ```json
 {

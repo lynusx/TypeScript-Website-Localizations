@@ -1,11 +1,11 @@
 ---
 display: 'No Implicit Any'
-oneline: 'Enable error reporting for expressions and declarations with an implied `any` type.'
+oneline: '为具有隐式 `any` 类型的表达式和声明启用错误报告。'
 ---
 
-In some cases where no type annotations are present, TypeScript will fall back to a type of `any` for a variable when it cannot infer the type.
+在某些缺少类型注解的情况下，如果 TypeScript 无法推断变量的类型，它将回退为 `any` 类型。
 
-This can cause some errors to be missed, for example:
+这可能会导致遗漏某些错误，例如：
 
 ```ts twoslash
 // @noImplicitAny: false
@@ -16,7 +16,7 @@ function fn(s) {
 fn(42)
 ```
 
-Turning on `noImplicitAny` however TypeScript will issue an error whenever it would have inferred `any`:
+启用 `noImplicitAny` 后，每当 TypeScript 准备推断为 `any` 时，都会发出错误提示：
 
 ```ts twoslash
 // @errors: 7006

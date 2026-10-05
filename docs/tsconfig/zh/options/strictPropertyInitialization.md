@@ -1,9 +1,9 @@
 ---
 display: 'Strict Property Initialization'
-oneline: 'Check for class properties that are declared but not set in the constructor.'
+oneline: '检查类中已声明但在构造函数中未明确初始化的属性。'
 ---
 
-When set to true, TypeScript will raise an error when a class property was declared but not set in the constructor.
+设置为 true 时，如果类的属性已被声明但未在构造函数中显式赋值，TypeScript 将会报错。
 
 ```ts twoslash
 // @errors: 2564
@@ -21,9 +21,9 @@ class UserAccount {
 }
 ```
 
-In the above case:
+在上述情况下：
 
-- `this.name` is set specifically.
-- `this.accountType` is set by default.
-- `this.email` is not set and raises an error.
-- `this.address` is declared as potentially `undefined` which means it does not have to be set.
+- `this.name` 经过了显式赋值。
+- `this.accountType` 具有默认初始值。
+- `this.email` 未被赋值，因此会报错。
+- `this.address` 被声明为可能为 `undefined`，这意味着它不必被赋值。

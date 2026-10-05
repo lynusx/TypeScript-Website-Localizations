@@ -1,6 +1,6 @@
 ---
 display: 'New Line'
-oneline: 'Set the newline character for emitting files.'
+oneline: '设置生成文件时的换行字符。'
 ---
 
-Specify the end of line sequence to be used when emitting files: 'CRLF' (dos) or 'LF' (unix).
+指定生成文件时使用的行尾换行序列：'CRLF' (dos) 或 'LF' (unix)。

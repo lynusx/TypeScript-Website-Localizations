@@ -1,8 +1,8 @@
 ---
 display: 'Resolve package.json Exports'
-oneline: "Use the package.json 'exports' field when resolving package imports."
+oneline: "在解析包导入时使用 package.json 的 'exports' 字段。"
 ---
 
-`--resolvePackageJsonExports` forces TypeScript to consult [the `exports` field of `package.json` files](https://nodejs.org/api/packages.html#exports) if it ever reads from a package in `node_modules`.
+`--resolvePackageJsonExports` 强制 TypeScript 在从 `node_modules` 中读取包时，必须查阅 [`package.json` 文件的 `exports` 字段](https://nodejs.org/api/packages.html#exports)。
 
-This option defaults to `true` under the `node16`, `nodenext`, and `bundler` options for [`--moduleResolution`](#moduleResolution).
+当 [`--moduleResolution`](#moduleResolution) 选项为 `node16`、`nodenext` 和 `bundler` 时，该选项默认为 `true`。

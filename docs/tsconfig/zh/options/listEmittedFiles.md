@@ -1,16 +1,16 @@
 ---
 display: 'List Emitted Files'
-oneline: 'Print the names of emitted files after a compilation.'
+oneline: '在编译后输出生成的文件名称。'
 ---
 
-Print names of generated files part of the compilation to the terminal.
+将作为编译结果生成的文件名称打印到终端。
 
-This flag is useful in two cases:
+此标志在以下两种情况下非常有用：
 
-- You want to transpile TypeScript as a part of a build chain in the terminal where the filenames are processed in the next command.
-- You are not sure that TypeScript has included a file you expected, as a part of debugging the [file inclusion settings](#Project_Files_0).
+- 你希望在终端构建链中转译 TypeScript，并将生成的文件名传递给下一个命令进行处理。
+- 你不确定 TypeScript 是否包含了你预期的文件，需要借此调试[文件包含设置](#Project_Files_0)。
 
-For example:
+例如：
 
 ```
 example
@@ -19,7 +19,7 @@ example
 └── tsconfig.json
 ```
 
-With:
+配合：
 
 ```json tsconfig
 {
@@ -30,7 +30,7 @@ With:
 }
 ```
 
-Would echo paths like:
+将输出类似如下的路径：
 
 ```
 $ npm run tsc
@@ -39,4 +39,4 @@ path/to/example/index.js
 path/to/example/index.d.ts
 ```
 
-Normally, TypeScript would return silently on success.
+通常情况下，TypeScript 在成功编译时会静默退出。

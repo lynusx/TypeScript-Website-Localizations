@@ -1,10 +1,10 @@
 ---
 display: 'Include'
-oneline: 'Specify a list of glob patterns that match files to be included in compilation.'
+oneline: '指定匹配要包含在编译中的文件的 glob 模式列表。'
 ---
 
-Specifies an array of filenames or patterns to include in the program.
-These filenames are resolved relative to the directory containing the `tsconfig.json` file.
+指定一个文件名或 glob 模式数组，包含在程序中。
+这些文件名相对于包含 `tsconfig.json` 文件的目录进行解析。
 
 ```json
 {
@@ -12,7 +12,7 @@ These filenames are resolved relative to the directory containing the `tsconfig.
 }
 ```
 
-Which would include:
+这将包含：
 
 <!-- TODO: #135
 ```diff
@@ -57,10 +57,10 @@ Which would include:
 └── yarn.lock
 ```
 
-`include` and `exclude` support wildcard characters to make glob patterns:
+`include` 和 `exclude` 支持通配符来构建 glob 模式：
 
-- `*` matches zero or more characters (excluding directory separators)
-- `?` matches any one character (excluding directory separators)
-- `**/` matches any directory nested to any level
+- `*` 匹配零个或多个字符（不包括目录分隔符）
+- `?` 匹配任意单个字符（不包括目录分隔符）
+- `**/` 匹配任意层级的嵌套目录
 
-If the last path segment in a pattern does not contain a file extension or wildcard character, then it is treated as a directory, and files with supported extensions inside that directory are included (e.g. `.ts`, `.tsx`, and `.d.ts` by default, with `.js` and `.jsx` if [`allowJs`](#allowJs) is set to true).
+如果模式的最后一个路径段不包含文件扩展名或通配符，则会被视为目录，该目录下具有支持扩展名的文件都会被包含在内（默认包括 `.ts`、`.tsx` 和 `.d.ts`；如果 [`allowJs`](#allowJs) 设置为 true，还会包含 `.js` 和 `.jsx`）。

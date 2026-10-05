@@ -1,17 +1,16 @@
 ---
 display: 'Composite'
-oneline: 'Enable constraints that allow a TypeScript project to be used with project references.'
+oneline: '启用相关约束，以便 TypeScript 项目可以配合项目引用（Project References）使用。'
 ---
 
-The `composite` option enforces certain constraints which make it possible for build tools (including TypeScript
-itself, under `--build` mode) to quickly determine if a project has been built yet.
+`composite` 选项会强制施加若干约束，使构建工具（包括处于 `--build` 模式下的 TypeScript 自身）能够快速判断项目是否已经被构建。
 
-When this setting is on:
+启用此设置后：
 
-- The [`rootDir`](#rootDir) setting, if not explicitly set, defaults to the directory containing the `tsconfig.json` file.
+- 如果未显式设置 [`rootDir`](#rootDir)，其默认值为包含 `tsconfig.json` 文件的目录。
 
-- All implementation files must be matched by an [`include`](#include) pattern or listed in the [`files`](#files) array. If this constraint is violated, `tsc` will inform you which files weren't specified.
+- 所有实现文件必须匹配 [`include`](#include) 模式或列在 [`files`](#files) 数组中。如果违反此约束，`tsc` 会提示哪些文件未被指定。
 
-- [`declaration`](#declaration) defaults to `true`
+- [`declaration`](#declaration) 默认值为 `true`。
 
-You can find documentation on TypeScript projects in [the handbook](https://www.typescriptlang.org/docs/handbook/project-references.html).
+你可以在[手册](https://www.typescriptlang.org/docs/handbook/project-references.html)中找到有关 TypeScript 项目的文档。

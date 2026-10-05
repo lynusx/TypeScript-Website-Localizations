@@ -1,18 +1,18 @@
 ---
 display: 'Target'
-oneline: 'Set the JavaScript language version for emitted JavaScript and include compatible library declarations.'
+oneline: '设置生成的 JavaScript 语言版本，并包含兼容的库声明。'
 ---
 
-Modern browsers support all ES6 features, so `ES6` is a good choice.
-You might choose to set a lower target if your code is deployed to older environments, or a higher target if your code is guaranteed to run in newer environments.
+现代浏览器支持所有 ES6 特性，因此 `ES6` 是一个不错的选择。
+如果代码部署在较旧的环境中，可以选择设置更低的目标版本；如果确保代码在更新的环境中运行，也可以选择更高的目标版本。
 
-The `target` setting changes which JS features are downleveled and which are left intact.
-For example, an arrow function `() => this` will be turned into an equivalent `function` expression if `target` is ES5 or lower.
+`target` 设置会改变哪些 JS 特性需要降级（downlevel）处理，哪些可以保持原样。
+例如，如果 `target` 为 ES5 或更低版本，箭头函数 `() => this` 将被转换为等效的 `function` 表达式。
 
-Changing `target` also changes the default value of [`lib`](#lib).
-You may "mix and match" `target` and `lib` settings as desired, but you could just set `target` for convenience.
+更改 `target` 还会改变 [`lib`](#lib) 的默认值。
+你可以根据需要“混搭”设置 `target` 和 `lib`，但为了方便起见，通常只需设置 `target` 即可。
 
-For developer platforms like Node there are baselines for the `target`, depending on the type of platform and its version. You can find a set of community organized TSConfigs at [tsconfig/bases](https://github.com/tsconfig/bases#centralized-recommendations-for-tsconfig-bases), which has configurations for common platforms and their versions.
+对于像 Node 这样的开发平台，根据平台类型及其版本会有推荐的 `target` 基准。你可以在 [tsconfig/bases](https://github.com/tsconfig/bases#centralized-recommendations-for-tsconfig-bases) 中找到一套由社区组织的 TSConfig，其中包含了常见平台及其版本的配置建议。
 
-The special `ESNext` value refers to the highest version your version of TypeScript supports.
-This setting should be used with caution, since it doesn't mean the same thing between different TypeScript versions and can make upgrades less predictable.
+特殊的 `ESNext` 值代表当前 TypeScript 版本所支持的最高版本。
+应谨慎使用此设置，因为它在不同的 TypeScript 版本之间含义并不相同，可能会降低升级时的可预测性。

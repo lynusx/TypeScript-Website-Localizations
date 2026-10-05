@@ -1,6 +1,6 @@
 ---
 display: 'Disable Size Limit'
-oneline: 'Remove the 20mb cap on total source code size for JavaScript files in the TypeScript language server.'
+oneline: '解除 TypeScript 语言服务中对 JavaScript 文件源码总大小 20MB 的上限限制。'
 ---
 
-To avoid a possible memory bloat issues when working with very large JavaScript projects, there is an upper limit to the amount of memory TypeScript will allocate. Turning this flag on will remove the limit.
+为了避免处理超大型 JavaScript 项目时可能出现的内存膨胀问题，TypeScript 对分配的内存设置了上限。开启此标志将移除该限制。

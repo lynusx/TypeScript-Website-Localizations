@@ -1,12 +1,11 @@
 ---
 display: 'List Files'
-oneline: 'Print all of the files read during the compilation.'
+oneline: '打印编译过程中读取的所有文件。'
 ---
 
-Print names of files part of the compilation. This is useful when you are not sure that TypeScript has
-included a file you expected.
+打印属于编译一部分的文件名称。当你无法确定 TypeScript 是否包含了你预期的文件时，这非常有用。
 
-For example:
+例如：
 
 ```
 example
@@ -15,7 +14,7 @@ example
 └── tsconfig.json
 ```
 
-With:
+配置：
 
 ```json tsconfig
 {
@@ -25,7 +24,7 @@ With:
 }
 ```
 
-Would echo paths like:
+将输出类似如下的路径：
 
 ```
 $ npm run tsc
@@ -37,4 +36,4 @@ path/to/example/node_modules/typescript/lib/lib.scripthost.d.ts
 path/to/example/index.ts
 ```
 
-Note if using TypeScript 4.2, prefer [`explainFiles`](#explainFiles) which offers an explanation of why a file was added too.
+注意：如果使用 TypeScript 4.2 及以上版本，建议优先使用 [`explainFiles`](#explainFiles)，它还会提供文件为何被添加的解释说明。

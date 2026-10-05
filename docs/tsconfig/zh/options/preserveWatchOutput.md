@@ -1,6 +1,6 @@
 ---
 display: 'Preserve Watch Output'
-oneline: 'Disable wiping the console in watch mode.'
+oneline: '在监视模式下禁止清空控制台屏幕。'
 ---
 
-Whether to keep outdated console output in watch mode instead of clearing the screen every time a change happened.
+是否在监视模式下保留历史控制台输出，而不是在每次发生变更时都清空屏幕。

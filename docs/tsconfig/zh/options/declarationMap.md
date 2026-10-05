@@ -1,9 +1,9 @@
 ---
 display: 'Declaration Map'
-oneline: 'Create sourcemaps for d.ts files.'
+oneline: '为 d.ts 文件创建 Source Map。'
 ---
 
-Generates a source map for `.d.ts` files which map back to the original `.ts` source file.
-This will allow editors such as VS Code to go to the original `.ts` file when using features like _Go to Definition_.
+为 `.d.ts` 文件生成映射回原始 `.ts` 源文件的 Source Map。
+这将允许 VS Code 等编辑器在使用*转到定义*（Go to Definition）等功能时跳转到原始 `.ts` 文件。
 
-You should strongly consider turning this on if you're using project references.
+如果你正在使用项目引用（project references），强烈建议开启此选项。

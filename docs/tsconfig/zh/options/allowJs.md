@@ -1,16 +1,16 @@
 ---
 display: 'Allow JS'
-oneline: 'Allow JavaScript files to be a part of your program. Use the `checkJS` option to get errors from these files.'
+oneline: '允许 JavaScript 文件成为程序的一部分。使用 `checkJS` 选项可从这些文件中获取报错信息。'
 ---
 
-Allow JavaScript files to be imported inside your project, instead of just `.ts` and `.tsx` files. For example, this JS file:
+允许在项目中导入 JavaScript 文件，而不仅限于 `.ts` 和 `.tsx` 文件。例如，以下 JS 文件：
 
 ```js twoslash
 // @filename: card.js
 export const defaultCardDeck = 'Heart'
 ```
 
-When imported into a TypeScript file will raise an error:
+当导入到 TypeScript 文件时会产生报错：
 
 ```ts twoslash
 // @errors: 2307
@@ -23,7 +23,7 @@ import { defaultCardDeck } from './card'
 console.log(defaultCardDeck)
 ```
 
-Imports fine with `allowJs` enabled:
+启用 `allowJs` 后即可正常导入：
 
 ```ts twoslash
 // @filename: card.js
@@ -36,6 +36,6 @@ import { defaultCardDeck } from './card'
 console.log(defaultCardDeck)
 ```
 
-This flag can be used as a way to incrementally add TypeScript files into JS projects by allowing the `.ts` and `.tsx` files to live along-side existing JavaScript files.
+该标志可用于逐步将 TypeScript 文件引入 JS 项目，使 `.ts` 和 `.tsx` 文件能与现有 JavaScript 文件共存。
 
-It can also be used along-side [`declaration`](#declaration) and [`emitDeclarationOnly`](#emitDeclarationOnly) to [create declarations for JS files](/docs/handbook/declaration-files/dts-from-js.html).
+它还可以与 [`declaration`](#declaration) 和 [`emitDeclarationOnly`](#emitDeclarationOnly) 配合使用，为 JS 文件[生成声明文件](/docs/handbook/declaration-files/dts-from-js.html)。

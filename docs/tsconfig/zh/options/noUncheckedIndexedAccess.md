@@ -1,9 +1,9 @@
 ---
 display: 'No Unchecked Indexed Access'
-oneline: 'Add `undefined` to a type when accessed using an index.'
+oneline: '当使用索引访问时，将 `undefined` 添加到类型中。'
 ---
 
-TypeScript has a way to describe objects which have unknown keys but known values on an object, via index signatures.
+TypeScript 提供了一种通过索引签名（index signatures）来描述键未知但值类型已知的对象的方法。
 
 ```ts twoslash
 interface EnvironmentVars {
@@ -27,7 +27,7 @@ const nodeEnv = env.NODE_ENV
 //    ^?
 ```
 
-Turning on `noUncheckedIndexedAccess` will add `undefined` to any un-declared field in the type.
+启用 `noUncheckedIndexedAccess` 会在类型中为任何未声明的字段添加 `undefined`。
 
 ```ts twoslash
 interface EnvironmentVars {

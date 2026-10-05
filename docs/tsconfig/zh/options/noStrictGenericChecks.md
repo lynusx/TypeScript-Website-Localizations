@@ -1,9 +1,9 @@
 ---
 display: 'No Strict Generic Checks'
-oneline: 'Disable strict checking of generic signatures in function types.'
+oneline: '禁用函数类型中泛型签名的严格检查。'
 ---
 
-TypeScript will unify type parameters when comparing two generic functions.
+TypeScript 在比较两个泛型函数时会统一（unify）类型参数。
 
 ```ts twoslash
 // @errors: 2322
@@ -17,4 +17,4 @@ function f(a: A, b: B) {
 }
 ```
 
-This flag can be used to remove that check.
+可以使用此标志来移除该检查。

@@ -1,9 +1,9 @@
 ---
 display: 'No Implicit Returns'
-oneline: 'Enable error reporting for codepaths that do not explicitly return in a function.'
+oneline: '对函数中未显式 return 的代码分支报错。'
 ---
 
-When enabled, TypeScript will check all code paths in a function to ensure they return a value.
+启用后，TypeScript 将检查函数中的所有代码路径，以确保它们都返回了值。
 
 ```ts twoslash
 // @errors: 2366 2322

@@ -1,8 +1,8 @@
 ---
 display: 'Disable Referenced Project Load'
-oneline: 'Reduce the number of projects loaded automatically by TypeScript.'
+oneline: '减少 TypeScript 自动加载的项目数量。'
 ---
 
-In multi-project TypeScript programs, TypeScript will load all of the available projects into memory in order to provide accurate results for editor responses which require a full knowledge graph like 'Find All References'.
+在多项目的 TypeScript 程序中，TypeScript 会将所有可用项目加载到内存中，以便为需要完整知识图谱的编辑器操作（例如“查找所有引用”）提供准确的结果。
 
-If your project is large, you can use the flag `disableReferencedProjectLoad` to disable the automatic loading of all projects. Instead, projects are loaded dynamically as you open files through your editor.
+如果你的项目规模较大，可以使用标志 `disableReferencedProjectLoad` 来禁用所有项目的自动加载。这样，项目只有在你在编辑器中打开文件时才会动态加载。

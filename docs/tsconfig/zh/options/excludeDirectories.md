@@ -1,9 +1,9 @@
 ---
 display: 'Exclude Directories'
-oneline: 'Remove a list of directories from the watch process.'
+oneline: '从监视流程中排除一组目录。'
 ---
 
-You can use [`excludeFiles`](#excludeFiles) to drastically reduce the number of files which are watched during `--watch`. This can be a useful way to reduce the number of open file which TypeScript tracks on Linux.
+你可以使用 [`excludeFiles`](#excludeFiles) 大幅减少在 `--watch` 期间监视的文件数量。在 Linux 上，这是一种减少 TypeScript 跟踪的打开文件句柄数的有效方法。
 
 ```json tsconfig
 {

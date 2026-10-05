@@ -1,6 +1,6 @@
 ---
 display: 'Skip Default Lib Check'
-oneline: 'Skip type checking .d.ts files that are included with TypeScript.'
+oneline: '跳过对 TypeScript 内置的 .d.ts 文件的类型检查。'
 ---
 
-Use [`skipLibCheck`](#skipLibCheck) instead. Skip type checking of default library declaration files.
+请改用 [`skipLibCheck`](#skipLibCheck)。跳过对默认库声明文件的类型检查。

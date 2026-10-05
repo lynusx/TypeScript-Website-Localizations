@@ -1,19 +1,14 @@
 ---
 display: 'Skip Lib Check'
-oneline: 'Skip type checking all .d.ts files.'
+oneline: '跳过对所有 .d.ts 声明文件的类型检查。'
 ---
 
-Skip type checking of declaration files.
+跳过对声明文件的类型检查。
 
-This can save time during compilation at the expense of type-system accuracy. For example, two libraries could
-define two copies of the same `type` in an inconsistent way. Rather than doing a full check of all `d.ts` files, TypeScript
-will type check the code you specifically refer to in your app's source code.
+这可以在牺牲类型系统精准度的前提下节省编译时间。例如，两个库可能会以不一致的方式定义同一个 `type` 的两份副本。TypeScript 不会对所有 `d.ts` 文件进行全量检查，而是仅对你在应用程序源代码中明确引用的代码进行类型检查。
 
-A common case where you might think to use `skipLibCheck` is when there are two copies of a library's types in
-your `node_modules`. In these cases, you should consider using a feature like [yarn's resolutions](https://yarnpkg.com/lang/en/docs/selective-version-resolutions/)
-to ensure there is only one copy of that dependency in your tree or investigate how to ensure there is
-only one copy by understanding the dependency resolution to fix the issue without additional tooling.
+考虑使用 `skipLibCheck` 的一个常见场景是 `node_modules` 中存在同一个库的类型定义的两个副本。在这些情况下，你应该考虑使用如 [yarn's resolutions](https://yarnpkg.com/lang/en/docs/selective-version-resolutions/) 之类的特性来确保依赖树中只有该依赖项的一个副本，或者通过深入理解依赖解析机制来确保仅存在单一副本，从而无需额外工具即可解决该问题。
 
-Another possibility is when you are migrating between TypeScript releases and the changes cause breakages in node_modules and the JS standard libraries which you do not want to deal with during the TypeScript update.
+另一种场景是，当你正在进行 TypeScript 版本升级迁移，而变更导致了 node_modules 以及 JS 标准库中产生报错，且你不想在升级 TypeScript 期间处理这些问题。
 
-Note, that if these issues come from the TypeScript standard library you can replace the library using [TypeScript 4.5's lib replacement](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-5.html#supporting-lib-from-node_modules) technique.
+请注意，如果这些问题来自 TypeScript 标准库，你可以利用 [TypeScript 4.5 的 lib 替换](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-5.html#supporting-lib-from-node_modules)技术来替换该库。

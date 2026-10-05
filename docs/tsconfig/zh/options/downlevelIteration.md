@@ -1,17 +1,17 @@
 ---
 display: 'Downlevel Iteration'
-oneline: 'Emit more compliant, but verbose and less performant JavaScript for iteration.'
+oneline: '为迭代操作生成更符合规范，但代码更繁琐且性能较低的 JavaScript。'
 ---
 
-Downleveling is TypeScript's term for transpiling to an older version of JavaScript.
-This flag is to enable support for a more accurate implementation of how modern JavaScript iterates through new concepts in older JavaScript runtimes.
+“降级（Downleveling）”是 TypeScript 中将代码转译为更低版本 JavaScript 的术语。
+该标志用于在旧版 JavaScript 运行时中，更准确地实现现代 JavaScript 对新特性的迭代方式。
 
-ECMAScript 6 added several new iteration primitives: the `for / of` loop (`for (el of arr)`), Array spread (`[a, ...b]`), argument spread (`fn(...args)`), and `Symbol.iterator`.
-`downlevelIteration` allows for these iteration primitives to be used more accurately in ES5 environments if a `Symbol.iterator` implementation is present.
+ECMAScript 6 增加了多种新的迭代原语：`for / of` 循环（`for (el of arr)`）、数组展开（`[a, ...b]`）、参数展开（`fn(...args)`）以及 `Symbol.iterator`。
+如果运行时存在 `Symbol.iterator` 的实现，`downlevelIteration` 可以在 ES5 环境中更准确地使用这些迭代原语。
 
-#### Example: Effects on `for / of`
+#### 示例：对 `for / of` 的影响
 
-With this TypeScript code:
+对于以下 TypeScript 代码：
 
 ```ts twoslash
 const str = 'Hello!'
@@ -20,7 +20,7 @@ for (const s of str) {
 }
 ```
 
-Without `downlevelIteration` enabled, a `for / of` loop on any object is downleveled to a traditional `for` loop:
+在未启用 `downlevelIteration` 时，对任何对象使用的 `for / of` 循环都会被降级为传统的 `for` 循环：
 
 ```ts twoslash
 // @target: ES5
@@ -31,12 +31,12 @@ for (const s of str) {
 }
 ```
 
-This is often what people expect, but it's not 100% compliant with ECMAScript iteration protocol.
-Certain strings, such as emoji (😜), have a `.length` of 2 (or even more!), but should iterate as 1 unit in a `for-of` loop.
-See [this blog post by Jonathan New](https://blog.jonnew.com/posts/poo-dot-length-equals-two) for a longer explanation.
+这通常符合人们的预期，但并不 100% 符合 ECMAScript 的迭代协议。
+某些字符串（例如 emoji 表情 😜）的 `.length` 为 2（甚至更长！），但在 `for-of` 循环中应该作为一个单独的单元进行迭代。
+详细解释请参阅 [Jonathan New 的这篇博文](https://blog.jonnew.com/posts/poo-dot-length-equals-two)。
 
-When `downlevelIteration` is enabled, TypeScript will use a helper function that checks for a `Symbol.iterator` implementation (either native or polyfill).
-If this implementation is missing, you'll fall back to index-based iteration.
+启用 `downlevelIteration` 后，TypeScript 将使用一个辅助函数来检查是否存在 `Symbol.iterator` 实现（无论是原生还是 polyfill）。
+如果缺少该实现，将回退到基于索引的迭代。
 
 ```ts twoslash
 // @target: ES5
@@ -48,7 +48,7 @@ for (const s of str) {
 }
 ```
 
-You can use [tslib](https://www.npmjs.com/package/tslib) via [`importHelpers`](#importHelpers) to reduce the amount of inline JavaScript too:
+你还可以配合 [`importHelpers`](#importHelpers) 使用 [tslib](https://www.npmjs.com/package/tslib)，以减少内联生成的 JavaScript 代码量：
 
 ```ts twoslash
 // @target: ES5
@@ -61,27 +61,27 @@ for (const s of str) {
 }
 ```
 
-**Note:** enabling `downlevelIteration` does not improve compliance if `Symbol.iterator` is not present in the runtime.
+**注意：** 如果运行时环境中不存在 `Symbol.iterator`，启用 `downlevelIteration` 并不会提高规范符合性。
 
-#### Example: Effects on Array Spreads
+#### 示例：对数组展开的影响
 
-This is an array spread:
+这是一个数组展开：
 
 ```js
 // Make a new array whose elements are 1 followed by the elements of arr2
 const arr = [1, ...arr2]
 ```
 
-Based on the description, it sounds easy to downlevel to ES5:
+从描述上看，降级到 ES5 似乎很简单：
 
 ```js
 // The same, right?
 const arr = [1].concat(arr2)
 ```
 
-However, this is observably different in certain rare cases.
+然而，在某些罕见情况下，两者会表现出明显的差异。
 
-For example, if a source array is missing one or more items (contains a hole), the spread syntax will replace each empty item with `undefined`, whereas `.concat` will leave them intact.
+例如，如果源数组缺少一个或多个元素（即存在空洞），展开语法会将每个空元素替换为 `undefined`，而 `.concat` 则会保留空位。
 
 ```js
 // Make an array where the element at index 1 is missing
@@ -97,4 +97,4 @@ console.log(concatenated)
 // [ 'a', <1 empty item>, 'c' ]
 ```
 
-Just as with `for / of`, `downlevelIteration` will use `Symbol.iterator` (if present) to more accurately emulate ES 6 behavior.
+与 `for / of` 一样，`downlevelIteration` 会使用 `Symbol.iterator`（如果存在）来更准确地模拟 ES 6 行为。

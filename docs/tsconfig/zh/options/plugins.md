@@ -1,17 +1,17 @@
 ---
 display: 'Plugins'
-oneline: 'Specify a list of language service plugins to include.'
+oneline: '指定要引入的语言服务插件列表。'
 ---
 
-List of language service plugins to run inside the editor.
+在编辑器内部运行的语言服务插件列表。
 
-Language service plugins are a way to provide additional information to a user based on existing TypeScript files. They can enhance existing messages between TypeScript and an editor, or to provide their own error messages.
+语言服务插件是一种基于现有 TypeScript 文件向用户提供额外信息的方式。它们可以增强 TypeScript 与编辑器之间现有的消息传递，或者提供自定义的错误提示信息。
 
-For example:
+例如：
 
-- [ts-sql-plugin](https://github.com/xialvjun/ts-sql-plugin#readme) &mdash; Adds SQL linting with a template strings SQL builder.
-- [typescript-styled-plugin](https://github.com/Microsoft/typescript-styled-plugin) &mdash; Provides CSS linting inside template strings .
-- [typescript-eslint-language-service](https://github.com/Quramy/typescript-eslint-language-service) &mdash; Provides eslint error messaging and fix-its inside the compiler's output.
-- [ts-graphql-plugin](https://github.com/Quramy/ts-graphql-plugin) &mdash; Provides validation and auto-completion inside GraphQL query template strings.
+- [ts-sql-plugin](https://github.com/xialvjun/ts-sql-plugin#readme) &mdash; 为模板字符串 SQL 构建器添加 SQL 检查（linting）。
+- [typescript-styled-plugin](https://github.com/Microsoft/typescript-styled-plugin) &mdash; 在模板字符串内部提供 CSS 检查。
+- [typescript-eslint-language-service](https://github.com/Quramy/typescript-eslint-language-service) &mdash; 在编译器输出中提供 ESLint 错误消息与自动修复。
+- [ts-graphql-plugin](https://github.com/Quramy/ts-graphql-plugin) &mdash; 在 GraphQL 查询模板字符串内部提供校验与自动补全。
 
-VS Code has the ability for a extension to [automatically include language service plugins](https://code.visualstudio.com/api/references/contribution-points#contributes.typescriptServerPlugins), and so you may have some running in your editor without needing to define them in your `tsconfig.json`.
+VS Code 支持扩展[自动引入语言服务插件](https://code.visualstudio.com/api/references/contribution-points#contributes.typescriptServerPlugins)，因此你的编辑器中可能已经运行了某些插件，而无需在 `tsconfig.json` 中显式定义它们。

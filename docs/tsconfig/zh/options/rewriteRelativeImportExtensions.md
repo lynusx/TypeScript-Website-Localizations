@@ -1,8 +1,8 @@
 ---
 display: 'rewriteRelativeImportExtensions'
-oneline: 'Rewrite `.ts`, `.tsx`, `.mts`, and `.cts` file extensions in relative import paths to their JavaScript equivalent in output files.'
+oneline: '在输出文件中将相对导入路径中的 `.ts`、`.tsx`、`.mts` 和 `.cts` 文件扩展名重写为对应的 JavaScript 扩展名。'
 ---
 
-Rewrite `.ts`, `.tsx`, `.mts`, and `.cts` file extensions in relative import paths to their JavaScript equivalent in output files.
+在输出文件中，将相对导入路径中的 `.ts`、`.tsx`、`.mts` 和 `.cts` 文件扩展名重写为对应的 JavaScript 扩展名。
 
-For more information, see the [TypeScript 5.7 release notes](/docs/handbook/release-notes/typescript-5-7.html#path-rewriting-for-relative-paths).
+有关更多信息，请参阅 [TypeScript 5.7 发布说明](/docs/handbook/release-notes/typescript-5-7.html#path-rewriting-for-relative-paths)。

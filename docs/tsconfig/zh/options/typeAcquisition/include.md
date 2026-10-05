@@ -1,11 +1,11 @@
 ---
 display: 'Include'
-oneline: 'Specify a list of modules which to acquire types for.'
+oneline: '指定需要获取类型定义的模块列表。'
 ---
 
-If you have a JavaScript project where TypeScript needs additional guidance to understand global dependencies, or have disabled the built-in inference via [`disableFilenameBasedTypeAcquisition`](#disableFilenameBasedTypeAcquisition).
+如果你有一个 JavaScript 项目，其中 TypeScript 需要额外指引来理解全局依赖，或者你已经通过 [`disableFilenameBasedTypeAcquisition`](#disableFilenameBasedTypeAcquisition) 禁用了内置的类型推断。
 
-You can use `include` to specify which types should be used from DefinitelyTyped:
+你可以使用 `include` 来指定应当从 DefinitelyTyped 获取并使用哪些类型：
 
 ```json
 {

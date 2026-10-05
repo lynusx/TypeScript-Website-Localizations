@@ -1,10 +1,10 @@
 ---
 display: 'Map Root'
-oneline: 'Specify the location where debugger should locate map files instead of generated locations.'
+oneline: '指定调试器查找 source map 文件的位置，而不是使用生成时的相对位置。'
 ---
 
-Specify the location where debugger should locate map files instead of generated locations.
-This string is treated verbatim inside the source-map, for example:
+指定调试器应该在哪个位置查找 map 文件，而不是使用生成的位置。
+此字符串会原封不动地写入 source map 中，例如：
 
 ```json tsconfig
 {
@@ -15,4 +15,4 @@ This string is treated verbatim inside the source-map, for example:
 }
 ```
 
-Would declare that `index.js` will have sourcemaps at `https://my-website.com/debug/sourcemaps/index.js.map`.
+将声明 `index.js` 的 source map 位于 `https://my-website.com/debug/sourcemaps/index.js.map`。

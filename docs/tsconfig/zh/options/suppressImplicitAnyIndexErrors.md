@@ -1,9 +1,9 @@
 ---
 display: 'Suppress Implicit Any Index Errors'
-oneline: 'Suppress [`noImplicitAny`](#noImplicitAny) errors when indexing objects that lack index signatures.'
+oneline: '在对缺少索引签名的对象进行索引时，抑制 [`noImplicitAny`](#noImplicitAny) 错误。'
 ---
 
-Turning `suppressImplicitAnyIndexErrors` on suppresses reporting the error about implicit anys when indexing into objects, as shown in the following example:
+开启 `suppressImplicitAnyIndexErrors` 会抑制对对象进行索引时报告的隐式 any 错误，如下例所示：
 
 ```ts twoslash
 // @noImplicitAny: true
@@ -14,7 +14,7 @@ const obj = { x: 10 }
 console.log(obj['foo'])
 ```
 
-Using `suppressImplicitAnyIndexErrors` is quite a drastic approach. It is recommended to use a `@ts-ignore` comment instead:
+使用 `suppressImplicitAnyIndexErrors` 是一种相当激进的做法。建议改用 `@ts-ignore` 注释：
 
 ```ts twoslash
 // @noImplicitAny: true

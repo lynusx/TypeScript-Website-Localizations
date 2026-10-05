@@ -1,3 +1,3 @@
 ---
-display: 'Interop Constraints'
+display: '互操作约束'
 ---

@@ -1,3 +1,3 @@
 ---
-display: 'Editor Support'
+display: '编辑器支持'
 ---

@@ -1,8 +1,8 @@
 ---
-display: 'Experimental'
+display: '实验性选项'
 ---
 
-TypeScript strives to only include features which are confirmed to be added into the JavaScript language.
+TypeScript 力求只包含那些确认会被添加到 JavaScript 语言规范中的特性。
 
-There have been cases where a feature is compelling enough to be an exception to that rule, and these live as experimental compiler flags.
-It is possible that a version of these features may be different when/if they are added to the JavaScript language, and thus are considered risky.
+但在某些情况下，部分特性因需求强烈而成为该原则的例外，并作为实验性编译器标志提供。
+当这些特性最终被纳入 JavaScript 语言规范时，其形式可能与当前实现存在差异，因此使用这些选项具有一定风险。

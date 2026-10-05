@@ -1,9 +1,9 @@
 ---
 display: 'Exclude Files'
-oneline: "Remove a list of files from the watch mode's processing."
+oneline: "在监视模式的处理中排除指定的文件列表。"
 ---
 
-You can use `excludeFiles` to remove a set of specific files from the files which are watched.
+你可以使用 `excludeFiles` 从被监视的文件中排除一组指定的文件。
 
 ```json tsconfig
 {

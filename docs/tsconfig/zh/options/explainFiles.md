@@ -1,11 +1,11 @@
 ---
 display: 'Explain Files'
-oneline: 'Print files read during the compilation including why it was included.'
+oneline: '打印在编译期间读取的文件以及将其包含在内的原因。'
 ---
 
-Print names of files which TypeScript sees as a part of your project and the reason they are part of the compilation.
+打印 TypeScript 视作项目一部分的文件名称，以及它们被包含在编译中的原因。
 
-For example, with this project of just a single `index.ts` file
+例如，对于仅包含单个 `index.ts` 文件的项目：
 
 ```sh
 example
@@ -14,7 +14,7 @@ example
 └── tsconfig.json
 ```
 
-Using a `tsconfig.json` which has `explainFiles` set to true:
+在 `tsconfig.json` 中将 `explainFiles` 设置为 true：
 
 ```json
 {
@@ -26,7 +26,7 @@ Using a `tsconfig.json` which has `explainFiles` set to true:
 }
 ```
 
-Running TypeScript against this folder would have output like this:
+在该文件夹中运行 TypeScript，输出将如下所示：
 
 ```
 ❯ tsc
@@ -46,9 +46,9 @@ index.ts
   Matched by include pattern '**/*' in 'tsconfig.json'
 ```
 
-The output above show:
+上述输出展示了：
 
-- The initial lib.d.ts lookup based on [`target`](#target), and the chain of `.d.ts` files which are referenced
-- The `index.ts` file located via the default pattern of [`include`](#include)
+- 基于 [`target`](#target) 进行的初始 lib.d.ts 查找，以及被引用的 `.d.ts` 文件链
+- 通过 [`include`](#include) 的默认模式定位到的 `index.ts` 文件
 
-This option is intended for debugging how a file has become a part of your compile.
+该选项用于调试文件为何会被包含在编译中。

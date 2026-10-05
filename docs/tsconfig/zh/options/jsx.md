@@ -1,26 +1,26 @@
 ---
 display: 'JSX'
-oneline: 'Specify what JSX code is generated.'
+oneline: '指定生成何种 JSX 代码。'
 ---
 
-Controls how JSX constructs are emitted in JavaScript files.
-This only affects output of JS files that started in `.tsx` files.
+控制 JSX 语法在 JavaScript 文件中的生成方式。
+这仅影响由 `.tsx` 文件编译生成的 JS 文件的输出。
 
-- `react-jsx`: Emit `.js` files with the JSX changed to `_jsx` calls optimized for production
-- `react-jsxdev`: Emit `.js` files with the JSX changed to `_jsx` calls for development only
-- `preserve`: Emit `.jsx` files with the JSX unchanged
-- `react-native`: Emit `.js` files with the JSX unchanged
-- `react`: Emit `.js` files with JSX changed to the equivalent `React.createElement` calls
+- `react-jsx`：生成 `.js` 文件，将 JSX 转换为针对生产环境优化的 `_jsx` 调用
+- `react-jsxdev`：生成 `.js` 文件，将 JSX 转换为仅用于开发环境的 `_jsx` 调用
+- `preserve`：生成 `.jsx` 文件，保留 JSX 结构不变
+- `react-native`：生成 `.js` 文件，保留 JSX 结构不变
+- `react`：生成 `.js` 文件，将 JSX 转换为等效的 `React.createElement` 调用
 
-### For example
+### 示例
 
-This sample code:
+以下示例代码：
 
 ```tsx
 export const HelloWorld = () => <h1>Hello world</h1>
 ```
 
-React: `"react-jsx"`<sup>[[1]](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)</sup>
+React：`"react-jsx"`<sup>[[1]](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)</sup>
 
 ```tsx twoslash
 declare module JSX {
@@ -35,7 +35,7 @@ declare module JSX {
 export const HelloWorld = () => <h1>Hello world</h1>
 ```
 
-React dev transform: `"react-jsxdev"`<sup>[[1]](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)</sup>
+React 开发转换：`"react-jsxdev"`<sup>[[1]](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)</sup>
 
 ```tsx twoslash
 declare module JSX {
@@ -50,7 +50,7 @@ declare module JSX {
 export const HelloWorld = () => <h1>Hello world</h1>
 ```
 
-Preserve: `"preserve"`
+保留（Preserve）：`"preserve"`
 
 ```tsx twoslash
 declare module JSX {
@@ -65,7 +65,7 @@ declare module JSX {
 export const HelloWorld = () => <h1>Hello world</h1>
 ```
 
-React Native: `"react-native"`
+React Native：`"react-native"`
 
 ```tsx twoslash
 declare module JSX {
@@ -80,7 +80,7 @@ declare module JSX {
 export const HelloWorld = () => <h1>Hello world</h1>
 ```
 
-Legacy React runtime: `"react"`
+传统 React 运行时：`"react"`
 
 ```tsx twoslash
 declare module JSX {
@@ -94,16 +94,16 @@ declare module JSX {
 export const HelloWorld = () => <h1>Hello world</h1>
 ```
 
-This option can be used on a per-file basis too using an `@jsxRuntime` comment.
+该选项也可以通过 `@jsxRuntime` 注释在每个文件级别单独使用。
 
-Always use the classic runtime (`"react"`) for this file:
+在该文件中始终使用经典运行时（`"react"`）：
 
 ```tsx
 /* @jsxRuntime classic */
 export const HelloWorld = () => <h1>Hello world</h1>
 ```
 
-Always use the automatic runtime (`"react-jsx"`) for this file:
+在该文件中始终使用自动运行时（`"react-jsx"`）：
 
 ```tsx
 /* @jsxRuntime automatic */

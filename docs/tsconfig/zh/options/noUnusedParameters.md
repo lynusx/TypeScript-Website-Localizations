@@ -1,9 +1,9 @@
 ---
 display: 'No Unused Parameters'
-oneline: "Raise an error when a function parameter isn't read."
+oneline: "当函数参数未被读取时报错。"
 ---
 
-Report errors on unused parameters in functions.
+在函数中存在未使用的参数时报告错误。
 
 ```ts twoslash
 // @noUnusedParameters
@@ -14,7 +14,7 @@ const createDefaultKeyboard = (modelID: number) => {
 }
 ```
 
-Parameters declaration with names starting with an underscore (`_`) are exempt from the unused parameter checking. e.g.:
+名称以下划线（`_`）开头的参数声明可以免除未使用参数的检查。例如：
 
 ```ts twoslash
 // @noUnusedParameters

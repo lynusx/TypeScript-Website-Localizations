@@ -1,10 +1,10 @@
 ---
 display: 'Allow Arbitrary Extensions'
-oneline: 'Enable importing files with any extension, provided a declaration file is present.'
+oneline: '允许导入具有任意扩展名的文件（只要存在对应的声明文件）。'
 ---
 
-In TypeScript 5.0, when an import path ends in an extension that isn't a known JavaScript or TypeScript file extension, the compiler will look for a declaration file for that path in the form of `{file basename}.d.{extension}.ts`.
-For example, if you are using a CSS loader in a bundler project, you might want to write (or generate) declaration files for those stylesheets:
+在 TypeScript 5.0 中，当导入路径以非已知的 JavaScript 或 TypeScript 文件扩展名结尾时，编译器将以 `{file basename}.d.{extension}.ts` 的形式查找该路径对应的声明文件。
+例如，如果你在打包工具项目中使用 CSS 加载器（loader），你可能希望为这些样式表编写（或生成）声明文件：
 
 ```css
 /* app.css */
@@ -28,11 +28,11 @@ import styles from './app.css'
 styles.cookieBanner // string
 ```
 
-By default, this import will raise an error to let you know that TypeScript doesn't understand this file type and your runtime might not support importing it.
-But if you've configured your runtime or bundler to handle it, you can suppress the error with the new `--allowArbitraryExtensions` compiler option.
+默认情况下，此类导入会报错，以提醒你 TypeScript 无法理解该文件类型，且你的运行时环境可能不支持导入它。
+但如果你已经配置了运行时或打包工具来处理该文件，则可以通过新增的 `--allowArbitraryExtensions` 编译器选项来消除此错误。
 
-Note that historically, a similar effect has often been achievable by adding a declaration file named `app.css.d.ts` instead of `app.d.css.ts` - however, this just worked through Node's `require` resolution rules for CommonJS.
-Strictly speaking, the former is interpreted as a declaration file for a JavaScript file named `app.css.js`.
-Because relative files imports need to include extensions in Node's ESM support, TypeScript would error on our example in an ESM file under `--moduleResolution node16` or `nodenext`.
+注意，从历史上看，通常可以通过添加名为 `app.css.d.ts` 而不是 `app.d.css.ts` 的声明文件来实现类似的效果——然而，这只是依靠 Node 的 CommonJS `require` 解析规则才能生效。
+严格来说，前者会被解释为名为 `app.css.js` 的 JavaScript 文件的声明文件。
+因为在 Node 的 ESM 支持中相对路径导入必须包含扩展名，所以在 `--moduleResolution node16` 或 `nodenext` 下的 ESM 文件中，TypeScript 会在上述示例中报错。
 
-For more information, read up [the proposal for this feature](https://github.com/microsoft/TypeScript/issues/50133) and [its corresponding pull request](https://github.com/microsoft/TypeScript/pull/51435).
+有关更多信息，请查阅[该特性的提案](https://github.com/microsoft/TypeScript/issues/50133)及其[对应的 Pull Request](https://github.com/microsoft/TypeScript/pull/51435)。

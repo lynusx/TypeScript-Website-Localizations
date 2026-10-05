@@ -1,13 +1,11 @@
 ---
 display: 'Types'
-oneline: 'Specify type package names to be included without being referenced in a source file.'
+oneline: '指定包含的类型声明包名称，这些包无需在源文件中被显式引用。'
 ---
 
-By default `types` is set to `[]`. For versions below TypeScript 6.0, by default all _visible_ "`@types`" packages are included in your compilation.
-Packages in `node_modules/@types` of any enclosing folder are considered _visible_.
-For example, that means packages within `./node_modules/@types/`, `../node_modules/@types/`, `../../node_modules/@types/`, and so on.
+默认情况下，`types` 设置为 `[]`。在 TypeScript 6.0 之前的版本中，默认会将所有*可见的* "`@types`" 包包含在编译中。任何外层文件夹中 `node_modules/@types` 下的包都被视为*可见的*。例如，这意味着包括 `./node_modules/@types/`、`../node_modules/@types/`、`../../node_modules/@types/` 等路径下的包。
 
-If `types` is specified, only packages listed will be included in the global scope. For instance:
+如果指定了 `types`，则只有列出的包才会被包含在全局作用域中。例如：
 
 ```json tsconfig
 {
@@ -17,12 +15,11 @@ If `types` is specified, only packages listed will be included in the global sco
 }
 ```
 
-This `tsconfig.json` file will _only_ include `./node_modules/@types/node`, `./node_modules/@types/jest` and `./node_modules/@types/express`.
-Other packages under `node_modules/@types/*` will not be included.
+此 `tsconfig.json` 文件将*仅*包含 `./node_modules/@types/node`、`./node_modules/@types/jest` 和 `./node_modules/@types/express`。`node_modules/@types/*` 下的其他包将不会被包含。
 
-### What does this affect?
+### 这会影响什么？
 
-This option does not affect how `@types/*` are included in your application code, for example if you had the above `compilerOptions` example with code like:
+该选项不会影响应用程序代码中 `@types/*` 的导入方式。例如，对于上述 `compilerOptions` 示例，如果包含如下代码：
 
 ```ts
 import * as moment from 'moment'
@@ -30,11 +27,11 @@ import * as moment from 'moment'
 moment().format('MMMM Do YYYY, h:mm:ss a')
 ```
 
-The `moment` import would be fully typed.
+`moment` 的导入仍然具有完整的类型支持。
 
-When you have this option set, by not including a module in the `types` array it:
+设置此选项后，如果某个模块未包含在 `types` 数组中：
 
-- Will not add globals to your project (e.g `process` in node, or `expect` in Jest)
-- Will not have exports appear as auto-import recommendations
+- 不会向你的项目中添加全局变量（例如 Node 中的 `process` 或 Jest 中的 `expect`）
+- 其导出内容不会出现在自动导入建议中
 
-This feature differs from [`typeRoots`](#typeRoots) in that it is about specifying only the exact types you want included, whereas [`typeRoots`](#typeRoots) supports saying you want particular folders.
+此特性与 [`typeRoots`](#typeRoots) 的不同之处在于：它是精确指定你希望包含的具体类型包，而 [`typeRoots`](#typeRoots) 则是指定要包含的特定文件夹。

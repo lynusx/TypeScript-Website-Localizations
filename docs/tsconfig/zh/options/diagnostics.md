@@ -1,8 +1,8 @@
 ---
 display: 'Diagnostics'
-oneline: 'Output compiler performance information after building.'
+oneline: '在构建后输出编译器性能信息。'
 ---
 
-Used to output diagnostic information for debugging. This command is a subset of [`extendedDiagnostics`](#extendedDiagnostics) which are more user-facing results, and easier to interpret.
+用于输出供调试使用的诊断信息。该选项是 [`extendedDiagnostics`](#extendedDiagnostics) 的子集，后者提供更面向用户且更容易理解的结果。
 
-If you have been asked by a TypeScript compiler engineer to give the results using this flag in a compile, in which there is no harm in using [`extendedDiagnostics`](#extendedDiagnostics) instead.
+如果 TypeScript 编译器工程师要求你提供在编译中使用此标志的结果，那么改用 [`extendedDiagnostics`](#extendedDiagnostics) 也是完全可以的。

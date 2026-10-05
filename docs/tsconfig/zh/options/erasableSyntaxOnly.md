@@ -1,19 +1,19 @@
 ---
 display: 'Erasable Syntax Only'
-oneline: 'Do not allow runtime constructs that are not part of ECMAScript.'
+oneline: '禁止使用不属于 ECMAScript 的运行时语法结构。'
 ---
 
-Node.js [supports running TypeScript files directly](https://nodejs.org/api/typescript.html#type-stripping) as of v23.6;
-however, only TypeScript-specific syntax that does not have runtime semantics are supported under this mode.
-In other words, it must be possible to easily _erase_ any TypeScript-specific syntax from a file, leaving behind a valid JavaScript file.
+从 v23.6 开始，Node.js [支持直接运行 TypeScript 文件](https://nodejs.org/api/typescript.html#type-stripping)；
+但是，在该模式下仅支持没有运行时语义的 TypeScript 特有语法。
+换句话说，必须能够轻松地从文件中*擦除*任何 TypeScript 特有语法，并留下一个合法的 JavaScript 文件。
 
-That means the following constructs are not supported:
+这意味着不支持以下语法结构：
 
-- `enum` declarations
-- `namespace`s and `module`s with runtime code
-- parameter properties in classes
-- Non-ECMAScript `import =` and `export =` assignments
-- `<prefix>`-style type assertions
+- `enum` 声明
+- 包含运行时代码的 `namespace` 和 `module`
+- 类中的参数属性（parameter properties）
+- 非 ECMAScript 标准的 `import =` 和 `export =` 赋值
+- `<prefix>` 前缀风格的类型断言
 
 ```ts
 // ❌ error: An `import ... = require(...)` alias
@@ -52,10 +52,10 @@ enum Direction {
 const num = <number>1
 ```
 
-Similar tools like [ts-blank-space](https://github.com/bloomberg/ts-blank-space) or [Amaro](https://github.com/nodejs/amaro) (the underlying library for type-stripping in Node.js) have the same limitations.
-These tools will provide helpful error messages if they encounter code that doesn't meet these requirements, but you still won't find out your code doesn't work until you actually try to run it.
+类似的工具如 [ts-blank-space](https://github.com/bloomberg/ts-blank-space) 或 [Amaro](https://github.com/nodejs/amaro)（Node.js 中类型擦除的底层库）也有相同的限制。
+如果遇到不符合这些要求的代码，这些工具会提供有用的错误提示，但直到实际尝试运行时你才会发现代码无法工作。
 
-The `--erasableSyntaxOnly` flag will cause TypeScript to error on most TypeScript-specific constructs that have runtime behavior.
+`--erasableSyntaxOnly` 标志会让 TypeScript 在遇到大多数具有运行时行为的 TypeScript 特有语法结构时报错。
 
 ```ts
 class C {
@@ -66,4 +66,4 @@ class C {
 }
 ```
 
-Typically, you will want to combine this flag with the `--verbatimModuleSyntax`, which ensures that a module contains the appropriate import syntax, and that import elision does not take place.
+通常，你会希望将该标志与 `--verbatimModuleSyntax` 结合使用，后者可以确保模块包含恰当的导入语法，并且不会发生导入省略（import elision）。

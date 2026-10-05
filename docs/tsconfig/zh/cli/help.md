@@ -1,4 +1,4 @@
 ---
 display: 'Help'
-oneline: 'Gives local information for help on the CLI.'
+oneline: '提供 CLI 本地帮助信息。'
 ---

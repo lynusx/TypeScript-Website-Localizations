@@ -1,3 +1,3 @@
 ---
-display: 'Modules'
+display: '模块'
 ---

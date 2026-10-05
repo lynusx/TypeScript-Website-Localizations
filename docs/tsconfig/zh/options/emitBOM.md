@@ -1,8 +1,8 @@
 ---
 display: 'Emit BOM'
-oneline: 'Emit a UTF-8 Byte Order Mark (BOM) in the beginning of output files.'
+oneline: '在输出文件的开头写入 UTF-8 字节顺序标记（BOM）。'
 ---
 
-Controls whether TypeScript will emit a [byte order mark (BOM)](https://wikipedia.org/wiki/Byte_order_mark) when writing output files.
-Some runtime environments require a BOM to correctly interpret a JavaScript files; others require that it is not present.
-The default value of `false` is generally best unless you have a reason to change it.
+控制 TypeScript 在写入输出文件时是否输出[字节顺序标记（BOM）](https://wikipedia.org/wiki/Byte_order_mark)。
+某些运行时环境需要 BOM 才能正确解析 JavaScript 文件；其他环境则要求不能包含 BOM。
+除非你有充分的理由需要修改，否则保持默认值 `false` 通常是最佳选择。

@@ -1,10 +1,10 @@
 ---
 display: 'Use Define For Class Fields'
-oneline: 'Emit ECMAScript-standard-compliant class fields.'
+oneline: '输出符合 ECMAScript 标准规范的类字段。'
 ---
 
-This flag is used as part of migrating to the upcoming standard version of class fields. TypeScript introduced class fields many years before it was ratified in TC39. The latest version of the upcoming specification has a different runtime behavior to TypeScript's implementation but the same syntax.
+此标志用于向即将到来的类字段（class fields）标准规范版本进行迁移。在 TC39 正式批准类字段特性的很多年前，TypeScript 就已经引入了该特性。即将到来的最新规范与 TypeScript 的实现语法相同，但运行时行为不同。
 
-This flag switches to the upcoming ECMA runtime behavior.
+此标志切换为即将到来的 ECMA 运行时行为。
 
-You can read more about the transition in [the 3.7 release notes](/docs/handbook/release-notes/typescript-3-7.html#the-usedefineforclassfields-flag-and-the-declare-property-modifier).
+你可以在 [3.7 发布说明](/docs/handbook/release-notes/typescript-3-7.html#the-usedefineforclassfields-flag-and-the-declare-property-modifier)中了解有关此过渡的更多信息。

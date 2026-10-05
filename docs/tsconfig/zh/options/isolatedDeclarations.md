@@ -1,8 +1,8 @@
 ---
 display: 'isolatedDeclarations'
-oneline: 'Require sufficient annotation on exports so other tools can trivially generate declaration files.'
+oneline: '要求在导出项上提供充分的类型注解，以便其他工具可以轻松生成声明文件。'
 ---
 
-Require sufficient annotation on exports so other tools can trivially generate declaration files.
+要求在导出项上提供充分的类型注解，以便其他工具可以轻松生成声明文件。
 
-For more information, see the [5.5 release notes](/docs/handbook/release-notes/typescript-5-5.html#isolated-declarations)
+更多信息请参阅 [5.5 发布说明](/docs/handbook/release-notes/typescript-5-5.html#isolated-declarations)。

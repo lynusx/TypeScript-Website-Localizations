@@ -1,3 +1,3 @@
-### Root Fields
+### 根字段
 
-Starting up are the root options in the TSConfig - these options relate to how your TypeScript or JavaScript project is set up.
+首先介绍的是 TSConfig 中的根字段 —— 这些选项与你的 TypeScript 或 JavaScript 项目的配置方式相关。

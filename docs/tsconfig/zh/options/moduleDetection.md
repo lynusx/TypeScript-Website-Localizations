@@ -1,15 +1,14 @@
 ---
 display: 'Module Detection'
-oneline: 'Specify what method is used to detect whether a file is a script or a module.'
+oneline: '指定用于检测文件是脚本还是模块的方法。'
 ---
 
-This setting controls how TypeScript determines whether a file is a
-[script or a module](/docs/handbook/modules/theory.html#scripts-and-modules-in-javascript).
+该设置控制 TypeScript 如何判断一个文件是[脚本还是模块](/docs/handbook/modules/theory.html#scripts-and-modules-in-javascript)。
 
-There are three choices:
+共有三种可选配置：
 
-- `"auto"` (default) - TypeScript will not only look for import and export statements, but it will also check whether the `"type"` field in a `package.json` is set to `"module"` when running with [`module`](#module): `nodenext` or `node16`, and check whether the current file is a JSX file when running under [`jsx`](#jsx): `react-jsx`.
+- `"auto"`（默认值）- TypeScript 不仅会查找 import 和 export 语句，在 [`module`](#module) 为 `nodenext` 或 `node16` 时还会检查 `package.json` 中的 `"type"` 字段是否设置为 `"module"`，并在 [`jsx`](#jsx) 为 `react-jsx` 时检查当前文件是否为 JSX 文件。
 
-- `"legacy"` - The same behavior as 4.6 and prior, usings import and export statements to determine whether a file is a module.
+- `"legacy"` - 与 4.6 及更早版本的行为相同，使用 import 和 export 语句来判断文件是否为模块。
 
-- `"force"` - Ensures that every non-declaration file is treated as a module.
+- `"force"` - 确保每个非声明文件都被视为模块。

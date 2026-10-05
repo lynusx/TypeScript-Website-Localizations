@@ -1,11 +1,11 @@
 ---
 display: 'JSX Fragment Factory'
-oneline: "Specify the JSX Fragment reference used for fragments when targeting React JSX emit e.g. 'React.Fragment' or 'Fragment'."
+oneline: "指定生成 React JSX 代码时片段所使用的 JSX 片段引用，例如 'React.Fragment' 或 'Fragment'。"
 ---
 
-Specify the JSX fragment factory function to use when targeting react JSX emit with [`jsxFactory`](#jsxFactory) compiler option is specified, e.g. `Fragment`.
+在指定了 [`jsxFactory`](#jsxFactory) 编译器选项且目标为 React JSX 生成时，指定要使用的 JSX 片段工厂函数，例如 `Fragment`。
 
-For example with this TSConfig:
+例如，使用如下 TSConfig：
 
 ```json tsconfig
 {
@@ -19,7 +19,7 @@ For example with this TSConfig:
 }
 ```
 
-This TSX file:
+此 TSX 文件：
 
 ```tsx
 import { h, Fragment } from 'preact'
@@ -31,7 +31,7 @@ const HelloWorld = () => (
 )
 ```
 
-Would look like:
+输出将如下所示：
 
 ```tsx twoslash
 // @showEmit
@@ -51,9 +51,9 @@ const HelloWorld = () => (
 )
 ```
 
-This option can be used on a per-file basis too similar to [Babel's `/* @jsxFrag h */` directive](https://babeljs.io/docs/en/babel-plugin-transform-react-jsx#fragments).
+该选项也可以像 [Babel 的 `/* @jsxFrag h */` 指令](https://babeljs.io/docs/en/babel-plugin-transform-react-jsx#fragments) 一样在每个文件级别单独使用。
 
-For example:
+例如：
 
 ```tsx twoslash
 /** @jsx h */

@@ -1,3 +1,3 @@
 ---
-display: 'Type Checking'
+display: '类型检查'
 ---

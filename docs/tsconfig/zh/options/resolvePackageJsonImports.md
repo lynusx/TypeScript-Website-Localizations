@@ -1,8 +1,8 @@
 ---
 display: 'Resolve package.json Imports'
-oneline: "Use the package.json 'imports' field when resolving imports."
+oneline: "在解析导入时使用 package.json 的 'imports' 字段。"
 ---
 
-`--resolvePackageJsonImports` forces TypeScript to consult [the `imports` field of `package.json` files](https://nodejs.org/api/packages.html#imports) when performing a lookup that starts with `#` from a file whose ancestor directory contains a `package.json`.
+`--resolvePackageJsonImports` 强制 TypeScript 在祖先目录包含 `package.json` 的文件中执行以 `#` 开头的查找时，查阅 [`package.json` 文件的 `imports` 字段](https://nodejs.org/api/packages.html#imports)。
 
-This option defaults to `true` under the `node16`, `nodenext`, and `bundler` options for [`--moduleResolution`](#moduleResolution).
+当 [`--moduleResolution`](#moduleResolution) 设置为 `node16`、`nodenext` 或 `bundler` 时，此选项默认值为 `true`。

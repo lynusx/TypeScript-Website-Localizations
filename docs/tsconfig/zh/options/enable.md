@@ -1,9 +1,9 @@
 ---
 display: 'Enable'
-oneline: 'Disable the type acquisition for JavaScript projects.'
+oneline: '禁用 JavaScript 项目的类型自动获取。'
 ---
 
-Disables automatic type acquisition in JavaScript projects:
+禁用 JavaScript 项目中的类型自动获取：
 
 ```json
 {

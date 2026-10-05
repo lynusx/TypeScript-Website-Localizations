@@ -1,5 +1,5 @@
 ---
-display: 'Advanced'
+display: '高级选项'
 ---
 
-Flags which help with debugging
+用于辅助调试的编译选项。

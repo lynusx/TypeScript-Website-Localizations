@@ -1,6 +1,6 @@
 ---
 display: 'noCheck'
-oneline: 'Disable full type checking (only critical parse and emit errors will be reported).'
+oneline: '禁用完整的类型检查（仅报告严重的解析和输出错误）。'
 ---
 
-Disable full type checking (only critical parse and emit errors will be reported).
+禁用完整的类型检查（仅报告严重的解析和输出错误）。

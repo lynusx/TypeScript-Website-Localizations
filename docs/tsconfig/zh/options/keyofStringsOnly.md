@@ -1,8 +1,8 @@
 ---
 display: 'Keyof Strings Only'
-oneline: 'Make keyof only return strings instead of string, numbers or symbols. Legacy option.'
+oneline: '让 keyof 仅返回 string，而非 string、number 或 symbol。已废弃的历史选项。'
 ---
 
-This flag changes the `keyof` type operator to return `string` instead of `string | number` when applied to a type with a string index signature.
+当对带有字符串索引签名的类型应用 `keyof` 类型操作符时，该标志会将其返回值从 `string | number` 改为仅返回 `string`。
 
-This flag is used to help people keep this behavior from [before TypeScript 2.9's release](/docs/handbook/release-notes/typescript-2-9.html#support-number-and-symbol-named-properties-with-keyof-and-mapped-types).
+该标志用于帮助开发者保持在 [TypeScript 2.9 发布之前](/docs/handbook/release-notes/typescript-2-9.html#support-number-and-symbol-named-properties-with-keyof-and-mapped-types)的历史行为。

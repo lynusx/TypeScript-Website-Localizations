@@ -1,9 +1,9 @@
 ---
 display: 'Extended Diagnostics'
-oneline: 'Output more detailed compiler performance information after building.'
+oneline: '在构建后输出更详细的编译器性能信息。'
 ---
 
-You can use this flag to discover where TypeScript is spending its time when compiling.
-This is a tool used for understanding the performance characteristics of your codebase overall.
+你可以使用此标志来了解 TypeScript 在编译时把时间消耗在哪些阶段。
+这是用于全面了解代码库性能特性的工具。
 
-You can learn more about how to measure and understand the output in the performance [section of the wiki](https://github.com/microsoft/TypeScript/wiki/Performance).
+你可以在 Wiki 的性能[章节](https://github.com/microsoft/TypeScript/wiki/Performance)中了解有关如何度量和理解输出信息的更多内容。

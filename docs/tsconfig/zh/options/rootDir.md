@@ -1,13 +1,13 @@
 ---
 display: 'Root Dir'
-oneline: 'Specify the root folder within your source files.'
+oneline: '指定源文件中的根目录。'
 ---
 
-**Default**: The longest common path of all non-declaration input files. If [`composite`](#composite) is set, the default is instead the directory containing the `tsconfig.json` file.
+**默认值**：所有非声明输入文件的最长公共路径。如果设置了 [`composite`](#composite)，则默认值为包含 `tsconfig.json` 文件的目录。
 
-When TypeScript compiles files, it keeps the same directory structure in the output directory as exists in the input directory.
+当 TypeScript 编译文件时，它会在输出目录中保持与输入目录相同的目录结构。
 
-For example, let's say you have some input files:
+例如，假设你有以下输入文件：
 
 ```
 MyProj
@@ -20,9 +20,9 @@ MyProj
 ├── types.d.ts
 ```
 
-The inferred value for `rootDir` is the longest common path of all non-declaration input files, which in this case is `core/`.
+推导出的 `rootDir` 值为所有非声明输入文件的最长公共路径，在本例中为 `core/`。
 
-If your [`outDir`](#outDir) was `dist`, TypeScript would write this tree:
+如果你的 [`outDir`](#outDir) 为 `dist`，TypeScript 会输出如下目录树：
 
 ```
 MyProj
@@ -33,8 +33,8 @@ MyProj
 │   │   ├── c.js
 ```
 
-However, you may have intended for `core` to be part of the output directory structure.
-By setting `rootDir: "."` in `tsconfig.json`, TypeScript would write this tree:
+然而，你可能希望让 `core` 成为输出目录结构的一部分。
+通过在 `tsconfig.json` 中设置 `rootDir: "."`，TypeScript 将输出如下目录树：
 
 ```
 MyProj
@@ -46,13 +46,13 @@ MyProj
 │   │   │   ├── c.js
 ```
 
-Importantly, `rootDir` **does not affect which files become part of the compilation**.
-It has no interaction with the [`include`](#include), [`exclude`](#exclude), or [`files`](#files) `tsconfig.json` settings.
+需要注意的是，`rootDir` **不会影响哪些文件参与编译**。
+它与 `tsconfig.json` 中的 [`include`](#include)、[`exclude`](#exclude) 或 [`files`](#files) 配置没有任何相互影响。
 
-Note that TypeScript will never write an output file to a directory outside of [`outDir`](#outDir), and will never skip emitting a file.
-For this reason, `rootDir` also enforces that all files which need to be emitted are underneath the `rootDir` path.
+请注意，TypeScript 绝不会将输出文件写入 [`outDir`](#outDir) 之外的目录中，也绝不会跳过任何文件的发射（emit）。
+出于这个原因，`rootDir` 还强制要求所有需要发射的文件都必须位于 `rootDir` 路径之下。
 
-For example, let's say you had this tree:
+例如，假设你有如下目录树：
 
 ```
 MyProj
@@ -63,4 +63,4 @@ MyProj
 ├── helpers.ts
 ```
 
-It would be an error to specify `rootDir` as `core` _and_ [`include`](#include) as `*` because it creates a file (`helpers.ts`) that would need to be emitted _outside_ the [`outDir`](#outDir) (i.e. `../helpers.js`).
+如果将 `rootDir` 指定为 `core`，_并且_ 将 [`include`](#include) 指定为 `*`，则会引发错误，因为这会导致一个文件（`helpers.ts`）需要被输出到 [`outDir`](#outDir) _之外_（即 `../helpers.js`）。

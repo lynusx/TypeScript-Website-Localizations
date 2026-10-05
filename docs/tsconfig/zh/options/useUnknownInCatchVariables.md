@@ -1,9 +1,9 @@
 ---
 display: 'Use Unknown In Catch Variables'
-oneline: 'Default catch clause variables as `unknown` instead of `any`.'
+oneline: '将 catch 子句中的变量默认类型设为 `unknown` 而非 `any`。'
 ---
 
-In TypeScript 4.0, support was added to allow changing the type of the variable in a catch clause from `any` to `unknown`. Allowing for code like:
+TypeScript 4.0 增加了将 catch 子句中的变量类型从 `any` 更改为 `unknown` 的支持，允许编写如下代码：
 
 ```ts twoslash
 // @useUnknownInCatchVariables
@@ -18,4 +18,4 @@ try {
 }
 ```
 
-This pattern ensures that error handling code becomes more comprehensive because you cannot guarantee that the object being thrown _is_ a Error subclass ahead of time. With the flag `useUnknownInCatchVariables` enabled, then you do not need the additional syntax (`: unknown`) nor a linter rule to try enforce this behavior.
+这种模式确保了错误处理代码更加完善，因为你无法提前保证抛出的对象就一定（_is_）是 Error 的子类。启用 `useUnknownInCatchVariables` 标志后，你不再需要显式编写附加语法（`: unknown`），也不需要通过 linter 规则来强制执行此行为。

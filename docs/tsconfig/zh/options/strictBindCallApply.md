@@ -1,9 +1,9 @@
 ---
 display: 'Strict Bind Call Apply'
-oneline: 'Check that the arguments for `bind`, `call`, and `apply` methods match the original function.'
+oneline: '检查 `bind`、`call` 和 `apply` 方法的参数是否与原函数相匹配。'
 ---
 
-When set, TypeScript will check that the built-in methods of functions `call`, `bind`, and `apply` are invoked with correct argument for the underlying function:
+设置后，TypeScript 会检查函数的内置方法 `call`、`bind` 和 `apply` 是否传入了与底层函数相匹配的正确参数：
 
 ```ts twoslash
 // @strictBindCallApply: true
@@ -19,7 +19,7 @@ const n1 = fn.call(undefined, '10')
 const n2 = fn.call(undefined, false)
 ```
 
-Otherwise, these functions accept any arguments and will return `any`:
+否则，这些方法将接受任意参数并返回 `any`：
 
 ```ts twoslash
 // @strictBindCallApply: false

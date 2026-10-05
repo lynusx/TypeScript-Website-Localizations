@@ -1,22 +1,22 @@
 ---
 display: 'Isolated Modules'
-oneline: 'Ensure that each file can be safely transpiled without relying on other imports.'
+oneline: '确保每个文件都能安全地转译，而无需依赖其他导入。'
 ---
 
-While you can use TypeScript to produce JavaScript code from TypeScript code, it's also common to use other transpilers such as [Babel](https://babeljs.io) to do this.
-However, other transpilers only operate on a single file at a time, which means they can't apply code transforms that depend on understanding the full type system.
-This restriction also applies to TypeScript's `ts.transpileModule` API which is used by some build tools.
+除了使用 TypeScript 将 TypeScript 代码转译为 JavaScript 代码外，通常也会使用如 [Babel](https://babeljs.io) 等其他转译器来完成这项工作。
+然而，其他转译器一次只能处理单个文件，这意味着它们无法应用依赖于完整类型系统理解的代码转换。
+这一限制同样适用于被某些构建工具使用的 TypeScript `ts.transpileModule` API。
 
-These limitations can cause runtime problems with some TypeScript features like `const enum`s and `namespace`s.
-Setting the `isolatedModules` flag tells TypeScript to warn you if you write certain code that can't be correctly interpreted by a single-file transpilation process.
+这些局限性可能会在使用某些 TypeScript 特性（如 `const enum` 和 `namespace`）时导致运行时问题。
+开启 `isolatedModules` 标志会提示 TypeScript：当你编写了某些无法被单文件转译过程正确解析的代码时发出警告。
 
-It does not change the behavior of your code, or otherwise change the behavior of TypeScript's checking and emitting process.
+它不会改变代码的运行行为，也不会以其他方式改变 TypeScript 的检查与发射（emit）流程。
 
-Some examples of code which does not work when `isolatedModules` is enabled.
+以下是启用 `isolatedModules` 时无法正常工作的一些代码示例。
 
-#### Exports of Non-Value Identifiers
+#### 导出非值标识符
 
-In TypeScript, you can import a _type_ and then subsequently export it:
+在 TypeScript 中，你可以导入一个类型（_type_），随后再将其导出：
 
 ```ts twoslash
 // @noErrors
@@ -27,17 +27,17 @@ someFunction()
 export { someType, someFunction }
 ```
 
-Because there's no value for `someType`, the emitted `export` will not try to export it (this would be a runtime error in JavaScript):
+由于 `someType` 并不存在对应的值，生成的 `export` 不会尝试导出它（否则在 JavaScript 中会导致运行时错误）：
 
 ```js
 export { someFunction }
 ```
 
-Single-file transpilers don't know whether `someType` produces a value or not, so it's an error to export a name that only refers to a type.
+单文件转译器无法获知 `someType` 是否产生了值，因此导出仅指向类型的名称属于错误行为。
 
-#### Non-Module Files
+#### 非模块文件
 
-If `isolatedModules` is set, namespaces are only allowed in _modules_ (which means it has some form of `import`/`export`). An error occurs if a namespace is found in a non-module file:
+如果启用了 `isolatedModules`，命名空间（namespace）仅允许在模块（_modules_，即包含某种形式的 `import`/`export`）中使用。如果在非模块文件中出现命名空间，则会报错：
 
 ```ts twoslash
 // @errors: 1277
@@ -47,11 +47,11 @@ namespace Instantiated {
 }
 ```
 
-This restriction doesn't apply to `.d.ts` files.
+此限制不适用于 `.d.ts` 文件。
 
-#### References to `const enum` members
+#### 引用 `const enum` 成员
 
-In TypeScript, when you reference a `const enum` member, the reference is replaced by its actual value in the emitted JavaScript. Changing this TypeScript:
+在 TypeScript 中，当你引用 `const enum` 的成员时，该引用会在生成的 JavaScript 中被替换为其具体的实际值。将以下 TypeScript：
 
 ```ts twoslash
 declare const enum Numbers {
@@ -61,7 +61,7 @@ declare const enum Numbers {
 console.log(Numbers.Zero + Numbers.One)
 ```
 
-To this JavaScript:
+转换为如下 JavaScript：
 
 ```ts twoslash
 // @showEmit
@@ -73,5 +73,5 @@ declare const enum Numbers {
 console.log(Numbers.Zero + Numbers.One)
 ```
 
-Without knowledge of the values of these members, other transpilers can't replace the references to `Numbers`, which would be a runtime error if left alone (since there are no `Numbers` object at runtime).
-Because of this, when `isolatedModules` is set, it is an error to reference an ambient `const enum` member.
+在不了解这些成员具体值的情况下，其他转译器无法替换对 `Numbers` 的引用，若保留不管则会导致运行时错误（因为在运行时根本不存在 `Numbers` 对象）。
+因此，当启用 `isolatedModules` 时，引用环境（ambient）`const enum` 成员属于错误行为。

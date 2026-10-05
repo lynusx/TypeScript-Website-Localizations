@@ -1,6 +1,6 @@
 ---
 display: 'Verbose'
-oneline: 'Enable verbose logging.'
+oneline: '启用详细日志记录。'
 ---
 
-Enable verbose logging
+启用详细日志记录。

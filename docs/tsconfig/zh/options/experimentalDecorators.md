@@ -1,11 +1,11 @@
 ---
 display: 'Experimental Decorators'
-oneline: 'Enable experimental support for TC39 stage 2 draft decorators.'
+oneline: '启用对 TC39 stage 2 草案装饰器的实验性支持。'
 ---
 
-Enables [experimental support for decorators](https://github.com/tc39/proposal-decorators), which is a version of decorators that predates the TC39 standardization process.
+启用对[装饰器的实验性支持](https://github.com/tc39/proposal-decorators)，这是早于 TC39 标准化进程的一个装饰器版本。
 
-Decorators are a language feature which hasn't yet been fully ratified into the JavaScript specification.
-This means that the implementation version in TypeScript may differ from the implementation in JavaScript when it is decided by TC39.
+装饰器是一项尚未完全正式纳入 JavaScript 规范的语言特性。
+这意味着当 TC39 最终敲定规范时，TypeScript 中的实现版本可能与 JavaScript 规范中的最终实现有所不同。
 
-You can find out more about decorator support in TypeScript in [the handbook](/docs/handbook/decorators.html).
+你可以在[用户手册](/docs/handbook/decorators.html)中了解有关 TypeScript 装饰器支持的更多信息。

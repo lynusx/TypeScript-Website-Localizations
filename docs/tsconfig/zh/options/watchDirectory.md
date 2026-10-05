@@ -1,10 +1,10 @@
 ---
 display: 'Watch Directory'
-oneline: 'Specify how directories are watched on systems that lack recursive file-watching functionality.'
+oneline: '在缺乏递归文件监视功能的系统上，指定如何监视目录。'
 ---
 
-The strategy for how entire directory trees are watched under systems that lack recursive file-watching functionality.
+在缺乏递归文件监视功能的系统下，监视整个目录树的策略。
 
-- `fixedPollingInterval`: Check every directory for changes several times a second at a fixed interval.
-- `dynamicPriorityPolling`: Use a dynamic queue where less-frequently modified directories will be checked less often.
-- `useFsEvents` (the default): Attempt to use the operating system/file system's native events for directory changes.
+- `fixedPollingInterval`：以固定时间间隔，每秒多次检查每个目录的变更。
+- `dynamicPriorityPolling`：使用动态队列，对修改频率较低的目录降低检查频率。
+- `useFsEvents`（默认值）：尝试使用操作系统/文件系统的原生事件来监听目录变更。

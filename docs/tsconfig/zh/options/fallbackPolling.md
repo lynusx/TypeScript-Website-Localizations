@@ -1,11 +1,11 @@
 ---
 display: 'Fallback Polling'
-oneline: 'Specify what approach the watcher should use if the system runs out of native file watchers.'
+oneline: '指定在系统耗尽原生文件监视器时，监视器应使用的后备策略。'
 ---
 
-When using file system events, this option specifies the polling strategy that gets used when the system runs out of native file watchers and/or doesn't support native file watchers.
+当使用文件系统事件时，该选项指定了在系统耗尽原生文件监视器和/或不支持原生文件监视器时所采用的轮询策略。
 
-- `fixedPollingInterval`: Check every file for changes several times a second at a fixed interval.
-- `priorityPollingInterval`: Check every file for changes several times a second, but use heuristics to check certain types of files less frequently than others.
-- `dynamicPriorityPolling`: Use a dynamic queue where less-frequently modified files will be checked less often.
-- `synchronousWatchDirectory`: Disable deferred watching on directories. Deferred watching is useful when lots of file changes might occur at once (e.g. a change in `node_modules` from running `npm install`), but you might want to disable it with this flag for some less-common setups.
+- `fixedPollingInterval`：以固定时间间隔，每秒多次检查每个文件的变更。
+- `priorityPollingInterval`：每秒多次检查每个文件的变更，但使用启发式算法降低某些特定类型文件的检查频率。
+- `dynamicPriorityPolling`：使用动态队列，对修改频率较低的文件降低检查频率。
+- `synchronousWatchDirectory`：对目录禁用延迟监视。当可能同时发生大量文件更改（例如运行 `npm install` 导致 `node_modules` 发生变更）时，延迟监视非常有用，但在某些不常见的配置中，你可能希望使用此标志禁用它。

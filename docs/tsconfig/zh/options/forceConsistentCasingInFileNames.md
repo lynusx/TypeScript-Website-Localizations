@@ -1,10 +1,10 @@
 ---
 display: 'Force Consistent Casing In File Names'
-oneline: 'Ensure that casing is correct in imports.'
+oneline: '确保导入语句中的文件名大小写完全一致。'
 ---
 
-TypeScript follows the case sensitivity rules of the file system it's running on.
-This can be problematic if some developers are working in a case-sensitive file system and others aren't.
-If a file attempts to import `fileManager.ts` by specifying `./FileManager.ts` the file will be found in a case-insensitive file system, but not on a case-sensitive file system.
+TypeScript 遵循其所运行文件系统的大小写敏感规则。
+如果部分开发者在大小写敏感的文件系统中工作，而其他开发者不在，这可能会导致问题。
+如果某个文件尝试通过指定 `./FileManager.ts` 来导入 `fileManager.ts`，在大小写不敏感的文件系统中可以找到该文件，但在大小写敏感的文件系统中则找不到。
 
-When this option is set, TypeScript will issue an error if a program tries to include a file by a casing different from the casing on disk.
+当启用此选项时，如果程序尝试引入文件时所用的大小写与磁盘上的实际大小写不一致，TypeScript 将会报错。

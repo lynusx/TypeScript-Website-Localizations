@@ -1,21 +1,19 @@
 ---
 display: 'Extends'
-oneline: 'Specify one or more path or node module references to base configuration files from which settings are inherited.'
+oneline: '指定一个或多个路径或 Node 模块引用，以继承基础配置文件中的设置。'
 ---
 
-The value of `extends` is a string which contains a path to another configuration file to inherit from.
-The path may use Node.js style resolution.
+`extends` 的值是一个字符串，其中包含要继承的另一个配置文件的路径。该路径可以使用 Node.js 风格的解析规则。
 
-The configuration from the base file are loaded first, then overridden by those in the inheriting config file. All relative paths found in the configuration file will be resolved relative to the configuration file they originated in.
+基础配置文件中的配置会首先加载，随后被继承配置文件中的配置所覆盖。配置文件中的所有相对路径都将相对于其源自的配置文件进行解析。
 
-It's worth noting that [`files`](#files), [`include`](#include), and [`exclude`](#exclude) from the inheriting config file _overwrite_ those from the
-base config file, and that circularity between configuration files is not allowed.
+值得注意的是，继承配置文件中的 [`files`](#files)、[`include`](#include) 和 [`exclude`](#exclude) 会直接*覆盖*基础配置文件中的对应配置，并且配置文件之间不允许出现循环继承。
 
-Currently, the only top-level property that is excluded from inheritance is [`references`](#references).
+目前，唯一不会被继承的顶级属性是 [`references`](#references)。
 
-#### Example
+#### 示例
 
-`configs/base.json`:
+`configs/base.json`：
 
 ```json tsconfig
 {
@@ -26,7 +24,7 @@ Currently, the only top-level property that is excluded from inheritance is [`re
 }
 ```
 
-`tsconfig.json`:
+`tsconfig.json`：
 
 ```json tsconfig
 {
@@ -35,7 +33,7 @@ Currently, the only top-level property that is excluded from inheritance is [`re
 }
 ```
 
-`tsconfig.nostrictnull.json`:
+`tsconfig.nostrictnull.json`：
 
 ```json tsconfig
 {
@@ -46,4 +44,4 @@ Currently, the only top-level property that is excluded from inheritance is [`re
 }
 ```
 
-Properties with relative paths found in the configuration file, which aren't excluded from inheritance, will be resolved relative to the configuration file they originated in.
+配置文件中包含相对路径且未被排除在继承之外的属性，都将相对于其源自的配置文件进行解析。

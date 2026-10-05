@@ -1,5 +1,5 @@
 ---
-display: 'File Inclusion'
+display: '文件包含'
 ---
 
-These settings help you ensure that TypeScript picks up the right files.
+这些设置用于帮助你确保 TypeScript 处理正确的文件。

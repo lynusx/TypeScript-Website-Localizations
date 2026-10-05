@@ -1,11 +1,11 @@
 ---
 display: 'No Error Truncation'
-oneline: 'Disable truncating types in error messages.'
+oneline: '禁止在错误信息中截断类型。'
 ---
 
-Do not truncate error messages.
+不截断错误信息。
 
-With `false`, the default.
+设置为 `false`（默认值）：
 
 ```ts twoslash
 // @errors: 2322 2454
@@ -24,7 +24,7 @@ var x: {
 var s: string = x
 ```
 
-With `true`
+设置为 `true`：
 
 ```ts twoslash
 // @errors: 2322 2454

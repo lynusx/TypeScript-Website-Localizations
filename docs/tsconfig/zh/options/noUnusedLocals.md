@@ -1,9 +1,9 @@
 ---
 display: 'No Unused Locals'
-oneline: "Enable error reporting when local variables aren't read."
+oneline: "当局部变量未被读取时启用报错。"
 ---
 
-Report errors on unused local variables.
+对未使用的局部变量报错。
 
 ```ts twoslash
 // @noUnusedLocals

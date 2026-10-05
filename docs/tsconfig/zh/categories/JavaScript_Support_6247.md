@@ -1,3 +1,3 @@
 ---
-display: 'JavaScript Support'
+display: 'JavaScript 支持'
 ---

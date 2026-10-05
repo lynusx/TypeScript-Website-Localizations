@@ -1,6 +1,6 @@
 ---
 display: 'Force'
-oneline: 'Build all projects, including those that appear to be up to date.'
+oneline: '构建所有项目，包括那些看似已是最新的项目。'
 ---
 
-Build all projects, including those that appear to be up to date
+构建所有项目，包括那些看似已是最新的项目。

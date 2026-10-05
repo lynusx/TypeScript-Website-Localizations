@@ -1,11 +1,11 @@
 ---
 display: 'Paths'
-oneline: 'Specify a set of entries that re-map imports to additional lookup locations.'
+oneline: '指定一组将导入重映射到其他查找位置的条目。'
 ---
 
-A series of entries which re-map imports to lookup locations relative to the [`baseUrl`](#baseUrl) if set, or to the tsconfig file itself otherwise. There is a larger coverage of `paths` in [the `moduleResolution` reference page](/docs/handbook/modules/reference.html#paths).
+一系列将导入重映射到查找位置的条目。若设置了 [`baseUrl`](#baseUrl)，则相对于 `baseUrl` 解析；否则相对于 tsconfig 文件本身解析。在 [`moduleResolution` 参考页面](/docs/handbook/modules/reference.html#paths) 中有关于 `paths` 更详尽的说明。
 
-`paths` lets you declare how TypeScript should resolve an import in your `require`/`import`s.
+`paths` 允许你声明 TypeScript 在处理 `require`/`import` 时应如何解析导入。
 
 ```json tsconfig
 {
@@ -17,7 +17,7 @@ A series of entries which re-map imports to lookup locations relative to the [`b
 }
 ```
 
-This would allow you to be able to write `import "jquery"`, and get all of the correct typing locally.
+这将允许你编写 `import "jquery"`，并在本地获取所有正确的类型定义。
 
 ```json tsconfig
 {
@@ -34,6 +34,6 @@ This would allow you to be able to write `import "jquery"`, and get all of the c
 }
 ```
 
-In this case, you can tell the TypeScript file resolver to support a number of custom prefixes to find code.
+在这种情况下，你可以告知 TypeScript 文件解析器支持多个自定义前缀以查找代码。
 
-Note that this feature does not change how import paths are emitted by `tsc`, so `paths` should only be used to inform TypeScript that another tool has this mapping and will use it at runtime or when bundling.
+注意，此特性不会改变 `tsc` 生成的导入路径，因此 `paths` 仅应用于告知 TypeScript 已经有其他工具配置了此映射并将在运行时或打包时使用它。

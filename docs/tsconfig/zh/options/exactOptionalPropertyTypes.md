@@ -1,11 +1,11 @@
 ---
 display: 'Exact Optional Property Types'
-oneline: 'Interpret optional property types as written, rather than adding `undefined`.'
+oneline: '按字面定义解释可选属性类型，而不是自动添加 `undefined`。'
 ---
 
-With exactOptionalPropertyTypes enabled, TypeScript applies stricter rules around how it handles properties on `type` or `interfaces` which have a `?` prefix.
+启用 `exactOptionalPropertyTypes` 后，TypeScript 会对带有 `?` 前缀修饰的 `type` 或 `interface` 属性应用更严格的类型处理规则。
 
-For example, this interface declares that there is a property which can be one of two strings: 'dark' or 'light' or it should not be in the object.
+例如，以下接口声明了一个属性，其值可以是两个字符串之一（'dark' 或 'light'），或者该属性不应存在于对象中。
 
 ```ts
 interface UserDefaults {
@@ -14,11 +14,11 @@ interface UserDefaults {
 }
 ```
 
-Without this flag enabled, there are three values which you can set `colorThemeOverride` to be: "dark", "light" and `undefined`.
+如果未启用此标志，你可以为 `colorThemeOverride` 赋予三种值："dark"、"light" 和 `undefined`。
 
-Setting the value to `undefined` will allow most JavaScript runtime checks for the existence to fail, which is effectively falsy. However, this isn't quite accurate; `colorThemeOverride: undefined` is not the same as `colorThemeOverride` not being defined. For example, `"colorThemeOverride" in settings` would have different behavior with `undefined` as the key compared to not being defined.
+将值设置为 `undefined` 可以让大多数用于检查属性是否存在的 JavaScript 运行时判断失败（实际上表现为假值）。然而，这并不完全准确；`colorThemeOverride: undefined` 与根本未定义 `colorThemeOverride` 并不相同。例如，当键的值为 `undefined` 时，`"colorThemeOverride" in settings` 的行为与该键完全未定义时的行为存在差异。
 
-`exactOptionalPropertyTypes` makes TypeScript truly enforce the definition provided as an optional property:
+`exactOptionalPropertyTypes` 使得 TypeScript 真正严格遵循可选属性的原始定义：
 
 ```ts twoslash
 // @exactOptionalPropertyTypes

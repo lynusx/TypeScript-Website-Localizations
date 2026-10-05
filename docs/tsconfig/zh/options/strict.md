@@ -1,11 +1,10 @@
 ---
 display: 'Strict'
-oneline: 'Enable all strict type-checking options.'
+oneline: '启用所有严格类型检查选项。'
 ---
 
-The `strict` flag enables a wide range of type checking behavior that results in stronger guarantees of program correctness.
-Turning this on is equivalent to enabling all of the _strict mode family_ options, which are outlined below.
-You can then turn off individual strict mode family checks as needed.
+`strict` 标志会启用一系列广泛的类型检查行为，从而对程序的正确性提供更强的保障。
+开启此选项相当于启用所有的“严格模式家族”选项（如下文所述）。随后你可以根据需要单独关闭其中的某些检查。
 
-Future versions of TypeScript may introduce additional stricter checking under this flag, so upgrades of TypeScript might result in new type errors in your program.
-When appropriate and possible, a corresponding flag will be added to disable that behavior.
+TypeScript 的未来版本可能会在该标志下引入更多更严格的检查，因此升级 TypeScript 可能会在程序中产生新的类型错误。
+在合适且可行的情况下，官方会添加对应的标志来禁用这些新行为。

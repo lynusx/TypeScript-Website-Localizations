@@ -1,12 +1,11 @@
 ---
 display: 'Preserve Const Enums'
-oneline: 'Disable erasing `const enum` declarations in generated code.'
+oneline: '禁止在生成的代码中擦除 `const enum` 声明。'
 ---
 
-Do not erase `const enum` declarations in generated code. `const enum`s provide a way to reduce the overall memory footprint
-of your application at runtime by emitting the enum value instead of a reference.
+不在生成的代码中擦除 `const enum` 声明。`const enum` 通过直接输出枚举值而非引用，提供了一种减少应用程序运行时总内存占用的方式。
 
-For example with this TypeScript:
+例如以下 TypeScript 代码：
 
 ```ts twoslash
 const enum Album {
@@ -21,8 +20,7 @@ if (selectedAlbum === Album.JimmyEatWorldFutures) {
 }
 ```
 
-The default `const enum` behavior is to convert any `Album.Something` to the corresponding number literal, and to remove a reference
-to the enum from the JavaScript completely.
+`const enum` 的默认行为是将任何 `Album.Something` 转换为对应的数值字面量，并从 JavaScript 中完全移除对该枚举的引用。
 
 ```ts twoslash
 // @showEmit
@@ -38,7 +36,7 @@ if (selectedAlbum === Album.JimmyEatWorldFutures) {
 }
 ```
 
-With `preserveConstEnums` set to `true`, the `enum` exists at runtime and the numbers are still emitted.
+将 `preserveConstEnums` 设置为 `true` 后，`enum` 会在运行时保留，并且数值仍会被输出。
 
 ```ts twoslash
 // @preserveConstEnums: true
@@ -55,4 +53,4 @@ if (selectedAlbum === Album.JimmyEatWorldFutures) {
 }
 ```
 
-This essentially makes such `const enums` a source-code feature only, with no runtime traces.
+这实质上使此类 `const enum` 仅作为源码特性存在，在运行时不留痕迹。

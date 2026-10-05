@@ -1,22 +1,22 @@
 ---
 display: 'Inline Source Map'
-oneline: 'Include sourcemap files inside the emitted JavaScript.'
+oneline: '在生成的 JavaScript 文件中内联包含 sourcemap 内容。'
 ---
 
-When set, instead of writing out a `.js.map` file to provide source maps, TypeScript will embed the source map content in the `.js` files.
-Although this results in larger JS files, it can be convenient in some scenarios.
-For example, you might want to debug JS files on a webserver that doesn't allow `.map` files to be served.
+设置后，TypeScript 不会输出单独的 `.js.map` 文件来提供源映射（source map），而是会将 source map 内容直接内嵌到生成的 `.js` 文件中。
+尽管这会导致 JS 文件体积变大，但在某些场景下非常方便。
+例如，你可能希望在不允许提供 `.map` 文件访问的 Web 服务器上调试 JS 文件。
 
-Mutually exclusive with [`sourceMap`](#sourceMap).
+与 [`sourceMap`](#sourceMap) 互斥。
 
-For example, with this TypeScript:
+例如，如下 TypeScript 代码：
 
 ```ts
 const helloWorld = 'hi'
 console.log(helloWorld)
 ```
 
-Converts to this JavaScript:
+转换为如下 JavaScript 代码：
 
 ```ts twoslash
 // @showEmit
@@ -24,8 +24,7 @@ const helloWorld = 'hi'
 console.log(helloWorld)
 ```
 
-Then enable building it with `inlineSourceMap` enabled there is a comment at the bottom of the file which includes
-a source-map for the file.
+接着，在启用 `inlineSourceMap` 进行构建时，文件底部会包含一段注释，其中包含了该文件的 source map：
 
 ```ts twoslash
 // @inlineSourceMap

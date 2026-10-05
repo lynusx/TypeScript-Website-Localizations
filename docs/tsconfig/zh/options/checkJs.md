@@ -1,19 +1,18 @@
 ---
 display: 'Check JS'
-oneline: 'Enable error reporting in type-checked JavaScript files.'
+oneline: '在进行类型检查的 JavaScript 文件中启用错误报告。'
 ---
 
-Works in tandem with [`allowJs`](#allowJs). When `checkJs` is enabled then errors are reported in JavaScript files. This is
-the equivalent of including `// @ts-check` at the top of all JavaScript files which are included in your project.
+与 [`allowJs`](#allowJs) 配合使用。启用 `checkJs` 后，会在 JavaScript 文件中报告错误。这相当于在项目中包含的所有 JavaScript 文件顶部都添加了 `// @ts-check`。
 
-For example, this is incorrect JavaScript according to the `parseFloat` type definition which comes with TypeScript:
+例如，根据 TypeScript 内置的 `parseFloat` 类型定义，以下是一段不正确的 JavaScript 代码：
 
 ```js
 // parseFloat only takes a string
 module.exports.pi = parseFloat(3.142)
 ```
 
-When imported into a TypeScript module:
+当导入到 TypeScript 模块中时：
 
 ```ts twoslash
 // @allowJs
@@ -25,7 +24,7 @@ import { pi } from './constants'
 console.log(pi)
 ```
 
-You will not get any errors. However, if you turn on `checkJs` then you will get error messages from the JavaScript file.
+你不会收到任何报错。但是，如果开启 `checkJs`，你将收到来自该 JavaScript 文件的错误提示。
 
 ```ts twoslash
 // @errors: 2345

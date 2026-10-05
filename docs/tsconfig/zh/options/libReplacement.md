@@ -1,11 +1,11 @@
 ---
 display: 'Lib Replacement'
-oneline: 'Enable substitution of default `lib` files with custom ones.'
+oneline: '允许使用自定义库文件替换默认的 `lib` 文件。'
 ---
 
-TypeScript 4.5 introduced the possibility of substituting the default `lib` files with custom ones.
-All built-in library files would first try to be resolved from packages named `@typescript/lib-*`.
-For example, you could lock your `dom` libraries onto a specific version of [the `@types/web` package](https://www.npmjs.com/package/@types/web?activeTab=readme) with the following `package.json`:
+TypeScript 4.5 引入了使用自定义文件替换默认 `lib` 文件的功能。
+所有内置库文件都会首先尝试从名为 `@typescript/lib-*` 的包中解析。
+例如，你可以通过如下 `package.json` 将 `dom` 库锁定在 [`@types/web` 包](https://www.npmjs.com/package/@types/web?activeTab=readme) 的特定版本：
 
 ```json
 {
@@ -15,8 +15,8 @@ For example, you could lock your `dom` libraries onto a specific version of [the
 }
 ```
 
-When installed, a package called `@typescript/lib-dom` should exist, and TypeScript would always look there when searching for `lib.dom.d.ts`.
+安装后，应存在名为 `@typescript/lib-dom` 的包，TypeScript 在查找 `lib.dom.d.ts` 时将始终从该包中寻找。
 
-The `--libReplacement` flag allows you to disable this behavior.
-If you're not using any `@typescript/lib-*` packages, you can now disable those package lookups with `--libReplacement false`.
-In the future, `--libReplacement false` may become the default, so if you currently rely on the behavior you should consider explicitly enabling it with `--libReplacement true`.
+`--libReplacement` 标志允许你禁用此行为。
+如果你没有使用任何 `@typescript/lib-*` 包，现在可以通过 `--libReplacement false` 禁用这些包的查找。
+将来 `--libReplacement false` 可能会成为默认行为，因此如果你当前依赖该特性，应考虑使用 `--libReplacement true` 显式启用它。

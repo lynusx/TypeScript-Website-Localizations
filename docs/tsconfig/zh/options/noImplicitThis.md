@@ -1,12 +1,11 @@
 ---
 display: 'No Implicit This'
-oneline: 'Enable error reporting when `this` is given the type `any`.'
+oneline: '当 `this` 表达式具有隐含的 `any` 类型时启用错误报告。'
 ---
 
-Raise error on 'this' expressions with an implied 'any' type.
+当 `this` 表达式具有隐含的 `any` 类型时引发错误。
 
-For example, the class below returns a function which tries to access `this.width` and `this.height` – but the context
-for `this` inside the function inside `getAreaFunction` is not the instance of the Rectangle.
+例如，下面的类中返回了一个尝试访问 `this.width` 和 `this.height` 的函数——但是 `getAreaFunction` 内部该函数中的 `this` 上下文并不是 Rectangle 的实例。
 
 ```ts twoslash
 // @errors: 2683

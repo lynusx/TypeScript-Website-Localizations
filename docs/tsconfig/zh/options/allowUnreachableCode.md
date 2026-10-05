@@ -1,15 +1,15 @@
 ---
 display: 'Allow Unreachable Code'
-oneline: 'Disable error reporting for unreachable code.'
+oneline: '禁用无法访问的代码的错误报告。'
 ---
 
-When:
+可选值：
 
-- `undefined` (default) provide suggestions as warnings to editors
-- `true` unreachable code is ignored
-- `false` raises compiler errors about unreachable code
+- `undefined`（默认值）：向编辑器提供建议性质的警告
+- `true`：忽略无法访问的代码
+- `false`：对无法访问的代码抛出编译器错误
 
-These warnings are only about code which is provably unreachable due to the use of JavaScript syntax, for example:
+这些警告仅针对因 JavaScript 语法使用而明确可判定为无法访问的代码，例如：
 
 ```ts
 function fn(n: number) {
@@ -22,7 +22,7 @@ function fn(n: number) {
 }
 ```
 
-With `"allowUnreachableCode": false`:
+设置 `"allowUnreachableCode": false` 时：
 
 ```ts twoslash
 // @errors: 7027
@@ -37,4 +37,4 @@ function fn(n: number) {
 }
 ```
 
-This does not affect errors on the basis of code which _appears_ to be unreachable due to type analysis.
+这不会影响那些因类型分析而*看起来*无法访问的代码所产生的错误。

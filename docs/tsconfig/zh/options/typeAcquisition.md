@@ -1,12 +1,12 @@
 ---
 display: 'Type Acquisition'
-oneline: 'Specify options for automatic acquisition of declaration files.'
+oneline: '指定自动获取声明文件的相关选项。'
 ---
 
-When you have a JavaScript project in your editor, TypeScript will provide types for your `node_modules` automatically using the DefinitelyTyped set of `@types` definitions.
-This is called automatic type acquisition, and you can customize it using the `typeAcquisition` object in your configuration.
+当你在编辑器中打开 JavaScript 项目时，TypeScript 会使用 DefinitelyTyped 的 `@types` 定义集合自动为你的 `node_modules` 提供类型。
+这被称为类型自动获取（Automatic Type Acquisition），你可以使用配置中的 `typeAcquisition` 对象对其进行自定义。
 
-If you would like to disable or customize this feature, create a `jsconfig.json` in the root of your project:
+如果你想禁用或自定义此功能，可以在项目根目录下创建一个 `jsconfig.json`：
 
 ```json
 {
@@ -16,7 +16,7 @@ If you would like to disable or customize this feature, create a `jsconfig.json`
 }
 ```
 
-If you have a specific module which should be included (but isn't in `node_modules`):
+如果你有某个需要包含的特定模块（但它不在 `node_modules` 中）：
 
 ```json
 {
@@ -26,7 +26,7 @@ If you have a specific module which should be included (but isn't in `node_modul
 }
 ```
 
-If a module should not be automatically acquired, for example if the library is available in your `node_modules` but your team has agreed to not use it:
+如果某个模块不应被自动获取（例如，该库存在于 `node_modules` 中，但团队已约定不使用它）：
 
 ```json
 {

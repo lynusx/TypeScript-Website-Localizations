@@ -1,6 +1,6 @@
 ---
 display: 'stopBuildOnErrors'
-oneline: 'Skip building downstream projects on error in upstream project.'
+oneline: '在上游项目发生错误时跳过构建下游项目。'
 ---
 
-Skip building downstream projects on error in upstream project.
+当上游项目出现错误时，跳过构建下游项目。

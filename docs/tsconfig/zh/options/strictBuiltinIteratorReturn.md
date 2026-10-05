@@ -1,6 +1,6 @@
 ---
 display: 'strictBuiltinIteratorReturn'
-oneline: 'Built-in iterators are instantiated with a TReturn type of undefined instead of any.'
+oneline: '内置迭代器在实例化时的 TReturn 类型为 undefined 而不是 any。'
 ---
 
-Built-in iterators are instantiated with a `TReturn` type of undefined instead of `any`.
+内置迭代器在实例化时的 `TReturn` 类型为 `undefined` 而不是 `any`。

@@ -1,12 +1,11 @@
 ---
 display: 'Resolve JSON Module'
-oneline: 'Enable importing .json files.'
+oneline: '允许导入 .json 文件。'
 ---
 
-Allows importing modules with a `.json` extension, which is a common practice in node projects. This includes
-generating a type for the `import` based on the static JSON shape.
+允许导入扩展名为 `.json` 的模块，这是 Node 项目中的常见做法。这也包括根据静态 JSON 结构为 `import` 生成对应的类型。
 
-TypeScript does not support resolving JSON files by default:
+默认情况下，TypeScript 不支持解析 JSON 文件：
 
 ```ts twoslash
 // @errors: 2732
@@ -23,7 +22,7 @@ settings.debug === true;
 settings.dry === 2;
 ```
 
-Enabling the option allows importing JSON, and validating the types in that JSON file.
+启用该选项后允许导入 JSON，并对该 JSON 文件中的类型进行校验。
 
 ```ts twoslash
 // @errors: 2367

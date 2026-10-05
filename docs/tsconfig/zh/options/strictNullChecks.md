@@ -1,15 +1,14 @@
 ---
 display: 'Strict Null Checks'
-oneline: 'When type checking, take into account `null` and `undefined`.'
+oneline: '在进行类型检查时考虑 `null` 和 `undefined`。'
 ---
 
-When `strictNullChecks` is `false`, `null` and `undefined` are effectively ignored by the language.
-This can lead to unexpected errors at runtime.
+当 `strictNullChecks` 为 `false` 时，语言实际上会忽略 `null` 和 `undefined`。
+这可能会导致运行时出现意料之外的错误。
 
-When `strictNullChecks` is `true`, `null` and `undefined` have their own distinct types and you'll get a type error if you try to use them where a concrete value is expected.
+当 `strictNullChecks` 为 `true` 时，`null` 和 `undefined` 拥有各自独立的类型。如果尝试在需要具体值的地方使用它们，将会收到类型错误。
 
-For example with this TypeScript code, `users.find` has no guarantee that it will actually find a user, but you can
-write code as though it will:
+例如在以下 TypeScript 代码中，`users.find` 并不能保证一定能找到用户，但你可以像必定能找到一样编写代码：
 
 ```ts twoslash
 // @strictNullChecks: false
@@ -25,7 +24,7 @@ const loggedInUser = users.find((u) => u.name === loggedInUsername)
 console.log(loggedInUser.age)
 ```
 
-Setting `strictNullChecks` to `true` will raise an error that you have not made a guarantee that the `loggedInUser` exists before trying to use it.
+将 `strictNullChecks` 设置为 `true` 时，若未在使用 `loggedInUser` 之前确保其存在，就会报错。
 
 ```ts twoslash
 // @errors: 2339 2532 18048
@@ -42,7 +41,7 @@ const loggedInUser = users.find((u) => u.name === loggedInUsername)
 console.log(loggedInUser.age)
 ```
 
-The second example failed because the array's `find` function looks a bit like this simplification:
+第二个示例之所以失败，是因为数组的 `find` 函数大致可以简化如下：
 
 ```ts
 // When strictNullChecks: true

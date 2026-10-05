@@ -1,12 +1,12 @@
 ---
 display: 'Custom Conditions'
-oneline: 'Conditions to set in addition to the resolver-specific defaults when resolving imports.'
+oneline: '解析导入时，在解析器特定默认条件之外额外设置的条件。'
 ---
 
-`--customConditions` takes a list of additional [conditions](https://nodejs.org/api/packages.html#nested-conditions) that should succeed when TypeScript resolves from an [`exports`](https://nodejs.org/api/packages.html#exports) or [`imports`](https://nodejs.org/api/packages.html#imports) field of a `package.json`.
-These conditions are added to whatever existing conditions a resolver will use by default.
+`--customConditions` 接受一个附加[条件（conditions）](https://nodejs.org/api/packages.html#nested-conditions)列表，当 TypeScript 解析 `package.json` 中的 [`exports`](https://nodejs.org/api/packages.html#exports) 或 [`imports`](https://nodejs.org/api/packages.html#imports) 字段时，这些条件应该匹配成功。
+这些条件会添加到解析器默认使用的任何既有条件之上。
 
-For example, when this field is set in a `tsconfig.json` as so:
+例如，在 `tsconfig.json` 中配置该字段如下：
 
 ```jsonc
 {
@@ -18,9 +18,9 @@ For example, when this field is set in a `tsconfig.json` as so:
 }
 ```
 
-Any time an `exports` or `imports` field is referenced in `package.json`, TypeScript will consider conditions called `my-condition`.
+每当引用 `package.json` 中的 `exports` 或 `imports` 字段时，TypeScript 都会考虑名为 `my-condition` 的条件。
 
-So when importing from a package with the following `package.json`
+因此，当从具有以下 `package.json` 的包中导入时：
 
 ```jsonc
 {
@@ -36,6 +36,6 @@ So when importing from a package with the following `package.json`
 }
 ```
 
-TypeScript will try to look for files corresponding to `foo.mjs`.
+TypeScript 将尝试查找与 `foo.mjs` 对应的文件。
 
-This field is only valid under the `node16`, `nodenext`, and `bundler` options for [`--moduleResolution`](#moduleResolution).
+该字段仅在 [`--moduleResolution`](#moduleResolution) 设置为 `node16`、`nodenext` 和 `bundler` 时有效。

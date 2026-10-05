@@ -1,20 +1,20 @@
 ---
 display: 'Source Map'
-oneline: 'Create source map files for emitted JavaScript files.'
+oneline: '为生成的 JavaScript 文件创建 source map 文件。'
 ---
 
-Enables the generation of [sourcemap files](https://developer.mozilla.org/docs/Tools/Debugger/How_to/Use_a_source_map).
-These files allow debuggers and other tools to display the original TypeScript source code when actually working with the emitted JavaScript files.
-Source map files are emitted as `.js.map` (or `.jsx.map`) files next to the corresponding `.js` output file.
+启用 [source map 文件](https://developer.mozilla.org/docs/Tools/Debugger/How_to/Use_a_source_map)的生成。
+这些文件使调试器及其他工具在实际处理生成的 JavaScript 文件时，能够展示原始的 TypeScript 源代码。
+Source map 文件会作为 `.js.map`（或 `.jsx.map`）文件输出在对应的 `.js` 输出文件旁边。
 
-The `.js` files will in turn contain a sourcemap comment to indicate where the files are to external tools, for example:
+随后，`.js` 文件中将包含一条 source map 注释，用以向外部工具指示文件的位置，例如：
 
 ```ts
 // helloWorld.ts
 export declare const helloWorld = 'hi'
 ```
 
-Compiling with `sourceMap` set to `true` creates the following JavaScript file:
+在 `sourceMap` 设置为 `true` 的情况下进行编译，将生成如下 JavaScript 文件：
 
 ```js
 // helloWorld.js
@@ -24,7 +24,7 @@ exports.helloWorld = 'hi'
 //# sourceMappingURL=// helloWorld.js.map
 ```
 
-And this also generates this json map:
+同时还会生成如下 JSON map 文件：
 
 ```json
 // helloWorld.js.map

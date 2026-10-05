@@ -1,3 +1,3 @@
 ---
-display: 'Projects'
+display: '项目'
 ---

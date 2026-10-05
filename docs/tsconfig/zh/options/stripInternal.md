@@ -1,11 +1,11 @@
 ---
 display: 'Strip Internal'
-oneline: 'Disable emitting declarations that have `@internal` in their JSDoc comments.'
+oneline: '禁止为 JSDoc 注释中带有 `@internal` 的代码生成声明。'
 ---
 
-Do not emit declarations for code that has an `@internal` annotation in its JSDoc comment.
-This is an internal compiler option; use at your own risk, because the compiler does not check that the result is valid.
-If you are searching for a tool to handle additional levels of visibility within your `d.ts` files, look at [api-extractor](https://api-extractor.com).
+禁止为 JSDoc 注释中带有 `@internal` 标记的代码生成声明。
+这是一个编译器内部选项；使用时需自行承担风险，因为编译器不会校验生成结果的有效性。
+如果你需要一个工具来在 `d.ts` 文件中处理更多层级的可见性控制，可以参考 [api-extractor](https://api-extractor.com)。
 
 ```ts twoslash
 /**
@@ -20,7 +20,7 @@ export function weeklySalary(dayRate: number) {
 }
 ```
 
-With the flag set to `false` (default):
+当该标志设置为 `false`（默认值）时：
 
 ```ts twoslash
 // @showEmittedFile: index.d.ts
@@ -38,7 +38,7 @@ export function weeklySalary(dayRate: number) {
 }
 ```
 
-With `stripInternal` set to `true` the `d.ts` emitted will be redacted.
+当 `stripInternal` 设置为 `true` 时，生成的 `d.ts` 将隐去相应内容：
 
 ```ts twoslash
 // @stripinternal
@@ -57,4 +57,4 @@ export function weeklySalary(dayRate: number) {
 }
 ```
 
-The JavaScript output is still the same.
+生成的 JavaScript 输出依然保持不变。

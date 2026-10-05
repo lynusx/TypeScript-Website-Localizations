@@ -1,17 +1,17 @@
 ---
 display: 'Import Helpers'
-oneline: 'Allow importing helper functions from tslib once per project, instead of including them per-file.'
+oneline: '允许在每个项目中从 tslib 统一导入辅助函数，而不是在每个文件中重复包含它们。'
 ---
 
-For certain downleveling operations, TypeScript uses some helper code for operations like extending class, spreading arrays or objects, and async operations.
-By default, these helpers are inserted into files which use them.
-This can result in code duplication if the same helper is used in many different modules.
+对于某些降级操作，TypeScript 会使用一些辅助代码来处理类继承、数组或对象展开以及异步操作等。
+默认情况下，这些辅助函数会被插入到使用它们的文件中。
+如果同一个辅助函数在许多不同的模块中被使用，这可能会导致代码重复。
 
-If the `importHelpers` flag is on, these helper functions are instead imported from the [tslib](https://www.npmjs.com/package/tslib) module.
-You will need to ensure that the `tslib` module is able to be imported at runtime.
-This only affects modules; global script files will not attempt to import modules.
+如果开启了 `importHelpers` 标志，这些辅助函数将改为从 [tslib](https://www.npmjs.com/package/tslib) 模块中导入。
+你需要确保在运行时能够导入 `tslib` 模块。
+这仅对模块生效；全局脚本文件不会尝试导入模块。
 
-For example, with this TypeScript:
+例如，对于以下 TypeScript 代码：
 
 ```ts
 export function fn(arr: number[]) {
@@ -19,7 +19,7 @@ export function fn(arr: number[]) {
 }
 ```
 
-Turning on [`downlevelIteration`](#downlevelIteration) and `importHelpers` is still false:
+开启 [`downlevelIteration`](#downlevelIteration) 且 `importHelpers` 仍为 false 时：
 
 ```ts twoslash
 // @showEmit
@@ -30,7 +30,7 @@ export function fn(arr: number[]) {
 }
 ```
 
-Then turning on both [`downlevelIteration`](#downlevelIteration) and `importHelpers`:
+接着同时开启 [`downlevelIteration`](#downlevelIteration) 和 `importHelpers`：
 
 ```ts twoslash
 // @showEmit
@@ -43,4 +43,4 @@ export function fn(arr: number[]) {
 }
 ```
 
-You can use [`noEmitHelpers`](#noEmitHelpers) when you provide your own implementations of these functions.
+当你自行提供这些函数的实现时，可以使用 [`noEmitHelpers`](#noEmitHelpers)。
