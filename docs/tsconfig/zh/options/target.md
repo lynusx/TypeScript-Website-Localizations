@@ -1,25 +1,18 @@
 ---
-display: "编译目标"
-oneline: "设置生成的 JavaScript 语言的版本，并且会包含兼容的库（环境）的定义。"
+display: 'Target'
+oneline: 'Set the JavaScript language version for emitted JavaScript and include compatible library declarations.'
 ---
 
-现代浏览器支持全部 ES6 的功能，所以 `ES6` 是一个不错的选择。
-如果你的代码部署在旧的环境中，你可以选择设置一个更低的目标；如果你的代码保证会运行在新的环境中，你可以选择一个更高的目标。
+Modern browsers support all ES6 features, so `ES6` is a good choice.
+You might choose to set a lower target if your code is deployed to older environments, or a higher target if your code is guaranteed to run in newer environments.
 
-`target` 的配置将会改变哪些 JS 特性会被降级，而哪些会被完整保留
-例如，如果 `target` 是 ES5 或更低版本，箭头函数 `() => this` 会被转换为等价的 `函数` 表达式。
+The `target` setting changes which JS features are downleveled and which are left intact.
+For example, an arrow function `() => this` will be turned into an equivalent `function` expression if `target` is ES5 or lower.
 
-改变 `target` 也会改变 [`lib`](#lib) 选项的默认值。
-你可以根据需要混搭 `target` 和 `lib` 的配置，你也可以为了方便只设置 `target`。
+Changing `target` also changes the default value of [`lib`](#lib).
+You may "mix and match" `target` and `lib` settings as desired, but you could just set `target` for convenience.
 
-如果你只使用 Node.js，这里推荐基于 Node 版本的 `target`：
+For developer platforms like Node there are baselines for the `target`, depending on the type of platform and its version. You can find a set of community organized TSConfigs at [tsconfig/bases](https://github.com/tsconfig/bases#centralized-recommendations-for-tsconfig-bases), which has configurations for common platforms and their versions.
 
-| 名称    | 支持的编译目标 |
-| ------- | ---------------- |
-| Node 8  | `ES2017`         |
-| Node 10 | `ES2018`         |
-| Node 12 | `ES2019`         |
-
-这些基于 [node.green](https://node.green) 的支持数据库。
-
-特殊的 `ESNext` 值代表你的 TypeScript 所支持的最高版本。这个配置应当被谨慎使用，因为它在不同的 TypeScript 版本之间的含义不同，并且会导致升级更难预测。
+The special `ESNext` value refers to the highest version your version of TypeScript supports.
+This setting should be used with caution, since it doesn't mean the same thing between different TypeScript versions and can make upgrades less predictable.

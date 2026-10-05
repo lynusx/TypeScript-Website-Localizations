@@ -1,3 +1,3 @@
-### 编译选项
+### Compiler Options
 
-这些选项是 TypeScript 配置的主要部分，它涵盖了语言应该如何工作。
+These options make up the bulk of TypeScript's configuration and it covers how the language should work.

@@ -1,39 +1,40 @@
 ---
-display: "检查 JS"
-oneline: "在经过类型检查的 JavaScript 中报告错误。"
+display: 'Check JS'
+oneline: 'Enable error reporting in type-checked JavaScript files.'
 ---
 
-与 `allowJs` 配合使用，当 `checkJs` 被启用时，JavaScript 文件中会报告错误。也就是相当于在项目中所有 JavaScript 文件顶部包含 `// @ts-check`。
+Works in tandem with [`allowJs`](#allowJs). When `checkJs` is enabled then errors are reported in JavaScript files. This is
+the equivalent of including `// @ts-check` at the top of all JavaScript files which are included in your project.
 
-例如，根据 TypeScript 自带的 `parseFloat` 类型定义，这是不正确的 JavaScript：
+For example, this is incorrect JavaScript according to the `parseFloat` type definition which comes with TypeScript:
 
 ```js
-// parseFloat 仅接受一个字符串作为参数
-module.exports.pi = parseFloat(3.124);
+// parseFloat only takes a string
+module.exports.pi = parseFloat(3.142)
 ```
 
-当引入到一个 TypeScript 模块：
+When imported into a TypeScript module:
 
 ```ts twoslash
 // @allowJs
 // @filename: constants.js
-module.exports.pi = parseFloat(3.124);
+module.exports.pi = parseFloat(3.142)
 
 // @filename: index.ts
-import { pi } from "./constants";
-console.log(pi);
+import { pi } from './constants'
+console.log(pi)
 ```
 
-你将不会得到任何错误。但是如果你开启了 `checkJs` 选项，那么你可以从 JavaScript 文件中得到错误信息。
+You will not get any errors. However, if you turn on `checkJs` then you will get error messages from the JavaScript file.
 
 ```ts twoslash
 // @errors: 2345
 // @allowjs: true
 // @checkjs: true
 // @filename: constants.js
-module.exports.pi = parseFloat(3.124);
+module.exports.pi = parseFloat(3.142)
 
 // @filename: index.ts
-import { pi } from "./constants";
-console.log(pi);
+import { pi } from './constants'
+console.log(pi)
 ```

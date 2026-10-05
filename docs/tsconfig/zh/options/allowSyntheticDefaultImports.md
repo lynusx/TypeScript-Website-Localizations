@@ -1,21 +1,23 @@
 ---
-display: "允许合成默认导入"
-oneline: "当模块没有默认导入时，允许 'import x from y'"
+display: 'Allow Synthetic Default Imports'
+oneline: "Allow 'import x from y' when a module doesn't have a default export."
 ---
 
-当设置为 true， 并且模块**没有**显式指定默认导出时，`allowSyntheticDefaultImports` 可以让你这样写导入：
+When set to true, `allowSyntheticDefaultImports` allows you to write an import like:
 
 ```ts
-import React from "react";
+import React from 'react'
 ```
 
-而不是：
+instead of:
 
 ```ts
-import * as React from "react";
+import * as React from 'react'
 ```
 
-例如：`allowSyntheticDefaultImports` 不为 true 时：
+When the module **does not** explicitly specify a default export.
+
+For example, without `allowSyntheticDefaultImports` as true:
 
 ```ts twoslash
 // @errors: 1259 1192
@@ -24,30 +26,31 @@ import * as React from "react";
 // @esModuleInterop: false
 // @filename: utilFunctions.js
 // @noImplicitAny: false
-const getStringLength = (str) => str.length;
+const getStringLength = (str) => str.length
 
 module.exports = {
   getStringLength,
-};
+}
 
 // @filename: index.ts
-import utils from "./utilFunctions";
+import utils from './utilFunctions'
 
-const count = utils.getStringLength("Check JS");
+const count = utils.getStringLength('Check JS')
 ```
 
-这段代码会引发一个错误，因为没有“default”对象可以导入，即使你认为应该有。
-为了使用方便，Babel 这样的转译器会在没有默认导出时自动为其创建，使模块看起来更像：
+This code raises an error because there isn't a `default` object which you can import. Even though it feels like it should.
+For convenience, transpilers like Babel will automatically create a default if one isn't created. Making the module look a bit more like:
 
 ```js
 // @filename: utilFunctions.js
-const getStringLength = (str) => str.length;
+const getStringLength = (str) => str.length
 const allFunctions = {
   getStringLength,
-};
+}
 
-module.exports = allFunctions;
-module.exports.default = allFunctions;
+module.exports = allFunctions
+module.exports.default = allFunctions
 ```
 
-本选项不会影响 TypeScript 生成的 JavaScript，它仅对类型检查起作用。当你使用 Babel 生成额外的默认导出，从而使模块的默认导出更易用时，本选项可以让 TypeScript 的行为与 Babel 一致。
+This flag does not affect the JavaScript emitted by TypeScript, it's only for the type checking.
+This option brings the behavior of TypeScript in-line with Babel, where extra code is emitted to make using a default export of a module more ergonomic.

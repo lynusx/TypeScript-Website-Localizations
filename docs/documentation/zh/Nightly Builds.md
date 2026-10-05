@@ -1,80 +1,80 @@
 ---
-title: 每日构建
+title: Nightly Builds
 layout: docs
-permalink: /zh/docs/handbook/nightly-builds.html
-oneline: 如何使用TypeScript的每日构建版本
+permalink: /docs/handbook/nightly-builds.html
+oneline: How to use a nightly build of TypeScript
 translatable: true
 ---
 
-在太平洋标准时间的每日午夜，TypeScript 代码仓库中[master 分支](https://github.com/Microsoft/TypeScript/tree/master)上的代码会自动构建并发布到 npm 上。
-下面将介绍如何获取并结合你的工具来使用它。
+A nightly build from the [TypeScript's `main`](https://github.com/Microsoft/TypeScript/tree/main) branch is published by midnight PST to npm.
+Here is how you can get it and use it with your tools.
 
-## 使用 npm
+## Using npm
 
 ```shell
-npm install -g typescript@next
+npm install -D typescript@next
 ```
 
-## 更新 IDE 来使用每日构建
+## Updating your IDE to use the nightly builds
 
-你还可以配置 IDE 来使用每日构建。
-首先你需要通过 npm 来安装代码包。
-你可以进行全局安装或者安装到本地的`node_modules`目录下。
-
-在下面的内容中，我们假设你已经安装好了`typescript@next`。
+You can also update your editor/IDE to use the nightly drop.
+You will typically need to install the package through npm.
+The rest of this section mostly assumes `typescript@next` is already installed.
 
 ### Visual Studio Code
 
-参考以下示例来更新`.vscode/settings.json`：
+The VS Code website [has documentation on selecting a workspace version of TypeScript](https://code.visualstudio.com/Docs/languages/typescript#_using-newer-typescript-versions).
+After installing a nightly version of TypeScript in your workspace, you can follow directions there, or simply update your workspace settings in the JSON view.
+A direct way to do this is to open or create your workspace's `.vscode/settings.json` and add the following property:
 
 ```json
 "typescript.tsdk": "<path to your folder>/node_modules/typescript/lib"
 ```
 
-更多详情请参考 [VSCode 文档](https://code.visualstudio.com/Docs/languages/typescript#_using-newer-typescript-versions)。
+Alternatively, if you simply want to run the nightly editing experience for JavaScript and TypeScript in Visual Studio Code without changing your workspace version, you can run the [JavaScript and TypeScript Nightly Extension](https://marketplace.visualstudio.com/items?itemName=TypeScriptTeam.vscode-typescript-nightly)
 
 ### Sublime Text
 
-参考以下示例来更新`Settings - User`：
+Update the `Settings - User` file with the following:
 
 ```json
 "typescript_tsdk": "<path to your folder>/node_modules/typescript/lib"
 ```
 
-更多详情请参考 [如何在 Sublime Text 里安装 TypeScript 插件](https://github.com/Microsoft/TypeScript-Sublime-Plugin#installation)。
+More information is available at the [TypeScript Plugin for Sublime Text installation documentation](https://github.com/Microsoft/TypeScript-Sublime-Plugin#installation).
 
-### Visual Studio 2013 和 2015
+### Visual Studio 2013 and 2015
 
-> 注意：绝大多数的变更不需要你安装新版本的 VS TypeScript 插件。
+> Note: Most changes do not require you to install a new version of the VS TypeScript plugin.
 
-目前，每日构建中没有包含完整的插件安装包，但是我们正在试着提供这样的安装包。
+The nightly build currently does not include the full plugin setup, but we are working on publishing an installer on a nightly basis as well.
 
-1. 下载 [VSDevMode.ps1](https://github.com/Microsoft/TypeScript/blob/master/scripts/VSDevMode.ps1) 脚本。
+1. Download the [VSDevMode.ps1](https://github.com/Microsoft/TypeScript/blob/main/scripts/VSDevMode.ps1) script.
 
-   > 同时也可以参考 wiki 文档： [使用自定义的语言服务文件](https://github.com/Microsoft/TypeScript/wiki/Dev-Mode-in-Visual-Studio#using-a-custom-language-service-file)。
+   > Also see our wiki page on [using a custom language service file](https://github.com/Microsoft/TypeScript/wiki/Dev-Mode-in-Visual-Studio#using-a-custom-language-service-file).
 
-2. 打开 PowerShell 命令行窗口，并运行：
+2. From a PowerShell command window, run:
 
-针对 VS 2015：
+For VS 2015:
 
 ```posh
 VSDevMode.ps1 14 -tsScript <path to your folder>/node_modules/typescript/lib
 ```
 
-针对 VS 2013:
+For VS 2013:
 
 ```posh
 VSDevMode.ps1 12 -tsScript <path to your folder>/node_modules/typescript/lib
 ```
 
-### IntelliJ IDEA （Mac）
+### IntelliJ IDEA (Mac)
 
-前往 `Preferences` > `Languages & Frameworks` > `TypeScript`：
+Go to `Preferences` > `Languages & Frameworks` > `TypeScript`:
 
-> TypeScript Version：若通过 npm 安装则为：`/usr/local/lib/node_modules/typescript/lib`
+> TypeScript Version: If you installed with npm: `/usr/local/lib/node_modules/typescript/lib`
 
-### IntelliJ IDEA （Windows）
+### IntelliJ IDEA (Windows)
 
-前往 `File` > `Settings` > `Languages & Frameworks` > `TypeScript`：
+Go to `File` > `Settings` > `Languages & Frameworks` > `TypeScript`:
 
-> TypeScript Version：若通过 npm 安装则为：`C:\Users\USERNAME\AppData\Roaming\npm\node_modules\typescript\lib`
+> TypeScript Version: If you installed with npm: `C:\Users\USERNAME\AppData\Roaming\npm\node_modules\typescript\lib`

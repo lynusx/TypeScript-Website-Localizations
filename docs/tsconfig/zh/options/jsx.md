@@ -1,52 +1,68 @@
 ---
-display: "JSX"
-oneline: "JSX 代码生成"
+display: 'JSX'
+oneline: 'Specify what JSX code is generated.'
 ---
 
-控制 JSX 在 JavaScript 文件中的输出方式。
-这只影响 `.tsx` 文件的 JS 文件输出。
+Controls how JSX constructs are emitted in JavaScript files.
+This only affects output of JS files that started in `.tsx` files.
 
-- `react`: 将 JSX 改为等价的对 `React.createElement` 的调用并生成 `.js` 文件。
-- `react-jsx`: 改为 `__jsx` 调用并生成 `.js` 文件。
-- `react-jsxdev`: 改为 `__jsx` 调用并生成 `.js` 文件。
-- `preserve`: 不对 JSX 进行改变并生成 `.jsx` 文件。
-- `react-native`: 不对 JSX 进行改变并生成 `.js` 文件。
+- `react-jsx`: Emit `.js` files with the JSX changed to `_jsx` calls optimized for production
+- `react-jsxdev`: Emit `.js` files with the JSX changed to `_jsx` calls for development only
+- `preserve`: Emit `.jsx` files with the JSX unchanged
+- `react-native`: Emit `.js` files with the JSX unchanged
+- `react`: Emit `.js` files with JSX changed to the equivalent `React.createElement` calls
 
-### 例
+### For example
 
-示例代码：
+This sample code:
 
 ```tsx
-export const helloWorld = () => <h1>Hello world</h1>;
+export const HelloWorld = () => <h1>Hello world</h1>
 ```
 
-默认为： `"react"`
+React: `"react-jsx"`<sup>[[1]](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)</sup>
 
 ```tsx twoslash
 declare module JSX {
   interface Element {}
   interface IntrinsicElements {
-    [s: string]: any;
+    [s: string]: any
   }
 }
 // @showEmit
 // @noErrors
-export const helloWorld = () => <h1>Hello world</h1>;
+// @jsx: react-jsx
+export const HelloWorld = () => <h1>Hello world</h1>
 ```
 
-保留: `"preserve"`
+React dev transform: `"react-jsxdev"`<sup>[[1]](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)</sup>
 
 ```tsx twoslash
 declare module JSX {
   interface Element {}
   interface IntrinsicElements {
-    [s: string]: any;
+    [s: string]: any
+  }
+}
+// @showEmit
+// @noErrors
+// @jsx: react-jsxdev
+export const HelloWorld = () => <h1>Hello world</h1>
+```
+
+Preserve: `"preserve"`
+
+```tsx twoslash
+declare module JSX {
+  interface Element {}
+  interface IntrinsicElements {
+    [s: string]: any
   }
 }
 // @showEmit
 // @noErrors
 // @jsx: preserve
-export const helloWorld = () => <h1>Hello world</h1>;
+export const HelloWorld = () => <h1>Hello world</h1>
 ```
 
 React Native: `"react-native"`
@@ -55,41 +71,41 @@ React Native: `"react-native"`
 declare module JSX {
   interface Element {}
   interface IntrinsicElements {
-    [s: string]: any;
+    [s: string]: any
   }
 }
 // @showEmit
 // @noErrors
 // @jsx: react-native
-export const helloWorld = () => <h1>Hello world</h1>;
+export const HelloWorld = () => <h1>Hello world</h1>
 ```
 
-React 17 转换: `"react-jsx"`<sup>[[1]](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)</sup>
+Legacy React runtime: `"react"`
 
 ```tsx twoslash
 declare module JSX {
   interface Element {}
   interface IntrinsicElements {
-    [s: string]: any;
+    [s: string]: any
   }
 }
 // @showEmit
 // @noErrors
-// @jsx: react-jsx
-export const helloWorld = () => <h1>Hello world</h1>;
+export const HelloWorld = () => <h1>Hello world</h1>
 ```
 
-React 17 开发模式转换: `"react-jsxdev"`<sup>[[1]](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)</sup>
+This option can be used on a per-file basis too using an `@jsxRuntime` comment.
 
-```tsx twoslash
-declare module JSX {
-  interface Element {}
-  interface IntrinsicElements {
-    [s: string]: any;
-  }
-}
-// @showEmit
-// @noErrors
-// @jsx: react-jsxdev
-export const helloWorld = () => <h1>Hello world</h1>;
+Always use the classic runtime (`"react"`) for this file:
+
+```tsx
+/* @jsxRuntime classic */
+export const HelloWorld = () => <h1>Hello world</h1>
+```
+
+Always use the automatic runtime (`"react-jsx"`) for this file:
+
+```tsx
+/* @jsxRuntime automatic */
+export const HelloWorld = () => <h1>Hello world</h1>
 ```

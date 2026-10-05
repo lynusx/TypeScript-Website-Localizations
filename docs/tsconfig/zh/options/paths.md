@@ -1,39 +1,39 @@
 ---
-display: "路径设置"
-oneline: "一组用于寻找模块导入的路径"
+display: 'Paths'
+oneline: 'Specify a set of entries that re-map imports to additional lookup locations.'
 ---
 
-一些将模块导入重新映射到相对于 `baseUrl` 路径的配置。[手册](/docs/handbook/module-resolution.html#path-mapping)中有更多关于 `paths` 的内容。
+A series of entries which re-map imports to lookup locations relative to the [`baseUrl`](#baseUrl) if set, or to the tsconfig file itself otherwise. There is a larger coverage of `paths` in [the `moduleResolution` reference page](/docs/handbook/modules/reference.html#paths).
 
-`paths` 可以允许你声明 TypeScript 应该如何解析你的 `require`/`import`。
+`paths` lets you declare how TypeScript should resolve an import in your `require`/`import`s.
 
 ```json tsconfig
 {
   "compilerOptions": {
-    "baseUrl": ".", // this must be specified if "paths" is specified.
     "paths": {
-      "jquery": ["node_modules/jquery/dist/jquery"] // this mapping is relative to "baseUrl"
+      "jquery": ["./vendor/jquery/dist/jquery"]
     }
   }
 }
 ```
 
-这将使你可以写 `import "jquery"`，并且在本地获得所有正确的类型。
+This would allow you to be able to write `import "jquery"`, and get all of the correct typing locally.
 
 ```json tsconfig
 {
   "compilerOptions": {
-    "baseUrl": "src",
     "paths": {
-        "app/*": ["app/*"],
-        "config/*": ["app/_config/*"],
-        "environment/*": ["environments/*"],
-        "shared/*": ["app/_shared/*"],
-        "helpers/*": ["helpers/*"],
-        "tests/*": ["tests/*"]
-    },
+      "app/*": ["./src/app/*"],
+      "config/*": ["./src/app/_config/*"],
+      "environment/*": ["./src/environments/*"],
+      "shared/*": ["./src/app/_shared/*"],
+      "helpers/*": ["./src/helpers/*"],
+      "tests/*": ["./src/tests/*"]
+    }
+  }
 }
 ```
 
-这种情况下，你可以告诉 TypeScript 文件解析器支持一些自定义的前缀来寻找代码。
-这种模式可以避免在你的代码中出现过长的相对路径。
+In this case, you can tell the TypeScript file resolver to support a number of custom prefixes to find code.
+
+Note that this feature does not change how import paths are emitted by `tsc`, so `paths` should only be used to inform TypeScript that another tool has this mapping and will use it at runtime or when bundling.

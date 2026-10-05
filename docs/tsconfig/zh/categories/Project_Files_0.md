@@ -1,6 +1,5 @@
 ---
-display: "文件包含"
+display: 'File Inclusion'
 ---
 
-这些设置用于确保 TypeScript 处理正确的文件。
-
+These settings help you ensure that TypeScript picks up the right files.

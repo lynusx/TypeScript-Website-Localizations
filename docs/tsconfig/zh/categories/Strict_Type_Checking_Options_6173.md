@@ -1,15 +1,15 @@
 ---
-display: "严格模式"
+display: 'Strict Checks'
 ---
 
-我们推荐使用[编译器选项`strict`](#strict)来启用每个可能的改进。
+We recommend using the [compiler option `strict`](#strict) to opt-in to every possible improvement as they are built.
 
-TypeScript支持大量的 JavaScript 模式，默认选项允许相当大的灵活性来适应这些模式。
-然而，很多时候这些技巧的使用与保证代码的安全性和可扩展性的目标相冲突。
+TypeScript supports a wide spectrum of JavaScript patterns and defaults to allowing for quite a lot of flexibility in accommodating these styles.
+Often the safety and potential scalability of a codebase can be at odds with some of these techniques.
 
-由于 TS 支持各种类型的 JavaScript，升级到新版本的 TypeScript 时可能出现两种新错误：：
+Because of the variety of supported JavaScript, upgrading to a new version of TypeScript can uncover two types of errors:
 
--代码中已存在的错误：因为语言已经改进了对 JavaScript 的理解，TypeScript 发现了它。
--处理新一块问题的一套新错误。
+- Errors which already exist in your codebase, which TypeScript has uncovered because the language has refined its understanding of JavaScript.
+- A new suite of errors which tackle a new problem domain.
 
-TypeScript 通常会为后一类错误添加一个编译器选项，默认情况下这些选项是不启用的。
+TypeScript will usually add a compiler flag for the latter set of errors, and by default these are not enabled.

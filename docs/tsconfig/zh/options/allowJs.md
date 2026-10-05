@@ -1,39 +1,41 @@
 ---
-display: "允许 JS"
-oneline: "允许你的程序包含 JS 文件。使用 checkJS 来检查在这些文件中的错误。"
+display: 'Allow JS'
+oneline: 'Allow JavaScript files to be a part of your program. Use the `checkJS` option to get errors from these files.'
 ---
 
-允许 JavaScript 文件在你的工程中被引入，而不是仅仅允许 `.ts` 和 `.tsx` 文件。例如这个 JS 文件：
+Allow JavaScript files to be imported inside your project, instead of just `.ts` and `.tsx` files. For example, this JS file:
 
 ```js twoslash
 // @filename: card.js
-export const defaultCardDeck = "Heart";
+export const defaultCardDeck = 'Heart'
 ```
 
-当你引入到一个 TypeScript 文件时将会抛出一个错误：
+When imported into a TypeScript file will raise an error:
 
 ```ts twoslash
 // @errors: 2307
 // @filename: card.js
-module.exports.defaultCardDeck = "Heart";
+module.exports.defaultCardDeck = 'Heart'
 // ---cut---
 // @filename: index.ts
-import { defaultCardDeck } from "./card";
+import { defaultCardDeck } from './card'
 
-console.log(defaultCardDeck);
+console.log(defaultCardDeck)
 ```
 
-当启用 `allowJs` 后它将被正常引入：
+Imports fine with `allowJs` enabled:
 
 ```ts twoslash
 // @filename: card.js
-module.exports.defaultCardDeck = "Heart";
+module.exports.defaultCardDeck = 'Heart'
 // ---cut---
 // @allowJs
 // @filename: index.ts
-import { defaultCardDeck } from "./card";
+import { defaultCardDeck } from './card'
 
-console.log(defaultCardDeck);
+console.log(defaultCardDeck)
 ```
 
-这个选项是一种可以允许 `.ts` 和 `.tsx` 与现有的 JavaScript 文件共存的方式。可以用于逐步将 TypeScript 文件逐步添加到 JS 工程中。
+This flag can be used as a way to incrementally add TypeScript files into JS projects by allowing the `.ts` and `.tsx` files to live along-side existing JavaScript files.
+
+It can also be used along-side [`declaration`](#declaration) and [`emitDeclarationOnly`](#emitDeclarationOnly) to [create declarations for JS files](/docs/handbook/declaration-files/dts-from-js.html).

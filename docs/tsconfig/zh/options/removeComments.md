@@ -1,33 +1,33 @@
 ---
-display: "移除注释"
-oneline: "不生成注释。"
+display: 'Remove Comments'
+oneline: 'Disable emitting comments.'
 ---
 
-当转换为 JavaScript 时，忽略所有 TypeScript 文件中的注释。默认为 `false`。
+Strips all comments from TypeScript files when converting into JavaScript. Defaults to `false`.
 
-例如，这是一个有 JSDoc 注释的 TypeScript 文件：
+For example, this is a TypeScript file which has a JSDoc comment:
 
 ```ts
-/** 'Hello world' 的葡萄牙语翻译 */
-export const helloWorldPTBR = "Olá Mundo";
+/** The translation of 'Hello world' into Portuguese */
+export const helloWorldPTBR = 'Olá Mundo'
 ```
 
-当然 `removeComments` 被设置为 `true`：
+When `removeComments` is set to `true`:
 
 ```ts twoslash
 // @showEmit
 // @removeComments: true
-/** 'Hello world' 的葡萄牙语翻译 */
-export const helloWorldPTBR = "Olá Mundo";
+/** The translation of 'Hello world' into Portuguese */
+export const helloWorldPTBR = 'Olá Mundo'
 ```
 
-未设置 `removeComments` 或被设置为 `false`：
+Without setting `removeComments` or having it as `false`:
 
 ```ts twoslash
 // @showEmit
 // @removeComments: false
-/** 'Hello world' 的葡萄牙语翻译 */
-export const helloWorldPTBR = "Olá Mundo";
+/** The translation of 'Hello world' into Portuguese */
+export const helloWorldPTBR = 'Olá Mundo'
 ```
 
-这意味着你的注释将呈现在 JavaScript 中。
+This means that your comments will show up in the JavaScript code.

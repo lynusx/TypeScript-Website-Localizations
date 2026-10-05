@@ -1,9 +1,13 @@
 ---
-display: "模块解析"
-oneline: "允许 TypeScript 1.6 的模块解析策略"
+display: 'Module Resolution'
+oneline: 'Specify how TypeScript looks up a file from a given module specifier.'
 ---
 
-指定模块解析策略：`'node'` （Node.js） 或 `'classic'` （在 TypeScript 1.6 版本之前使用）。
-你可能不需要在新代码中使用 `classic`。
+Specify the module resolution strategy:
 
-这里有一个关于[模块解析](/docs/handbook/module-resolution.html)的手册参考。
+- `'node16'` or `'nodenext'` for modern versions of Node.js. Node.js v12 and later supports both ECMAScript imports and CommonJS `require`, which resolve using different algorithms. These `moduleResolution` values, when combined with the corresponding [`module`](#module) values, picks the right algorithm for each resolution based on whether Node.js will see an `import` or `require` in the output JavaScript code.
+- `'node10'` (previously called `'node'`) for Node.js versions older than v10, which only support CommonJS `require`. You probably won't need to use `node10` in modern code.
+- `'bundler'` for use with bundlers. Like `node16` and `nodenext`, this mode supports package.json `"imports"` and `"exports"`, but unlike the Node.js resolution modes, `bundler` never requires file extensions on relative paths in imports.
+- `'classic'` was used in TypeScript before the release of 1.6. `classic` should not be used.
+
+There are reference pages explaining the [theory behind TypeScript’s module resolution](https://www.typescriptlang.org/docs/handbook/modules/theory.html#module-resolution) and the [details of each option](/docs/handbook/modules/reference.html#the-moduleresolution-compiler-option).

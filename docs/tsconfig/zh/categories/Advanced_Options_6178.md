@@ -1,5 +1,5 @@
 ---
-display: "高级"
+display: 'Advanced'
 ---
 
-调试相关的选项。
+Flags which help with debugging

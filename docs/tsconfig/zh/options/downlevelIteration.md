@@ -1,96 +1,100 @@
 ---
-display: "迭代器降级"
-oneline: "为迭代器对象生成更符合要求但更复杂的 JavaScript。"
+display: 'Downlevel Iteration'
+oneline: 'Emit more compliant, but verbose and less performant JavaScript for iteration.'
 ---
 
-‘降级’ 是 TypeScript 的术语，指用于转换到旧版本的 JavaScript。
-这个选项是为了在旧版 Javascript 运行时上更准确的实现现代 JavaScript 迭代器的概念。
+Downleveling is TypeScript's term for transpiling to an older version of JavaScript.
+This flag is to enable support for a more accurate implementation of how modern JavaScript iterates through new concepts in older JavaScript runtimes.
 
-ECMAScript 6 增加了几个新的迭代器原语：`for / of` 循环（`for (el of arr)`），数组展开（`[a, ...b]`），参数展开（`fn(...args)`）和 `Symbol.iterator`。
+ECMAScript 6 added several new iteration primitives: the `for / of` loop (`for (el of arr)`), Array spread (`[a, ...b]`), argument spread (`fn(...args)`), and `Symbol.iterator`.
+`downlevelIteration` allows for these iteration primitives to be used more accurately in ES5 environments if a `Symbol.iterator` implementation is present.
 
-如果 `Symbol.iterator` 存在的话，`--downlevelIteration` 将允许在 ES5 环境更准确的使用这些迭代原语。
+#### Example: Effects on `for / of`
 
-#### 例：`for / of` 的效果
-
-对于 TypeScript 代码：
+With this TypeScript code:
 
 ```ts twoslash
-const str = "Hello!";
+const str = 'Hello!'
 for (const s of str) {
-  console.log(s);
+  console.log(s)
 }
 ```
 
-如果没有启用 `downlevelIteration`，`for / of` 循环将被降级为传统的 `for` 循环：
+Without `downlevelIteration` enabled, a `for / of` loop on any object is downleveled to a traditional `for` loop:
 
 ```ts twoslash
 // @target: ES5
 // @showEmit
-const str = "Hello!";
+const str = 'Hello!'
 for (const s of str) {
-  console.log(s);
+  console.log(s)
 }
 ```
 
-这通常是人们所期望的，但是它并不是 100% 符合 ECMAScript 迭代器协议。
-某些字符串，例如 emoji （😜），其 `.length` 为 2（甚至更多），但在 `for-of` 循环中应只有一次迭代。
-可以在 [Jonathan New 的这篇文章中](https://blog.jonnew.com/posts/poo-dot-length-equals-two) 找到更详细的解释。
+This is often what people expect, but it's not 100% compliant with ECMAScript iteration protocol.
+Certain strings, such as emoji (😜), have a `.length` of 2 (or even more!), but should iterate as 1 unit in a `for-of` loop.
+See [this blog post by Jonathan New](https://blog.jonnew.com/posts/poo-dot-length-equals-two) for a longer explanation.
 
-当 `downlevelIteration` 启用时，TypeScript 将会使用辅助函数来检查 `Symbol.iterator` 的实现（无论是原生实现还是polyfill）。
-如果没有实现，则将会回退到基于索引的迭代。
+When `downlevelIteration` is enabled, TypeScript will use a helper function that checks for a `Symbol.iterator` implementation (either native or polyfill).
+If this implementation is missing, you'll fall back to index-based iteration.
 
 ```ts twoslash
 // @target: ES5
 // @downlevelIteration
 // @showEmit
-const str = "Hello!";
+const str = 'Hello!'
 for (const s of str) {
-  console.log(s);
+  console.log(s)
 }
 ```
 
-你也可以通过 [`importHelpers`](#importHelpers) 来使用 [tslib](https://www.npmjs.com/package/tslib) 以减少被内联的 JavaScript 的数量：
+You can use [tslib](https://www.npmjs.com/package/tslib) via [`importHelpers`](#importHelpers) to reduce the amount of inline JavaScript too:
 
 ```ts twoslash
 // @target: ES5
 // @downlevelIteration
 // @importHelpers
 // @showEmit
-const str = "Hello!";
+const str = 'Hello!'
 for (const s of str) {
-  console.log(s);
+  console.log(s)
 }
 ```
 
-**注：** 如果在运行时不存在 `Symbol.iterator`，启用 `downlevelIteration` 将不会提高合规性。
+**Note:** enabling `downlevelIteration` does not improve compliance if `Symbol.iterator` is not present in the runtime.
 
-#### 例：数组展开的效果
+#### Example: Effects on Array Spreads
 
-这是一个数组展开：
+This is an array spread:
 
 ```js
-// 构建一个新的数组，其元素首先为 1，然后是 arr2 的元素。 
-const arr = [1, ...arr2];
+// Make a new array whose elements are 1 followed by the elements of arr2
+const arr = [1, ...arr2]
 ```
-根据描述，听起来很容易降级到 ES5：
+
+Based on the description, it sounds easy to downlevel to ES5:
 
 ```js
 // The same, right?
-const arr = [1].concat(arr2);
+const arr = [1].concat(arr2)
 ```
 
-但是在某些罕见的情况下会明显不同。例如如果数组中有一个“洞”，缺失的索引在展开时将创建一个 _自己的_ 属性，但若使用 `concat` 则不会： 
+However, this is observably different in certain rare cases.
+
+For example, if a source array is missing one or more items (contains a hole), the spread syntax will replace each empty item with `undefined`, whereas `.concat` will leave them intact.
 
 ```js
-// 构建一个元素 `1` 不存在的数组
-let missing = [0, , 1];
-let spreaded = [...missing];
-let concated = [].concat(missing);
+// Make an array where the element at index 1 is missing
+let arrayWithHole = ['a', , 'c']
+let spread = [...arrayWithHole]
+let concatenated = [].concat(arrayWithHole)
 
-// true
-"1" in spreaded;
-// false
-"1" in concated;
+console.log(arrayWithHole)
+// [ 'a', <1 empty item>, 'c' ]
+console.log(spread)
+// [ 'a', undefined, 'c' ]
+console.log(concatenated)
+// [ 'a', <1 empty item>, 'c' ]
 ```
 
-就像 `for / of` 一样，`downlevelIteration` 将使用 `Symbol.iterator`（如果存在的话）来更准确的模拟 ES6 的行为。
+Just as with `for / of`, `downlevelIteration` will use `Symbol.iterator` (if present) to more accurately emulate ES 6 behavior.

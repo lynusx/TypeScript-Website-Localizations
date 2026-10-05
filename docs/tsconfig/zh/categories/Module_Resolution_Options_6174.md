@@ -1,3 +1,3 @@
 ---
-display: "模块解析"
+display: 'Module Resolution'
 ---

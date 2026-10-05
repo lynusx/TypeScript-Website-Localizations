@@ -1,10 +1,10 @@
 ---
-display: "增量"
-oneline: "为支持增量编译工程，保存 .tsbuildinfo 文件"
+display: 'Incremental'
+oneline: 'Save .tsbuildinfo files to allow for incremental compilation of projects.'
 ---
 
-使 TypeScript 将上次编译的工程图信息保存到磁盘上的文件中。这将会在您编译输出的同一文件夹中创建一系列 `.tsbuildinfo` 文件。
-它们不会再运行时被您的 JavaScript 使用，并且可以被安全的删除。
-你可以在 [3.4 发布日志](/docs/handbook/release-notes/typescript-3-4.html#faster-subsequent-builds-with-the---incremental-flag) 中获取更多关于该选项的内容。
+Tells TypeScript to save information about the project graph from the last compilation to files stored on disk. This
+creates a series of `.tsbuildinfo` files in the same folder as your compilation output. They are not used by your
+JavaScript at runtime and can be safely deleted. You can read more about the flag in the [3.4 release notes](/docs/handbook/release-notes/typescript-3-4.html#faster-subsequent-builds-with-the---incremental-flag).
 
-可以使用 [`tsBuildInfoFile`](#tsBuildInfoFile) 来控制 `.tsbuildinfo` 文件被编译到哪个文件夹。
+To control which folders you want to the files to be built to, use the config option [`tsBuildInfoFile`](#tsBuildInfoFile).

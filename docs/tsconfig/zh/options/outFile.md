@@ -1,11 +1,11 @@
 ---
-display: "输出文件"
-oneline: "将所有输出打包到一个 .js 文件中。如果 `declaration` 为 true 还可以指定一个 .d.ts 文件。"
+display: 'Out File'
+oneline: 'Specify a file that bundles all outputs into one JavaScript file. If [`declaration`](#declaration) is true, also designates a file that bundles all .d.ts output.'
 ---
 
-如果被指定，所有 _全局_ （非模块） 文件将被合并到指定的单个输出文件中。
+If specified, all _global_ (non-module) files will be concatenated into the single output file specified.
 
-如果 `module` 为 `system` 或 `amd`，所有模块文件也将在所有全局内容之后被合并到这个文件中。
+If `module` is `system` or `amd`, all module files will also be concatenated into this file after all global content.
 
-注：除非 `module` 是 `None`，`System` 或 `AMD`， 否则不能使用 `outFile`。
-这个选项 _不能_ 用来打包 CommonJS 或 ES6 模块。
+Note: `outFile` cannot be used unless `module` is `None`, `System`, or `AMD`.
+This option _cannot_ be used to bundle CommonJS or ES6 modules.

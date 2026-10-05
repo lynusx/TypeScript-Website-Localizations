@@ -1,11 +1,12 @@
 ---
-display: "根目录"
-oneline: "设置多个根目录"
+display: 'Root Dirs'
+oneline: 'Allow multiple folders to be treated as one when resolving modules.'
 ---
 
-通过 `rootDirs`，你可以告诉编译器有许多“虚拟”的目录作为一个根目录。这将会允许编译器在这些“虚拟”目录中解析相对应的模块导入，就像它们被合并到同一目录中一样。
+Using `rootDirs`, you can inform the compiler that there are many "virtual" directories acting as a single root.
+This allows the compiler to resolve relative module imports within these "virtual" directories, as if they were merged in to one directory.
 
-例如：
+For example:
 
 ```
  src
@@ -27,4 +28,39 @@ oneline: "设置多个根目录"
 }
 ```
 
-这不会影响到 TypeScript 如何生成 JavaScript，而仅是模拟了假设它们在运行时能通过这些相对路径工作。
+This does not affect how TypeScript emits JavaScript, it only emulates the assumption that they will be able to
+work via those relative paths at runtime.
+
+`rootDirs` can be used to provide a separate "type layer" to files that are not TypeScript or JavaScript by providing a home for generated `.d.ts` files in another folder. This technique is useful for bundled applications where you use `import` of files that aren't necessarily code:
+
+```sh
+ src
+ └── index.ts
+ └── css
+     └── main.css
+     └── navigation.css
+
+ generated
+ └── css
+     └── main.css.d.ts
+     └── navigation.css.d.ts
+```
+
+```json tsconfig
+{
+  "compilerOptions": {
+    "rootDirs": ["src", "generated"]
+  }
+}
+```
+
+This technique lets you generate types ahead of time for the non-code source files. Imports then work naturally based off the source file's location.
+For example `./src/index.ts` can import the file `./src/css/main.css` and TypeScript will be aware of the bundler's behavior for that filetype via the corresponding generated declaration file.
+
+```ts twoslash
+// @filename: main.css.d.ts
+export const appClass = 'mainClassF3EC2'
+// ---cut---
+// @filename: index.ts
+import { appClass } from './main.css'
+```

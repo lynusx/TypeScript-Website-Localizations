@@ -1,6 +1,17 @@
-## TSConfig 前言
+---
+header: Intro to the TSConfig Reference
+firstLine: A TSConfig file in a directory indicates that the directory is the root of a TypeScript or JavaScript project...
+---
 
-目录中的 TSConfig 文件表明该目录是 TypeScript 或 JavaScript 项目的根目录。
-TSConfig 文件可以是 `tsconfig.json` 或 `jsconfig.json`，它们的配置项和行为相同。
+A TSConfig file in a directory indicates that the directory is the root of a TypeScript or JavaScript project.
+The TSConfig file can be either a `tsconfig.json` or `jsconfig.json`, both have the same set of config variables.
 
-此页涵盖了 TSConfig 文件中可用的所有不同选项。本页从每个选项的概述开始，到 JSON 文件的根属性，然后是`compilerOptions`（大部分选项），最后是 `watchOptions`。
+This page covers all of the different options available inside a TSConfig file. There are over 100 options, and this page is not built to be read from top to bottom. Instead it has five main sections:
+
+- A categorized overview of all compiler flags
+- The [root fields](#Top%20Level) for letting TypeScript know what files are available
+- The [`compilerOptions`](#compilerOptions) fields, this is the majority of the document
+- The [`watchOptions`](#watchOptions) fields, for tweaking the watch mode
+- The [`typeAcquisition`](#typeAcquisition) fields, for tweaking how types are added to JavaScript projects
+
+If you are starting a TSConfig from scratch, you may want to consider using `tsc --init` to bootstrap or use a [TSConfig base](https://github.com/tsconfig/bases#centralized-recommendations-for-tsconfig-bases).

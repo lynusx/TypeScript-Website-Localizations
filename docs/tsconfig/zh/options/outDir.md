@@ -1,12 +1,12 @@
 ---
-display: "输出目录"
-oneline: "为所有生成的文件设置一个输出目录。"
+display: 'Out Dir'
+oneline: 'Specify an output folder for all emitted files.'
 ---
 
-如果被指定，`.js` （以及 `.d.ts`, `.js.map` 等）将会被生成到这个目录下。
-原始源文件的目录将会被保留，如果计算出的根目录不是你想要的，可以查看 [rootDir](#rootDir)。
+If specified, `.js` (as well as `.d.ts`, `.js.map`, etc.) files will be emitted into this directory.
+The directory structure of the original source files is preserved; see [`rootDir`](#rootDir) if the computed root is not what you intended.
 
-如果没有指定，`.js` 将被生成至于生成它们的 `.ts` 文件相同的目录中：
+If not specified, `.js` files will be emitted in the same directory as the `.ts` files they were generated from:
 
 ```sh
 $ tsc
@@ -16,7 +16,7 @@ example
 └── index.ts
 ```
 
-使用类似这样的 `tsconfig.json`：
+With a `tsconfig.json` like this:
 
 ```json tsconfig
 {
@@ -26,7 +26,7 @@ example
 }
 ```
 
-使用这些配置运行 `tsc` 时，会将文件移动到指定的 `dist` 文件夹中：
+Running `tsc` with these settings moves the files into the specified `dist` folder:
 
 ```sh
 $ tsc

@@ -1,7 +1,8 @@
 ---
-display: "Source Maps"
+display: 'Source Maps'
 ---
 
-为了支持丰富的调试工具，并为开发人员提供有意义的崩溃报告，TypeScript 支持生成符合 JavaScript Source Map 标准的附加文件。
+In order to provide rich debugging tools and crash reports which make sense to developers, TypeScript supports
+emitting additional files which conform to the JavaScript Source Map standards.
 
-它们与对应的 JavaScript 文件一起生成，以 `.map` 结尾。
+These are emitted as `.map` files which live alongside the file they represent.

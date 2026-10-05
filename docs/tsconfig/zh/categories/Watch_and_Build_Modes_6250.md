@@ -1,9 +1,10 @@
 ---
-display: "监听选项"
+display: 'Watch Options'
 ---
 
-TypeScript 3.8 提供了一个监听目录的新策略，这对于有效地获取 `node_modules` 的更改至关重要。
+TypeScript 3.8 shipped a new strategy for watching directories, which is crucial for efficiently picking up changes to `node_modules`.
 
-在 Linux 这一类操作系统上，TypeScript 会在 `node_modules` 及其子目录上启动目录监听（而不是文件监听），以检测依赖关系的变化。这是因为 `node_modules` 中的文件数目巨大，经常超过系统允许的最大文件监听数量，而需要监听的目录却少得多。
+On operating systems like Linux, TypeScript installs directory watchers (as opposed to file watchers) on `node_modules` and many of its subdirectories to detect changes in dependencies.
+This is because the number of available file watchers is often eclipsed by the number of files in `node_modules`, whereas there are way fewer directories to track.
 
-由于不同项目的环境和需求等不同，这个新方法可能不适合你的工作流，因此 TypeScript 3.8 引入了一个新的 `watchOptions` 字段，允许用户告诉编译器或语言服务应该采用哪种策略来跟踪文件和目录更改。
+Because every project might work better under different strategies, and this new approach might not work well for your workflows, TypeScript 3.8 introduces a new `watchOptions` field which allows users to tell the compiler/language service which watching strategies should be used to keep track of files and directories.

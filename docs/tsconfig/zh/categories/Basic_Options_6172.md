@@ -1,5 +1,5 @@
 ---
-display: "项目选项"
+display: 'Project Options'
 ---
 
-这些设置用于定义项目的运行时期望、JavaScript 的输出方式和位置，以及与现有 JavaScript 代码的集成级别。
+These settings are used to define the runtime expectations of your project, how and where you want the JavaScript to be emitted and the level of integration you want with existing JavaScript code.

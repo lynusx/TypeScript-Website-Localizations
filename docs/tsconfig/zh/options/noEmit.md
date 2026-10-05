@@ -1,10 +1,10 @@
 ---
-display: "禁止生成"
-oneline: "不在编译中生产文件。"
+display: 'No Emit'
+oneline: 'Disable emitting files from a compilation.'
 ---
 
-禁止编译器生成文件，例如 JavaScript 代码，source-map 或声明。
+Do not emit compiler output files like JavaScript source code, source-maps or declarations.
 
-这为另一个工具提供了空间，例如用 [Babel](https://babeljs.io) 或 [swc](https://github.com/swc-project/swc) 来处理将 TypeScript 转换为可以在 JavaScript 环境中运行的文件的过程。
+This makes room for another tool like [Babel](https://babeljs.io), or [swc](https://github.com/swc-project/swc) to handle converting the TypeScript file to a file which can run inside a JavaScript environment.
 
-然后你可以使用 TypeScript 作为提供编辑器集成的工具，或用来对源码进行类型检查。
+You can then use TypeScript as a tool for providing editor integration, and as a source code type-checker.
