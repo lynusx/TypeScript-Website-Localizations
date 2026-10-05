@@ -108,3 +108,6 @@ docs/**/en
 
 # Then you can set this up yourself
 .vscode
+
+# MacOS
+.DS_Store
