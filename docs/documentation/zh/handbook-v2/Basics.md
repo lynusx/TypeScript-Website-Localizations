@@ -1,7 +1,7 @@
 ---
 title: The Basics
 layout: docs
-permalink: /docs/handbook/2/basic-types.html
+permalink: /zh/docs/handbook/2/basic-types.html
 oneline: 'Step one in learning TypeScript: The basic types.'
 preamble: >
   <p>Welcome to the first page of the handbook. If this is your first experience with TypeScript - you may want to start at one of the '<a href='https://www.typescriptlang.org/docs/handbook/intro.html#get-started'>Getting Started</a>' guides</a>

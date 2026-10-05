@@ -1,7 +1,7 @@
 ---
 title: Nightly Builds
 layout: docs
-permalink: /docs/handbook/nightly-builds.html
+permalink: /zh/docs/handbook/nightly-builds.html
 oneline: How to use a nightly build of TypeScript
 translatable: true
 ---

@@ -1,7 +1,7 @@
 ---
 title: JS Projects Utilizing TypeScript
 layout: docs
-permalink: /docs/handbook/intro-to-js-ts.html
+permalink: /zh/docs/handbook/intro-to-js-ts.html
 oneline: How to add type checking to JavaScript files using TypeScript
 translatable: true
 ---

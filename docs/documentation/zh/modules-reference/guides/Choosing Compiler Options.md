@@ -2,7 +2,7 @@
 title: Modules - Choosing Compiler Options
 short: Choosing Compiler Options
 layout: docs
-permalink: /docs/handbook/modules/guides/choosing-compiler-options.html
+permalink: /zh/docs/handbook/modules/guides/choosing-compiler-options.html
 oneline: How to choose compiler options that reflect your module environment
 translatable: true
 ---

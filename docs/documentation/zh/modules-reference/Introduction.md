@@ -2,7 +2,7 @@
 title: Modules - Introduction
 short: Introduction
 layout: docs
-permalink: /docs/handbook/modules/introduction.html
+permalink: /zh/docs/handbook/modules/introduction.html
 oneline: How TypeScript models JavaScript modules
 translatable: true
 ---

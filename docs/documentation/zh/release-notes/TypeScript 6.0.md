@@ -1,7 +1,7 @@
 ---
 title: TypeScript 6.0
 layout: docs
-permalink: /docs/handbook/release-notes/typescript-6-0.html
+permalink: /zh/docs/handbook/release-notes/typescript-6-0.html
 oneline: TypeScript 6.0 Release Notes
 ---
 

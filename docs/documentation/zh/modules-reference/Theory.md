@@ -2,7 +2,7 @@
 title: Modules - Theory
 short: Theory
 layout: docs
-permalink: /docs/handbook/modules/theory.html
+permalink: /zh/docs/handbook/modules/theory.html
 oneline: How TypeScript models JavaScript modules
 translatable: true
 ---

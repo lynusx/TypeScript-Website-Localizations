@@ -2,7 +2,7 @@
 title: TypeScript for Java/C# Programmers
 short: TS for Java/C# Programmers
 layout: docs
-permalink: /docs/handbook/typescript-in-5-minutes-oop.html
+permalink: /zh/docs/handbook/typescript-in-5-minutes-oop.html
 oneline: Learn TypeScript if you have a background in object-oriented languages
 ---
 

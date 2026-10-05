@@ -1,7 +1,7 @@
 ---
 title: TypeScript 5.4
 layout: docs
-permalink: /docs/handbook/release-notes/typescript-5-4.html
+permalink: /zh/docs/handbook/release-notes/typescript-5-4.html
 oneline: TypeScript 5.4 Release Notes
 ---
 

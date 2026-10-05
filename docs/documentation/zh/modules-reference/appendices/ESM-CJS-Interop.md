@@ -2,7 +2,7 @@
 title: Modules - ESM/CJS Interoperability
 short: ESM/CJS Interoperability
 layout: docs
-permalink: /docs/handbook/modules/appendices/esm-cjs-interop.html
+permalink: /zh/docs/handbook/modules/appendices/esm-cjs-interop.html
 oneline: A detailed look at interoperability between ES modules and CommonJS modules
 ---
 

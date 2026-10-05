@@ -1,7 +1,7 @@
 ---
 title: TypeScript 5.8
 layout: docs
-permalink: /docs/handbook/release-notes/typescript-5-8.html
+permalink: /zh/docs/handbook/release-notes/typescript-5-8.html
 oneline: TypeScript 5.8 Release Notes
 ---
 

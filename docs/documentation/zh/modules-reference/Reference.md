@@ -2,7 +2,7 @@
 title: Modules - Reference
 short: Reference
 layout: docs
-permalink: /docs/handbook/modules/reference.html
+permalink: /zh/docs/handbook/modules/reference.html
 oneline: Module syntax and compiler options reference
 translatable: true
 ---
