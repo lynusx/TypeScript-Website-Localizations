@@ -16,24 +16,24 @@ TypeScript 还会根据你指定的 [`target`](#target) 包含较新 JS 特性�
 
 ### High Level libraries
 
-| Name         | Contents                                                                                                                                          |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ES5`        | 所有 ES5 功能的核心定义                                                                                                                           |
-| `ES2015`     | ES2015（亦称 ES6）中可用的附加 API —— `array.find`、`Promise`、`Proxy`、`Symbol`、`Map`、`Set`、`Reflect` 等                                    |
-| `ES6`        | "ES2015" 的别名                                                                                                                                   |
-| `ES2016`     | ES2016 中可用的附加 API —— `array.include` 等                                                                                                     |
-| `ES7`        | "ES2016" 的别名                                                                                                                                   |
-| `ES2017`     | ES2017 中可用的附加 API —— `Object.entries`、`Object.values`、`Atomics`、`SharedArrayBuffer`、`date.formatToParts`、类型化数组等                  |
-| `ES2018`     | ES2018 中可用的附加 API —— `async` 可迭代对象、`promise.finally`、`Intl.PluralRules`、`regexp.groups` 等                                        |
-| `ES2019`     | ES2019 中可用的附加 API —— `array.flat`、`array.flatMap`、`Object.fromEntries`、`string.trimStart`、`string.trimEnd` 等                          |
-| `ES2020`     | ES2020 中可用的附加 API —— `string.matchAll` 等                                                                                                  |
-| `ES2021`     | ES2021 中可用的附加 API —— `promise.any`、`string.replaceAll` 等                                                                                 |
-| `ES2022`     | ES2022 中可用的附加 API —— `array.at`、`RegExp.hasIndices` 等                                                                                    |
-| `ES2023`     | ES2023 中可用的附加 API —— `array.with`、`array.findLast`、`array.findLastIndex`、`array.toSorted`、`array.toReversed` 等                         |
-| `ESNext`     | ESNext 中可用的附加 API —— 随着 JavaScript 规范的演进而发生变化                                                                                   |
-| `DOM`        | [DOM](https://developer.mozilla.org/docs/Glossary/DOM) 定义 —— `window`、`document` 等                                                          |
-| `WebWorker`  | [WebWorker](https://developer.mozilla.org/docs/Web/API/Web_Workers_API/Using_web_workers) 环境中可用的 API                                      |
-| `ScriptHost` | [Windows 脚本宿主系统（Windows Script Host）](https://wikipedia.org/wiki/Windows_Script_Host) 的 API                                            |
+| Name         | Contents                                                                                                                         |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| `ES5`        | 所有 ES5 功能的核心定义                                                                                                          |
+| `ES2015`     | ES2015（亦称 ES6）中可用的附加 API —— `array.find`、`Promise`、`Proxy`、`Symbol`、`Map`、`Set`、`Reflect` 等                     |
+| `ES6`        | "ES2015" 的别名                                                                                                                  |
+| `ES2016`     | ES2016 中可用的附加 API —— `array.include` 等                                                                                    |
+| `ES7`        | "ES2016" 的别名                                                                                                                  |
+| `ES2017`     | ES2017 中可用的附加 API —— `Object.entries`、`Object.values`、`Atomics`、`SharedArrayBuffer`、`date.formatToParts`、类型化数组等 |
+| `ES2018`     | ES2018 中可用的附加 API —— `async` 可迭代对象、`promise.finally`、`Intl.PluralRules`、`regexp.groups` 等                         |
+| `ES2019`     | ES2019 中可用的附加 API —— `array.flat`、`array.flatMap`、`Object.fromEntries`、`string.trimStart`、`string.trimEnd` 等          |
+| `ES2020`     | ES2020 中可用的附加 API —— `string.matchAll` 等                                                                                  |
+| `ES2021`     | ES2021 中可用的附加 API —— `promise.any`、`string.replaceAll` 等                                                                 |
+| `ES2022`     | ES2022 中可用的附加 API —— `array.at`、`RegExp.hasIndices` 等                                                                    |
+| `ES2023`     | ES2023 中可用的附加 API —— `array.with`、`array.findLast`、`array.findLastIndex`、`array.toSorted`、`array.toReversed` 等        |
+| `ESNext`     | ESNext 中可用的附加 API —— 随着 JavaScript 规范的演进而发生变化                                                                  |
+| `DOM`        | [DOM](https://developer.mozilla.org/docs/Glossary/DOM) 定义 —— `window`、`document` 等                                           |
+| `WebWorker`  | [WebWorker](https://developer.mozilla.org/docs/Web/API/Web_Workers_API/Using_web_workers) 环境中可用的 API                       |
+| `ScriptHost` | [Windows 脚本宿主系统（Windows Script Host）](https://wikipedia.org/wiki/Windows_Script_Host) 的 API                             |
 
 ### Individual library components
 

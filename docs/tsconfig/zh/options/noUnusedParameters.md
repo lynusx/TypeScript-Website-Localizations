@@ -1,6 +1,6 @@
 ---
 display: 'No Unused Parameters'
-oneline: "当函数参数未被读取时报错。"
+oneline: '当函数参数未被读取时报错。'
 ---
 
 在函数中存在未使用的参数时报告错误。

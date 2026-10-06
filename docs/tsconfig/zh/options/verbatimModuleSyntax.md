@@ -3,7 +3,7 @@ display: 'Verbatim Module Syntax'
 oneline: "不转换也不省略任何未标记为仅类型的导入或导出，确保根据 'module' 设置将其写入输出文件的格式中。"
 ---
 
-默认情况下，TypeScript 会执行名为 *导入省略*（import elision）的操作。
+默认情况下，TypeScript 会执行名为 _导入省略_（import elision）的操作。
 大体上，如果你编写类似如下代码：
 
 ```ts

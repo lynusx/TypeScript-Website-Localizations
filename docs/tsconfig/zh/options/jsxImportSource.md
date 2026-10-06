@@ -92,4 +92,4 @@ export function App() {
 
 这会为 `_jsx` 工厂函数添加 `preact/jsx-runtime` 导入。
 
-*注意：* 为了使其按预期工作，你的 `tsx` 文件必须包含 `export` 或 `import`，以便被视为一个模块。
+_注意：_ 为了使其按预期工作，你的 `tsx` 文件必须包含 `export` 或 `import`，以便被视为一个模块。
