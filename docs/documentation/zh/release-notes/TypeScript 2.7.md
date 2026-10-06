@@ -2,14 +2,14 @@
 title: TypeScript 2.7
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-2-7.html
-oneline: TypeScript 2.7 Release Notes
+oneline: TypeScript 2.7 发布说明
 ---
 
-## Constant-named properties
+## 常量命名属性
 
-TypeScript 2.7 adds support for declaring const-named properties on types including ECMAScript symbols.
+TypeScript 2.7 新增了对在类型上声明常量命名属性的支持，包括 ECMAScript symbol。
 
-##### Example
+##### 示例
 
 ```ts
 // Lib
@@ -32,9 +32,9 @@ class JSONSerializableItem implements Serializable {
 }
 ```
 
-This also applies to numeric and string literals.
+该特性同样适用于数字字面量和字符串字面量。
 
-##### Example
+##### 示例
 
 ```ts
 const Foo = 'Foo'
@@ -51,12 +51,12 @@ let b = x[Bar] // has type 'string'
 
 ## `unique symbol`
 
-To enable treating symbols as unique literals a new type `unique symbol` is available.
-`unique symbol` is a subtype of `symbol`, and are produced only from calling `Symbol()` or `Symbol.for()`, or from explicit type annotations.
-The new type is only allowed on `const` declarations and `readonly static` properties, and in order to reference a specific unique symbol, you'll have to use the `typeof` operator.
-Each reference to a `unique symbol` implies a completely unique identity that's tied to a given declaration.
+为了将 symbol 视为独特的字面量类型，TypeScript 引入了新的 `unique symbol` 类型。
+`unique symbol` 是 `symbol` 的子类型，只能通过调用 `Symbol()` 或 `Symbol.for()`，或通过显式类型注解来产生。
+该新类型仅允许用于 `const` 声明和 `readonly static` 属性上。若要引用某个特定的 unique symbol，必须使用 `typeof` 运算符。
+每个 `unique symbol` 的引用都代表与特定声明绑定的完全唯一的标识。
 
-##### Example
+##### 示例
 
 ```ts
 // Works
@@ -74,9 +74,9 @@ class C {
 }
 ```
 
-Because each `unique symbol` has a completely separate identity, no two `unique symbol` types are assignable or comparable to each other.
+由于每个 `unique symbol` 都有完全独立的标识，两个 `unique symbol` 类型之间不可相互赋值或比较。
 
-##### Example
+##### 示例
 
 ```ts
 const Foo = Symbol()
@@ -88,11 +88,11 @@ if (Foo === Bar) {
 }
 ```
 
-## Strict Class Initialization
+## 严格的类初始化检查
 
-TypeScript 2.7 introduces a new flag called [`strictPropertyInitialization`](/tsconfig#strictPropertyInitialization).
-This flag performs checks to ensure that each instance property of a class gets initialized in the constructor body, or by a property initializer.
-For example
+TypeScript 2.7 引入了一个名为 [`strictPropertyInitialization`](/tsconfig#strictPropertyInitialization) 的新标志。
+该标志会检查类的每个实例属性是否在构造函数体中或通过属性初始化器完成了初始化。
+例如：
 
 ```ts
 class C {
@@ -109,9 +109,9 @@ class C {
 }
 ```
 
-In the above, if we truly meant for `baz` to potentially be `undefined`, we should have declared it with the type `boolean | undefined`.
+在上面的例子中，如果我们确实希望 `baz` 可以是 `undefined`，应将其声明为 `boolean | undefined` 类型。
 
-There are certain scenarios where properties can be initialized indirectly (perhaps by a helper method or dependency injection library), in which case you can use the new _definite assignment assertion modifiers_ for your properties (discussed below).
+某些情况下，属性可能通过辅助方法或依赖注入库间接完成初始化，此时可以对属性使用新的**确定性赋值断言修饰符**（见下文）。
 
 ```ts
 class C {
@@ -130,14 +130,14 @@ class C {
 }
 ```
 
-Keep in mind that [`strictPropertyInitialization`](/tsconfig#strictPropertyInitialization) will be turned on along with other [`strict`](/tsconfig#strict) mode flags, which can impact your project.
-You can set the [`strictPropertyInitialization`](/tsconfig#strictPropertyInitialization) setting to `false` in your `tsconfig.json`'s `compilerOptions`, or `--strictPropertyInitialization false` on the command line to turn off this checking.
+请注意，[`strictPropertyInitialization`](/tsconfig#strictPropertyInitialization) 会随其他 [`strict`](/tsconfig#strict) 模式标志一同开启，可能会影响你的项目。
+你可以在 `tsconfig.json` 的 `compilerOptions` 中将 [`strictPropertyInitialization`](/tsconfig#strictPropertyInitialization) 设置为 `false`，或在命令行使用 `--strictPropertyInitialization false` 来关闭此检查。
 
-## Definite Assignment Assertions
+## 确定性赋值断言
 
-The definite assignment assertion is a feature that allows a `!` to be placed after instance property and variable declarations to relay to TypeScript that a variable is indeed assigned for all intents and purposes, even if TypeScript's analyses cannot detect so.
+确定性赋值断言是一项允许在实例属性和变量声明后放置 `!` 的特性，用于向 TypeScript 表明该变量在实际使用前已经被赋值，即便 TypeScript 的分析无法检测到这一点。
 
-##### Example
+##### 示例
 
 ```ts
 let x: number
@@ -151,7 +151,7 @@ function initialize() {
 }
 ```
 
-With definite assignment assertions, we can assert that `x` is really assigned by appending an `!` to its declaration:
+使用确定性赋值断言，可以通过在声明时追加 `!` 来断言 `x` 确实已被赋值：
 
 ```ts
 // Notice the '!'
@@ -166,7 +166,7 @@ function initialize() {
 }
 ```
 
-In a sense, the definite assignment assertion operator is the dual of the non-null assertion operator (in which _expressions_ are post-fixed with a `!`), which we could also have used in the example.
+从某种意义上说，确定性赋值断言运算符与非空断言运算符（在**表达式**后面加 `!`）是对偶关系，后者同样可用于该示例中：
 
 ```ts
 let x: number
@@ -180,19 +180,19 @@ function initialize() {
 }
 ```
 
-In our example, we knew that all uses of `x` would be initialized so it makes more sense to use definite assignment assertions than non-null assertions.
+在我们的示例中，由于已知所有使用 `x` 的地方都已初始化，使用确定性赋值断言比非空断言更合适。
 
-## Fixed Length Tuples
+## 固定长度元组
 
-In TypeScript 2.6 and earlier, `[number, string, string]` was considered a subtype of `[number, string]`.
-This was motivated by TypeScript's structural nature; the first and second elements of a `[number, string, string]` are respectively subtypes of the first and second elements of `[number, string]`.
-However, after examining real world usage of tuples, we noticed that most situations in which this was permitted was typically undesirable.
+在 TypeScript 2.6 及更早版本中，`[number, string, string]` 被视为 `[number, string]` 的子类型。
+这源于 TypeScript 的结构化类型特性：`[number, string, string]` 的第一个和第二个元素分别是 `[number, string]` 对应元素的子类型。
+然而，通过观察元组在实际场景中的用法，我们发现这种允许行为在大多数情况下并不是期望的。
 
-In TypeScript 2.7, tuples of different arities are no longer assignable to each other.
-Thanks to a pull request from [Kiara Grouwstra](https://github.com/KiaraGrouwstra), tuple types now encode their arity into the type of their respective `length` property.
-This is accomplished by leveraging numeric literal types, which now allow tuples to be distinct from tuples of different arities.
+TypeScript 2.7 起，不同元数的元组之间不再可以相互赋值。
+感谢 [Kiara Grouwstra](https://github.com/KiaraGrouwstra) 的 pull request，元组类型现在将元数编码进其 `length` 属性的类型中。
+这通过利用数字字面量类型来实现，使得不同元数的元组能够相互区分。
 
-Conceptually, you might consider the type `[number, string]` to be equivalent to the following declaration of `NumStrTuple`:
+从概念上看，你可以将类型 `[number, string]` 理解为等同于以下 `NumStrTuple` 的声明：
 
 ```ts
 interface NumStrTuple extends Array<number | string> {
@@ -202,8 +202,8 @@ interface NumStrTuple extends Array<number | string> {
 }
 ```
 
-Note that this is a breaking change for some code.
-If you need to resort to the original behavior in which tuples only enforce a minimum length, you can use a similar declaration that does not explicitly define a `length` property, falling back to `number`.
+注意，这是一项破坏性变更。
+如果你需要回归原来的行为（元组只强制最小长度），可以使用类似的声明，但不显式定义 `length` 属性，使其回退为 `number`：
 
 ```ts
 interface MinimumNumStrTuple extends Array<number | string> {
@@ -212,24 +212,24 @@ interface MinimumNumStrTuple extends Array<number | string> {
 }
 ```
 
-Note that this does not imply tuples represent immutable arrays, but it is an implied convention.
+注意，这并不意味着元组代表不可变数组，只是一种约定俗成的规范。
 
-## Improved type inference for object literals
+## 改进对象字面量的类型推断
 
-TypeScript 2.7 improves type inference for multiple object literals occurring in the same context.
-When multiple object literal types contribute to a union type, we now _normalize_ the object literal types such that all properties are present in each constituent of the union type.
+TypeScript 2.7 改进了在相同上下文中出现多个对象字面量时的类型推断。
+当多个对象字面量类型共同构成一个联合类型时，我们现在会对这些对象字面量类型进行**规范化**，确保联合类型的每个成员都包含所有属性。
 
-Consider:
+考虑如下代码：
 
 ```ts
 const obj = test ? { text: 'hello' } : {} // { text: string } | { text?: undefined }
 const s = obj.text // string | undefined
 ```
 
-Previously type `{}` was inferred for `obj` and the second line subsequently caused an error because `obj` would appear to have no properties.
-That obviously wasn't ideal.
+以前，`obj` 被推断为类型 `{}`，导致第二行报错——因为 `obj` 看起来没有任何属性。
+这显然不是理想的行为。
 
-##### Example
+##### 示例
 
 ```ts
 // let obj: { a: number, b: number } |
@@ -240,7 +240,7 @@ obj.a // string | number | undefined
 obj.b // number | undefined
 ```
 
-Multiple object literal type inferences for the same type parameter are similarly collapsed into a single normalized union type:
+对同一类型参数的多个对象字面量类型推断同样会被合并为一个规范化的联合类型：
 
 ```ts
 declare function f<T>(...items: T[]): T
@@ -252,17 +252,17 @@ obj.a // string | number | undefined
 obj.b // number | undefined
 ```
 
-## Improved handling of structurally identical classes and `instanceof` expressions
+## 改进对结构相同的类与 `instanceof` 表达式的处理
 
-TypeScript 2.7 improves the handling of structurally identical classes in union types and `instanceof` expressions:
+TypeScript 2.7 改进了联合类型和 `instanceof` 表达式中对结构相同的类的处理：
 
-- Structurally identical, but distinct, class types are now preserved in union types (instead of eliminating all but one).
-- Union type subtype reduction only removes a class type if it is a subclass of _and_ derives from another class type in the union.
-- Type checking of the `instanceof` operator is now based on whether the type of the left operand _derives from_ the type indicated by the right operand (as opposed to a structural subtype check).
+- 结构相同但不同的类类型现在会在联合类型中保留（而不是只保留其中一个）。
+- 联合类型的子类型化归约只会在某个类类型是联合中另一个类类型的子类**且**派生自该类时才将其移除。
+- `instanceof` 运算符的类型检查现在基于左操作数的类型是否**派生自**右操作数所表示的类型（而非结构子类型检查）。
 
-This means that union types and `instanceof` properly distinguish between structurally identical classes.
+这意味着联合类型和 `instanceof` 能够正确区分结构相同的类。
 
-##### Example
+##### 示例
 
 ```ts
 class A {}
@@ -291,13 +291,13 @@ function f1(x: B | C | D) {
 }
 ```
 
-## Type guards inferred from `in` operator
+## 从 `in` 运算符推断类型守卫
 
-The `in` operator now acts as a narrowing expression for types.
+`in` 运算符现在可用作类型的收窄表达式。
 
-For a `n in x` expression, where `n` is a string literal or string literal type and `x` is a union type, the "true" branch narrows to types which have an optional or required property `n`, and the "false" branch narrows to types which have an optional or missing property `n`.
+对于 `n in x` 表达式，其中 `n` 是字符串字面量或字符串字面量类型，`x` 是联合类型，"true" 分支会收窄为拥有可选或必需属性 `n` 的类型，"false" 分支会收窄为拥有可选或缺少属性 `n` 的类型。
 
-##### Example
+##### 示例
 
 ```ts
 interface A {
@@ -315,35 +315,35 @@ function foo(x: A | B) {
 }
 ```
 
-## Support for `import d from "cjs"` from CommonJS modules with `--esModuleInterop`
+## 通过 `--esModuleInterop` 支持从 CommonJS 模块使用 `import d from "cjs"`
 
-TypeScript 2.7 updates CommonJS/AMD/UMD module emit to synthesize namespace records based on the presence of an `__esModule` indicator under [`esModuleInterop`](/tsconfig#esModuleInterop).
-The change brings the generated output from TypeScript closer to that generated by Babel.
+TypeScript 2.7 更新了 CommonJS/AMD/UMD 模块的代码生成，在 [`esModuleInterop`](/tsconfig#esModuleInterop) 下基于 `__esModule` 标志合成命名空间记录。
+这使 TypeScript 生成的输出更接近 Babel 的生成结果。
 
-Previously CommonJS/AMD/UMD modules were treated in the same way as ES6 modules, resulting in a couple of problems. Namely:
+此前，CommonJS/AMD/UMD 模块与 ES6 模块的处理方式相同，由此引发了若干问题，具体如下：
 
-- TypeScript treats a namespace import (i.e. `import * as foo from "foo"`) for a CommonJS/AMD/UMD module as equivalent to `const foo = require("foo")`.Things are simple here, but they don't work out if the primary object being imported is a primitive or a class or a function. ECMAScript spec stipulates that a namespace record is a plain object, and that a namespace import (`foo` in the example above) is not callable, though allowed by TypeScript
-- Similarly a default import (i.e. `import d from "foo"`) for a CommonJS/AMD/UMD module as equivalent to `const d = require("foo").default`.Most of the CommonJS/AMD/UMD modules available today do not have a `default` export, making this import pattern practically unusable to import non-ES modules (i.e. CommonJS/AMD/UMD). For instance `import fs from "fs"` or `import express from "express"` are not allowed.
+- TypeScript 将 CommonJS/AMD/UMD 模块的命名空间导入（即 `import * as foo from "foo"`）等同于 `const foo = require("foo")`。这在简单情况下可以工作，但当被导入的主体对象是原始值、类或函数时则会出现问题。ECMAScript 规范规定命名空间记录是一个普通对象，且命名空间导入（如上例中的 `foo`）不可调用——尽管 TypeScript 允许这样做。
+- 类似地，CommonJS/AMD/UMD 模块的默认导入（即 `import d from "foo"`）被等同于 `const d = require("foo").default`。而当今绝大多数 CommonJS/AMD/UMD 模块并没有 `default` 导出，这使得该导入模式在导入非 ES 模块（即 CommonJS/AMD/UMD）时几乎无法使用。例如 `import fs from "fs"` 或 `import express from "express"` 均不被允许。
 
-Under the new [`esModuleInterop`](/tsconfig#esModuleInterop) these two issues should be addressed:
+启用新的 [`esModuleInterop`](/tsconfig#esModuleInterop) 后，上述两个问题将得到解决：
 
-- A namespace import (i.e. `import * as foo from "foo"`) is now correctly flagged as uncallable. Calling it will result in an error.
-- Default imports to CommonJS/AMD/UMD are now allowed (e.g. `import fs from "fs"`), and should work as expected.
+- 命名空间导入（即 `import * as foo from "foo"`）现在会被正确标记为不可调用，调用它将产生错误。
+- 对 CommonJS/AMD/UMD 的默认导入（如 `import fs from "fs"`）现在是允许的，并可按预期正常工作。
 
-> Note: The new behavior is added under a flag to avoid unwarranted breaks to existing code bases. **We highly recommend applying it both to new and existing projects.**
-> For existing projects, namespace imports (`import * as express from "express"; express();`) will need to be converted to default imports (`import express from "express"; express();`).
+> 注意：此新行为放置在一个编译选项下，以避免对现有代码库造成意外的破坏。**我们强烈建议在新建项目和现有项目中都启用该选项。**
+> 对于现有项目，命名空间导入（`import * as express from "express"; express();`）需要转换为默认导入（`import express from "express"; express();`）。
 
-##### Example
+##### 示例
 
-With [`esModuleInterop`](/tsconfig#esModuleInterop) two new helpers are generated `__importStar` and `__importDefault` for import `*` and import `default` respectively.
-For instance input like:
+启用 [`esModuleInterop`](/tsconfig#esModuleInterop) 后，将为 `import *` 和 `import default` 分别生成两个新的辅助函数 `__importStar` 和 `__importDefault`。
+例如，以下输入：
 
 ```ts
 import * as foo from 'foo'
 import b from 'bar'
 ```
 
-Will generate:
+将生成：
 
 ```js
 'use strict'
@@ -368,12 +368,12 @@ var foo = __importStar(require('foo'))
 var bar_1 = __importDefault(require('bar'))
 ```
 
-## Numeric separators
+## 数字分隔符
 
-TypeScript 2.7 brings support for [ES Numeric Separators](https://github.com/tc39/proposal-numeric-separator).
-Numeric literals can now be separated into segments using `_`.
+TypeScript 2.7 支持 [ES 数字分隔符提案](https://github.com/tc39/proposal-numeric-separator)。
+数字字面量现在可以使用 `_` 分隔各段。
 
-##### Example
+##### 示例
 
 ```ts
 const million = 1_000_000
@@ -382,12 +382,12 @@ const bytes = 0xff_0c_00_ff
 const word = 0b1100_0011_1101_0001
 ```
 
-## Cleaner output in `--watch` mode
+## `--watch` 模式下更整洁的输出
 
-TypeScript's `--watch` mode now clears the screen after a re-compilation is requested.
+TypeScript 的 `--watch` 模式现在会在触发重新编译后清空屏幕。
 
-## Prettier `--pretty` output
+## 更美观的 `--pretty` 输出
 
-TypeScript's [`pretty`](/tsconfig#pretty) flag can make error messages easier to read and manage.
-[`pretty`](/tsconfig#pretty) now uses colors for file names, diagnostic codes, and line numbers.
-File names and positions are now also formatted to allow navigation in common terminals (e.g. Visual Studio Code terminal).
+TypeScript 的 [`pretty`](/tsconfig#pretty) 标志可以让错误信息更易于阅读和管理。
+[`pretty`](/tsconfig#pretty) 现在会为文件名、诊断代码和行号添加颜色。
+文件名和位置信息也经过格式化，支持在常见终端（如 Visual Studio Code 终端）中直接跳转。

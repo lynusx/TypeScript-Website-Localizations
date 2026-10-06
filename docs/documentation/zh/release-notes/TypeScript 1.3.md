@@ -2,12 +2,12 @@
 title: TypeScript 1.3
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-1-3.html
-oneline: TypeScript 1.3 Release Notes
+oneline: TypeScript 1.3 发布说明
 ---
 
-## Protected
+## protected 修饰符
 
-The new `protected` modifier in classes works like it does in familiar languages like C++, C#, and Java. A `protected` member of a class is visible only inside subclasses of the class in which it is declared:
+类中新增的 `protected` 修饰符的工作机制与 C++、C# 和 Java 等常见语言类似。类的 `protected` 成员仅在声明它的类的子类内部可见：
 
 ```ts
 class Thing {
@@ -26,9 +26,9 @@ var t = new MyThing()
 t.doSomething() // Error, cannot call protected member from outside class
 ```
 
-## Tuple types
+## 元组类型（Tuple types）
 
-Tuple types express an array where the type of certain elements is known, but need not be the same. For example, you may want to represent an array with a `string` at position 0 and a `number` at position 1:
+元组类型用于表示已知特定位置元素类型的数组，各元素的类型不必相同。例如，你可能想要表示一个在索引 0 处为 `string`、在索引 1 处为 `number` 的数组：
 
 ```ts
 // Declare a tuple type
@@ -39,14 +39,14 @@ x = ['hello', 10] // OK
 x = [10, 'hello'] // Error
 ```
 
-When accessing an element with a known index, the correct type is retrieved:
+访问已知索引的元素时，可以获取到对应的正确类型：
 
 ```ts
 console.log(x[0].substr(1)) // OK
 console.log(x[1].substr(1)) // Error, 'number' does not have 'substr'
 ```
 
-Note that in TypeScript 1.4, when accessing an element outside the set of known indices, a union type is used instead:
+注意，在 TypeScript 1.4 中，当访问超出已知索引集合的元素时，将改用联合类型：
 
 ```ts
 x[3] = 'world' // OK

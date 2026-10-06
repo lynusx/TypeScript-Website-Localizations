@@ -2,13 +2,13 @@
 title: Angular
 layout: docs
 permalink: /zh/docs/handbook/angular.html
-oneline: Using Angular with TypeScript
+oneline: 结合 TypeScript 使用 Angular
 deprecated: true
 ---
 
-Angular is a modern framework built entirely in TypeScript, and as a result, using TypeScript with Angular provides a seamless experience.
+Angular 是一个完全基于 TypeScript 构建的现代框架，因此在 Angular 中使用 TypeScript 能够带来无缝的开发体验。
 
-The Angular documentation not only supports TypeScript as a first-class citizen, but uses it as its primary language.
-With this in mind, [Angular's site](https://angular.io) will always be the most up-to-date reference for using Angular with TypeScript.
+Angular 官方文档不仅将 TypeScript 视为一等公民，而且将其作为首选语言。
+基于这一点，[Angular 官方网站](https://angular.io)将始终是结合 TypeScript 使用 Angular 的最新参考资料。
 
-Check out the [quick start guide here](https://angular.io/docs/ts/latest/quickstart.html) to start learning Angular now!
+请查阅这里的[快速入门指南](https://angular.io/docs/ts/latest/quickstart.html)，立即开始学习 Angular！

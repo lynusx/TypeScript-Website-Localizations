@@ -2,14 +2,14 @@
 title: TypeScript 5.3
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-5-3.html
-oneline: TypeScript 5.3 Release Notes
+oneline: TypeScript 5.3 发布说明
 ---
 
-## Import Attributes
+## 导入属性（Import Attributes）
 
-TypeScript 5.3 supports the latest updates to the [import attributes](https://github.com/tc39/proposal-import-attributes) proposal.
+TypeScript 5.3 支持了最新的[导入属性（import attributes）](https://github.com/tc39/proposal-import-attributes)提案。
 
-One use-case of import attributes is to provide information about the expected format of a module to the runtime.
+导入属性的一个用例是向运行时提供有关模块预期格式的信息。
 
 ```ts
 // We only want this to be interpreted as JSON,
@@ -17,7 +17,7 @@ One use-case of import attributes is to provide information about the expected f
 import obj from './something.json' with { type: 'json' }
 ```
 
-The contents of these attributes are not checked by TypeScript since they're host-specific, and are simply left alone so that browsers and runtimes can handle them (and possibly error).
+TypeScript 不会检查这些属性的具体内容，因为它们是由宿主环境决定的；TypeScript 只是保留它们，以便浏览器和运行时能够进行处理（并可能报错）。
 
 ```ts
 // TypeScript is fine with this.
@@ -25,7 +25,7 @@ The contents of these attributes are not checked by TypeScript since they're hos
 import * as foo from './foo.js' with { type: 'fluffy bunny' }
 ```
 
-Dynamic `import()` calls can also use import attributes through a second argument.
+动态 `import()` 调用也可以通过第二个参数来使用导入属性。
 
 ```ts
 const obj = await import('./something.json', {
@@ -33,22 +33,22 @@ const obj = await import('./something.json', {
 })
 ```
 
-The expected type of that second argument is defined by a type called `ImportCallOptions`, which by default just expects a property called `with`.
+该第二个参数的预期类型由名为 `ImportCallOptions` 的类型定义，默认情况下它只期望一个名为 `with` 的属性。
 
-Note that import attributes are an evolution of an earlier proposal called ["import assertions", which were implemented in TypeScript 4.5](https://devblogs.microsoft.com/typescript/announcing-typescript-4-5/#import-assertions).
-The most obvious difference is the use of the `with` keyword over the `assert` keyword.
-But the less-visible difference is that runtimes are now free to use attributes to guide the resolution and interpretation of import paths, whereas import assertions could only assert some characteristics after loading a module.
+请注意，导入属性是由早期名为[“导入断言（import assertions）”的提案演进而来，后者已在 TypeScript 4.5 中实现](https://devblogs.microsoft.com/typescript/announcing-typescript-4-5/#import-assertions)。
+最显著的区别在于使用 `with` 关键字替代了 `assert` 关键字。
+但更深层次的区别在于，运行时现在可以自由使用属性来指导导入路径的解析和解释，而导入断言只能在加载模块之后断言某些特征。
 
-Over time, TypeScript will be deprecating the old syntax for import assertions in favor of the proposed syntax for import attributes.
-Existing code using `assert` should migrate towards the `with` keyword.
-New code that needs an import attribute should use `with` exclusively.
+随着时间的推移，TypeScript 将弃用旧的导入断言语法，转而采用提议的导入属性语法。
+使用 `assert` 的现有代码应当向 `with` 关键字迁移。
+需要导入属性的新代码则应一律使用 `with`。
 
-We'd like to thank [Oleksandr Tarasiuk](https://github.com/a-tarasyuk) for [implementing this proposal](https://github.com/microsoft/TypeScript/pull/54242)!
-And we'd also like to call out [Wenlu Wang](https://github.com/Kingwl) for their implementation of [import assertions](https://github.com/microsoft/TypeScript/pull/40698)!
+我们要感谢 [Oleksandr Tarasiuk](https://github.com/a-tarasyuk) [实现了该提案](https://github.com/microsoft/TypeScript/pull/54242)！
+同时也要感谢 [Wenlu Wang](https://github.com/Kingwl) 此前对[导入断言](https://github.com/microsoft/TypeScript/pull/40698)的实现！
 
-## Stable Support `resolution-mode` in Import Types
+## 在类型导入中稳定支持 `resolution-mode`
 
-In TypeScript 4.7, TypeScript added support for a `resolution-mode` attribute in `/// <reference types="..." />` to control whether a specifier should be resolved via `import` or `require` semantics.
+在 TypeScript 4.7 中，TypeScript 添加了对 `/// <reference types="..." />` 中 `resolution-mode` 属性的支持，以控制模块说明符应通过 `import` 还是 `require` 语义进行解析。
 
 ```ts
 /// <reference types="pkg" resolution-mode="require" />
@@ -58,12 +58,12 @@ In TypeScript 4.7, TypeScript added support for a `resolution-mode` attribute in
 /// <reference types="pkg" resolution-mode="import" />
 ```
 
-A corresponding field was added to import assertions on type-only imports as well;
-however, it was only supported in nightly versions of TypeScript.
-The rationale was that in spirit, import _assertions_ were not intended to guide module resolution.
-So this feature was shipped experimentally in a nightly-only mode to get more feedback.
+在纯类型导入（type-only imports）的导入断言中也添加了对应的字段；
+然而，它之前仅在 TypeScript 的 nightly 版本中受支持。
+其原由在于从设计初衷来看，导入*断言*并不是用来指导模块解析的。
+因此该特性仅作为实验性功能在 nightly 版本中发布，以收集更多反馈。
 
-But given that _[import attributes](#import-attributes)_ can guide resolution, and that we've seen reasonable use-cases, TypeScript 5.3 now supports the `resolution-mode` attribute for `import type`.
+但鉴于*[导入属性](#import-attributes)*可以指导解析，而且我们确实看到了合理的用例，TypeScript 5.3 现在正式为 `import type` 支持了 `resolution-mode` 属性。
 
 ```ts
 // Resolve `pkg` as if we were importing with a `require()`
@@ -79,7 +79,7 @@ import type { TypeFromImport } from 'pkg' with {
 export interface MergedType extends TypeFromRequire, TypeFromImport {}
 ```
 
-These import attributes can also be used on `import()` types.
+这些导入属性也可以在 `import()` 类型中使用。
 
 ```ts
 export type TypeFromRequire = import('pkg', {
@@ -93,18 +93,18 @@ export type TypeFromImport = import('pkg', {
 export interface MergedType extends TypeFromRequire, TypeFromImport {}
 ```
 
-For more information, [check out the change here](https://github.com/microsoft/TypeScript/pull/55725)
+欲了解更多信息，请[查看此处的更改](https://github.com/microsoft/TypeScript/pull/55725)。
 
-## `resolution-mode` Supported in All Module Modes
+## 在所有模块模式中支持 `resolution-mode`
 
-Previously, using `resolution-mode` was only allowed under the `moduleResolution` options `node16` and `nodenext`.
-To make it easier to look up modules specifically for type purposes, `resolution-mode` now works appropriately in all other `moduleResolution` options like `bundler`, `node10`, and simply doesn't error under `classic`.
+此前，仅在 `moduleResolution` 选项为 `node16` 和 `nodenext` 时才允许使用 `resolution-mode`。
+为了更方便地专门针对类型目的查找模块，`resolution-mode` 现在可以在所有其他 `moduleResolution` 选项（如 `bundler`、`node10`）中正常工作，并且在 `classic` 下也不会报错。
 
-For more information, [see the implementing pull request](https://github.com/microsoft/TypeScript/pull/55725).
+欲了解更多信息，请[参阅实现该特性的 Pull Request](https://github.com/microsoft/TypeScript/pull/55725)。
 
-## `switch (true)` Narrowing
+## `switch (true)` 中的类型收窄
 
-TypeScript 5.3 now can perform narrowing based on conditions in each `case` clause within a `switch (true)`.
+TypeScript 5.3 现在可以根据 `switch (true)` 中每个 `case` 子句的条件来执行类型收窄。
 
 ```ts
 function f(x: unknown) {
@@ -126,16 +126,16 @@ function f(x: unknown) {
 }
 ```
 
-[This feature](https://github.com/microsoft/TypeScript/pull/55991) was spearheaded [initial work](https://github.com/microsoft/TypeScript/pull/53681) by [Mateusz Burzyński](https://github.com/Andarist)
-We'd like to extend a "thank you!" for this contribution.
+[该特性](https://github.com/microsoft/TypeScript/pull/55991)由 [Mateusz Burzyński](https://github.com/Andarist) 的[先期工作](https://github.com/microsoft/TypeScript/pull/53681)推动实现。
+我们对这项贡献表示由衷的感谢！
 
-## Narrowing On Comparisons to Booleans
+## 对布尔值的比较收窄（Narrowing On Comparisons to Booleans）
 
-Occasionally you may find yourself performing a direct comparison with `true` or `false` in a condition.
-Usually these are unnecessary comparisons, but you might prefer it as a point of style, or to avoid certain issues around JavaScript truthiness.
-Regardless, previously TypeScript just didn't recognize such forms when performing narrowing.
+有时你可能会在条件判断中直接与 `true` 或 `false` 进行比较。
+通常这些比较是不必要的，但出于代码风格喜好，或是为了避免 JavaScript 中关于真值（truthiness）的某些问题，你可能会倾向于这样写。
+无论如何，此前 TypeScript 在执行类型收窄时并不能识别这种形式。
 
-TypeScript 5.3 now keeps up and understands these expressions when narrowing variables.
+TypeScript 5.3 现已跟进，在收窄变量类型时能够正确理解这些表达式。
 
 ```ts
 interface A {
@@ -159,12 +159,12 @@ function someFn(x: MyType) {
 }
 ```
 
-We'd like to thank [Mateusz Burzyński](https://github.com/Andarist) for [the pull request](https://github.com/microsoft/TypeScript/pull/53681) that implemented this.
+感谢 [Mateusz Burzyński](https://github.com/Andarist) 提交了实现该特性的 [Pull Request](https://github.com/microsoft/TypeScript/pull/53681)。
 
-## `instanceof` Narrowing Through `Symbol.hasInstance`
+## 通过 `Symbol.hasInstance` 进行 `instanceof` 收窄
 
-A slightly esoteric feature of JavaScript is that it is possible to override the behavior of the `instanceof` operator.
-To do so, the value on the right side of the `instanceof` operator needs to have a specific method named by `Symbol.hasInstance`.
+JavaScript 中有一个稍显小众的特性：可以重写 `instanceof` 运算符的行为。
+为此，`instanceof` 运算符右侧的值需要拥有一个以 `Symbol.hasInstance` 命名的特定方法。
 
 ```js
 class Weirdo {
@@ -181,8 +181,8 @@ console.log(new Thing() instanceof Weirdo)
 console.log(undefined instanceof Weirdo)
 ```
 
-To better model this behavior in `instanceof`, TypeScript now checks if such a `[Symbol.hasInstance]` method exists and is declared as a type predicate function.
-If it does, the tested value on the left side of the `instanceof` operator will be narrowed appropriately by that type predicate.
+为了更好地对 `instanceof` 中的这种行为建模，TypeScript 现在会检查是否存在这样一个 `[Symbol.hasInstance]` 方法，且该方法是否被声明为类型谓词函数。
+如果是，`instanceof` 运算符左侧被测试的值将通过该类型谓词进行适当的类型收窄。
 
 ```ts
 interface PointLike {
@@ -228,16 +228,16 @@ function f(value: unknown) {
 }
 ```
 
-As you can see in this example, `Point` defines its own `[Symbol.hasInstance]` method.
-It actually acts as a custom type guard over a separate type called `PointLike`.
-In the function `f`, we were able to narrow `value` down to a `PointLike` with `instanceof`, but _not_ a `Point`.
-That means that we can access the properties `x` and `y`, but not the method `distanceFromOrigin`.
+正如本例所示，`Point` 定义了自己的 `[Symbol.hasInstance]` 方法。
+它实际上充当了针对另一个独立类型 `PointLike` 的自定义类型守卫。
+在函数 `f` 中，我们能够通过 `instanceof` 将 `value` 收窄为 `PointLike`，但*不是* `Point`。
+这意味着我们可以访问属性 `x` 和 `y`，但不能访问方法 `distanceFromOrigin`。
 
-For more information, you can [read up on this change here](https://github.com/microsoft/TypeScript/pull/55052).
+欲了解更多信息，你可以[在此阅读有关此更改的内容](https://github.com/microsoft/TypeScript/pull/55052)。
 
-## Checks for `super` Property Accesses on Instance Fields
+## 检查在实例字段上对 `super` 属性的访问
 
-In JavaScript, it's possible to access a declaration in a base class through the `super` keyword.
+在 JavaScript 中，可以通过 `super` 关键字访问基类中的声明。
 
 ```js
 class Base {
@@ -259,8 +259,8 @@ new Derived().someMethod()
 //   Base method called!
 ```
 
-This is different from writing something like `this.someMethod()`, since that could invoke an overridden method.
-This is a subtle distinction, made more subtle by the fact that often the two can be interchangeable if a declaration is never overridden at all.
+这与编写类似 `this.someMethod()` 的代码不同，因为后者可能会调用被重写的方法。
+这是一个细微的区别；而当某个声明根本没有被重写时，两者通常可以互换使用，这使得该区别更加微妙。
 
 ```js
 class Base {
@@ -283,8 +283,8 @@ new Derived().someOtherMethod()
 //   someMethod called!
 ```
 
-The problem is using them interchangeably is that `super` only works on members declared on the prototype &mdash; _not_ instance properties.
-That means that if you wrote `super.someMethod()`, but `someMethod` was defined as a field, you'd get a runtime error!
+将它们混用的问题在于：`super` 仅适用于原型上声明的成员&mdash;&mdash;而*不适用于*实例属性。
+这意味着如果你编写了 `super.someMethod()`，但 `someMethod` 是定义为一个字段，你就会遇到运行时错误！
 
 ```ts
 class Base {
@@ -304,30 +304,30 @@ new Derived().someOtherMethod()
 // Doesn't work because 'super.someMethod' is 'undefined'.
 ```
 
-TypeScript 5.3 now more-closely inspects `super` property accesses/method calls to see if they correspond to class fields.
-If they do, we'll now get a type-checking error.
+TypeScript 5.3 现在会更严格地检查 `super` 属性访问/方法调用，以确认它们是否对应于类字段。
+如果是，现在将产生类型检查错误。
 
-[This check](https://github.com/microsoft/TypeScript/pull/54056) was contributed thanks to [Jack Works](https://github.com/Jack-Works)!
+感谢 [Jack Works](https://github.com/Jack-Works) 贡献了[此项检查](https://github.com/microsoft/TypeScript/pull/54056)！
 
-## Interactive Inlay Hints for Types
+## 针对类型的交互式内联提示（Interactive Inlay Hints）
 
-TypeScript's inlay hints now support jumping to the definition of types!
-This makes it easier to casually navigate your code.
+TypeScript 的内联提示（inlay hints）现已支持跳转到类型定义！
+这使得在代码中浏览跳转变得更加轻松便捷。
 
 ![Ctrl-clicking an inlay hint to jump to the definition of a parameter type.](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2023/10/clickable-inlay-hints-for-types-5-3-beta.gif)
 
-See more at [the implementation here](https://github.com/microsoft/TypeScript/pull/55141).
+欲了解更多信息，请参阅[此处的具体实现](https://github.com/microsoft/TypeScript/pull/55141)。
 
-## Settings to Prefer `type` Auto-Imports
+## 优先使用 `type` 自动导入的设置项
 
-Previously when TypeScript generated auto-imports for something in a type position, it would add a `type` modifier based on your settings.
-For example, when getting an auto-import on `Person` in the following:
+此前，当 TypeScript 为类型位置的内容生成自动导入时，它会根据你的设置添加 `type` 修饰符。
+例如，当在以下代码中对 `Person` 执行自动导入时：
 
 ```ts
 export let p: Person
 ```
 
-TypeScript's editing experience would usually add an import for `Person` as:
+TypeScript 的编辑器体验通常会将 `Person` 的导入添加为：
 
 ```ts
 import { Person } from './types'
@@ -335,7 +335,7 @@ import { Person } from './types'
 export let p: Person
 ```
 
-and under certain settings like `verbatimModuleSyntax`, it would add the `type` modifier:
+而在某些特定设置（如 `verbatimModuleSyntax`）下，它会添加 `type` 修饰符：
 
 ```ts
 import { type Person } from './types'
@@ -343,10 +343,10 @@ import { type Person } from './types'
 export let p: Person
 ```
 
-However, maybe your codebase isn't able to use some of these options; or you just have a preference for explicit `type` imports when possible.
+然而，你的代码库可能无法使用这些配置选项；或者你只是个人偏好在可能的情况下显式使用 `type` 导入。
 
-[With a recent change](https://github.com/microsoft/TypeScript/pull/56090), TypeScript now enables this to be an editor-specific option.
-In Visual Studio Code, you can enable it in the UI under "TypeScript › Preferences: Prefer Type Only Auto Imports", or as the JSON configuration option `typescript.preferences.preferTypeOnlyAutoImports`
+[通过最近的一项改动](https://github.com/microsoft/TypeScript/pull/56090)，TypeScript 现在允许将其配置为特定于编辑器的选项。
+在 Visual Studio Code 中，你可以在界面设置中启用 “TypeScript › Preferences: Prefer Type Only Auto Imports”，或在 JSON 配置中设置 `typescript.preferences.preferTypeOnlyAutoImports`。
 
 <!--
 ## Triggerable Refactor to Convert to Template String
@@ -355,75 +355,75 @@ https://github.com/microsoft/TypeScript/pull/54647
 
 -->
 
-## Optimizations by Skipping JSDoc Parsing
+## 通过跳过 JSDoc 解析实现优化
 
-When running TypeScript via `tsc`, the compiler will now avoid parsing JSDoc.
-This drops parsing time on its own, but also reduces memory usage to store comments along with time spent in garbage collection.
-All-in-all, you should see slightly faster compiles and quicker feedback in `--watch` mode.
+当通过 `tsc` 运行 TypeScript 时，编译器现在会避免解析 JSDoc。
+这不仅降低了解析时间本身，还减少了存储注释的内存占用以及垃圾回收所花费的时间。
+总的来说，你应该会体验到稍快的编译速度以及在 `--watch` 模式下更迅速的反馈。
 
-[The specific changes can be viewed here](https://github.com/microsoft/TypeScript/pull/52921).
+[具体的改动可以在此处查看](https://github.com/microsoft/TypeScript/pull/52921)。
 
-Because not every tool using TypeScript will need to store JSDoc (e.g. typescript-eslint and Prettier), this parsing strategy has been surfaced as part of the API itself.
-This can enable these tools to gain the same memory and speed improvements we've brought to the TypeScript compiler.
-The new options for comment parsing strategy are described in `JSDocParsingMode`.
-More information is available [on this pull request](https://github.com/microsoft/TypeScript/pull/55739).
+由于并非所有使用 TypeScript 的工具都需要存储 JSDoc（例如 typescript-eslint 和 Prettier），这种解析策略已作为 API 的一部分对外暴露。
+这使得这些工具能够获得我们为 TypeScript 编译器带来的同等内存与速度提升。
+注释解析策略的新选项在 `JSDocParsingMode` 中进行了说明。
+更多信息可以在[该 Pull Request 中查看](https://github.com/microsoft/TypeScript/pull/55739)。
 
-## Optimizations by Comparing Non-Normalized Intersections
+## 通过比较非规范化交叉类型实现优化
 
-In TypeScript, unions and intersections always follow a specific form, where intersections can't contain union types.
-That means that when we create an intersection over a union like `A & (B | C)`, that intersection will be normalized into `(A & B) | (A & C)`.
-Still, in some cases the type system will maintain the original form for display purposes.
+在 TypeScript 中，联合类型和交叉类型总是遵循一种特定的形式，其中交叉类型不能包含联合类型。
+这意味着当我们在联合类型上创建交叉类型（如 `A & (B | C)`）时，该交叉类型会被规范化为 `(A & B) | (A & C)`。
+尽管如此，在某些情况下类型系统仍会保留原始形式以供展示使用。
 
-It turns out that the original form can be used for some clever fast-path comparisons between types.
+事实证明，原始形式可用于在类型之间进行某些巧妙的快速路径（fast-path）比较。
 
-For example, let's say we have `SomeType & (Type1 | Type2 | ... | Type99999NINE)` and we want to see if that's assignable to `SomeType`.
-Recall that we don't really have an intersection as our source type &mdash; we have a union that looks like `(SomeType & Type1) | (SomeType & Type2) | ... |(SomeType & Type99999NINE)`.
-When checking if a union is assignable to some target type, we have to check if _every_ member of the union is assignable to the target type, and that can be very slow.
+例如，假设我们有 `SomeType & (Type1 | Type2 | ... | Type99999NINE)`，并且想要检查它是否可以赋值给 `SomeType`。
+回顾一下，我们的源类型实际上并不是一个交叉类型&mdash;&mdash;而是一个形如 `(SomeType & Type1) | (SomeType & Type2) | ... |(SomeType & Type99999NINE)` 的联合类型。
+在检查联合类型是否可赋值给某个目标类型时，我们必须检查联合类型的*每个*成员是否都可以赋值给目标类型，而这可能会非常慢。
 
-In TypeScript 5.3, we peek at the original intersection form that we were able to tuck away.
-When we compare the types, we do a quick check to see if the target exists in any constituent of the source intersection.
+在 TypeScript 5.3 中，我们会审视之前得以保留的原始交叉类型形式。
+当我们比较类型时，会进行一次快速检查，以查看目标类型是否存在于源交叉类型的任何组成部分中。
 
-For more information, [see this pull request](https://github.com/microsoft/TypeScript/pull/55851).
+欲了解更多信息，请[参阅此 Pull Request](https://github.com/microsoft/TypeScript/pull/55851)。
 
-## Consolidation Between `tsserverlibrary.js` and `typescript.js`
+## 合并 `tsserverlibrary.js` 与 `typescript.js`
 
-TypeScript itself ships two library files: `tsserverlibrary.js` and `typescript.js`.
-There are certain APIs available only in `tsserverlibrary.js` (like the `ProjectService` API), which may be useful to some importers.
-Still, the two are distinct bundles with a lot of overlap, duplicating code in the package.
-What's more, it can be challenging to consistently use one over the other due to auto-imports or muscle memory.
-Accidentally loading both modules is far too easy, and code may not work properly on a different instance of the API.
-Even if it does work, loading a second bundle increases resource usage.
+TypeScript 本身随附了两个库文件：`tsserverlibrary.js` 和 `typescript.js`。
+某些 API 仅在 `tsserverlibrary.js` 中提供（例如 `ProjectService` API），这可能对某些导入者很有用。
+但两者是具有大量重叠的独立打包文件，导致包中存在重复代码。
+此外，由于自动导入或肌肉记忆，要始终如一地使用其中某一个可能会很困难。
+一不小心就极易同时加载这两个模块，而且代码在不同的 API 实例上可能无法正常工作。
+即使能正常工作，加载第二个打包文件也会增加资源消耗。
 
-Given this, we've decided to consolidate the two.
-`typescript.js` now contains what `tsserverlibrary.js` used to contain, and `tsserverlibrary.js` now simply re-exports `typescript.js`.
-Comparing the before/after of this consolidation, we saw the following reduction in package size:
+鉴于此，我们决定将两者进行合并。
+`typescript.js` 现在包含了 `tsserverlibrary.js` 原先包含的内容，而 `tsserverlibrary.js` 现在仅直接重新导出 `typescript.js`。
+对比合并前后的情况，我们观察到了如下包体积缩减：
 
-|          | Before    | After     | Diff      | Diff (percent) |
-| -------- | --------- | --------- | --------- | -------------- |
-| Packed   | 6.90 MiB  | 5.48 MiB  | -1.42 MiB | -20.61%        |
-| Unpacked | 38.74 MiB | 30.41 MiB | -8.33 MiB | -21.50%        |
+|          | 变更前    | 变更后    | 差值      | 变化幅度 |
+| -------- | --------- | --------- | --------- | -------- |
+| 打包体积 | 6.90 MiB  | 5.48 MiB  | -1.42 MiB | -20.61%  |
+| 解包体积 | 38.74 MiB | 30.41 MiB | -8.33 MiB | -21.50%  |
 
-|                            | Before     | After      | Diff        | Diff (percent) |
-| -------------------------- | ---------- | ---------- | ----------- | -------------- |
-| `lib/tsserverlibrary.d.ts` | 570.95 KiB | 865.00 B   | -570.10 KiB | -99.85%        |
-| `lib/tsserverlibrary.js`   | 8.57 MiB   | 1012.00 B  | -8.57 MiB   | -99.99%        |
-| `lib/typescript.d.ts`      | 396.27 KiB | 570.95 KiB | +174.68 KiB | +44.08%        |
-| `lib/typescript.js`        | 7.95 MiB   | 8.57 MiB   | +637.53 KiB | +7.84%         |
+|                            | 变更前     | 变更后     | 差值        | 变化幅度 |
+| -------------------------- | ---------- | ---------- | ----------- | -------- |
+| `lib/tsserverlibrary.d.ts` | 570.95 KiB | 865.00 B   | -570.10 KiB | -99.85%  |
+| `lib/tsserverlibrary.js`   | 8.57 MiB   | 1012.00 B  | -8.57 MiB   | -99.99%  |
+| `lib/typescript.d.ts`      | 396.27 KiB | 570.95 KiB | +174.68 KiB | +44.08%  |
+| `lib/typescript.js`        | 7.95 MiB   | 8.57 MiB   | +637.53 KiB | +7.84%   |
 
-In other words, this is over a 20.5% reduction in package size.
+换言之，包体积缩减了超过 20.5%。
 
-For more information, you can [see the work involved here](https://github.com/microsoft/TypeScript/pull/55273).
+欲了解更多信息，你可以[在此查看相关工作](https://github.com/microsoft/TypeScript/pull/55273)。
 
-## Breaking Changes and Correctness Improvements
+## 破坏性变更与正确性改进
 
-### `lib.d.ts` Changes
+### `lib.d.ts` 变更
 
-Types generated for the DOM may have an impact on your codebase.
-For more information, [see the DOM updates for TypeScript 5.3](https://github.com/microsoft/TypeScript/pull/55798).
+为 DOM 生成的类型可能会对你的代码库产生影响。
+欲了解更多信息，请[参阅 TypeScript 5.3 的 DOM 更新](https://github.com/microsoft/TypeScript/pull/55798)。
 
-### Checks for `super` Accesses on Instance Properties
+### 检查在实例属性上对 `super` 的访问
 
-TypeScript 5.3 now detects when the declaration referenced by a `super.` property access is a class field and issues an error.
-This prevents errors that might occur at runtime.
+TypeScript 5.3 现在会检测通过 `super.` 属性访问所引用的声明是否为类字段，并在是类字段时报错。
+这可以防止在运行时可能出现的错误。
 
-[See more on this change here](https://github.com/microsoft/TypeScript/pull/54056).
+[在此查看关于此更改的更多信息](https://github.com/microsoft/TypeScript/pull/54056)。

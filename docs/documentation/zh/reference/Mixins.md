@@ -1,21 +1,21 @@
 ---
-title: Mixins
+title: 混入（Mixins）
 layout: docs
 permalink: /zh/docs/handbook/mixins.html
-oneline: Using the mixin pattern with TypeScript
+oneline: 在 TypeScript 中使用混入模式
 translatable: true
 ---
 
-Along with traditional OO hierarchies, another popular way of building up classes from reusable components is to build them by combining simpler partial classes.
-You may be familiar with the idea of mixins or traits for languages like Scala, and the pattern has also reached some popularity in the JavaScript community.
+除了传统的面向对象层次结构之外，另一种通过可复用组件构建类的流行方式是通过组合更简单的局部类来进行构建。
+你可能熟悉 Scala 等语言中的混入（mixins）或特质（traits）概念，这一模式在 JavaScript 社区中也颇受欢迎。
 
-## How Does A Mixin Work?
+## 混入是如何工作的？
 
-The pattern relies on using generics with class inheritance to extend a base class.
-TypeScript's best mixin support is done via the class expression pattern.
-You can read more about how this pattern works in JavaScript [here](https://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/).
+该模式依赖于结合泛型与类继承来扩展基类。
+TypeScript 对混入的最佳支持是通过类表达式模式实现的。
+你可以[在此处](https://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/)阅读有关该模式在 JavaScript 中如何工作的更多信息。
 
-To get started, we'll need a class which will have the mixins applied on top of:
+首先，我们需要一个将被应用混入的基础类：
 
 ```ts twoslash
 class Sprite {
@@ -29,7 +29,7 @@ class Sprite {
 }
 ```
 
-Then you need a type and a factory function which returns a class expression extending the base class.
+接下来，你需要一个类型以及一个返回继承自基类的类表达式的工厂函数。
 
 ```ts twoslash
 // To get started, we need a type which we'll use to extend
@@ -58,7 +58,7 @@ function Scale<TBase extends Constructor>(Base: TBase) {
 }
 ```
 
-With these all set up, then you can create a class which represents the base class with mixins applied:
+完成这些准备工作后，你就可以创建一个表示应用了混入的基类：
 
 ```ts twoslash
 class Sprite {
@@ -96,11 +96,11 @@ flappySprite.setScale(0.8)
 console.log(flappySprite.scale)
 ```
 
-## Constrained Mixins
+## 受约束的混入（Constrained Mixins）
 
-In the above form, the mixin's have no underlying knowledge of the class which can make it hard to create the design you want.
+在上面的形式中，混入并不了解被混入类的任何底层信息，这可能会使你难以实现想要的设计。
 
-To model this, we modify the original constructor type to accept a generic argument.
+为了对此建模，我们修改原始的构造函数类型以接受泛型参数。
 
 ```ts twoslash
 // This was our previous constructor:
@@ -110,7 +110,7 @@ type Constructor = new (...args: any[]) => {}
 type GConstructor<T = {}> = new (...args: any[]) => T
 ```
 
-This allows for creating classes which only work with constrained base classes:
+这允许创建仅适用于受约束基类的类：
 
 ```ts twoslash
 type GConstructor<T = {}> = new (...args: any[]) => T
@@ -129,7 +129,7 @@ type Spritable = GConstructor<Sprite>
 type Loggable = GConstructor<{ print: () => void }>
 ```
 
-Then you can create mixins which only work when you have a particular base to build on:
+然后，你就可以创建仅在拥有特定基类时才能工作的混入：
 
 ```ts twoslash
 type GConstructor<T = {}> = new (...args: any[]) => T
@@ -159,9 +159,9 @@ function Jumpable<TBase extends Positionable>(Base: TBase) {
 }
 ```
 
-## Alternative Pattern
+## 替代模式（Alternative Pattern）
 
-Previous versions of this document recommended a way to write mixins where you created both the runtime and type hierarchies separately, then merged them at the end:
+本文档的早期版本推荐过一种编写混入的方式，即分别独立创建运行时和类型层次结构，最后再将它们合并：
 
 ```ts twoslash
 // @strict: false
@@ -206,16 +206,16 @@ function applyMixins(derivedCtor: any, constructors: any[]) {
 }
 ```
 
-This pattern relies less on the compiler, and more on your codebase to ensure both runtime and type-system are correctly kept in sync.
+这种模式对编译器的依赖较少，更多地依赖于你的代码库来确保运行时与类型系统保持正确同步。
 
-## Constraints
+## 限制
 
-The mixin pattern is supported natively inside the TypeScript compiler by code flow analysis.
-There are a few cases where you can hit the edges of the native support.
+TypeScript 编译器通过控制流分析原生支持混入模式。
+在某些情况下，你可能会触碰到原生支持的边界。
 
-#### Decorators and Mixins [`#4881`](https://github.com/microsoft/TypeScript/issues/4881)
+#### 装饰器与混入 [`#4881`](https://github.com/microsoft/TypeScript/issues/4881)
 
-You cannot use decorators to provide mixins via code flow analysis:
+你不能通过控制流分析使用装饰器来提供混入：
 
 ```ts twoslash
 // @experimentalDecorators
@@ -245,12 +245,12 @@ const playerTwo = new Player() as unknown as FreezablePlayer
 playerTwo.shouldFreeze
 ```
 
-#### Static Property Mixins [`#17829`](https://github.com/microsoft/TypeScript/issues/17829)
+#### 静态属性混入 [`#17829`](https://github.com/microsoft/TypeScript/issues/17829)
 
-More of a gotcha than a constraint.
-The class expression pattern creates singletons, so they can't be mapped at the type system to support different variable types.
+这更像是一个陷阱而非限制。
+类表达式模式创建的是单例，因此无法在类型系统级别进行映射以支持不同的变量类型。
 
-You can work around this by using functions to return your classes which differ based on a generic:
+你可以通过使用函数返回根据泛型而不同的类来解决这个问题：
 
 ```ts twoslash
 function base<T>() {

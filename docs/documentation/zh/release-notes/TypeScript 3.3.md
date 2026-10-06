@@ -2,12 +2,12 @@
 title: TypeScript 3.3
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-3-3.html
-oneline: TypeScript 3.3 Release Notes
+oneline: TypeScript 3.3 发布说明
 ---
 
-## Improved behavior for calling union types
+## 调用联合类型时的改进
 
-In prior versions of TypeScript, unions of callable types could _only_ be invoked if they had identical parameter lists.
+在 TypeScript 早期版本中，仅当可调用类型的联合具有完全相同的参数列表时，才_能够_被调用。
 
 ```ts
 type Fruit = 'apple' | 'orange'
@@ -23,9 +23,9 @@ declare let f: FruitEater | ColorConsumer
 f('orange')
 ```
 
-However, in the above example, both `FruitEater`s and `ColorConsumer`s should be able to take the string `"orange"`, and return either a `number` or a `string`.
+然而在上述示例中，`FruitEater` 和 `ColorConsumer` 都应该能够接收字符串 `"orange"`，并返回 `number` 或 `string`。
 
-In TypeScript 3.3, this is no longer an error.
+在 TypeScript 3.3 中，这不再是一个错误。
 
 ```ts
 type Fruit = 'apple' | 'orange'
@@ -43,18 +43,18 @@ f('apple') // error - Argument of type '"apple"' is not assignable to parameter 
 f('red') // error - Argument of type '"red"' is not assignable to parameter of type '"orange"'.
 ```
 
-In TypeScript 3.3, the parameters of these signatures are _intersected_ together to create a new signature.
+在 TypeScript 3.3 中，这些签名的参数会被_交叉_（intersect）在一起，从而创建一个新签名。
 
-In the example above, the parameters `fruit` and `color` are intersected together to a new parameter of type `Fruit & Color`.
-`Fruit & Color` is really the same as `("apple" | "orange") & ("red" | "orange")` which is equivalent to `("apple" & "red") | ("apple" & "orange") | ("orange" & "red") | ("orange" & "orange")`.
-Each of those impossible intersections reduces to `never`, and we're left with `"orange" & "orange"` which is just `"orange"`.
+在上面的示例中，参数 `fruit` 和 `color` 被交叉在一起，形成一个类型为 `Fruit & Color` 的新参数。
+`Fruit & Color` 实际上与 `("apple" | "orange") & ("red" | "orange")` 相同，等价于 `("apple" & "red") | ("apple" & "orange") | ("orange" & "red") | ("orange" & "orange")`。
+其中每一个不可能的交叉项都会归约为 `never`，最终只剩下 `"orange" & "orange"`，即 `"orange"`。
 
-## Caveats
+## 注意事项
 
-This new behavior only kicks in when at most one type in the union has multiple overloads, and at most one type in the union has a generic signature.
-That means methods on `number[] | string[]` like `map` (which is generic) still won't be callable.
+该新行为仅在联合中至多有一个类型拥有多个重载，且至多有一个类型拥有泛型签名时才会生效。
+这意味着像 `number[] | string[]` 上的 `map` 方法（它是泛型方法）仍然是不可调用的。
 
-On the other hand, methods like `forEach` will now be callable, but under [`noImplicitAny`](/tsconfig#noImplicitAny) there may be some issues.
+另一方面，像 `forEach` 这样的方法现在可以被调用了，但在 [`noImplicitAny`](/tsconfig#noImplicitAny) 下可能会遇到一些问题。
 
 ```ts
 interface Dog {
@@ -74,7 +74,7 @@ catOrDogArray.forEach((animal) => {
 })
 ```
 
-This is still strictly more capable in TypeScript 3.3, and adding an explicit type annotation will work.
+尽管如此，TypeScript 3.3 的能力显然更强了，并且添加显式类型注解即可正常工作。
 
 ```ts
 interface Dog {
@@ -98,21 +98,21 @@ catOrDogArray.forEach((animal: Dog | Cat) => {
 })
 ```
 
-## Incremental file watching for composite projects in `--build --watch`
+## `--build --watch` 中复合项目的增量文件监视
 
-TypeScript 3.0 introduced a new feature for structuring builds called "composite projects".
-Part of the goal here was to ensure users could break up large projects into smaller parts that build quickly and preserve project structure, without compromising the existing TypeScript experience.
-Thanks to composite projects, TypeScript can use `--build` mode to recompile only the set of projects and dependencies.
-You can think of this as optimizing _inter_-project builds.
+TypeScript 3.0 引入了一项用于组织构建结构的新特性——“复合项目”（composite projects）。
+其部分目标是确保用户可以将大型项目拆分为能够快速构建且保留项目结构的小型部分，同时不影响现有的 TypeScript 体验。
+得益于复合项目，TypeScript 可以使用 `--build` 模式仅重新编译该组项目及其依赖项。
+你可以将此理解为优化项目_间_（inter-project）的构建。
 
-TypeScript 2.7 also introduced `--watch` mode builds via a new incremental "builder" API.
-In a similar vein, the entire idea is that this mode only re-checks and re-emits changed files or files whose dependencies might impact type-checking.
-You can think of this as optimizing _intra_-project builds.
+TypeScript 2.7 还通过全新的增量“构建器”（builder）API 引入了 `--watch` 模式构建。
+类似地，其核心思想在于该模式仅重新检查并重新生成发生变更的文件，或者其依赖项可能影响类型检查的文件。
+你可以将此理解为优化项目_内_（intra-project）的构建。
 
-Prior to 3.3, building composite projects using `--build --watch` actually didn't use this incremental file watching infrastructure.
-An update in one project under `--build --watch` mode would force a full build of that project, rather than determining which files within that project were affected.
+在 3.3 之前，使用 `--build --watch` 构建复合项目实际上并没有使用这种增量文件监视基础设施。
+在 `--build --watch` 模式下，某个项目中的更新会强制对该项目进行完整构建，而不会判断该项目中有哪些文件受到了影响。
 
-In TypeScript 3.3, `--build` mode's `--watch` flag _does_ leverage incremental file watching as well.
-That can mean significantly faster builds under `--build --watch`.
-In our testing, this functionality has resulted in **a reduction of 50% to 75% in build times** of the original `--build --watch` times.
-[You can read more on the original pull request for the change](https://github.com/Microsoft/TypeScript/pull/29161) to see specific numbers, but we believe most composite project users will see significant wins here.
+在 TypeScript 3.3 中，`--build` 模式的 `--watch` 标志_同样_利用了增量文件监视。
+这意味着在 `--build --watch` 下的构建速度会显著提升。
+在我们的测试中，相比原先的 `--build --watch` 时间，该功能使**构建时间减少了 50% 到 75%**。
+[你可以阅读有关此项更改的原始 Pull Request](https://github.com/Microsoft/TypeScript/pull/29161) 以查看具体数字，但我们相信大多数复合项目用户都会在此获得显著提升。

@@ -2,14 +2,14 @@
 title: TypeScript 4.9
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-4-9.html
-oneline: TypeScript 4.9 Release Notes
+oneline: TypeScript 4.9 发布说明
 ---
 
-## The `satisfies` Operator
+## `satisfies` 运算符
 
-TypeScript developers are often faced with a dilemma: we want to ensure that some expression _matches_ some type, but also want to keep the _most specific_ type of that expression for inference purposes.
+TypeScript 开发者经常面临两难境地：我们既希望确保某个表达式*匹配*某种类型，又希望保留该表达式*最具体*的类型用于类型推断。
 
-For example:
+例如：
 
 ```ts
 // Each property can be a string or an RGB tuple.
@@ -24,8 +24,7 @@ const palette = {
 const greenNormalized = palette.green.toUpperCase()
 ```
 
-Notice that we've written `bleu`, whereas we probably should have written `blue`.
-We could try to catch that `bleu` typo by using a type annotation on `palette`, but we'd lose the information about each property.
+注意，我们把属性名误写成了 `bleu`，而原本应该写成 `blue`。我们可以尝试在 `palette` 上添加类型标注来捕获 `bleu` 拼写错误，但这样会丢失各个属性的具体类型信息：
 
 ```ts
 type Colors = 'red' | 'green' | 'blue'
@@ -44,8 +43,7 @@ const palette: Record<Colors, string | RGB> = {
 const greenNormalized = palette.green.toUpperCase()
 ```
 
-The new `satisfies` operator lets us validate that the type of an expression matches some type, without changing the resulting type of that expression.
-As an example, we could use `satisfies` to validate that all the properties of `palette` are compatible with `string | number[]`:
+全新的 `satisfies` 运算符允许我们验证表达式的类型是否匹配某种类型，同时不改变该表达式本身的推断类型结果。例如，我们可以使用 `satisfies` 来验证 `palette` 的所有属性是否与 `string | number[]` 兼容：
 
 ```ts
 type Colors = 'red' | 'green' | 'blue'
@@ -63,8 +61,7 @@ const palette = {
 const greenNormalized = palette.green.toUpperCase()
 ```
 
-`satisfies` can be used to catch lots of possible errors.
-For example, we could ensure that an object has _all_ the keys of some type, but no more:
+`satisfies` 可用于捕获许多潜在错误。例如，我们可以确保对象具备某种类型的*所有*键，且不多不少：
 
 ```ts
 type Colors = 'red' | 'green' | 'blue'
@@ -82,8 +79,7 @@ const favoriteColors = {
 const g: boolean = favoriteColors.green
 ```
 
-Maybe we don't care about if the property names match up somehow, but we do care about the types of each property.
-In that case, we can also ensure that all of an object's property values conform to some type.
+或者，我们可能不关心属性名称是否匹配，但关心各个属性的类型。在这种情况下，我们也可以确保对象的所有属性值都符合某种类型：
 
 ```ts
 type RGB = [red: number, green: number, blue: number]
@@ -100,17 +96,13 @@ const redComponent = palette.red.at(0)
 const greenNormalized = palette.green.toUpperCase()
 ```
 
-For more examples, you can see the [issue proposing this](https://github.com/microsoft/TypeScript/issues/47920) and [the implementing pull request](https://github.com/microsoft/TypeScript/pull/46827).
-We'd like to thank [Oleksandr Tarasiuk](https://github.com/a-tarasyuk) who implemented and iterated on this feature with us.
+欲了解更多示例，你可以查看[提出该特性的 issue](https://github.com/microsoft/TypeScript/issues/47920) 和[实现该功能的 Pull Request](https://github.com/microsoft/TypeScript/pull/46827)。我们要向 [Oleksandr Tarasiuk](https://github.com/a-tarasyuk) 致谢，是他与我们一起实现并迭代了这一特性。
 
-## Unlisted Property Narrowing with the `in` Operator
+## 使用 `in` 运算符收窄未列出的属性
 
-As developers, we often need to deal with values that aren't fully known at runtime.
-In fact, we often don't know if properties exist, whether we're getting a response from a server or reading a configuration file.
-JavaScript's `in` operator can check whether a property
-exists on an object.
+作为开发者，我们经常需要处理运行时无法完全确定的值。事实上，无论是在接收服务器响应还是读取配置文件时，我们通常都无法预先得知某个属性是否存在。JavaScript 的 `in` 运算符可以检查对象上是否存在某个属性。
 
-Previously, TypeScript allowed us to narrow away any types that don't explicitly list a property.
+此前，TypeScript 允许我们收窄并排除那些未显式列出该属性的类型：
 
 ```ts
 interface RGB {
@@ -133,11 +125,9 @@ function setColor(color: RGB | HSV) {
 }
 ```
 
-Here, the type `RGB` didn't list the `hue` and got narrowed away, and leaving us with the type `HSV`.
+在这里，类型 `RGB` 没有列出 `hue`，因而被排除收窄，留给我们的类型就是 `HSV`。
 
-But what about examples where no type listed a given property?
-In those cases, the language didn't help us much.
-Let's take the following example in JavaScript:
+但是，如果所有类型都没有列出给定属性呢？在那些情况下，语言并没有提供太多帮助。来看以下 JavaScript 示例：
 
 ```js
 function tryGetPackageName(context) {
@@ -154,8 +144,7 @@ function tryGetPackageName(context) {
 }
 ```
 
-Rewriting this to canonical TypeScript would just be a matter of defining and using a type for `context`;
-however, picking a safe type like `unknown` for the `packageJSON` property would cause issues in older versions of TypeScript.
+将其重写为规范的 TypeScript 代码只需为 `context` 定义并使用一个类型；然而在旧版本的 TypeScript 中，为 `packageJSON` 属性选择一个像 `unknown` 这样的安全类型会导致问题：
 
 ```ts
 interface Context {
@@ -180,14 +169,11 @@ function tryGetPackageName(context: Context) {
 }
 ```
 
-This is because while the type of `packageJSON` was narrowed from `unknown` to `object`, the `in` operator strictly narrowed to types that actually defined the property being checked.
-As a result, the type of `packageJSON` remained `object`.
+这是因为虽然 `packageJSON` 的类型从 `unknown` 收窄为了 `object`，但 `in` 运算符此前只会严格收窄到实际定义了所检查属性的类型上。因此，`packageJSON` 的类型仍然是 `object`。
 
-TypeScript 4.9 makes the `in` operator a little bit more powerful when narrowing types that _don't_ list the property at all.
-Instead of leaving them as-is, the language will intersect their types with `Record<"property-key-being-checked", unknown>`.
+TypeScript 4.9 让 `in` 运算符在收窄根本*没有*列出该属性的类型时变得更加强大。语言不再保持它们的原样，而是会将它们的类型与 `Record<"被检查的属性名", unknown>` 进行交叉。
 
-So in our example, `packageJSON` will have its type narrowed from `unknown` to `object` to `object & Record<"name", unknown>`
-That allows us to access `packageJSON.name` directly and narrow that independently.
+因此在我们的示例中，`packageJSON` 的类型将从 `unknown` 收窄为 `object`，再收窄为 `object & Record<"name", unknown>`。这使我们能够直接访问 `packageJSON.name` 并对其独立进行类型收窄：
 
 ```ts
 interface Context {
@@ -209,15 +195,13 @@ function tryGetPackageName(context: Context): string | undefined {
 }
 ```
 
-TypeScript 4.9 also tightens up a few checks around how `in` is used, ensuring that the left side is assignable to the type `string | number | symbol`, and the right side is assignable to `object`.
-This helps check that we're using valid property keys, and not accidentally checking primitives.
+TypeScript 4.9 还收紧了围绕 `in` 运算符使用的若干检查，确保左操作数可赋值给 `string | number | symbol` 类型，而右操作数可赋值给 `object` 类型。这有助于确保我们使用的是有效的属性键，而不会意外去检查原始类型。
 
-For more information, [read the implementing pull request](https://github.com/microsoft/TypeScript/pull/50666)
+欲了解更多信息，请[阅读实现该功能的 Pull Request](https://github.com/microsoft/TypeScript/pull/50666)。
 
-## Auto-Accessors in Classes
+## 类中的自动访问器（Auto-Accessors）
 
-TypeScript 4.9 supports an upcoming feature in ECMAScript called auto-accessors.
-Auto-accessors are declared just like properties on classes, except that they're declared with the `accessor` keyword.
+TypeScript 4.9 支持 ECMAScript 中即将到来的“自动访问器（auto-accessors）”特性。自动访问器的声明方式与类属性相同，只是它们使用 `accessor` 关键字进行声明：
 
 ```ts
 class Person {
@@ -229,7 +213,7 @@ class Person {
 }
 ```
 
-Under the covers, these auto-accessors "de-sugar" to a `get` and `set` accessor with an unreachable private property.
+在底层，这些自动访问器会被“脱糖（de-sugar）”为一个 `get` 和 `set` 访问器以及一个外部无法访问的私有属性：
 
 ```ts
 class Person {
@@ -248,14 +232,13 @@ class Person {
 }
 ```
 
-You can [read up more about the auto-accessors pull request on the original PR](https://github.com/microsoft/TypeScript/pull/49705).
+你可以在[原始 PR 中了解关于自动访问器的更多信息](https://github.com/microsoft/TypeScript/pull/49705)。
 
-## Checks For Equality on `NaN`
+## 对 `NaN` 的相等性检查
 
-A major gotcha for JavaScript developers is checking against the value `NaN` using the built-in equality operators.
+对 JavaScript 开发者来说，使用内置相等运算符与 `NaN` 值进行比较是一个常见的陷阱。
 
-For some background, `NaN` is a special numeric value that stands for "Not a Number".
-Nothing is ever equal to `NaN` - even `NaN`!
+背景知识是：`NaN` 是一个表示“非数字（Not a Number）”的特殊数值。没有任何值与 `NaN` 相等——即使是 `NaN` 本身也不相等！
 
 ```js
 console.log(NaN == 0) // false
@@ -265,7 +248,7 @@ console.log(NaN == NaN) // false
 console.log(NaN === NaN) // false
 ```
 
-But at least symmetrically _everything_ is always not-equal to `NaN`.
+但对称地，*所有值*都始终不等于 `NaN`：
 
 ```js
 console.log(NaN != 0) // true
@@ -275,11 +258,9 @@ console.log(NaN != NaN) // true
 console.log(NaN !== NaN) // true
 ```
 
-This technically isn't a JavaScript-specific problem, since any language that contains IEEE-754 floats has the same behavior;
-but JavaScript's primary numeric type is a floating point number, and number parsing in JavaScript can often result in `NaN`.
-In turn, checking against `NaN` ends up being fairly common, and the correct way to do so is to use [`Number.isNaN`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isNaN) - _but_ as we mentioned, lots of people accidentally end up checking with `someValue === NaN` instead.
+从技术上讲，这并不是 JavaScript 独有的问题，因为任何采用 IEEE-754 浮点数的语言都具有相同的行为；但 JavaScript 的主要数值类型是浮点数，且 JavaScript 中的数字解析常常会产生 `NaN`。因此，检查 `NaN` 相当普遍，正确的方法是使用 [`Number.isNaN`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isNaN)——*但是*正如我们提到的，许多人会不小心用 `someValue === NaN` 进行比较。
 
-TypeScript now errors on direct comparisons against `NaN`, and will suggest using some variation of `Number.isNaN` instead.
+TypeScript 现在会对与 `NaN` 的直接比较报错，并建议使用 `Number.isNaN` 的某种变体来替代：
 
 ```ts
 function validate(someValue: number) {
@@ -290,47 +271,29 @@ function validate(someValue: number) {
 }
 ```
 
-We believe that this change should strictly help catch beginner errors, similar to how TypeScript currently issues errors on comparisons against object and array literals.
+我们相信这项更改能切实帮助捕获初学者的错误，类似于目前 TypeScript 对对象和数组字面量比较所给出的错误提示。
 
-We'd like to extend our thanks to [Oleksandr Tarasiuk](https://github.com/a-tarasyuk) who [contributed this check](https://github.com/microsoft/TypeScript/pull/50626).
+感谢 [Oleksandr Tarasiuk](https://github.com/a-tarasyuk) [贡献了这项检查](https://github.com/microsoft/TypeScript/pull/50626)。
 
-## File-Watching Now Uses File System Events
+## 文件监视现采用文件系统事件
 
-In earlier versions, TypeScript leaned heavily on _polling_ for watching individual files.
-Using a polling strategy meant checking the state of a file periodically for updates.
-On Node.js, [`fs.watchFile`](https://nodejs.org/docs/latest-v18.x/api/fs.html#fswatchfilefilename-options-listener) is the built-in way to get a polling file-watcher.
-While polling tends to be more predictable across platforms and file systems, it means that your CPU has to periodically get interrupted and check for updates to the file, even when nothing's changed.
-For a few dozen files, this might not be noticeable;
-but on a bigger project with lots of files - or lots of files in `node_modules` - this can become a resource hog.
+在早期版本中，TypeScript 在监视单个文件时严重依赖*轮询（polling）*。使用轮询策略意味着定期检查文件的状态是否有更新。在 Node.js 中，[`fs.watchFile`](https://nodejs.org/docs/latest-v18.x/api/fs.html#fswatchfilefilename-options-listener) 是获取轮询文件监视器的内置方式。虽然轮询在不同平台和文件系统之间往往更具可预测性，但这意味着即便没有任何变更，CPU 也必须定期被打断以检查文件更新。对于几十个文件，这可能并不明显；但对于包含大量文件的大型项目——或者在 `node_modules` 中有大量文件时——这会变成资源消耗大户。
 
-Generally speaking, a better approach is to use file system events.
-Instead of polling, we can announce that we're interested in updates of specific files and provide a callback for when those files _actually do_ change.
-Most modern platforms in use provide facilities and APIs like `CreateIoCompletionPort`, `kqueue`, `epoll`, and `inotify`.
-Node.js mostly abstracts these away by providing [`fs.watch`](https://nodejs.org/docs/latest-v18.x/api/fs.html#fswatchfilename-options-listener).
-File system events usually work great, but there are [lots of caveats](https://nodejs.org/docs/latest-v18.x/api/fs.html#caveats) to using them, and in turn, to using the `fs.watch` API.
-A watcher needs to be careful to consider [inode watching](https://nodejs.org/docs/latest-v18.x/api/fs.html#inodes), [unavailability on certain file systems](https://nodejs.org/docs/latest-v18.x/api/fs.html#availability) (e.g.networked file systems), whether recursive file watching is available, whether directory renames trigger events, and even file watcher exhaustion!
-In other words, it's not quite a free lunch, especially if you're looking for something cross-platform.
+一般而言，更好的方案是使用文件系统事件。我们可以声明自己对特定文件的更新感兴趣，并在这些文件*确实*发生变化时提供回调，而不是主动轮询。大多数主流现代平台都提供了类似 `CreateIoCompletionPort`、`kqueue`、`epoll` 和 `inotify` 的设施和 API。Node.js 主要通过提供 [`fs.watch`](https://nodejs.org/docs/latest-v18.x/api/fs.html#fswatchfilename-options-listener) 来将这些机制抽象化。文件系统事件通常工作良好，但在使用它们以及使用 `fs.watch` API 时有[许多需要注意的陷阱](https://nodejs.org/docs/latest-v18.x/api/fs.html#caveats)。监视器需要谨慎考虑 [inode 监视](https://nodejs.org/docs/latest-v18.x/api/fs.html#inodes)、[在某些文件系统上的不可用性](https://nodejs.org/docs/latest-v18.x/api/fs.html#availability)（例如网络文件系统）、是否支持递归文件监视、目录重命名是否会触发事件，甚至是文件监视器句柄耗尽问题！换言之，这并非没有代价，尤其是在寻求跨平台兼容方案时。
 
-As a result, our default was to pick the lowest common denominator: polling.
-Not always, but most of the time.
+因此，我们此前默认选择了折中的最低标准：轮询。虽非全部情况，但大多数时候如此。
 
-Over time, we've provided the means to [choose other file-watching strategies](https://www.typescriptlang.org/docs/handbook/configuring-watch.html).
-This allowed us to get feedback and harden our file-watching implementation against most of these platform-specific gotchas.
-As TypeScript has needed to scale to larger codebases, and has improved in this area, we felt swapping to file system events as the default would be a worthwhile investment.
+随着时间的推移，我们提供了[选择其他文件监视策略](https://www.typescriptlang.org/docs/handbook/configuring-watch.html)的能力。这使我们能够收集反馈并加强文件监视实现，以应对大多数平台特有的坑。随着 TypeScript 需要扩展到更大的代码库并在这一领域不断成熟，我们认为将默认策略切换为文件系统事件是一项值得的投入。
 
-In TypeScript 4.9, file watching is powered by file system events by default, only falling back to polling if we fail to set up event-based watchers.
-For most developers, this should provide a much less resource-intensive experience when running in `--watch` mode, or running with a TypeScript-powered editor like Visual Studio or VS Code.
+在 TypeScript 4.9 中，文件监视默认由文件系统事件驱动，仅在我们无法设置基于事件的监视器时才会回退到轮询。对于大多数开发者而言，无论是在 `--watch` 模式下运行，还是在使用 Visual Studio 或 VS Code 等基于 TypeScript 的编辑器时，这都应该带来占用资源大幅减少的体验。
 
-[The way file-watching works can still be configured](https://www.typescriptlang.org/docs/handbook/configuring-watch.html) through environment variables and `watchOptions` - and [some editors like VS Code can support `watchOptions` independently](https://code.visualstudio.com/docs/getstarted/settings#:~:text=typescript%2etsserver%2ewatchOptions).
-Developers using more exotic set-ups where source code resides on a networked file systems (like NFS and SMB) may need to opt back into the older behavior; though if a server has reasonable processing power, it might just be better to enable SSH and run TypeScript remotely so that it has direct local file access.
-VS Code has plenty of [remote extensions](https://marketplace.visualstudio.com/search?term=remote&target=VSCode&category=All%20categories&sortBy=Relevance) to make this easier.
+[文件监视的工作机制仍可通过环境变量和 `watchOptions` 进行配置](https://www.typescriptlang.org/docs/handbook/configuring-watch.html)——且[某些编辑器（如 VS Code）可独立支持 `watchOptions`](https://code.visualstudio.com/docs/getstarted/settings#:~:text=typescript%2etsserver%2ewatchOptions)。使用源码位于网络文件系统（如 NFS 和 SMB）上的特殊配置的开发者可能需要选择恢复旧行为；不过，如果服务器具备合理的计算能力，启用 SSH 并远程运行 TypeScript 以直接访问本地文件可能会是更好的选择。VS Code 拥有丰富的[远程扩展](https://marketplace.visualstudio.com/search?term=remote&target=VSCode&category=All%20categories&sortBy=Relevance)以简化这一过程。
 
-You can [read up more on this change on GitHub](https://github.com/microsoft/TypeScript/pull/50366).
+你可以在 GitHub 上[阅读有关此项变更的更多信息](https://github.com/microsoft/TypeScript/pull/50366)。
 
-## "Remove Unused Imports" and "Sort Imports" Commands for Editors
+## 编辑器的“移除未使用的导入”与“对导入排序”命令
 
-Previously, TypeScript only supported two editor commands to manage imports.
-For our examples, take the following code:
+此前，TypeScript 仅支持两个用于管理导入的编辑器命令。看以下示例代码：
 
 ```ts
 import { Zebra, Moose, HoneyBadger } from './zoo'
@@ -339,8 +302,7 @@ import { foo, bar } from './helper'
 let x: Moose | HoneyBadger = foo()
 ```
 
-The first was called "Organize Imports" which would remove unused imports, and then sort the remaining ones.
-It would rewrite that file to look like this one:
+第一个命令是“整理导入（Organize Imports）”，它会删除未使用的导入，然后对剩余的导入进行排序。它会将文件重写为如下所示：
 
 ```ts
 import { foo } from './helper'
@@ -349,7 +311,7 @@ import { HoneyBadger, Moose } from './zoo'
 let x: Moose | HoneyBadger = foo()
 ```
 
-In TypeScript 4.3, we introduced a command called "Sort Imports" which would _only_ sort imports in the file, but not remove them - and would rewrite the file like this.
+在 TypeScript 4.3 中，我们引入了一个名为“对导入排序（Sort Imports）”的命令，它*只*对文件中的导入进行排序，而不删除它们——它会将文件重写如下：
 
 ```ts
 import { bar, foo } from './helper'
@@ -358,10 +320,9 @@ import { HoneyBadger, Moose, Zebra } from './zoo'
 let x: Moose | HoneyBadger = foo()
 ```
 
-The caveat with "Sort Imports" was that in Visual Studio Code, this feature was only available as an on-save command - not as a manually triggerable command.
+“对导入排序”的局限在于，在 Visual Studio Code 中，该功能仅作为保存时触发的命令可用，而无法手动触发。
 
-TypeScript 4.9 adds the other half, and now provides "Remove Unused Imports".
-TypeScript will now remove unused import names and statements, but will otherwise leave the relative ordering alone.
+TypeScript 4.9 补全了另一半功能，现在提供了“移除未使用的导入（Remove Unused Imports）”。TypeScript 现在会移除未使用的导入名称和语句，但在其他方面保留其相对顺序不变：
 
 ```ts
 import { Moose, HoneyBadger } from './zoo'
@@ -370,37 +331,29 @@ import { foo } from './helper'
 let x: Moose | HoneyBadger = foo()
 ```
 
-This feature is available to all editors that wish to use either command;
-but notably, Visual Studio Code (1.73 and later) will have support built in _and_ will surface these commands via its Command Palette.
-Users who prefer to use the more granular "Remove Unused Imports" or "Sort Imports" commands should be able to reassign the "Organize Imports" key combination to them if desired.
+该特性适用于所有希望使用任一命令的编辑器；尤其值得一提的是，Visual Studio Code（1.73 及更高版本）已内置支持，*并且*会通过其命令面板（Command Palette）公开这些命令。更喜欢使用细粒度的“移除未使用的导入”或“对导入排序”命令的用户，可以根据需要将“整理导入”的快捷键重新绑定到它们上。
 
-You can [view specifics of the feature here](https://github.com/microsoft/TypeScript/pull/50931).
+你可以[在此查看该特性的具体细节](https://github.com/microsoft/TypeScript/pull/50931)。
 
-## Go-to-Definition on `return` Keywords
+## 在 `return` 关键字上支持“跳转到定义”
 
-In the editor, when running a go-to-definition on the `return` keyword, TypeScript will now jump you to the top of the corresponding function.
-This can be helpful to get a quick sense of which function a `return` belongs to.
+在编辑器中，当在 `return` 关键字上执行“跳转到定义”时，TypeScript 现在会跳转到对应函数的顶部。这有助于快速了解某个 `return` 属于哪个函数。
 
-We expect TypeScript will expand this functionality to more keywords [such as `await` and `yield`](https://github.com/microsoft/TypeScript/issues/51223) or [`switch`, `case`, and `default`](https://github.com/microsoft/TypeScript/issues/51225).
+我们预计 TypeScript 会将此功能扩展到更多关键字，[例如 `await` 和 `yield`](https://github.com/microsoft/TypeScript/issues/51223) 或 [`switch`、`case` 和 `default`](https://github.com/microsoft/TypeScript/issues/51225)。
 
-[This feature was implemented](https://github.com/microsoft/TypeScript/pull/51227) thanks to [Oleksandr Tarasiuk](https://github.com/a-tarasyuk).
+[该特性的实现](https://github.com/microsoft/TypeScript/pull/51227)感谢 [Oleksandr Tarasiuk](https://github.com/a-tarasyuk)。
 
-## Performance Improvements
+## 性能改进
 
-TypeScript has a few small, but notable, performance improvements.
+TypeScript 带来了一些小巧但显著的性能改进。
 
-First, TypeScript's `forEachChild` function has been rewritten to use a function table lookup instead of a `switch` statement across all syntax nodes.
-`forEachChild` is a workhorse for traversing syntax nodes in the compiler, and is used heavily in the binding stage of our compiler, along with parts of the language service.
-The refactoring of `forEachChild` yielded up to a 20% reduction of time spent in our binding phase and across language service operations.
+首先，TypeScript 的 `forEachChild` 函数经过重写，采用了函数表查找而非对所有语法节点使用 `switch` 语句。`forEachChild` 是编译器中遍历语法节点的核心工作函数，在编译器的绑定阶段以及语言服务的部分功能中被大量使用。对 `forEachChild` 的重构使我们在绑定阶段和各项语言服务操作中耗费的时间减少了高达 20%。
 
-Once we discovered this performance win for `forEachChild`, we tried it out on `visitEachChild`, a function we use for transforming nodes in the compiler and language service.
-The same refactoring yielded up to a 3% reduction in time spent in generating project output.
+当我们发现 `forEachChild` 的这项性能提升后，我们在 `visitEachChild` 上也进行了尝试（我们在编译器和语言服务中用该函数转换节点）。同样的重构使生成项目输出所花费的时间减少了高达 3%。
 
-The initial exploration in `forEachChild` was [inspired by a blog post](https://artemis.sh/2022/08/07/emulating-calculators-fast-in-js.html) by [Artemis Everfree](https://artemis.sh/).
-While we have some reason to believe the root cause of our speed-up might have more to do with function size/complexity than the issues described in the blog post, we're grateful that we were able to learn from the experience and try out a relatively quick refactoring that made TypeScript faster.
+对 `forEachChild` 的最初探索是[受到一篇文章的启发](https://artemis.sh/2022/08/07/emulating-calculators-fast-in-js.html)，作者是 [Artemis Everfree](https://artemis.sh/)。虽然我们有理由相信性能提升的根本原因可能更多与函数体积/复杂度有关，而非博文中所描述的问题，但我们很庆幸能从这次经历中汲取经验，并尝试通过相对轻量的重构让 TypeScript 变得更快。
 
-Finally, the way TypeScript preserves the information about a type in the true branch of a conditional type has been optimized.
-In a type like
+最后，TypeScript 优化了在条件类型的真分支中保留类型信息的方式。对于形如下述类型：
 
 ```ts
 interface Zoo<T extends Animal> {
@@ -410,39 +363,29 @@ interface Zoo<T extends Animal> {
 type MakeZoo<A> = A extends Animal ? Zoo<A> : never
 ```
 
-TypeScript has to "remember" that `A` must also be an `Animal` when checking if `Zoo<A>` is valid.
-This is basically done by creating a special type that used to hold the intersection of `A` with `Animal`;
-however, TypeScript previously did this eagerly which isn't always necessary.
-Furthermore, some faulty code in our type-checker prevented these special types from being simplified.
-TypeScript now defers intersecting these types until it's necessary.
-For codebases with heavy use of conditional types, you might witness significant speed-ups with TypeScript, but in our performance testing suite, we saw a more modest 3% reduction in type-checking time.
+TypeScript 在检查 `Zoo<A>` 是否合法时必须“记住” `A` 也必须是一个 `Animal`。这基本上是通过创建一个特殊的类型来实现的，该类型此前用于保存 `A` 与 `Animal` 的交叉；然而，TypeScript 之前是急切（eagerly）创建该类型的，这并不总是必需的。此外，我们类型检查器中的某些缺陷代码阻碍了这些特殊类型的简化。TypeScript 现在会将这些类型的交叉推迟到必要时进行。对于大量使用条件类型的代码库，你可能会看到 TypeScript 显著加速；而在我们的性能测试套件中，我们观察到类型检查时间有了约 3% 的温和改善。
 
-You can read up more on these optimizations on their respective pull requests:
+你可以在各自的 Pull Request 中了解关于这些优化的更多信息：
 
-- [`forEachChild` as a jump-table](https://github.com/microsoft/TypeScript/pull/50225)
-- [`visitEachChild` as a jump-table](https://github.com/microsoft/TypeScript/pull/50266)
-- [Optimize substitition types](https://github.com/microsoft/TypeScript/pull/50397)
+- [基于跳转表的 `forEachChild`](https://github.com/microsoft/TypeScript/pull/50225)
+- [基于跳转表的 `visitEachChild`](https://github.com/microsoft/TypeScript/pull/50266)
+- [优化替换类型（substitution types）](https://github.com/microsoft/TypeScript/pull/50397)
 
-## Correctness Fixes and Breaking Changes
+## 正确性修复与破坏性变更
 
-### `lib.d.ts` Updates
+### `lib.d.ts` 更新
 
-While TypeScript strives to avoid major breaks, even small changes in the built-in libraries can cause issues.
-We don't expect major breaks as a result of DOM and `lib.d.ts` updates, but there may be some small ones.
+虽然 TypeScript 竭力避免重大破坏性变更，但内置库中哪怕很小的改动也可能引发问题。我们预计 DOM 和 `lib.d.ts` 的更新不会带来重大破坏，但可能会有一些细微影响。
 
-### Better Types for `Promise.resolve`
+### `Promise.resolve` 的更优类型定义
 
-`Promise.resolve` now uses the `Awaited` type to unwrap Promise-like types passed to it.
-This means that it more often returns the right `Promise` type, but that improved type can break existing code if it was expecting `any` or `unknown` instead of a `Promise`.
-For more information, [see the original change](https://github.com/microsoft/TypeScript/pull/33074).
+`Promise.resolve` 现在使用 `Awaited` 类型来解包传入给它的 Promise-like 类型。这意味着它能更频繁地返回正确的 `Promise` 类型，但如果现有代码期望返回 `any` 或 `unknown` 而非 `Promise`，这种更精准的类型可能会破坏现有代码。欲了解更多信息，请[查看原始变更](https://github.com/microsoft/TypeScript/pull/33074)。
 
-### JavaScript Emit No Longer Elides Imports
+### JavaScript 代码生成不再省略导入语句
 
-When TypeScript first supported type-checking and compilation for JavaScript, it accidentally supported a feature called import elision.
-In short, if an import is not used as a value, or the compiler can detect that the import doesn't refer to a value at runtime, the compiler will drop the import during emit.
+当 TypeScript 最初支持 JavaScript 的类型检查和编译时，它无意中支持了一项名为“导入省略（import elision）”的功能。简而言之，如果某个导入未作为值使用，或者编译器能够检测到该导入在运行时不指代任何值，编译器就会在生成代码时丢弃该导入。
 
-This behavior was questionable, especially the detection of whether the import doesn't refer to a value, since it means that TypeScript has to trust sometimes-inaccurate declaration files.
-In turn, TypeScript now preserves imports in JavaScript files.
+这种行为值得商榷，尤其是检测导入是否不指代值这一项，因为这意味着 TypeScript 必须信任有时并不准确的声明文件。因此，TypeScript 现在会在 JavaScript 文件中保留导入语句。
 
 ```js
 // Input:
@@ -464,12 +407,11 @@ import { someValue, SomeClass } from 'some-module'
 let val = someValue
 ```
 
-More information is available at [the implementing change](https://github.com/microsoft/TypeScript/pull/50404).
+更多信息可在[实现该功能的变更](https://github.com/microsoft/TypeScript/pull/50404)中查看。
 
-### `exports` is Prioritized Over `typesVersions`
+### `exports` 的优先级高于 `typesVersions`
 
-Previously, TypeScript incorrectly prioritized the `typesVersions` field over the `exports` field when resolving through a `package.json` under `--moduleResolution node16`.
-If this change impacts your library, you may need to add `types@` version selectors in your `package.json`'s `exports` field.
+此前，在 `--moduleResolution node16` 下通过 `package.json` 进行解析时，TypeScript 错误地将 `typesVersions` 字段的优先级排在 `exports` 字段之前。如果这一变更影响了你的库，你可能需要在 `package.json` 的 `exports` 字段中添加 `types@` 版本选择器：
 
 ```diff
   {
@@ -489,10 +431,10 @@ If this change impacts your library, you may need to add `types@` version select
   }
 ```
 
-For more information, [see this pull request](https://github.com/microsoft/TypeScript/pull/50890).
+欲了解更多信息，请[参阅此 Pull Request](https://github.com/microsoft/TypeScript/pull/50890)。
 
-## `substitute` Replaced With `constraint` on `SubstitutionType`s
+## `SubstitutionType` 上的 `substitute` 被替换为 `constraint`
 
-As part of an optimization on substitution types, `SubstitutionType` objects no longer contain the `substitute` property representing the effective substitution (usually an intersection of the base type and the implicit constraint) - instead, they just contain the `constraint` property.
+作为替换类型优化的一部分，`SubstitutionType` 对象不再包含表示有效替换（通常是基础类型与隐式约束的交叉）的 `substitute` 属性——相反，它们仅包含 `constraint` 属性。
 
-For more details, [read more on the original pull request](https://github.com/microsoft/TypeScript/pull/50397).
+欲了解更多详情，请[在原始 Pull Request 中阅读更多内容](https://github.com/microsoft/TypeScript/pull/50397)。

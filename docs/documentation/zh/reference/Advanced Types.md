@@ -1,8 +1,8 @@
 ---
-title: Advanced Types
+title: 高级类型
 layout: docs
 permalink: /zh/docs/handbook/advanced-types.html
-oneline: Advanced concepts around types in TypeScript
+oneline: TypeScript 中关于类型的高级概念
 deprecated_by: /docs/handbook/2/types-from-types.html
 
 # prettier-ignore
@@ -29,14 +29,14 @@ deprecation_redirects: [
 ]
 ---
 
-This page lists some of the more advanced ways in which you can model types, it works in tandem with the [Utility Types](/docs/handbook/utility-types.html) doc which includes types which are included in TypeScript and available globally.
+本页面列举了一些更高级的类型建模方式。它与 [Utility Types](/docs/handbook/utility-types.html) 文档相辅相成，后者涵盖了 TypeScript 中内置且全局可用的实用工具类型。
 
-## Type Guards and Differentiating Types
+## 类型守卫与类型区分
 
-Union types are useful for modeling situations when values can overlap in the types they can take on.
-What happens when we need to know specifically whether we have a `Fish`?
-A common idiom in JavaScript to differentiate between two possible values is to check for the presence of a member.
-As we mentioned, you can only access members that are guaranteed to be in all the constituents of a union type.
+当值可能属于重叠的多种类型时，联合类型在为这类场景建模时非常有用。
+但当我们明确需要知道当前拥有的是不是 `Fish` 时，该怎么办？
+在 JavaScript 中，区分两个可能值的常用做法是检查某个成员是否存在。
+正如前文所述，你只能访问那些保证存在于联合类型所有组成成员中的成员。
 
 ```ts twoslash
 // @errors: 2339
@@ -56,7 +56,7 @@ if (pet.fly) {
 }
 ```
 
-To get the same code working via property accessors, we'll need to use a type assertion:
+为了让上述代码通过属性访问器正常工作，我们需要使用类型断言：
 
 ```ts twoslash
 type Fish = { swim: () => void }
@@ -74,18 +74,18 @@ if (fishPet.swim) {
 }
 ```
 
-This isn't the sort of code you would want in your codebase however.
+然而，这并不是你希望在代码库中看到的代码风格。
 
-## User-Defined Type Guards
+## 用户自定义类型守卫
 
-It would be much better if once we performed the check, we could know the type of `pet` within each branch.
+如果在执行检查后，我们就能在每个分支中直接获知 `pet` 的确切类型，那就好多了。
 
-It just so happens that TypeScript has something called a _type guard_.
-A type guard is some expression that performs a runtime check that guarantees the type in some scope.
+恰好，TypeScript 提供了名为*类型守卫*（type guard）的机制。
+类型守卫是一种在运行时执行检查的表达式，用于确保在某个作用域内的类型安全。
 
-### Using type predicates
+### 使用类型谓词
 
-To define a type guard, we simply need to define a function whose return type is a _type predicate_:
+要定义一个类型守卫，我们只需要定义一个返回值类型为*类型谓词*（type predicate）的函数：
 
 ```ts twoslash
 type Fish = { swim: () => void }
@@ -97,10 +97,10 @@ function isFish(pet: Fish | Bird): pet is Fish {
 }
 ```
 
-`pet is Fish` is our type predicate in this example.
-A predicate takes the form `parameterName is Type`, where `parameterName` must be the name of a parameter from the current function signature.
+在这个例子中，`pet is Fish` 就是我们的类型谓词。
+谓词的形式为 `parameterName is Type`，其中 `parameterName` 必须是当前函数签名中的参数名。
 
-Any time `isFish` is called with some variable, TypeScript will _narrow_ that variable to that specific type if the original type is compatible.
+每当使用某个变量调用 `isFish` 时，如果原始类型与目标类型兼容，TypeScript 就会将该变量*收窄*（narrow）为具体的类型。
 
 ```ts twoslash
 type Fish = { swim: () => void }
@@ -120,10 +120,10 @@ if (isFish(pet)) {
 }
 ```
 
-Notice that TypeScript not only knows that `pet` is a `Fish` in the `if` branch;
-it also knows that in the `else` branch, you _don't_ have a `Fish`, so you must have a `Bird`.
+请注意，TypeScript 不仅知道在 `if` 分支中 `pet` 是 `Fish`；
+它还知道在 `else` 分支中它*不是* `Fish`，因此必定是 `Bird`。
 
-You may use the type guard `isFish` to filter an array of `Fish | Bird` and obtain an array of `Fish`:
+你还可以使用类型守卫 `isFish` 来过滤 `Fish | Bird` 类型的数组，从而获取 `Fish` 数组：
 
 ```ts twoslash
 // @errors: 2345
@@ -141,11 +141,11 @@ const underWater2: Fish[] = zoo.filter<Fish>(isFish)
 const underWater3: Fish[] = zoo.filter<Fish>((pet) => isFish(pet))
 ```
 
-### Using the `in` operator
+### 使用 `in` 操作符
 
-The `in` operator also acts as a narrowing expression for types.
+`in` 操作符同样可以用作收窄类型的表达式。
 
-For a `n in x` expression, where `n` is a string literal or string literal type and `x` is a union type, the "true" branch narrows to types which have an optional or required property `n`, and the "false" branch narrows to types which have an optional or missing property `n`.
+对于形如 `n in x` 的表达式（其中 `n` 是字符串字面量或字符串字面量类型，`x` 是联合类型），在为 true 的分支中，类型会收窄为具有可选或必选属性 `n` 的类型；而在为 false 的分支中，类型会收窄为具有可选或缺失属性 `n` 的类型。
 
 ```ts twoslash
 type Fish = { swim: () => void }
@@ -159,10 +159,10 @@ function move(pet: Fish | Bird) {
 }
 ```
 
-## `typeof` type guards
+## `typeof` 类型守卫
 
-Let's go back and write the code for a version of `padLeft` which uses union types.
-We could write it with type predicates as follows:
+我们回过头来，使用联合类型编写一个 `padLeft` 的版本。
+我们可以使用类型谓词将其编写如下：
 
 ```ts twoslash
 function isNumber(x: any): x is number {
@@ -184,9 +184,9 @@ function padLeft(value: string, padding: string | number) {
 }
 ```
 
-However, having to define a function to figure out if a type is a primitive is kind of a pain.
-Luckily, you don't need to abstract `typeof x === "number"` into its own function because TypeScript will recognize it as a type guard on its own.
-That means we could just write these checks inline.
+然而，仅仅为了判断一个类型是否为原始类型而专门定义一个函数未免过于麻烦。
+幸运的是，你不需要将 `typeof x === "number"` 抽象为单独的函数，因为 TypeScript 本身就能将其识别为一个类型守卫。
+这意味着我们可以直接内联编写这些检查。
 
 ```ts twoslash
 function padLeft(value: string, padding: string | number) {
@@ -200,15 +200,15 @@ function padLeft(value: string, padding: string | number) {
 }
 ```
 
-These _`typeof` type guards_ are recognized in two different forms: `typeof v === "typename"` and `typeof v !== "typename"`, where `"typename"` can be one of [`typeof` operator's return values](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof#Description) (`"undefined"`, `"number"`, `"string"`, `"boolean"`, `"bigint"`, `"symbol"`, `"object"`, or `"function"`).
-While TypeScript won't stop you from comparing to other strings, the language won't recognize those expressions as type guards.
+这类 _`typeof` 类型守卫_ 可以被识别为两种不同的形式：`typeof v === "typename"` 和 `typeof v !== "typename"`，其中 `"typename"` 可以是 [`typeof` 操作符的返回值](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof#Description) 之一（`"undefined"`、`"number"`、`"string"`、`"boolean"`、`"bigint"`、`"symbol"`、`"object"` 或 `"function"`）。
+虽然 TypeScript 不会阻止你将其与其他字符串进行比较，但编译器不会将那些表达式识别为类型守卫。
 
-## `instanceof` type guards
+## `instanceof` 类型守卫
 
-If you've read about `typeof` type guards and are familiar with the `instanceof` operator in JavaScript, you probably have some idea of what this section is about.
+如果你阅读过 `typeof` 类型守卫，并且熟悉 JavaScript 中的 `instanceof` 操作符，那么大概就能猜到本节要探讨的内容了。
 
-_`instanceof` type guards_ are a way of narrowing types using their constructor function.
-For instance, let's borrow our industrial strength string-padder example from earlier:
+_`instanceof` 类型守卫_ 是一种利用构造函数来收窄类型的方式。
+例如，我们借用之前那个工业级强度的字符串填充器示例：
 
 ```ts twoslash
 interface Padder {
@@ -248,25 +248,23 @@ if (padder instanceof StringPadder) {
 }
 ```
 
-The right side of the `instanceof` needs to be a constructor function, and TypeScript will narrow down to:
+`instanceof` 的右侧必须是一个构造函数，TypeScript 将按如下顺序依次进行类型收窄：
 
-1. the type of the function's `prototype` property if its type is not `any`
-2. the union of types returned by that type's construct signatures
+1. 如果该函数的 `prototype` 属性类型不是 `any`，则收窄为其 `prototype` 属性的类型
+2. 由该类型的构造签名所返回类型的联合类型
 
-in that order.
+## 可空类型
 
-## Nullable types
+TypeScript 拥有两个特殊的类型：`null` 和 `undefined`，它们分别对应值 null 和 undefined。
+我们在[基础类型](/docs/handbook/basic-types.html)章节中曾简要介绍过它们。
 
-TypeScript has two special types, `null` and `undefined`, that have the values null and undefined respectively.
-We mentioned these briefly in [the Basic Types section](/docs/handbook/basic-types.html).
+默认情况下，类型检查器认为 `null` 和 `undefined` 可以赋值给任何类型。
+实际上，`null` 和 `undefined` 是每种类型的有效值。
+这意味着你无法*阻止*它们被赋值给任何类型，即便你希望加以防范。
+`null` 的发明者 Tony Hoare 将其称为他[“价值十亿美元的错误”](https://wikipedia.org/wiki/Null_pointer#History)。
 
-By default, the type checker considers `null` and `undefined` assignable to anything.
-Effectively, `null` and `undefined` are valid values of every type.
-That means it's not possible to _stop_ them from being assigned to any type, even when you would like to prevent it.
-The inventor of `null`, Tony Hoare, calls this his ["billion dollar mistake"](https://wikipedia.org/wiki/Null_pointer#History).
-
-The [`strictNullChecks`](/tsconfig#strictNullChecks) flag fixes this: when you declare a variable, it doesn't automatically include `null` or `undefined`.
-You can include them explicitly using a union type:
+[`strictNullChecks`](/tsconfig#strictNullChecks) 标志修复了这个问题：当声明一个变量时，它不会自动包含 `null` 或 `undefined`。
+你可以通过联合类型显式地将它们包含进来：
 
 ```ts twoslash
 // @errors: 2322
@@ -279,14 +277,14 @@ stringOrNull = null
 stringOrNull = undefined
 ```
 
-Note that TypeScript treats `null` and `undefined` differently in order to match JavaScript semantics.
-`string | null` is a different type than `string | undefined` and `string | undefined | null`.
+注意，为了契合 JavaScript 语义，TypeScript 会对 `null` 和 `undefined` 作区分处理。
+`string | null` 与 `string | undefined` 以及 `string | undefined | null` 分别属于不同的类型。
 
-From TypeScript 3.7 and onwards, you can use [optional chaining](/docs/handbook/release-notes/typescript-3-7.html#optional-chaining) to simplify working with nullable types.
+从 TypeScript 3.7 开始，你可以使用[可选链](/docs/handbook/release-notes/typescript-3-7.html#optional-chaining)（optional chaining）来简化可空类型的处理。
 
-### Optional parameters and properties
+### 可选参数与属性
 
-With [`strictNullChecks`](/tsconfig#strictNullChecks), an optional parameter automatically adds `| undefined`:
+在启用了 [`strictNullChecks`](/tsconfig#strictNullChecks) 的情况下，可选参数会自动添加 `| undefined`：
 
 ```ts twoslash
 // @errors: 2345
@@ -300,7 +298,7 @@ f(1, undefined)
 f(1, null)
 ```
 
-The same is true for optional properties:
+可选属性同样如此：
 
 ```ts twoslash
 // @strict: false
@@ -320,10 +318,10 @@ c.b = undefined
 c.b = null
 ```
 
-### Type guards and type assertions
+### 类型守卫与类型断言
 
-Since nullable types are implemented with a union, you need to use a type guard to get rid of the `null`.
-Fortunately, this is the same code you'd write in JavaScript:
+由于可空类型是通过联合类型实现的，因此你需要使用类型守卫来去除 `null`。
+幸运的是，这与你在 JavaScript 中编写的代码完全相同：
 
 ```ts twoslash
 function f(stringOrNull: string | null): string {
@@ -335,7 +333,7 @@ function f(stringOrNull: string | null): string {
 }
 ```
 
-The `null` elimination is pretty obvious here, but you can use terser operators too:
+这里的 `null` 排除逻辑非常显而易见，但你也可以使用更简短的操作符：
 
 ```ts twoslash
 function f(stringOrNull: string | null): string {
@@ -343,8 +341,8 @@ function f(stringOrNull: string | null): string {
 }
 ```
 
-In cases where the compiler can't eliminate `null` or `undefined`, you can use the type assertion operator to manually remove them.
-The syntax is postfix `!`: `identifier!` removes `null` and `undefined` from the type of `identifier`:
+当编译器无法自动消除 `null` 或 `undefined` 时，你可以使用类型断言操作符来手动移除它们。
+其语法为后置 `!`：`identifier!` 会从 `identifier` 的类型中移除 `null` 和 `undefined`：
 
 ```ts twoslash
 // @errors: 2532 18048
@@ -369,10 +367,10 @@ if (user) {
 user!.email!.length
 ```
 
-## Type Aliases
+## 类型别名
 
-Type aliases create a new name for a type.
-Type aliases are sometimes similar to interfaces, but can name primitives, unions, tuples, and any other types that you'd otherwise have to write by hand.
+类型别名会为类型创建一个新名称。
+类型别名有时与接口类似，但它可以为原始类型、联合类型、元组以及任何其他需要手动编写的类型进行命名。
 
 ```ts twoslash
 type Second = number
@@ -381,16 +379,16 @@ let timeInSecond: number = 10
 let time: Second = 10
 ```
 
-Aliasing doesn't actually create a new type - it creates a new _name_ to refer to that type.
-Aliasing a primitive is not terribly useful, though it can be used as a form of documentation.
+定义别名并不会真正创建一个新类型——它只是创建了一个引用该类型的新*名称*。
+为原始类型定义别名并没有太大实际用处，不过可以用作一种代码文档形式。
 
-Just like interfaces, type aliases can also be generic - we can just add type parameters and use them on the right side of the alias declaration:
+与接口一样，类型别名也可以是泛型的——我们只需添加类型参数，并在别名声明的右侧使用它们：
 
 ```ts
 type Container<T> = { value: T }
 ```
 
-We can also have a type alias refer to itself in a property:
+我们还可以让类型别名在属性中引用自身：
 
 ```ts
 type Tree<T> = {
@@ -400,7 +398,7 @@ type Tree<T> = {
 }
 ```
 
-Together with [intersection](/docs/handbook/unions-and-intersections.html) types, we can make some pretty mind-bending types:
+结合[交叉类型](/docs/handbook/unions-and-intersections.html)，我们还可以构建出一些非常精妙复杂的类型：
 
 ```ts twoslash
 declare function getDriversLicenseQueue(): LinkedList<Person>
@@ -419,11 +417,11 @@ people.next.next.next.name
 //                  ^?
 ```
 
-## Interfaces vs. Type Aliases
+## 接口与类型别名
 
-As we mentioned, type aliases can act sort of like interfaces; however, there are some subtle differences.
+如前所述，类型别名的作用与接口十分相似；然而，它们之间仍存在一些细微差别。
 
-Almost all features of an `interface` are available in `type`, the key distinction is that a type cannot be re-opened to add new properties vs an interface which is always extendable.
+`interface` 的绝大多数特性在 `type` 中均可使用，二者的核心区别在于：类型别名创建后无法再次打开以添加新属性，而接口始终是可扩展的。
 
 <div class='table-container'>
 <table class='full-width-table'>
@@ -434,7 +432,7 @@ Almost all features of an `interface` are available in `type`, the key distincti
     </tr>
     <tr>
       <td>
-        <p>Extending an interface</p>
+        <p>扩展接口</p>
         <code><pre>
 interface Animal {
   name: string
@@ -448,7 +446,7 @@ bear.honey
         </pre></code>
       </td>
       <td>
-        <p>Extending a type via intersections</p>
+        <p>通过交叉类型扩展类型别名</p>
         <code><pre>
 type Animal = {
   name: string
@@ -464,7 +462,7 @@ bear.honey;
     </tr>
     <tr>
       <td>
-        <p>Adding new fields to an existing interface</p>
+        <p>向已有接口添加新字段</p>
         <code><pre>
 interface Window {
   title: string
@@ -477,7 +475,7 @@ window.ts.transpileModule(src, {});
         </pre></code>
       </td>
       <td>
-        <p>A type cannot be changed after being created</p>
+        <p>类型别名一旦创建便无法更改</p>
         <code><pre>
 type Window = {
   title: string
@@ -493,22 +491,22 @@ type Window = {
 </table>
 </div>
 
-Because an interface more closely maps how JavaScript objects work [by being open to extension](https://wikipedia.org/wiki/Open/closed_principle), we recommend using an interface over a type alias when possible.
+由于接口[对扩展开放](https://wikipedia.org/wiki/Open/closed_principle)的特性更贴合 JavaScript 对象的运作方式，因此在可行的情况下，我们建议优先使用接口而非类型别名。
 
-On the other hand, if you can't express some shape with an interface and you need to use a union or tuple type, type aliases are usually the way to go.
+另一方面，如果你无法使用接口来表达某种类型形状，并且需要使用联合类型或元组类型，那么类型别名通常是更好的选择。
 
-## Enum Member Types
+## 枚举成员类型
 
-As mentioned in [our section on enums](./enums.html#union-enums-and-enum-member-types), enum members have types when every member is literal-initialized.
+正如在[枚举章节](./enums.html#union-enums-and-enum-member-types)中所述，当枚举的每个成员都通过字面量初始化时，枚举成员便拥有各自独立的类型。
 
-Much of the time when we talk about "singleton types", we're referring to both enum member types as well as numeric/string literal types, though many users will use "singleton types" and "literal types" interchangeably.
+在大多数情况下，当我们提到“单例类型”（singleton types）时，通常指的既是枚举成员类型，也是数值/字符串字面量类型；不过许多用户会把“单例类型”和“字面量类型”混用互称。
 
-## Polymorphic `this` types
+## 多态 `this` 类型
 
-A polymorphic `this` type represents a type that is the _subtype_ of the containing class or interface.
-This is called _F_-bounded polymorphism, a lot of people know it as the [fluent API](https://en.wikipedia.org/wiki/Fluent_interface) pattern.
-This makes hierarchical fluent interfaces much easier to express, for example.
-Take a simple calculator that returns `this` after each operation:
+多态 `this` 类型表示其包含类或接口的*子类型*（subtype）。
+这被称为 _F_ 有界多态（_F_-bounded polymorphism），许多人更熟悉将其称为 [fluent API](https://en.wikipedia.org/wiki/Fluent_interface) 模式。
+例如，这使得具有层级继承关系的流式接口表达起来更加容易。
+以一个在每次操作后都返回 `this` 的简单计算器为例：
 
 ```ts twoslash
 class BasicCalculator {
@@ -530,7 +528,7 @@ class BasicCalculator {
 let v = new BasicCalculator(2).multiply(5).add(1).currentValue()
 ```
 
-Since the class uses `this` types, you can extend it and the new class can use the old methods with no changes.
+由于该类使用了 `this` 类型，你可以对它进行继承扩展，派生出的新类无需任何修改就能直接沿用原有的方法：
 
 ```ts twoslash
 class BasicCalculator {
@@ -563,14 +561,14 @@ class ScientificCalculator extends BasicCalculator {
 let v = new ScientificCalculator(2).multiply(5).sin().add(1).currentValue()
 ```
 
-Without `this` types, `ScientificCalculator` would not have been able to extend `BasicCalculator` and keep the fluent interface.
-`multiply` would have returned `BasicCalculator`, which doesn't have the `sin` method.
-However, with `this` types, `multiply` returns `this`, which is `ScientificCalculator` here.
+如果没有 `this` 类型，`ScientificCalculator` 将无法在继承 `BasicCalculator` 的同时保持流式接口。
+此时 `multiply` 会返回 `BasicCalculator`，而它并没有 `sin` 方法。
+然而，在使用 `this` 类型后，`multiply` 返回的是 `this`，在此处其类型正是 `ScientificCalculator`。
 
-## Index types
+## 索引类型
 
-With index types, you can get the compiler to check code that uses dynamic property names.
-For example, a common JavaScript pattern is to pick a subset of properties from an object:
+借助索引类型，你可以让编译器对使用动态属性名的代码进行类型检查。
+例如，在 JavaScript 中有一种常见模式是从对象中选取属性子集：
 
 ```js
 function pluck(o, propertyNames) {
@@ -578,7 +576,7 @@ function pluck(o, propertyNames) {
 }
 ```
 
-Here's how you would write and use this function in TypeScript, using the **index type query** and **indexed access** operators:
+以下是在 TypeScript 中使用**索引类型查询**（index type query）和**索引访问**（indexed access）操作符来编写与使用该函数的方式：
 
 ```ts twoslash
 function pluck<T, K extends keyof T>(o: T, propertyNames: K[]): T[K][] {
@@ -606,11 +604,11 @@ let makeAndModel: string[] = pluck(taxi, ['manufacturer', 'model'])
 let modelYear = pluck(taxi, ['model', 'year'])
 ```
 
-The compiler checks that `manufacturer` and `model` are actually properties on `Car`.
-The example introduces a couple of new type operators.
-First is `keyof T`, the **index type query operator**.
-For any type `T`, `keyof T` is the union of known, public property names of `T`.
-For example:
+编译器会检查 `manufacturer` 和 `model` 是否确实为 `Car` 上的属性。
+上面的示例引入了两个全新的类型操作符。
+首先是 `keyof T`，即**索引类型查询操作符**。
+对于任何类型 `T`，`keyof T` 是 `T` 的已知公共属性名组成的联合类型。
+例如：
 
 ```ts twoslash
 interface Car {
@@ -623,22 +621,22 @@ let carProps: keyof Car
 //         ^?
 ```
 
-`keyof Car` is completely interchangeable with `"manufacturer" | "model" | "year"`.
-The difference is that if you add another property to `Car`, say `ownersAddress: string`, then `keyof Car` will automatically update to be `"manufacturer" | "model" | "year" | "ownersAddress"`.
-And you can use `keyof` in generic contexts like `pluck`, where you can't possibly know the property names ahead of time.
-That means the compiler will check that you pass the right set of property names to `pluck`:
+`keyof Car` 与 `"manufacturer" | "model" | "year"` 完全可以互换。
+两者的区别在于，如果你向 `Car` 中添加另一个属性，比如 `ownersAddress: string`，那么 `keyof Car` 会自动更新为 `"manufacturer" | "model" | "year" | "ownersAddress"`。
+此外，你还可以在像 `pluck` 这样的泛型上下文中使用 `keyof`，因为在这些场景中你无法提前预知具体的属性名。
+这意味着编译器会校验你传入 `pluck` 的属性名集合是否正确：
 
 ```ts
 // error, Type '"unknown"' is not assignable to type '"manufacturer" | "model" | "year"'
 pluck(taxi, ['year', 'unknown'])
 ```
 
-The second operator is `T[K]`, the **indexed access operator**.
-Here, the type syntax reflects the expression syntax.
-That means that `taxi["manufacturer"]` has the type `Car["manufacturer"]` &mdash; which in our example is just `string`.
-However, just like index type queries, you can use `T[K]` in a generic context, which is where its real power comes to life.
-You just have to make sure that the type variable `K extends keyof T`.
-Here's another example with a function named `getProperty`.
+第二个操作符是 `T[K]`，即**索引访问操作符**。
+在这里，类型语法反映了表达式语法。
+这意味着 `taxi["manufacturer"]` 的类型为 `Car["manufacturer"]` &mdash; 在本例中就是 `string`。
+然而，正如索引类型查询一样，你也可以在泛型上下文中使用 `T[K]`，而这正是其真正威力所在。
+你只需要确保类型变量满足 `K extends keyof T` 即可。
+下面是另一个名为 `getProperty` 的函数示例：
 
 ```ts
 function getProperty<T, K extends keyof T>(o: T, propertyName: K): T[K] {
@@ -646,8 +644,8 @@ function getProperty<T, K extends keyof T>(o: T, propertyName: K): T[K] {
 }
 ```
 
-In `getProperty`, `o: T` and `propertyName: K`, so that means `o[propertyName]: T[K]`.
-Once you return the `T[K]` result, the compiler will instantiate the actual type of the key, so the return type of `getProperty` will vary according to which property you request.
+在 `getProperty` 中，由于 `o: T` 且 `propertyName: K`，这意味着 `o[propertyName]: T[K]`。
+一旦返回 `T[K]` 的计算结果，编译器就会实例化该键的实际类型，因此 `getProperty` 的返回值类型会根据你所请求的属性不同而动态变化。
 
 ```ts twoslash
 // @errors: 2345
@@ -671,13 +669,12 @@ let year: number = getProperty(taxi, 'year')
 let unknown = getProperty(taxi, 'unknown')
 ```
 
-## Index types and index signatures
+## 索引类型与索引签名
 
-`keyof` and `T[K]` interact with index signatures. An index signature parameter type must be 'string' or 'number'.
-If you have a type with a string index signature, `keyof T` will be `string | number`
-(and not just `string`, since in JavaScript you can access an object property either
-by using strings (`object["42"]`) or numbers (`object[42]`)).
-And `T[string]` is just the type of the index signature:
+`keyof` 与 `T[K]` 会与索引签名相互作用。索引签名的参数类型必须是 'string' 或 'number'。
+如果一个类型带有字符串索引签名，那么 `keyof T` 将是 `string | number`
+（而不仅仅是 `string`，因为在 JavaScript 中，访问对象属性既可以使用字符串（`object["42"]`），也可以使用数字（`object[42]`））。
+并且 `T[string]` 就是该索引签名的类型：
 
 ```ts twoslash
 interface Dictionary<T> {
@@ -689,7 +686,7 @@ let value: Dictionary<number>['foo']
 //      ^?
 ```
 
-If you have a type with a number index signature, `keyof T` will just be `number`.
+如果一个类型带有数字索引签名，那么 `keyof T` 将仅为 `number`。
 
 ```ts twoslash
 // @errors: 2339
@@ -704,9 +701,9 @@ let numberValue: Dictionary<number>[42]
 let value: Dictionary<number>['foo']
 ```
 
-## Mapped types
+## 映射类型
 
-A common task is to take an existing type and make each of its properties optional:
+一个常见的需求是基于某个已有类型，将其所有属性都变为可选属性：
 
 ```ts
 interface PersonSubset {
@@ -715,7 +712,7 @@ interface PersonSubset {
 }
 ```
 
-Or we might want a readonly version:
+或者我们可能需要一个只读版本：
 
 ```ts
 interface PersonReadonly {
@@ -724,10 +721,10 @@ interface PersonReadonly {
 }
 ```
 
-This happens often enough in JavaScript that TypeScript provides a way to create new types based on old types &mdash; **mapped types**.
-In a mapped type, the new type transforms each property in the old type in the same way.
-For example, you can make all properties optional or of a type `readonly`.
-Here are a couple of examples:
+这种情况在 JavaScript 中非常普遍，因此 TypeScript 提供了一种基于旧类型创建新类型的方式 &mdash; **映射类型**。
+在映射类型中，新类型以相同的方式转换旧类型中的每一个属性。
+例如，你可以将所有属性都设为可选，或者设为 `readonly` 类型。
+以下是几个示例：
 
 ```ts twoslash
 type Partial<T> = {
@@ -740,7 +737,7 @@ type Readonly<T> = {
 }
 ```
 
-And to use it:
+使用方式如下：
 
 ```ts twoslash
 type Person = {
@@ -754,8 +751,8 @@ type ReadonlyPerson = Readonly<Person>
 //   ^?
 ```
 
-Note that this syntax describes a type rather than a member.
-If you want to add members, you can use an intersection type:
+请注意，这种语法描述的是整个类型而非单个成员。
+如果你希望添加新成员，可以使用交叉类型：
 
 ```ts twoslash
 // @errors: 2693 1005 1128 7061
@@ -771,21 +768,21 @@ type WrongPartialWithNewMember<T> = {
 }
 ```
 
-Let's take a look at the simplest mapped type and its parts:
+让我们来看一下最简单的映射类型及其组成部分：
 
 ```ts twoslash
 type Keys = 'option1' | 'option2'
 type Flags = { [K in Keys]: boolean }
 ```
 
-The syntax resembles the syntax for index signatures with a `for .. in` inside.
-There are three parts:
+该语法与内部带有 `for .. in` 的索引签名语法十分相似。
+它包含三个部分：
 
-1. The type variable `K`, which gets bound to each property in turn.
-2. The string literal union `Keys`, which contains the names of properties to iterate over.
-3. The resulting type of the property.
+1. 类型变量 `K`，它会依次绑定到每个属性名。
+2. 字符串字面量联合类型 `Keys`，包含要遍历的属性名集合。
+3. 属性的目标类型。
 
-In this simple example, `Keys` is a hard-coded list of property names and the property type is always `boolean`, so this mapped type is equivalent to writing:
+在这个简单示例中，`Keys` 是硬编码的属性名列表，而属性类型始终是 `boolean`，因此该映射类型等价于：
 
 ```ts twoslash
 type Flags = {
@@ -794,9 +791,9 @@ type Flags = {
 }
 ```
 
-Real applications, however, look like `Readonly` or `Partial` above.
-They're based on some existing type, and they transform the properties in some way.
-That's where `keyof` and indexed access types come in:
+然而在实际应用中，映射类型通常类似于前文提到的 `Readonly` 或 `Partial`。
+它们基于某个已有类型，并以某种方式对这些属性进行转换。
+这正是 `keyof` 与索引访问类型发挥作用的地方：
 
 ```ts twoslash
 type Person = {
@@ -810,20 +807,20 @@ type PartialPerson = { [P in keyof Person]?: Person[P] }
 //   ^?
 ```
 
-But it's more useful to have a general version.
+但定义一个通用泛型版本会更加实用：
 
 ```ts
 type Nullable<T> = { [P in keyof T]: T[P] | null }
 type Partial<T> = { [P in keyof T]?: T[P] }
 ```
 
-In these examples, the properties list is `keyof T` and the resulting type is some variant of `T[P]`.
-This is a good template for any general use of mapped types.
-That's because this kind of transformation is [homomorphic](https://wikipedia.org/wiki/Homomorphism), which means that the mapping applies only to properties of `T` and no others.
-The compiler knows that it can copy all the existing property modifiers before adding any new ones.
-For example, if `Person.name` was readonly, `Partial<Person>.name` would be readonly and optional.
+在这些示例中，属性列表为 `keyof T`，而得到的目标类型则是 `T[P]` 的某种变体。
+这是通用的映射类型模板。
+因为这种转换是[同态的](https://wikipedia.org/wiki/Homomorphism)，这意味着该映射仅作用于 `T` 的属性，而不会引入其他属性。
+编译器知道在添加任何新修饰符之前，可以完整保留并复制所有现有的属性修饰符。
+例如，如果 `Person.name` 原本是只读的，那么 `Partial<Person>.name` 将会同时是只读和可选的。
 
-Here's one more example, in which `T[P]` is wrapped in a `Proxy<T>` class:
+再来看一个示例，其中 `T[P]` 被包装在 `Proxy<T>` 类中：
 
 ```ts twoslash
 // @noErrors
@@ -845,7 +842,7 @@ let proxyProps = proxify(props)
 //  ^?
 ```
 
-Note that `Readonly<T>` and `Partial<T>` are so useful, they are included in TypeScript's standard library along with `Pick` and `Record`:
+由于 `Readonly<T>` 和 `Partial<T>` 非常实用，它们与 `Pick` 以及 `Record` 一起被直接收录在 TypeScript 的标准库中：
 
 ```ts
 type Pick<T, K extends keyof T> = {
@@ -857,21 +854,21 @@ type Record<K extends keyof any, T> = {
 }
 ```
 
-`Readonly`, `Partial` and `Pick` are homomorphic whereas `Record` is not.
-One clue that `Record` is not homomorphic is that it doesn't take an input type to copy properties from:
+`Readonly`、`Partial` 和 `Pick` 是同态的，而 `Record` 则不是。
+`Record` 不是同态的一个线索是，它并没有接收一个用于从中复制属性的输入类型：
 
 ```ts twoslash
 type ThreeStringProps = Record<'prop1' | 'prop2' | 'prop3', string>
 ```
 
-Non-homomorphic types are essentially creating new properties, so they can't copy property modifiers from anywhere.
+非同态类型本质上是在创建新属性，因此它们无法从任何地方复制已有的属性修饰符。
 
-Note that `keyof any` represents the type of any value that can be used as an index to an object. In otherwords, `keyof any` is currently equal to `string | number | symbol`.
+需要注意的是，`keyof any` 表示可以用作对象索引的任意值的类型。换句话说，`keyof any` 目前等同于 `string | number | symbol`。
 
-## Inference from mapped types
+## 由映射类型进行推断
 
-Now that you know how to wrap the properties of a type, the next thing you'll want to do is unwrap them.
-Fortunately, that's pretty easy:
+既然已经掌握了如何对类型的属性进行包装，接下来很自然的一步就是将它们解包。
+幸运的是，这非常简单：
 
 ```ts twoslash
 type Proxy<T> = {
@@ -902,23 +899,23 @@ let originalProps = unproxify(proxyProps)
 //  ^?
 ```
 
-Note that this unwrapping inference only works on homomorphic mapped types.
-If the mapped type is not homomorphic you'll have to give an explicit type parameter to your unwrapping function.
+需要注意的是，这种解包推断仅适用于同态映射类型。
+如果映射类型不是同态的，你必须为解包函数显式指定类型参数。
 
-## Conditional Types
+## 条件类型
 
-A conditional type selects one of two possible types based on a condition expressed as a type relationship test:
+条件类型会根据由类型关系测试所表达的条件，在两种可能的类型中选择其一：
 
 ```ts
 T extends U ? X : Y
 ```
 
-The type above means when `T` is assignable to `U` the type is `X`, otherwise the type is `Y`.
+上述类型表示：当 `T` 可以赋值给 `U` 时，其类型为 `X`，否则为 `Y`。
 
-A conditional type `T extends U ? X : Y` is either _resolved_ to `X` or `Y`, or _deferred_ because the condition depends on one or more type variables.
-When `T` or `U` contains type variables, whether to resolve to `X` or `Y`, or to defer, is determined by whether or not the type system has enough information to conclude that `T` is always assignable to `U`.
+条件类型 `T extends U ? X : Y` 要么被直接*解析（resolved）*为 `X` 或 `Y`，要么由于该条件依赖于一个或多个类型变量而被*延迟（deferred）*解析。
+当 `T` 或 `U` 包含类型变量时，究竟是解析为 `X` 或 `Y`，还是进行延迟解析，取决于类型系统是否有足够的信息来断定 `T` 始终可以赋值给 `U`。
 
-As an example of some types that are immediately resolved, we can take a look at the following example:
+作为会被立即解析的类型示例，我们可以看下面这段代码：
 
 ```ts twoslash
 declare function f<T extends boolean>(x: T): T extends true ? string : number
@@ -928,7 +925,7 @@ let x = f(Math.random() < 0.5)
 //  ^?
 ```
 
-Another example would be the `TypeName` type alias, which uses nested conditional types:
+另一个示例是使用了嵌套条件类型的 `TypeName` 类型别名：
 
 ```ts twoslash
 type TypeName<T> = T extends string
@@ -955,7 +952,7 @@ type T4 = TypeName<string[]>
 //   ^?
 ```
 
-But as an example of a place where conditional types are deferred - where they stick around instead of picking a branch - would be in the following:
+而对于条件类型被延迟解析（即保持原样而未立即选取某一分支）的情况，可以参考如下示例：
 
 ```ts twoslash
 interface Foo {
@@ -974,19 +971,19 @@ function foo<U>(x: U) {
 }
 ```
 
-In the above, the variable `a` has a conditional type that hasn't yet chosen a branch.
-When another piece of code ends up calling `foo`, it will substitute in `U` with some other type, and TypeScript will re-evaluate the conditional type, deciding whether it can actually pick a branch.
+在上面的代码中，变量 `a` 的类型是一个尚未选取具体分支的条件类型。
+当其他代码调用 `foo` 时，会用具体类型替换 `U`，此时 TypeScript 将重新计算该条件类型，以决定是否能确定具体的分支。
 
-In the meantime, we can assign a conditional type to any other target type as long as each branch of the conditional is assignable to that target.
-So in our example above we were able to assign `U extends Foo ? string : number` to `string | number` since no matter what the conditional evaluates to, it's known to be either `string` or `number`.
+与此同时，只要条件类型的每个分支都能赋值给某个目标类型，我们就可以将该条件类型赋值给该目标类型。
+因此在上面的示例中，我们可以将 `U extends Foo ? string : number` 赋值给 `string | number`，因为无论该条件最终的计算结果是什么，它必定是 `string` 或 `number` 之一。
 
-## Distributive conditional types
+## 分布式条件类型
 
-Conditional types in which the checked type is a naked type parameter are called _distributive conditional types_.
-Distributive conditional types are automatically distributed over union types during instantiation.
-For example, an instantiation of `T extends U ? X : Y` with the type argument `A | B | C` for `T` is resolved as `(A extends U ? X : Y) | (B extends U ? X : Y) | (C extends U ? X : Y)`.
+如果被检查的类型是裸类型参数（naked type parameter），那么此类条件类型被称为*分布式条件类型（distributive conditional types）*。
+分布式条件类型在实例化期间会自动分发到联合类型上。
+例如，若用类型实参 `A | B | C` 实例化 `T extends U ? X : Y` 中的 `T`，结果会被解析为 `(A extends U ? X : Y) | (B extends U ? X : Y) | (C extends U ? X : Y)`。
 
-#### Example
+#### 示例
 
 ```ts twoslash
 type TypeName<T> = T extends string
@@ -1009,10 +1006,10 @@ type T7 = TypeName<string[] | number[]>
 //   ^?
 ```
 
-In instantiations of a distributive conditional type `T extends U ? X : Y`, references to `T` within the conditional type are resolved to individual constituents of the union type (i.e. `T` refers to the individual constituents _after_ the conditional type is distributed over the union type).
-Furthermore, references to `T` within `X` have an additional type parameter constraint `U` (i.e. `T` is considered assignable to `U` within `X`).
+在分布式条件类型 `T extends U ? X : Y` 的实例化中，条件类型内部对 `T` 的引用会被解析为联合类型的各个独立组成成员（即在条件类型分发到联合类型*之后*，`T` 指代这些独立的成员）。
+此外，在 `X` 分支中对 `T` 的引用还具有额外的类型参数约束 `U`（即在 `X` 中，`T` 被视作可以赋值给 `U`）。
 
-#### Example
+#### 示例
 
 ```ts twoslash
 type BoxedValue<T> = { value: T }
@@ -1027,9 +1024,9 @@ type T3 = Boxed<string | number[]>
 //   ^?
 ```
 
-Notice that `T` has the additional constraint `any[]` within the true branch of `Boxed<T>` and it is therefore possible to refer to the element type of the array as `T[number]`. Also, notice how the conditional type is distributed over the union type in the last example.
+注意在 `Boxed<T>` 的真值（true）分支中，`T` 具有额外的约束 `any[]`，因此可以直接使用 `T[number]` 来引用数组的元素类型。另外，请注意在最后一个示例中，条件类型是如何分发到联合类型上的。
 
-The distributive property of conditional types can conveniently be used to _filter_ union types:
+利用条件类型的分发特性，可以很方便地对联合类型进行*过滤（filter）*：
 
 ```ts twoslash
 // @errors: 2300 2322
@@ -1068,7 +1065,7 @@ function f2<T extends string | undefined>(x: T, y: NotNullable<T>) {
 }
 ```
 
-Conditional types are particularly useful when combined with mapped types:
+当条件类型与映射类型结合使用时尤其实用：
 
 ```ts twoslash
 type FunctionPropertyNames<T> = {
@@ -1098,29 +1095,29 @@ type T4 = NonFunctionProperties<Part>
 //   ^?
 ```
 
-Note, conditional types are not permitted to reference themselves recursively. For example the following is an error.
+注意，条件类型不允许递归引用自身。例如，以下写法会报错。
 
-#### Example
+#### 示例
 
 ```ts twoslash
 // @errors: 2456 2315
 type ElementType<T> = T extends any[] ? ElementType<T[number]> : T // Error
 ```
 
-## Type inference in conditional types
+## 条件类型中的类型推断
 
-Within the `extends` clause of a conditional type, it is now possible to have `infer` declarations that introduce a type variable to be inferred.
-Such inferred type variables may be referenced in the true branch of the conditional type.
-It is possible to have multiple `infer` locations for the same type variable.
+在条件类型的 `extends` 子句中，可以使用 `infer` 声明来引入一个待推断的类型变量。
+这些被推断的类型变量可以在条件类型的真值分支中被引用。
+同一个类型变量可以出现在多个 `infer` 位置上。
 
-For example, the following extracts the return type of a function type:
+例如，以下代码提取了一个函数类型的返回值类型：
 
 ```ts twoslash
 // @noErrors
 type ReturnType<T> = T extends (...args: any[]) => infer R ? R : any
 ```
 
-Conditional types can be nested to form a sequence of pattern matches that are evaluated in order:
+条件类型可以嵌套使用，以形成按顺序求值的模式匹配序列：
 
 ```ts twoslash
 type Unpacked<T> = T extends (infer U)[]
@@ -1145,7 +1142,7 @@ type T5 = Unpacked<Unpacked<Promise<string>[]>>
 //   ^?
 ```
 
-The following example demonstrates how multiple candidates for the same type variable in co-variant positions causes a union type to be inferred:
+以下示例演示了：当同一个类型变量在协变（co-variant）位置存在多个候选类型时，推断出的结果为联合类型：
 
 ```ts twoslash
 type Foo<T> = T extends { a: infer U; b: infer U } ? U : never
@@ -1156,7 +1153,7 @@ type T2 = Foo<{ a: string; b: number }>
 //   ^?
 ```
 
-Likewise, multiple candidates for the same type variable in contra-variant positions causes an intersection type to be inferred:
+同样地，当同一个类型变量在逆变（contra-variant）位置存在多个候选类型时，推断出的结果为交叉类型：
 
 ```ts twoslash
 type Bar<T> = T extends { a: (x: infer U) => void; b: (x: infer U) => void }
@@ -1169,8 +1166,8 @@ type T2 = Bar<{ a: (x: string) => void; b: (x: number) => void }>
 //   ^?
 ```
 
-When inferring from a type with multiple call signatures (such as the type of an overloaded function), inferences are made from the _last_ signature (which, presumably, is the most permissive catch-all case).
-It is not possible to perform overload resolution based on a list of argument types.
+当从具有多个调用签名的类型（例如重载函数的类型）进行推断时，推断会基于*最后一个*签名进行（这通常是最宽松的兜底分支）。
+无法根据参数类型列表来进行重载解析。
 
 ```ts twoslash
 declare function foo(x: string): number
@@ -1181,14 +1178,14 @@ type T1 = ReturnType<typeof foo>
 //   ^?
 ```
 
-It is not possible to use `infer` declarations in constraint clauses for regular type parameters:
+不能在常规类型参数的约束子句中使用 `infer` 声明：
 
 ```ts twoslash
 // @errors: 1338 2304
 type ReturnedType<T extends (...args: any[]) => infer R> = R
 ```
 
-However, much the same effect can be obtained by erasing the type variables in the constraint and instead specifying a conditional type:
+不过，可以通过抹去约束中的类型变量，转而指定条件类型来达到大致相同的效果：
 
 ```ts twoslash
 // @noErrors
@@ -1198,6 +1195,6 @@ type ReturnType<T extends AnyFunction> = T extends (...args: any[]) => infer R
   : any
 ```
 
-## Predefined conditional types
+## 预定义的条件类型
 
-TypeScript adds several predefined conditional types, you can find the full list and examples in [Utility Types](/docs/handbook/utility-types.html).
+TypeScript 添加了若干预定义的条件类型，你可以在 [Utility Types](/docs/handbook/utility-types.html) 中查看完整列表及示例。

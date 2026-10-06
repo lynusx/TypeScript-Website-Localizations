@@ -2,14 +2,14 @@
 title: TypeScript 4.6
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-4-6.html
-oneline: TypeScript 4.6 Release Notes
+oneline: TypeScript 4.6 发布说明
 ---
 
-## Allowing Code in Constructors Before `super()`
+## 允许在构造函数中的 `super()` 之前执行代码
 
-In JavaScript classes it's mandatory to call `super()` before referring to `this`.
-TypeScript enforces this as well, though it was a bit too strict in _how_ it ensured this.
-In TypeScript, it was previously an error to contain _any_ code at the beginning of a constructor if its containing class had any property initializers.
+在 JavaScript 类中，在引用 `this` 之前必须先调用 `super()`。
+TypeScript 同样强制要求这一点，但在*如何*保证这一规则方面此前过于严苛。
+在 TypeScript 早期版本中，如果包含类具有任何属性初始值设定项，那么在构造函数开头包含*任何*代码都会报错：
 
 ```ts
 class Base {
@@ -28,15 +28,15 @@ class Derived extends Base {
 }
 ```
 
-This made it cheap to check that `super()` gets called before `this` is referenced, but it ended up rejecting a lot of valid code.
-TypeScript 4.6 is now much more lenient in that check and permits other code to run before `super()`., all while still ensuring that `super()` occurs at the top-level before any references to `this`.
+这虽然能以低成本的方式检查 `super()` 是否在引用 `this` 之前被调用，但最终却拒绝了许多有效的代码。
+TypeScript 4.6 现在对这一检查放宽了许多，允许在 `super()` 之前运行其他代码，同时仍然保证 `super()` 在顶层且在对 `this` 进行任何引用之前执行。
 
-We'd like to extend our thanks to [Joshua Goldberg](https://github.com/JoshuaKGoldberg) for [patiently working with us to land this change](https://github.com/microsoft/TypeScript/pull/29374)!
+我们由衷感谢 [Joshua Goldberg](https://github.com/JoshuaKGoldberg) [耐心与我们合作落地了该改动](https://github.com/microsoft/TypeScript/pull/29374)！
 
-## Control Flow Analysis for Destructured Discriminated Unions
+## 可辨识联合在解构时的控制流分析改进
 
-TypeScript is able to narrow types based on what's called a discriminant property.
-For example, in the following code snippet, TypeScript is able to narrow the type of `action` based on every time we check against the value of `kind`.
+TypeScript 能够基于所谓的判别属性（discriminant property）进行类型窄化。
+例如，在下面的代码片段中，每次我们对 `kind` 的值进行检查时，TypeScript 都能对 `action` 的类型进行窄化：
 
 ```ts
 type Action =
@@ -56,10 +56,10 @@ function processAction(action: Action) {
 }
 ```
 
-This lets us work with objects that can hold different data, but a common field tells us _which_ data those objects have.
+这使我们能够处理可容纳不同数据的对象，并通过一个公共字段获知这些对象具体持有*哪种*数据。
 
-This is very common in TypeScript; however, depending on your preferences, you might have wanted to destructure `kind` and `payload` in the example above.
-Perhaps something like the following:
+这在 TypeScript 中非常常见；然而，根据个人编码习惯，你可能更希望解构上述示例中的 `kind` 和 `payload`。
+例如写成如下形式：
 
 ```ts
 type Action =
@@ -78,21 +78,21 @@ function processAction(action: Action) {
 }
 ```
 
-Previously TypeScript would error on these - once `kind` and `payload` were extracted from the same object into variables, they were considered totally independent.
+此前 TypeScript 会在此处报错——一旦 `kind` 和 `payload` 从同一个对象解构到局部变量中，它们就会被视为完全独立的变量。
 
-In TypeScript 4.6, this just works!
+在 TypeScript 4.6 中，这可以直接正常工作！
 
-When destructuring individual properties into a `const` declaration, or when destructuring a parameter into variables that are never assigned to, TypeScript will check for if the destructured type is a discriminated union.
-If it is, TypeScript can now narrow the types of variables depending on checks of other variables
-So in our example, a check on `kind` narrows the type of `payload`.
+当把单独的属性解构到 `const` 声明中，或者将参数解构为从未被重新赋值的变量时，TypeScript 会检查解构的类型是否为可辨识联合。
+如果是，TypeScript 现在可以根据对其他变量的检查来窄化相关变量的类型。
+因此在我们的示例中，对 `kind` 的检查会自动窄化 `payload` 的类型。
 
-For more information, [see the pull request that implemented this analysis](https://github.com/microsoft/TypeScript/pull/46266).
+更多信息请参阅 [实现该分析的 Pull Request](https://github.com/microsoft/TypeScript/pull/46266)。
 
-## Improved Recursion Depth Checks
+## 改进的递归深度检查
 
-TypeScript has some interesting challenges due to the fact that it's built on a structural type system that also provides generics.
+由于 TypeScript 构建在具有泛型能力的结构化类型系统之上，因此面临着一些有趣的挑战。
 
-In a structural type system, object types are compatible based on the members they have.
+在结构化类型系统中，对象类型的兼容性取决于它们所拥有的成员：
 
 ```ts
 interface Source {
@@ -112,11 +112,11 @@ function check(source: Source, target: Target) {
 }
 ```
 
-Notice that whether or not `Source` is compatible with `Target` has to do with whether their _properties_ are assignable.
-In this case, that's just `prop`.
+请注意，`Source` 是否与 `Target` 兼容取决于它们的*属性*是否可赋值。
+在这个例子中，就是属性 `prop`。
 
-When you introduce generics into this, there are some harder questions to answer.
-For instance, is a `Source<string>` assignable to a `Target<number>` in the following case?
+当把泛型引入该机制时，就会引发一些更难回答的问题。
+例如，在下述情况下，`Source<string>` 是否可以赋值给 `Target<number>` 呢？
 
 ```ts
 interface Source<T> {
@@ -132,13 +132,13 @@ function check(source: Source<string>, target: Target<number>) {
 }
 ```
 
-In order to answer that, TypeScript needs to check whether the types of `prop` are compatible.
-That leads to the another question: is a `Source<Source<string>>` assignable to a `Target<Target<number>>`?
-To answer that, TypeScript checks whether `prop` is compatible for _those_ types, and ends up checking whether `Source<Source<Source<string>>>` is assignable to `Target<Target<Target<number>>>`.
-Keep going for a bit, and you might notice that the type infinitely expands the more you dig in.
+为了回答这个问题，TypeScript 需要检查 `prop` 的类型是否兼容。
+这又引出了另一个问题：`Source<Source<string>>` 是否可以赋值给 `Target<Target<number>>`？
+为此，TypeScript 会检查*那些*类型的 `prop` 是否兼容，并最终检查 `Source<Source<Source<string>>>` 是否可以赋值给 `Target<Target<Target<number>>>`。
+依此类推，你可能会注意到随着深入挖掘，类型会发生无限展开。
 
-TypeScript has a few heuristics here - if a type _appears_ to be infinitely expanding after encountering a certain depth check, then it considers that the types _could_ be compatible.
-This is usually enough, but embarrassingly there were some false-negatives that this wouldn't catch.
+TypeScript 在此处采用了一些启发式规则——如果在达到某个深度检查后，类型*看似*处于无限展开状态，那么它就会认为这些类型*可能*是兼容的。
+这通常足够应付大多数情况，但尴尬的是，这也留下了一些无法捕获的假阴性（false-negatives）问题：
 
 ```ts
 interface Foo<T> {
@@ -151,19 +151,19 @@ declare let y: Foo<Foo<Foo<Foo<Foo<string>>>>>
 x = y
 ```
 
-A human reader can see that `x` and `y` should be incompatible in the above example.
-While the types are deeply nested, that's just a consequence of how they were declared.
-The heuristic was meant to capture cases where deeply-nested types were generated through exploring the types, not from when a developer wrote that type out themselves.
+人类读者一眼就能看出上述示例中 `x` 和 `y` 应当是不兼容的。
+尽管类型嵌套很深，但这仅仅是它们被声明出的形式而已。
+启发式规则本意是捕获那些在类型推演过程中生成的深层嵌套类型，而不是开发者自己亲手写出的类型。
 
-TypeScript 4.6 is now able to distinguish these cases, and correctly errors on the last example.
-Additionally, because the language is no longer concerned with false-positives from explicitly-written types, TypeScript can conclude that a type is infinitely expanding much earlier, and save a bunch of work in checking for type compatibility.
-As a result, libraries on DefinitelyTyped like `redux-immutable`, `react-lazylog`, and `yup` saw a 50% reduction in check-time.
+TypeScript 4.6 现在能够区分这些情况，并在上面的最后一个示例中正确报错。
+此外，由于该语言不再担心显式手写类型所带来的假阳性，TypeScript 可以更早得出某个类型处于无限展开状态的结论，从而在类型兼容性检查中节省大量工作。
+因此，DefinitelyTyped 上的 `redux-immutable`、`react-lazylog` 和 `yup` 等库的类型检查耗时减少了 50%。
 
-You may already have this change because it was cherry-picked into TypeScript 4.5.3, but it is a notable feature of TypeScript 4.6 which you can read up more about [here](https://github.com/microsoft/TypeScript/pull/46599).
+你可能已经拥有此项改动，因为它已被挑选（cherry-pick）合入到了 TypeScript 4.5.3 中，但它依然是 TypeScript 4.6 的一项重要特性，你可以在 [此处](https://github.com/microsoft/TypeScript/pull/46599) 阅读更多内容。
 
-## Indexed Access Inference Improvements
+## 索引访问推断改进
 
-TypeScript now can correctly infer to indexed access types which immediately index into a mapped object type.
+TypeScript 现在能够正确推断立即对映射对象类型进行索引的索引访问类型：
 
 ```ts
 interface TypeMap {
@@ -197,15 +197,15 @@ processRecord({
 })
 ```
 
-This pattern was already supported and allowed TypeScript to understand that the call to `record.f(record.v)` is valid, but previously the call to `processRecord` would give poor inference results for `val`
+该模式此前虽然已经得到支持，并且允许 TypeScript 理解对 `record.f(record.v)` 的调用是合法的，但在之前，调用 `processRecord` 时会对 `val` 给出较差的推断结果。
 
-TypeScript 4.6 improves this so that no type assertions are necessary within the call to `processRecord`.
+TypeScript 4.6 对此进行了改进，因此在调用 `processRecord` 时不再需要任何类型断言。
 
-For more information, you can [read up on the pull request](https://github.com/microsoft/TypeScript/pull/47109).
+更多详细信息，请参阅 [该 Pull Request](https://github.com/microsoft/TypeScript/pull/47109)。
 
-## Control Flow Analysis for Dependent Parameters
+## 针对相关参数的控制流分析
 
-A signature can be declared with a rest parameter whose type is a discriminated union of tuples.
+函数签名可以声明一个剩余参数，其类型为元组的可辨识联合：
 
 ```ts
 function func(...args: ['str', string] | ['num', number]) {
@@ -213,11 +213,11 @@ function func(...args: ['str', string] | ['num', number]) {
 }
 ```
 
-What this says is that the arguments to `func` depends entirely on the first argument.
-When the first argument is the string `"str"`, then its second argument has to be a `string`.
-When its first argument is the string `"num"`, its second argument has to be a `number`.
+这意味着 `func` 的参数完全取决于第一个参数。
+当第一个参数是字符串 `"str"` 时，其第二个参数必须是 `string`。
+当第一个参数是字符串 `"num"` 时，其第二个参数必须是 `number`。
 
-In cases where TypeScript infers the type of a function from a signature like this, TypeScript can now narrow parameters that depend on each other.
+在 TypeScript 从此类签名推断函数类型的情况下，TypeScript 现在可以对彼此相互依赖的参数进行类型窄化：
 
 ```ts
 type Func = (...args: ['a', number] | ['b', string]) => void
@@ -235,43 +235,43 @@ f1('a', 42)
 f1('b', 'hello')
 ```
 
-For more information, [see the change on GitHub](https://github.com/microsoft/TypeScript/pull/47190).
+更多信息请参阅 [GitHub 上的改动](https://github.com/microsoft/TypeScript/pull/47190)。
 
 ## `--target es2022`
 
-TypeScript's `--target` option now supports `es2022`.
-This means features like class fields now have a stable output target where they can be preserved.
-It also means that new built-in functionality like the [`at()` method on `Array`s](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/at), [`Object.hasOwn`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwn), or [the `cause` option on `new Error`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/Error#rethrowing_an_error_with_a_cause) can be used either with this new `--target` setting, or with `--lib es2022`.
+TypeScript 的 `--target` 选项现已支持 `es2022`。
+这意味着类字段（class fields）等特性现在拥有了一个可以保留它们的稳定输出目标。
+这也意味着新的内置功能，如 [`Array` 上的 `at()` 方法](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/at)、[`Object.hasOwn`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwn) 或 [`new Error` 上的 `cause` 选项](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/Error#rethrowing_an_error_with_a_cause)，既可以在使用新的 `--target` 设置时使用，也可以在搭配 `--lib es2022` 时使用。
 
-This functionality was [implemented](https://github.com/microsoft/TypeScript/pull/46291) by [Kagami Sascha Rosylight (saschanaz)](https://github.com/saschanaz) over several PRs, and we're grateful for that contribution!
+该功能由 [Kagami Sascha Rosylight (saschanaz)](https://github.com/saschanaz) 通过多个 PR [实现](https://github.com/microsoft/TypeScript/pull/46291)，我们非常感谢这一贡献！
 
-## Removed Unnecessary Arguments in `react-jsx`
+## 移除 `react-jsx` 中不必要的参数
 
-Previously, when compiling code like the following in `--jsx react-jsx`
+此前，当在 `--jsx react-jsx` 模式下编译如下代码时：
 
 ```tsx
 export const el = <div>foo</div>
 ```
 
-TypeScript would produce the following JavaScript code:
+TypeScript 会生成如下 JavaScript 代码：
 
 ```jsx
 import { jsx as _jsx } from 'react/jsx-runtime'
 export const el = _jsx('div', { children: 'foo' }, void 0)
 ```
 
-That last `void 0` argument is unnecessary in this emit mode, and removing it can improve bundle sizes.
+最后一个 `void 0` 参数在此生成模式下是不必要的，将其移除可以减小打包体积：
 
 ```diff
 - export const el = _jsx("div", { children: "foo" }, void 0);
 + export const el = _jsx("div", { children: "foo" });
 ```
 
-Thanks to [a pull request](https://github.com/microsoft/TypeScript/pull/47467) from [Alexander Tarasyuk](https://github.com/a-tarasyuk), TypeScript 4.6 now drops the `void 0` argument.
+感谢 [Alexander Tarasyuk](https://github.com/a-tarasyuk) 提交的 [Pull Request](https://github.com/microsoft/TypeScript/pull/47467)，TypeScript 4.6 现在会省略该 `void 0` 参数。
 
-## JSDoc Name Suggestions
+## JSDoc 参数名建议
 
-In JSDoc, you can document parameters using an `@param` tag.
+在 JSDoc 中，你可以使用 `@param` 标签为参数添加文档：
 
 ```js
 /**
@@ -283,8 +283,8 @@ function add(x, y) {
 }
 ```
 
-But what happens when these comments fall out of date?
-What if we rename `x` and `y` to `a` and `b`?
+但如果这些注释过时了会怎样？
+如果我们把 `x` 和 `y` 重命名为 `a` 和 `b` 呢？
 
 ```js
 /**
@@ -296,21 +296,21 @@ function add(a, b) {
 }
 ```
 
-Previously TypeScript would only tell you about this when performing type-checking on JavaScript files - when using either the `checkJs` option, or adding a `// @ts-check` comment to the top of your file.
+此前，TypeScript 仅在对 JavaScript 文件执行类型检查时才会提示此信息——即使用 `checkJs` 选项，或在文件顶部添加 `// @ts-check` 注释。
 
-You can now get similar information for TypeScript files in your editor!
-TypeScript now provides suggestions for when parameter names don't match between your function and its JSDoc comment.
+现在，你可以在编辑器中为 TypeScript 文件获得类似的信息提示！
+当函数与其 JSDoc 注释之间的参数名称不匹配时，TypeScript 现在会提供相应建议。
 
-![Suggestion diagnostics being shown in the editor for parameter names in JSDoc comments that don't match an actual parameter name.](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2022/02/jsdoc-comment-suggestions-4-6.png)
+![编辑器中显示的建议诊断信息，针对 JSDoc 注释中与实际参数名称不匹配的参数名](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2022/02/jsdoc-comment-suggestions-4-6.png)
 
-[This change](https://github.com/microsoft/TypeScript/pull/47257) was provided courtesy of [Alexander Tarasyuk](https://github.com/a-tarasyuk)!
+[该改动](https://github.com/microsoft/TypeScript/pull/47257) 由 [Alexander Tarasyuk](https://github.com/a-tarasyuk) 友情贡献！
 
-## More Syntax and Binding Errors in JavaScript
+## JavaScript 中更多的语法和绑定错误
 
-TypeScript has expanded its set of syntax and binding errors in JavaScript files.
-You'll see these new errors if you open JavaScript files in an editor like Visual Studio or Visual Studio Code, or if you run JavaScript code through the TypeScript compiler - even if you don't turn on `checkJs` or add a `// @ts-check` comment to the top of your files.
+TypeScript 扩展了其在 JavaScript 文件中的语法和绑定错误检查范围。
+如果你在 Visual Studio 或 Visual Studio Code 等编辑器中打开 JavaScript 文件，或者通过 TypeScript 编译器运行 JavaScript 代码，即使未开启 `checkJs` 或未在文件顶部添加 `// @ts-check` 注释，你也会看到这些新错误。
 
-As one example, if you have two declarations of a `const` in the same scope of a JavaScript file, TypeScript will now issue an error on those declarations.
+举个例子，如果在 JavaScript 文件的同一作用域中有两个 `const` 声明，TypeScript 现在会对这些声明报错：
 
 ```ts
 const foo = 1234
@@ -324,7 +324,7 @@ const foo = 5678
 // error: Cannot redeclare block-scoped variable 'foo'.
 ```
 
-As another example, TypeScript will let you know if a modifier is being incorrectly used.
+再比如，TypeScript 会提示修饰符是否被错误使用：
 
 ```ts
 function container() {
@@ -335,26 +335,26 @@ function container() {
 }
 ```
 
-These errors can be disabled by adding a `// @ts-nocheck` at the top of your file, but we're interested in hearing some early feedback about how it works for your JavaScript workflow.
-You can easily try it out for Visual Studio Code by installing the [TypeScript and JavaScript Nightly Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-next), and read up more on the [first](https://github.com/microsoft/TypeScript/pull/47067) and [second](https://github.com/microsoft/TypeScript/pull/47075) pull requests.
+可以通过在文件顶部添加 `// @ts-nocheck` 来禁用这些错误，但我们非常希望获得关于这对你的 JavaScript 工作流影响的早期反馈。
+你可以通过安装 [TypeScript and JavaScript Nightly 扩展](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-next) 轻松在 Visual Studio Code 中进行体验，并在 [第一个](https://github.com/microsoft/TypeScript/pull/47067) 和 [第二个](https://github.com/microsoft/TypeScript/pull/47075) Pull Request 中阅读更多内容。
 
-## TypeScript Trace Analyzer
+## TypeScript 追踪分析器（Trace Analyzer）
 
-Occasionally, teams may encounter types that are computationally expensive to create and compare against other types.
-[TypeScript has a `--generateTrace` flag](https://github.com/microsoft/TypeScript/wiki/Performance#performance-tracing) to help identify some of those expensive types, or sometimes help diagnose issues in the TypeScript compiler.
-While the information generated by `--generateTrace` can be useful (especially with some information added in TypeScript 4.6), it can often be hard to read in existing trace visualizers.
+有时，团队可能会遇到创建和与其他类型进行对比时计算开销极大的类型。
+[TypeScript 提供了 `--generateTrace` 标志](https://github.com/microsoft/TypeScript/wiki/Performance#performance-tracing)，以帮助识别其中一些昂贵的类型，或者有时帮助诊断 TypeScript 编译器中的问题。
+虽然 `--generateTrace` 生成的信息非常有用（尤其是在 TypeScript 4.6 中新增了一些信息），但在现有的追踪可视化工具中通常很难阅读。
 
-We recently published a tool called [@typescript/analyze-trace](https://www.npmjs.com/package/@typescript/analyze-trace) to get a more digestible view of this information.
-While we don't expect everyone to need `analyze-trace`, we think it can come in handy for any team that is running into [build performance issues with TypeScript](https://github.com/microsoft/TypeScript/wiki/Performance).
+我们最近发布了一个名为 [@typescript/analyze-trace](https://www.npmjs.com/package/@typescript/analyze-trace) 的工具，以更加通俗易懂的方式展示这些信息。
+虽然我们不期望每个人都需要 `analyze-trace`，但我们认为它对于任何遇到 [TypeScript 构建性能问题](https://github.com/microsoft/TypeScript/wiki/Performance) 的团队都很有帮助。
 
-For more information, [see the `analyze-trace` tool's repo](https://github.com/microsoft/typescript-analyze-trace).
+更多信息请参阅 [`analyze-trace` 工具的代码仓库](https://github.com/microsoft/typescript-analyze-trace)。
 
-## Breaking Changes
+## 破坏性变更
 
-### Object Rests Drop Unspreadable Members from Generic Objects
+### 泛型对象的剩余属性解构会剔除不可展开的成员
 
-Object rest expressions now drop members that appear to be unspreadable on generic objects.
-In the following example...
+对象剩余（rest）表达式现在会剔除在泛型对象上看似不可展开的成员。
+在以下示例中……
 
 ```ts
 class Thing {
@@ -374,12 +374,12 @@ function foo<T extends Thing>(x: T) {
 }
 ```
 
-the variable `rest` used to have the type `Omit<T, "someProperty">` because TypeScript would strictly analyze which other properties were destructured.
-This doesn't model how `...rest` would work in a destructuring from a non-generic type because `someMethod` would typically be dropped as well.
-In TypeScript 4.6, the type of `rest` is `Omit<T, "someProperty" | "someMethod">`.
+变量 `rest` 之前具有类型 `Omit<T, "someProperty">`，因为 TypeScript 当时会严格分析哪些其他属性被解构了。
+这无法准确模拟从非泛型类型进行解构时 `...rest` 的工作方式，因为 `someMethod` 通常也会被丢弃。
+在 TypeScript 4.6 中，`rest` 的类型为 `Omit<T, "someProperty" | "someMethod">`。
 
-This can also come up in cases when destructuring from `this`.
-When destructuring `this` using a `...rest` element, unspreadable and non-public members are now dropped, which is consistent with destructuring instances of a class in other places.
+这在从 `this` 进行解构时也会出现。
+当使用 `...rest` 元素解构 `this` 时，不可展开及非公共成员现在会被剔除，这与在其他地方解构类的实例保持一致：
 
 ```ts
 class Thing {
@@ -399,14 +399,14 @@ class Thing {
 }
 ```
 
-For more details, [see the corresponding change here](https://github.com/microsoft/TypeScript/pull/47078).
+更多详细信息，请参阅 [此处的对应改动](https://github.com/microsoft/TypeScript/pull/47078)。
 
-### JavaScript Files Always Receive Grammar and Binding Errors
+### JavaScript 文件始终会收到语法和绑定错误
 
-Previously, TypeScript would ignore most grammar errors in JavaScript apart from accidentally using TypeScript syntax in a JavaScript file.
-TypeScript now shows JavaScript syntax and binding errors in your file, such as using incorrect modifiers, duplicate declarations, and more.
-These will typically be most apparent in Visual Studio Code or Visual Studio, but can also occur when running JavaScript code through the TypeScript compiler.
+此前，除了在 JavaScript 文件中误用 TypeScript 语法之外，TypeScript 会忽略 JavaScript 中的大多数语法错误。
+TypeScript 现在会在文件中显示 JavaScript 语法和绑定错误，例如使用不正确的修饰符、重复声明等。
+这些通常在 Visual Studio Code 或 Visual Studio 中最为明显，但在通过 TypeScript 编译器运行 JavaScript 代码时也会出现。
 
-You can explicitly turn these errors off by inserting a `// @ts-nocheck` comment at the top of your file.
+你可以通过在文件顶部添加 `// @ts-nocheck` 注释来显式关闭这些错误。
 
-For more information, see the [first](https://github.com/microsoft/TypeScript/pull/47067) and [second](https://github.com/microsoft/TypeScript/pull/47075) implementing pull requests for these features.
+更多信息请参阅实现这些特性的 [第一个](https://github.com/microsoft/TypeScript/pull/47067) 和 [第二个](https://github.com/microsoft/TypeScript/pull/47075) Pull Request。

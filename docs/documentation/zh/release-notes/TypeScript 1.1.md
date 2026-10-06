@@ -2,16 +2,16 @@
 title: TypeScript 1.1
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-1-1.html
-oneline: TypeScript 1.1 Release Notes
+oneline: TypeScript 1.1 发布说明
 ---
 
-## Performance Improvements
+## 性能提升
 
-The 1.1 compiler is typically around 4x faster than any previous release. See [this blog post for some impressive charts.](https://web.archive.org/web/20141007020020/http://blogs.msdn.com/b/typescript/archive/2014/10/06/announcing-typescript-1-1-ctp.aspx)
+1.1 编译器通常比以往任何版本都要快 4 倍左右。有关令人瞩目的对比图表，请参阅[这篇博文](https://web.archive.org/web/20141007020020/http://blogs.msdn.com/b/typescript/archive/2014/10/06/announcing-typescript-1-1-ctp.aspx)。
 
-## Better Module Visibility Rules
+## 更好的模块可见性规则
 
-TypeScript now only strictly enforces the visibility of types in modules if the [`declaration`](/tsconfig#declaration) flag is provided. This is very useful for Angular scenarios, for example:
+TypeScript 现在仅在指定了 [`declaration`](/tsconfig#declaration) 标志时，才会严格强制执行模块中类型的可见性规则。这在 Angular 等场景中非常有用，例如：
 
 ```ts
 module MyControllers {

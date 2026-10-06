@@ -2,13 +2,13 @@
 title: TypeScript 5.4
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-5-4.html
-oneline: TypeScript 5.4 Release Notes
+oneline: TypeScript 5.4 发布说明
 ---
 
-## Preserved Narrowing in Closures Following Last Assignments
+## 闭包中保留最后一次赋值后的类型收窄（Preserved Narrowing in Closures Following Last Assignment）
 
-TypeScript can usually figure out a more specific type for a variable based on checks that you might perform.
-This process is called narrowing.
+TypeScript 通常可以根据你执行的条件检查推断出变量的更具体类型。
+这个过程被称为类型收窄（Narrowing）。
 
 ```ts
 function uppercaseStrings(x: string | number) {
@@ -19,7 +19,7 @@ function uppercaseStrings(x: string | number) {
 }
 ```
 
-One common pain point was that these narrowed types weren't always preserved within function closures.
+一个常见的痛点是：这些收窄后的类型并不总能在函数闭包中得以保留。
 
 ```ts
 function getUrls(url: string | URL, names: string[]) {
@@ -38,16 +38,16 @@ function getUrls(url: string | URL, names: string[]) {
 }
 ```
 
-Here, TypeScript decided that it wasn't "safe" to assume that `url` was _actually_ a `URL` object in our callback function because it was mutated elsewhere;
-however, in this instance, that arrow function is _always_ created after that assignment to `url`, and it's also the _last_ assignment to `url`.
+在这里，TypeScript 认为在回调函数中假设 `url` *确实*是一个 `URL` 对象并“不安全”，因为该变量在其他地方被修改过；
+然而在该示例中，这个箭头函数*总是*在对 `url` 进行赋值之后才创建的，而且这也是对 `url` 的*最后一次*赋值。
 
-TypeScript 5.4 takes advantage of this to make narrowing a little smarter.
-When parameters and `let` variables are used in non-[hoisted](https://developer.mozilla.org/en-US/docs/Glossary/Hoisting) functions, the type-checker will look for a last assignment point.
-If one is found, TypeScript can safely narrow from outside the containing function.
-What that means is the above example just works now.
+TypeScript 5.4 充分利用了这一点，使类型收窄变得更加智能。
+当形参和 `let` 变量在非[提升（hoisted）](https://developer.mozilla.org/en-US/docs/Glossary/Hoisting)函数中使用时，类型检查器会寻找最后一次赋值的位置。
+如果找到了该位置，TypeScript 就可以安全地从包含函数的外部作用域继承收窄后的类型。
+这意味着上面的示例现在可以正常工作了。
 
-Note that narrowing analysis doesn't kick in if the variable is assigned anywhere in a nested function.
-This is because there's no way to know for sure whether the function will be called later.
+注意，如果变量在任何嵌套函数内部被赋值，收窄分析就不会生效。
+这是因为无法确切知道该函数是否会在后续被调用。
 
 ```ts
 function printValueLater(value: string | undefined) {
@@ -69,12 +69,12 @@ function printValueLater(value: string | undefined) {
 }
 ```
 
-This should make lots of typical JavaScript code easier to express.
-You can [read more about the change on GitHub](https://github.com/microsoft/TypeScript/pull/56908).
+这将使大量典型的 JavaScript 代码更容易表达。
+你可以[在 GitHub 上阅读有关此更改的更多信息](https://github.com/microsoft/TypeScript/pull/56908)。
 
-## The `NoInfer` Utility Type
+## `NoInfer` 工具类型
 
-When calling generic functions, TypeScript is able to infer type arguments from whatever you pass in.
+在调用泛型函数时，TypeScript 能够根据你传入的实参来推断类型参数。
 
 ```ts
 function doSomething<T>(arg: T) {
@@ -88,10 +88,10 @@ doSomething<string>('hello!')
 doSomething('hello!')
 ```
 
-One challenge, however, is that it is not always clear what the "best" type is to infer.
-This might lead to TypeScript rejecting valid calls, accepting questionable calls, or just reporting worse error messages when it catches a bug.
+然而，面临的一个挑战是：并不总是清楚应该推断出的“最佳”类型是什么。
+这可能会导致 TypeScript 拒绝合法的调用、接受存疑的调用，或者在捕获错误时给出更糟糕的错误信息。
 
-For example, let's imagine a `createStreetLight` function that takes a list of color names, along with an optional default color.
+例如，设想一个接收颜色名称列表以及可选默认颜色的 `createStreetLight` 函数。
 
 ```ts
 function createStreetLight<C extends string>(colors: C[], defaultColor?: C) {
@@ -101,19 +101,19 @@ function createStreetLight<C extends string>(colors: C[], defaultColor?: C) {
 createStreetLight(['red', 'yellow', 'green'], 'red')
 ```
 
-What happens when we pass in a `defaultColor` that wasn't in the original `colors` array?
-In this function, `colors` is supposed to be the "source of truth" and describe what can be passed to `defaultColor`.
+当我们传入一个不存在于原始 `colors` 数组中的 `defaultColor` 时会发生什么？
+在这个函数中，`colors` 应该作为“事实来源（source of truth）”，并描述哪些值可以传递给 `defaultColor`。
 
 ```ts
 // Oops! This is undesirable, but is allowed!
 createStreetLight(['red', 'yellow', 'green'], 'blue')
 ```
 
-In this call, type inference decided that `"blue"` was just as valid of a type as `"red"` or `"yellow"` or `"green"`.
-So instead of rejecting the call, TypeScript infers the type of `C` as `"red" | "yellow" | "green" | "blue"`.
-You might say that inference just blue up in our faces!
+在此次调用中，类型推断认为 `"blue"` 与 `"red"`、`"yellow"` 或 `"green"` 一样是一个合法的类型。
+因此 TypeScript 没有拒绝该调用，而是将 `C` 的类型推断为 `"red" | "yellow" | "green" | "blue"`。
+可以说这里的类型推断完全出乎了我们的意料！
 
-One way people currently deal with this is to add a separate type parameter that's bounded by the existing type parameter.
+目前人们应对这种情况的一种方法是添加一个由现有类型参数约束的独立类型参数。
 
 ```ts
 function createStreetLight<C extends string, D extends C>(
@@ -127,13 +127,13 @@ createStreetLight(['red', 'yellow', 'green'], 'blue')
 // Argument of type '"blue"' is not assignable to parameter of type '"red" | "yellow" | "green" | undefined'.
 ```
 
-This works, but is a little bit awkward because `D` probably won't be used anywhere else in the signature for `createStreetLight`.
-While not bad _in this case_, using a type parameter only once in a signature is often a code smell.
+这种方法可行，但略显别扭，因为 `D` 可能在 `createStreetLight` 的签名中不会用于任何其他地方。
+虽然*在这种情况下*不算太糟，但在类型签名中只使用一次类型参数通常是一种代码异味（code smell）。
 
-That's why TypeScript 5.4 introduces a new `NoInfer<T>` utility type.
-Surrounding a type in `NoInfer<...>` gives a signal to TypeScript not to dig in and match against the inner types to find candidates for type inference.
+这就是为什么 TypeScript 5.4 引入了全新的 `NoInfer<T>` 工具类型。
+使用 `NoInfer<...>` 包裹类型可以向 TypeScript 发出信号，告知其不要深入匹配内部类型来寻找类型推断的候选者。
 
-Using `NoInfer`, we can rewrite `createStreetLight` as something like this:
+使用 `NoInfer`，我们可以将 `createStreetLight` 重写为如下形式：
 
 ```ts
 function createStreetLight<C extends string>(
@@ -149,18 +149,18 @@ createStreetLight(['red', 'yellow', 'green'], 'blue')
 // Argument of type '"blue"' is not assignable to parameter of type '"red" | "yellow" | "green" | undefined'.
 ```
 
-Excluding the type of `defaultColor` from being explored for inference means that `"blue"` never ends up as an inference candidate, and the type-checker can reject it.
+将 `defaultColor` 的类型排除在推断探索之外，意味着 `"blue"` 绝不会成为推断候选，因此类型检查器可以将其拒绝。
 
-You can see the specific changes in [the implementing pull request](https://github.com/microsoft/TypeScript/pull/56794), along with [the initial implementation](https://github.com/microsoft/TypeScript/pull/52968) provided thanks to [Mateusz Burzyński](https://github.com/Andarist)!
+你可以在[实现该特性的 Pull Request](https://github.com/microsoft/TypeScript/pull/56794) 中查看具体的改动，同时感谢 [Mateusz Burzyński](https://github.com/Andarist) 提供的[初始实现](https://github.com/microsoft/TypeScript/pull/52968)！
 
-## `Object.groupBy` and `Map.groupBy`
+## `Object.groupBy` 与 `Map.groupBy`
 
-TypeScript 5.4 adds declarations for JavaScript's new `Object.groupBy` and `Map.groupBy` static methods.
+TypeScript 5.4 为 JavaScript 全新的 `Object.groupBy` 和 `Map.groupBy` 静态方法添加了类型声明。
 
-`Object.groupBy` takes an iterable, and a function that decides which "group" each element should be placed in.
-The function needs to make a "key" for each distinct group, and `Object.groupBy` uses that key to make an object where every key maps to an array with the original element in it.
+`Object.groupBy` 接收一个可迭代对象，以及一个决定每个元素应当放入哪个“分组”的函数。
+该函数需要为每个不同的分组生成一个“键（key）”，`Object.groupBy` 会使用该键来创建一个对象，其中每个键都映射到一个包含原始元素的数组。
 
-So the following JavaScript:
+因此以下 JavaScript 代码：
 
 ```js
 const array = [0, 1, 2, 3, 4, 5]
@@ -170,7 +170,7 @@ const myObj = Object.groupBy(array, (num, index) => {
 })
 ```
 
-is basically equivalent to writing this:
+基本上等同于编写以下代码：
 
 ```js
 const myObj = {
@@ -179,8 +179,8 @@ const myObj = {
 }
 ```
 
-`Map.groupBy` is similar, but produces a `Map` instead of a plain object.
-This might be more desirable if you need the guarantees of `Map`s, you're dealing with APIs that expect `Map`s, or you need to use any kind of key for grouping - not just keys that can be used as property names in JavaScript.
+`Map.groupBy` 与之类似，但生成的是 `Map` 而不是普通对象。
+如果你需要 `Map` 的行为保证、正在处理期望接收 `Map` 的 API，或者需要使用任意类型的键进行分组（而不仅限于 JavaScript 中可用作属性名的键），那么它会更加适用。
 
 ```js
 const myObj = Map.groupBy(array, (num, index) => {
@@ -188,7 +188,7 @@ const myObj = Map.groupBy(array, (num, index) => {
 })
 ```
 
-and just as before, you could have created `myObj` in an equivalent way:
+正如前文所述，你也可以通过等效的方式创建 `myObj`：
 
 ```js
 const myObj = new Map()
@@ -197,7 +197,7 @@ myObj.set('even', [0, 2, 4])
 myObj.set('odd', [1, 3, 5])
 ```
 
-Note that in the above example of `Object.groupBy`, the object produced uses all optional properties.
+请注意，在上述 `Object.groupBy` 的示例中，生成的对象的所有属性都是可选的。
 
 ```ts
 interface EvenOdds {
@@ -212,29 +212,29 @@ myObj.even;
 // Error to access this under 'strictNullChecks'.
 ```
 
-This is because there's no way to guarantee in a general way that _all_ the keys were produced by `groupBy`.
+这是因为通常无法保证 `groupBy` 会生成*所有*的键。
 
-Note also that these methods are only accessible by configuring your `target` to `esnext` or adjusting your `lib` settings.
-We expect they will eventually be available under a stable `es2024` target.
+另外还要注意，只有将 `target` 配置为 `esnext` 或调整 `lib` 设置，才能访问这些方法。
+我们预计它们最终将在稳定的 `es2024` 目标版本下可用。
 
-We'd like to extend a thanks to [Kevin Gibbons](https://github.com/bakkot) for [adding the declarations to these `groupBy` methods](https://github.com/microsoft/TypeScript/pull/56805).
+感谢 [Kevin Gibbons](https://github.com/bakkot) [为这些 `groupBy` 方法添加了类型声明](https://github.com/microsoft/TypeScript/pull/56805)。
 
-## Support for `require()` calls in `--moduleResolution bundler` and `--module preserve`
+## 在 `--moduleResolution bundler` 和 `--module preserve` 中支持 `require()` 调用
 
-TypeScript has a `moduleResolution` option called `bundler` that is meant to model the way modern bundlers figure out which file an import path refers to.
-One of the limitations of the option is that it had to be paired with `--module esnext`, making it impossible to use the `import ... = require(...)` syntax.
+TypeScript 提供了一个名为 `bundler` 的 `moduleResolution` 选项，旨在模拟现代打包器确定导入路径所指代文件的方式。
+该选项的限制之一是它必须与 `--module esnext` 配合使用，从而导致无法使用 `import ... = require(...)` 语法。
 
 ```ts
 // previously errored
 import myModule = require('module/path')
 ```
 
-That might not seem like a big deal if you're planning on just writing standard ECMAScript `import`s, but there's a difference when using a package with [conditional exports](https://nodejs.org/api/packages.html#conditional-exports).
+如果你只打算编写标准的 ECMAScript `import`，这看起来可能不是什么大问题；但当使用带有[条件导出（conditional exports）](https://nodejs.org/api/packages.html#conditional-exports)的包时，就会产生区别。
 
-In TypeScript 5.4, `require()` can now be used when setting the `module` setting to a new option called `preserve`.
+在 TypeScript 5.4 中，当将 `module` 设置为名为 `preserve` 的新选项时，现在可以使用 `require()` 了。
 
-Between `--module preserve` and `--moduleResolution bundler`, the two more accurately model what bundlers and runtimes like Bun will allow, and how they'll perform module lookups.
-In fact, when using `--module preserve`, the `bundler` option will be implicitly set for `--moduleResolution` (along with `--esModuleInterop` and `--resolveJsonModule`)
+结合使用 `--module preserve` 与 `--moduleResolution bundler`，可以更准确地模拟打包器以及诸如 Bun 等运行时所允许的行为，以及它们执行模块查找的方式。
+事实上，当使用 `--module preserve` 时，`--moduleResolution` 将被隐式设置为 `bundler`（同时隐式启用 `--esModuleInterop` 和 `--resolveJsonModule`）。
 
 ```json5
 {
@@ -250,24 +250,24 @@ In fact, when using `--module preserve`, the `bundler` option will be implicitly
 }
 ```
 
-Under `--module preserve`, an ECMAScript `import` will always be emitted as-is, and `import ... = require(...)` will be emitted as a `require()` call (though in practice you may not even use TypeScript for emit, since it's likely you'll be using a bundler for your code).
-This holds true regardless of the file extension of the containing file.
-So the output of this code:
+在 `--module preserve` 下，ECMAScript `import` 始终会原样输出，而 `import ... = require(...)` 将输出为 `require()` 调用（尽管在实践中你可能根本不会使用 TypeScript 进行输出，因为你很可能会使用打包器来处理代码）。
+无论包含该代码的文件的扩展名是什么，这一点都成立。
+因此以下代码的输出：
 
 ```ts
 import * as foo from 'some-package/foo'
 import bar = require('some-package/bar')
 ```
 
-should look something like this:
+看起来大致如下：
 
 ```js
 import * as foo from 'some-package/foo'
 var bar = require('some-package/bar')
 ```
 
-What this also means is that the syntax you choose directs how [conditional exports](https://nodejs.org/api/packages.html#conditional-exports) are matched.
-So in the above example, if the `package.json` of `some-package` looks like this:
+这也意味着你所选择的语法将决定如何匹配[条件导出（conditional exports）](https://nodejs.org/api/packages.html#conditional-exports)。
+因此在上面的示例中，如果 `some-package` 的 `package.json` 如下所示：
 
 ```json5
 {
@@ -286,14 +286,14 @@ So in the above example, if the `package.json` of `some-package` looks like this
 }
 ```
 
-TypeScript will resolve these paths to `[...]/some-package/esm/foo-from-import.mjs` and `[...]/some-package/cjs/bar-from-require.cjs`.
+TypeScript 会将这些路径分别解析为 `[...]/some-package/esm/foo-from-import.mjs` 和 `[...]/some-package/cjs/bar-from-require.cjs`。
 
-For more information, you can [read up on these new settings here](https://github.com/microsoft/TypeScript/pull/56785).
+欲了解更多信息，你可以[在此阅读有关这些新设置的内容](https://github.com/microsoft/TypeScript/pull/56785)。
 
-## Checked Import Attributes and Assertions
+## 导入属性与断言的类型检查
 
-Import attributes and assertions are now checked against the global `ImportAttributes` type.
-This means that runtimes can now more accurately describe the import attributes
+导入属性和断言现在会根据全局的 `ImportAttributes` 类型进行检查。
+这意味着运行时现在可以更准确地描述导入属性。
 
 ```ts
 // In some global file.
@@ -311,23 +311,23 @@ import * as ns from 'foo' with { type: 'not-json' }
 //    Type '"not-json"' is not assignable to type '"json"'.
 ```
 
-[This change](https://github.com/microsoft/TypeScript/pull/56034) was provided thanks to [Oleksandr Tarasiuk](https://github.com/a-tarasyuk).
+感谢 [Oleksandr Tarasiuk](https://github.com/a-tarasyuk) 提供了[此项更改](https://github.com/microsoft/TypeScript/pull/56034)。
 
-## Quick Fix for Adding Missing Parameters
+## 添加缺失参数的快速修复
 
-TypeScript now has a quick fix to add a new parameter to functions that are called with too many arguments.
+TypeScript 现在提供了一个快速修复（Quick Fix），用于向传入过多实参调用的函数中添加新参数。
 
 ![A quick fix being offered when someFunction calls someHelperFunction with 2 more arguments than are expected.](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2024/01/add-missing-params-5-4-beta-before.png)
 
 ![The missing arguments have been added to someHelperFunction after the quick fix was applied.](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2024/01/add-missing-params-5-4-beta-after.png)
 
-This can be useful when threading a new argument through several existing functions, which can be cumbersome today.
+当需要将一个新参数逐层传递给多个现有函数时，这非常实用，而在以往这往往相当繁琐。
 
-[This quick fix](https://github.com/microsoft/TypeScript/pull/56411) was provided courtsey of [Oleksandr Tarasiuk](https://github.com/a-tarasyuk).
+[该快速修复](https://github.com/microsoft/TypeScript/pull/56411)由 [Oleksandr Tarasiuk](https://github.com/a-tarasyuk) 贡献。
 
-## Upcoming Changes from TypeScript 5.0 Deprecations
+## TypeScript 5.0 弃用项即将到来的变更
 
-TypeScript 5.0 deprecated the following options and behaviors:
+TypeScript 5.0 弃用了以下选项和行为：
 
 - `charset`
 - `target: ES3`
@@ -339,30 +339,30 @@ TypeScript 5.0 deprecated the following options and behaviors:
 - `suppressImplicitAnyIndexErrors`
 - `out`
 - `preserveValueImports`
-- `prepend` in project references
-- implicitly OS-specific `newLine`
+- 项目引用中的 `prepend`
+- 隐式受操作系统影响的 `newLine`
 
-To continue using them, developers using TypeScript 5.0 and other more recent versions have had to specify a new option called `ignoreDeprecations` with the value `"5.0"`.
+为了继续使用它们，使用 TypeScript 5.0 及更新版本的开发者此前必须指定一个名为 `ignoreDeprecations` 的新选项，其值为 `"5.0"`。
 
-However, TypScript 5.4 will be the last version in which these will continue to function as normal.
-By TypeScript 5.5 (likely June 2024), these will become hard errors, and code using them will need to be migrated away.
+然而，TypeScript 5.4 将是这些选项能够继续正常发挥作用的最后一个版本。
+到 TypeScript 5.5（预计为 2024 年 6 月）时，它们将变成硬性错误，使用它们的代码将必须完成迁移。
 
-For more information, you can [read up on this plan on GitHub](https://github.com/microsoft/TypeScript/issues/51909), which contains suggestions in how to best adapt your codebase.
+欲了解更多信息，你可以[在 GitHub 上阅读该计划](https://github.com/microsoft/TypeScript/issues/51909)，其中包含了关于如何妥善改造代码库的建议。
 
-## Notable Behavioral Changes
+## 值得注意的行为变更
 
-This section highlights a set of noteworthy changes that should be acknowledged and understood as part of any upgrade.
-Sometimes it will highlight deprecations, removals, and new restrictions.
-It can also contain bug fixes that are functionally improvements, but which can also affect an existing build by introducing new errors.
+本节重点介绍在任何版本升级过程中都应予以确认和理解的一系列值得关注的变更。
+它有时会突出弃用项、移除项以及新的限制。
+此外也可能包含功能改进方面的错误修复，但这些修复也可能通过引入新错误而对现有的构建产生影响。
 
-### `lib.d.ts` Changes
+### `lib.d.ts` 变更
 
-Types generated for the DOM may have an impact on type-checking your codebase.
-For more information, [see the DOM updates for TypeScript 5.4](https://github.com/microsoft/TypeScript/pull/57027).
+为 DOM 生成的类型可能会对你代码库的类型检查产生影响。
+欲了解更多信息，请[参阅 TypeScript 5.4 的 DOM 更新](https://github.com/microsoft/TypeScript/pull/57027)。
 
-### More Accurate Conditional Type Constraints
+### 条件类型约束更加精确
 
-The following code no longer allows the second variable declaration in the function `foo`.
+以下代码在函数 `foo` 中不再允许声明第二个变量。
 
 ```ts
 type IsArray<T> = T extends any[] ? true : false
@@ -373,22 +373,22 @@ function foo<U extends object>(x: IsArray<U>) {
 }
 ```
 
-Previously, when TypeScript checked the initializer for `second`, it needed to determine whether `IsArray<U>` was assignable to the unit type `false`.
-While `IsArray<U>` isn't compatible any obvious way, TypeScript looks at the _constraint_ of that type as well.
-In a conditional type like `T extends Foo ? TrueBranch : FalseBranch`, where `T` is generic, the type system would look at the constraint of `T`, substitute it in for `T` itself, and decide on either the true or false branch.
+此前，当 TypeScript 检查 `second` 的初始化表达式时，需要确定 `IsArray<U>` 是否可赋值给单元类型 `false`。
+虽然 `IsArray<U>` 并没有显而易见的兼容性，但 TypeScript 还会查看该类型的*约束（constraint）*。
+在形如 `T extends Foo ? TrueBranch : FalseBranch`（其中 `T` 为泛型）的条件类型中，类型系统会检查 `T` 的约束，将其代入 `T` 本身，然后决定进入 true 分支还是 false 分支。
 
-But this behavior was inaccurate because it was overly eager.
-Even if the constraint of `T` isn't assignable to `Foo`, that doesn't mean that it won't be instantiated with something that is.
-And so the more correct behavior is to produce a union type for the constraint of the conditional type in cases where it can't be proven that `T` _never_ or _always_ extends `Foo.`
+但这种行为并不准确，因为它过于急切（eager）。
+即使 `T` 的约束不可赋值给 `Foo`，也不代表它在实例化时不会接收一个可赋值给 `Foo` 的具体类型。
+因此更正确的行为是：在无法证明 `T` *从不*或*始终*继承自 `Foo` 的情况下，为条件类型的约束生成一个联合类型。
 
-TypeScript 5.4 adopts this more accurate behavior.
-What this means in practice is that you may begin to find that some conditional type instances are no longer compatible with their branches.
+TypeScript 5.4 采用了这种更加精确的行为。
+在实践中这意味着你可能会开始发现某些条件类型实例不再与其分支兼容。
 
-[You can read about the specific changes here](https://github.com/microsoft/TypeScript/pull/56004).
+[你可以在此阅读具体的相关变更](https://github.com/microsoft/TypeScript/pull/56004)。
 
-### More Aggressive Reduction of Intersections Between Type Variables and Primitive Types
+### 更激进地化简类型变量与原始类型之间的交叉类型
 
-TypeScript now reduces intersections with type variables and primitives more aggressively, depending on how the type variable's constraint overlaps with those primitives.
+TypeScript 现在会更激进地化简类型变量与原始类型之间的交叉类型，具体取决于该类型变量的约束与这些原始类型的重叠情况。
 
 ```ts
 declare function intersect<T, U>(x: T, y: U): T & U
@@ -405,11 +405,11 @@ function foo<T extends 'abc' | 'def'>(x: T, str: string, num: number) {
 }
 ```
 
-For more information, [see the change here](https://github.com/microsoft/TypeScript/pull/56515).
+欲了解更多信息，请[参阅此处的更改](https://github.com/microsoft/TypeScript/pull/56515)。
 
-### Improved Checking Against Template Strings with Interpolations
+### 改进对带插值的模板字符串的检查
 
-TypeScript now more accurately checks whether or not strings are assignable to the placeholder slots of a template string type.
+TypeScript 现在能更精确地检查字符串是否可以赋值给模板字符串类型的占位符插槽。
 
 ```ts
 function a<T extends { id: string }>() {
@@ -420,13 +420,13 @@ function a<T extends { id: string }>() {
 }
 ```
 
-This behavior is more desirable, but may cause breaks in code using constructs like conditional types, where these rule changes are easy to witness.
+这种行为更符合预期，但在使用条件类型等语法结构的代码中可能会引发破坏，因为在这些场景下规则的变化很容易显现。
 
-[See this change](https://github.com/microsoft/TypeScript/pull/56598) for more details.
+更多详情请[参见该更改](https://github.com/microsoft/TypeScript/pull/56598)。
 
-### Errors When Type-Only Imports Conflict with Local Values
+### 仅类型导入与本地值冲突时报错
 
-Previously, TypeScript would permit the following code under `isolatedModules` if the import to `Something` only referred to a type.
+此前在开启 `isolatedModules` 的情况下，如果对 `Something` 的导入仅引用了一个类型，TypeScript 会允许以下代码：
 
 ```ts
 import { Something } from './some/path'
@@ -434,14 +434,14 @@ import { Something } from './some/path'
 let Something = 123
 ```
 
-However, it's not safe for single-file compilers to assume whether it's "safe" to drop the `import`, even if the code is guaranteed to fail at runtime.
-In TypeScript 5.4, this code will trigger an error like the following:
+然而，对于单文件编译器而言，假定丢弃该 `import` 是否“安全”并不可靠，即便该代码在运行时必然失败。
+在 TypeScript 5.4 中，此代码将触发类似如下的错误：
 
 ```
 Import 'Something' conflicts with local value, so must be declared with a type-only import when 'isolatedModules' is enabled.
 ```
 
-The fix should be to either make a local rename, or, as the error states, add the `type` modifier to the import:
+修复方法是进行本地重命名，或者正如错误提示所述，为导入添加 `type` 修饰符：
 
 ```ts
 import type { Something } from './some/path'
@@ -451,14 +451,14 @@ import type { Something } from './some/path'
 import { type Something } from './some/path'
 ```
 
-[See more information on the change itself](https://github.com/microsoft/TypeScript/pull/56354).
+[查看关于该更改本身的更多信息](https://github.com/microsoft/TypeScript/pull/56354)。
 
-### New Enum Assignability Restrictions
+### 新增枚举可赋值性限制
 
-When two enums have the same declared names and enum member names, they were previously always considered compatible;
-however, when the values were known, TypeScript would silently allow them to have differing values.
+当两个枚举具有相同的声明名称和枚举成员名称时，此前它们总是被视为兼容的；
+然而，即使成员的值已知，TypeScript 也会静默允许它们拥有不同的值。
 
-TypeScript 5.4 tightens this restriction by requiring the values to be identical when they are known.
+TypeScript 5.4 收紧了这一限制，要求当枚举成员的值已知时，它们的值必须完全相同。
 
 ```ts
 namespace First {
@@ -485,9 +485,9 @@ function foo(x: First.SomeEnum, y: Second.SomeEnum) {
 }
 ```
 
-Additionally, there are new restrictions for when one of the enum members does not have a statically known value.
-In these cases, the other enum must at least be implicitly numeric (e.g. it has no statically resolved initializer), or it is explicitly numeric (meaning TypeScript could resolve the value to something numeric).
-Practically speaking, what this means is that string enum members are only ever compatible with other string enums of the same value.
+此外，当其中一个枚举成员不具有静态已知的值时，也引入了新的限制。
+在这些情况下，另一个枚举必须至少是隐式数值型的（例如它没有静态解析的初始值设定项），或者是显式数值型的（意味着 TypeScript 能够将其值解析为数值）。
+在实际应用中，这意味着字符串枚举成员仅与具有相同值的其他字符串枚举兼容。
 
 ```ts
 namespace First {
@@ -514,11 +514,11 @@ function foo(x: First.SomeEnum, y: Second.SomeEnum) {
 }
 ```
 
-For more information, [see the pull request that introduced this change](https://github.com/microsoft/TypeScript/pull/55924).
+欲了解更多信息，请[参阅引入该更改的 Pull Request](https://github.com/microsoft/TypeScript/pull/55924)。
 
-### Name Restrictions on Enum Members
+### 枚举成员名称限制
 
-TypeScript no longer allows enum members to use the names `Infinity`, `-Infinity`, or `NaN`.
+TypeScript 不再允许枚举成员使用 `Infinity`、`-Infinity` 或 `NaN` 作为名称。
 
 ```ts
 // Errors on all of these:
@@ -531,12 +531,12 @@ enum E {
 }
 ```
 
-[See more details here](https://github.com/microsoft/TypeScript/pull/56161).
+[在此查看更多详情](https://github.com/microsoft/TypeScript/pull/56161)。
 
-### Better Mapped Type Preservation Over Tuples with `any` Rest Elements
+### 更好地保留包含 `any` rest 元素的元组上的映射类型
 
-Previously, applying a mapped type with `any` into a tuple would create an `any` element type.
-This is undesirable and is now fixed.
+此前，将带有 `any` 的映射类型应用于元组时会产生 `any` 元素类型。
+这是不符合预期的，现已修复。
 
 ```ts
 Promise.all(['', ...([] as any)]).then((result) => {
@@ -545,14 +545,14 @@ Promise.all(['', ...([] as any)]).then((result) => {
 })
 ```
 
-For more information, see [the fix](https://github.com/microsoft/TypeScript/pull/57031) along with [the follow-on discussion around behavioral changes](https://github.com/microsoft/TypeScript/issues/57389) and [further tweaks](https://github.com/microsoft/TypeScript/issues/57389).
+欲了解更多信息，请参阅[此修复](https://github.com/microsoft/TypeScript/pull/57031)，以及[围绕行为变更的后续讨论](https://github.com/microsoft/TypeScript/issues/57389)与[进一步调整](https://github.com/microsoft/TypeScript/issues/57389)。
 
-### Emit Changes
+### 代码生成变更
 
-While not a breaking change per se, developers may have implicitly taken dependencies on TypeScript's JavaScript or declaration emit outputs.
-The following are notable changes.
+虽然这本身不属于破坏性变更，但开发者可能隐式依赖了 TypeScript 的 JavaScript 或声明文件生成输出。
+以下是值得注意的变更：
 
-- [Preserve type parameter names more often when shadowed](https://github.com/microsoft/TypeScript/pull/55820)
-- [Move complex parameter lists of async function into downlevel generator body](https://github.com/microsoft/TypeScript/pull/56296)
-- [Do not remove binding alias in function declarations](https://github.com/microsoft/TypeScript/pull/57020)
-- [ImportAttributes should go through the same emit phases when in an ImportTypeNode](https://github.com/microsoft/TypeScript/pull/56395)
+- [在类型参数被遮蔽（shadowed）时更频繁地保留其名称](https://github.com/microsoft/TypeScript/pull/55820)
+- [将 async 函数的复杂参数列表移至降级生成器函数体中](https://github.com/microsoft/TypeScript/pull/56296)
+- [不要在函数声明中移除绑定别名](https://github.com/microsoft/TypeScript/pull/57020)
+- [在 ImportTypeNode 中时，ImportAttributes 应当经历相同的代码生成阶段](https://github.com/microsoft/TypeScript/pull/56395)

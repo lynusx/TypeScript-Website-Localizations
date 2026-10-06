@@ -2,14 +2,14 @@
 title: TypeScript 5.5
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-5-5.html
-oneline: TypeScript 5.5 Release Notes
+oneline: TypeScript 5.5 发布说明
 ---
 
-## Inferred Type Predicates
+## 推断类型谓词
 
-_This section was written by [Dan Vanderkam](https://github.com/danvk), who [implemented this feature in TypeScript 5.5](https://github.com/microsoft/TypeScript/pull/57465). Thanks Dan!_
+_本节由 [Dan Vanderkam](https://github.com/danvk) 撰写，他[在 TypeScript 5.5 中实现了该特性](https://github.com/microsoft/TypeScript/pull/57465)。感谢 Dan！_
 
-TypeScript's control flow analysis does a great job of tracking how the type of a variable changes as it moves through your code:
+TypeScript 的控制流分析能够出色地跟踪变量在代码执行流中的类型变化：
 
 ```tsx
 interface Bird {
@@ -32,9 +32,9 @@ function makeNationalBirdCall(country: string) {
 }
 ```
 
-By making you handle the `undefined` case, TypeScript pushes you to write more robust code.
+通过强制开发者处理 `undefined` 的情况，TypeScript 促使你编写出更加健壮的代码。
 
-In the past, this sort of type refinement was more difficult to apply to arrays. This would have been an error in all previous versions of TypeScript:
+在过去，这种类型细化（type refinement）很难直接应用于数组。在 TypeScript 5.5 之前的所有版本中，以下代码都会报错：
 
 ```tsx
 function makeBirdCalls(countries: string[]) {
@@ -49,10 +49,10 @@ function makeBirdCalls(countries: string[]) {
 }
 ```
 
-This code is perfectly fine: we've filtered all the `undefined` values out of the list.
-But TypeScript hasn't been able to follow along.
+这段代码本身没有任何问题：我们已经从列表中过滤掉了所有 `undefined` 值。
+然而，先前的 TypeScript 并不能理解这种过滤操作。
 
-With TypeScript 5.5, the type checker is fine with this code:
+在 TypeScript 5.5 中，类型检查器可以顺利通过这段代码：
 
 ```tsx
 function makeBirdCalls(countries: string[]) {
@@ -67,10 +67,10 @@ function makeBirdCalls(countries: string[]) {
 }
 ```
 
-Note the more precise type for `birds`.
+请注意 `birds` 此时拥有了更加精确的类型。
 
-This works because TypeScript now infers a [type predicate](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates) for the `filter` function.
-You can see what's going on more clearly by pulling it out into a standalone function:
+这是因为 TypeScript 现在会为 `filter` 函数推断出[类型谓词（type predicate）](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates)。
+将其提取为独立函数可以更清晰地看清背后的原理：
 
 ```tsx
 // function isBirdReal(bird: Bird | undefined): bird is Bird
@@ -79,19 +79,19 @@ function isBirdReal(bird: Bird | undefined) {
 }
 ```
 
-`bird is Bird` is the type predicate.
-It means that, if the function returns `true`, then it's a `Bird` (if the function returns `false` then it's `undefined`).
-The type declarations for `Array.prototype.filter` know about type predicates, so the net result is that you get a more precise type and the code passes the type checker.
+`bird is Bird` 即为类型谓词。
+它意味着：如果函数返回 `true`，则参数是 `Bird`（如果函数返回 `false`，则为 `undefined`）。
+`Array.prototype.filter` 的类型声明能够识别类型谓词，因此最终能得到更精确的类型，代码也能顺利通过类型检查。
 
-TypeScript will infer that a function returns a type predicate if these conditions hold:
+当满足以下条件时，TypeScript 会推断该函数返回类型谓词：
 
-1. The function does not have an explicit return type or type predicate annotation.
-2. The function has a single `return` statement and no implicit returns.
-3. The function does not mutate its parameter.
-4. The function returns a `boolean` expression that's tied to a refinement on the parameter.
+1. 函数没有显式的返回类型或类型谓词标注。
+2. 函数只有一条 `return` 语句，且没有隐式返回。
+3. 函数不会修改其参数。
+4. 函数返回一个与参数细化相关的 `boolean` 表达式。
 
-Generally this works how you'd expect.
-Here's a few more examples of inferred type predicates:
+通常情况下，它的表现完全符合你的直觉。
+以下是推断类型谓词的更多示例：
 
 ```tsx
 // const isNumber: (x: unknown) => x is number
@@ -101,16 +101,16 @@ const isNumber = (x: unknown) => typeof x === 'number'
 const isNonNullish = <T,>(x: T) => x != null
 ```
 
-Previously, TypeScript would have just inferred that these functions return `boolean`.
-It now infers signatures with type predicates like `x is number` or `x is NonNullable<T>`.
+在过去，TypeScript 只会将这些函数的返回类型推断为 `boolean`。
+现在，它能够推断出包含类型谓词的签名，例如 `x is number` 或 `x is NonNullable<T>`。
 
-Type predicates have "if and only if" semantics.
-If a function returns `x is T`, then it means that:
+类型谓词具有“当且仅当”（充要条件）语义。
+如果一个函数返回 `x is T`，则意味着：
 
-1. If the function returns `true` then `x` has the type `T`.
-2. If the function returns `false` then `x` does _not_ have type `T`.
+1. 如果函数返回 `true`，则 `x` 的类型为 `T`。
+2. 如果函数返回 `false`，则 `x` 的类型*不是* `T`。
 
-If you're expecting a type predicate to be inferred but it's not, then you may be running afoul of the second rule. This often comes up with "truthiness" checks:
+如果你期望推断出类型谓词却没有推断出来，可能是违反了第二条规则。这种情况常见于“真值（truthiness）”检查：
 
 ```tsx
 function getClassroomAverage(
@@ -127,12 +127,12 @@ function getClassroomAverage(
 }
 ```
 
-TypeScript did not infer a type predicate for `score => !!score`, and rightly so: if this returns `true` then `score` is a `number`.
-But if it returns `false`, then `score` could be either `undefined` or a `number` (specifically, `0`).
-This is a real bug: if any student got a zero on the test, then filtering out their score will skew the average upwards.
-Fewer will be above average and more will be sad!
+TypeScript 没有为 `score => !!score` 推断类型谓词，这是完全正确的：如果该函数返回 `true`，`score` 确实是 `number`；
+但如果返回 `false`，`score` 既可能是 `undefined`，也可能是 `number`（具体来说是 `0`）。
+这会导致真正的 bug：如果有学生考了零分，过滤掉其成绩会导致平均分虚高。
+“高于平均分的人更少，伤心的人更多”！
 
-As with the first example, it's better to explicitly filter out `undefined` values:
+正如第一个示例一样，更好的做法是显式过滤掉 `undefined` 值：
 
 ```tsx
 function getClassroomAverage(
@@ -147,14 +147,14 @@ function getClassroomAverage(
 }
 ```
 
-A truthiness check _will_ infer a type predicate for object types, where there's no ambiguity.
-Remember that functions must return a `boolean` to be a candidate for an inferred type predicate: `x => !!x` might infer a type predicate, but `x => x` definitely won't.
+对于不存在二义性的对象类型，真值检查*确实会*推断出类型谓词。
+需要牢记的是，函数必须返回 `boolean` 才能成为推断类型谓词的候选者：`x => !!x` 可能会推断出类型谓词，但 `x => x` 绝对不会。
 
-Explicit type predicates continue to work exactly as before.
-TypeScript will not check whether it would infer the same type predicate.
-Explicit type predicates ("is") are no safer than a type assertion ("as").
+显式类型谓词的行为与以往完全一致。
+TypeScript 不会检查自己推断出的谓词是否与显式标注一致。
+显式类型谓词（"is"）在安全性上与类型断言（"as"）并无二致。
 
-It's possible that this feature will break existing code if TypeScript now infers a more precise type than you want. For example:
+如果 TypeScript 推断出的类型比你预期的更精确，这项特性可能会对现有代码造成破坏性变更（breaking change）。例如：
 
 ```tsx
 // Previously, nums: (number | null)[]
@@ -164,18 +164,18 @@ const nums = [1, 2, 3, null, 5].filter((x) => x !== null)
 nums.push(null) // ok in TS 5.4, error in TS 5.5
 ```
 
-The fix is to tell TypeScript the type that you want using an explicit type annotation:
+修复方法是通过显式类型标注告诉 TypeScript 你期望的类型：
 
 ```tsx
 const nums: (number | null)[] = [1, 2, 3, null, 5].filter((x) => x !== null)
 nums.push(null) // ok in all versions
 ```
 
-For more information, check out the [implementing pull request](https://github.com/microsoft/TypeScript/pull/57465) and [Dan's blog post about implementing this feature](https://effectivetypescript.com/2024/04/16/inferring-a-type-predicate/).
+有关更多信息，请查阅[实现该特性的 Pull Request](https://github.com/microsoft/TypeScript/pull/57465) 以及 [Dan 关于实现该特性的博文](https://effectivetypescript.com/2024/04/16/inferring-a-type-predicate/)。
 
-## Control Flow Narrowing for Constant Indexed Accesses
+## 常量索引访问的控制流类型收窄
 
-TypeScript is now able to narrow expressions of the form `obj[key]` when both `obj` and `key` are effectively constant.
+当 `obj` 与 `key` 均为事实上的常量时，TypeScript 现在能够对 `obj[key]` 形式的表达式进行类型收窄。
 
 ```ts
 function f1(obj: Record<string, unknown>, key: string) {
@@ -186,13 +186,13 @@ function f1(obj: Record<string, unknown>, key: string) {
 }
 ```
 
-In the above, neither `obj` nor `key` are ever mutated, so TypeScript can narrow the type of `obj[key]` to `string` after the `typeof` check.
-For more information, [see the implementing pull request here](https://github.com/microsoft/TypeScript/pull/57847).
+在上面的代码中，`obj` 和 `key` 均未被重新赋值或修改，因此 TypeScript 可以在 `typeof` 检查之后将 `obj[key]` 的类型收窄为 `string`。
+更多信息，[请参见实现该特性的 Pull Request](https://github.com/microsoft/TypeScript/pull/57847)。
 
-## The JSDoc `@import` Tag
+## JSDoc `@import` 标签
 
-Today, if you want to import something only for type-checking in a JavaScript file, it is cumbersome.
-JavaScript developers can't simply import a type named `SomeType` if it's not there at runtime.
+如今，如果想在 JavaScript 文件中仅为了类型检查而导入某些内容，操作往往十分繁琐。
+由于 `SomeType` 在运行时并不存在，JavaScript 开发者无法直接导入该类型：
 
 ```js
 // ./some-module.d.ts
@@ -211,8 +211,8 @@ function doSomething(myValue) {
 }
 ```
 
-`SomeType` won't exist at runtime, so the import will fail.
-Developers can instead use a namespace import instead.
+`SomeType` 在运行时不存在，因此该导入会报错。
+开发者可以改用命名空间导入：
 
 ```js
 import * as someModule from './some-module'
@@ -225,9 +225,9 @@ function doSomething(myValue) {
 }
 ```
 
-But `./some-module` is still imported at runtime - which might also not be desirable.
+但 `./some-module` 仍然会在运行时被导入——这可能同样不符合预期。
 
-To avoid this, developers typically had to use `import(...)` types in JSDoc comments.
+为了避免这种情况，开发者通常只能在 JSDoc 注释中使用 `import(...)` 类型：
 
 ```js
 /**
@@ -238,7 +238,7 @@ function doSomething(myValue) {
 }
 ```
 
-If you wanted to reuse the same type in multiple places, you could use a `typedef` to avoid repeating the import.
+如果想在多处复用该类型，可以使用 `@typedef` 避免重复书写导入路径：
 
 ```js
 /**
@@ -253,9 +253,9 @@ function doSomething(myValue) {
 }
 ```
 
-This helps with local uses of `SomeType`, but it gets repetitive for many imports and can be a bit verbose.
+这有助于在当前作用域复用 `SomeType`，但面对大量导入时依然显得繁琐且冗长。
 
-That's why TypeScript now supports a new `@import` comment tag that has the same syntax as ECMAScript imports.
+为此，TypeScript 现在支持了全新的 `@import` 注释标签，其语法与 ECMAScript 的导入语句完全一致：
 
 ```js
 /** @import { SomeType } from "some-module" */
@@ -268,8 +268,8 @@ function doSomething(myValue) {
 }
 ```
 
-Here, we used named imports.
-We could also have written our import as a namespace import.
+这里使用了具名导入（named imports）。
+我们也可以将其写为命名空间导入（namespace import）：
 
 ```js
 /** @import * as someModule from "some-module" */
@@ -282,17 +282,17 @@ function doSomething(myValue) {
 }
 ```
 
-Because these are just JSDoc comments, they don't affect runtime behavior at all.
+由于这些仅是 JSDoc 注释，因此它们完全不会影响任何运行时行为。
 
-We would like to extend a big thanks to [Oleksandr Tarasiuk](https://github.com/a-tarasyuk) who contributed [this change](https://github.com/microsoft/TypeScript/pull/57207)!
+在此衷心感谢 [Oleksandr Tarasiuk](https://github.com/a-tarasyuk)，感谢他贡献了[该变更](https://github.com/microsoft/TypeScript/pull/57207)！
 
-## Regular Expression Syntax Checking
+## 正则表达式语法检查
 
-Until now, TypeScript has typically skipped over most regular expressions in code.
-This is because regular expressions technically have an extensible grammar and TypeScript never made any effort to compile regular expressions to earlier versions of JavaScript.
-Still, this meant that lots of common problems would go undiscovered in regular expressions, and they would either turn into errors at runtime, or silently fail.
+在此之前，TypeScript 通常会跳过代码中的绝大多数正则表达式。
+这是因为从技术上讲，正则表达式拥有可扩展的语法，且 TypeScript 从未尝试过将正则表达式降级编译为较早版本的 JavaScript。
+然而，这也意味着正则表达式中的许多常见错误无法被及时发现，最终要么在运行时抛出错误，要么静默失败。
 
-But TypeScript now does basic syntax checking on regular expressions!
+现在，TypeScript 可以对正则表达式进行基础的语法检查！
 
 ```ts
 let myRegex = /@robot(\s+(please|immediately)))? do some task/
@@ -301,9 +301,9 @@ let myRegex = /@robot(\s+(please|immediately)))? do some task/
 // Unexpected ')'. Did you mean to escape it with backslash?
 ```
 
-This is a simple example, but this checking can catch a lot of common mistakes.
-In fact, TypeScript's checking goes slightly beyond syntactic checks.
-For instance, TypeScript can now catch issues around backreferences that don't exist.
+这是一个简单的示例，但这项检查能够捕获大量常见错误。
+事实上，TypeScript 的检查不仅限于纯语法层面。
+例如，TypeScript 现在可以捕获引用了不存在的分组的反向引用（backreference）：
 
 ```ts
 let myRegex = /@typedef \{import\((.+)\)\.([a-zA-Z_]+)\} \3/u
@@ -313,7 +313,7 @@ let myRegex = /@typedef \{import\((.+)\)\.([a-zA-Z_]+)\} \3/u
 // There are only 2 capturing groups in this regular expression.
 ```
 
-The same applies to named capturing groups.
+具名捕获组（named capturing groups）同样如此：
 
 ```ts
 let myRegex =
@@ -323,8 +323,8 @@ let myRegex =
 // There is no capturing group named 'namedImport' in this regular expression.
 ```
 
-TypeScript's checking is now also aware of when certain RegExp features are used when newer than your target version of ECMAScript.
-For example, if we use named capturing groups like the above in an ES5 target, we'll get an error.
+TypeScript 的检查现在还能感知某些正则表达式特性是否高于你配置的目标 ECMAScript 版本。
+例如，如果我们在目标版本为 ES5 的项目中像上面那样使用具名捕获组，就会收到报错：
 
 ```ts
 let myRegex =
@@ -334,22 +334,22 @@ let myRegex =
 // Named capturing groups are only available when targeting 'ES2018' or later.
 ```
 
-The same is true for certain regular expression flags as well.
+对于某些正则表达式标志（flags）也是如此。
 
-Note that TypeScript's regular expression support is limited to regular expression _literals_.
-If you try calling `new RegExp` with a string literal, TypeScript will not check the provided string.
+需要注意的是，TypeScript 的正则表达式支持仅限于正则表达式*字面量*。
+如果使用字符串字面量调用 `new RegExp`，TypeScript 不会检查传入的字符串。
 
-We would like to thank [GitHub user graphemecluster](https://github.com/graphemecluster/) who iterated a ton with us [to get this feature into TypeScript](https://github.com/microsoft/TypeScript/pull/55600).
+我们非常感谢 [GitHub 用户 graphemecluster](https://github.com/graphemecluster/)，他与我们进行了大量迭代与合作，[促成了该特性在 TypeScript 中的落地](https://github.com/microsoft/TypeScript/pull/55600)。
 
-## Support for New ECMAScript `Set` Methods
+## 支持崭新的 ECMAScript `Set` 方法
 
-TypeScript 5.5 declares [new proposed methods for the ECMAScript `Set` type](https://github.com/tc39/proposal-set-methods).
+TypeScript 5.5 为 [ECMAScript `Set` 类型声明了新提案中的方法](https://github.com/tc39/proposal-set-methods)。
 
-Some of these methods, like `union`, `intersection`, `difference`, and `symmetricDifference`, take another `Set` and return a new `Set` as the result.
-The other methods, `isSubsetOf`, `isSupersetOf`, and `isDisjointFrom`, take another `Set` and return a `boolean`.
-None of these methods mutate the original `Set`s.
+其中部分方法（如 `union`、`intersection`、`difference` 和 `symmetricDifference`）接受另一个 `Set` 并返回一个新的 `Set` 作为结果；
+其他方法（如 `isSubsetOf`、`isSupersetOf` 和 `isDisjointFrom`）接受另一个 `Set` 并返回一个 `boolean`。
+这些方法均不会修改原有的 `Set`。
 
-Here's a quick example of how you might use these methods and how they behave:
+以下是这些方法的使用示例及其行为表现：
 
 ```ts
 let fruits = new Set(['apples', 'bananas', 'pears', 'oranges'])
@@ -456,27 +456,27 @@ console.log(fruits.isSupersetOf(fruits))
 console.log(emptySet.isSupersetOf(fruits))
 ```
 
-We'd like to thank [Kevin Gibbons](https://github.com/bakkot) who not only co-championed the feature in ECMAScript, but [also provided the declarations for `Set`, `ReadonlySet`, and `ReadonlySetLike` in TypeScript](https://github.com/microsoft/TypeScript/pull/57230)!
+我们要感谢 [Kevin Gibbons](https://github.com/bakkot)，他不仅是 ECMAScript 中该特性的共同推动者，[还在 TypeScript 中为 `Set`、`ReadonlySet` 和 `ReadonlySetLike` 提供了类型声明](https://github.com/microsoft/TypeScript/pull/57230)！
 
-## Isolated Declarations
+## 独立声明生成（Isolated Declarations）
 
-_This section was co-authored by [Rob Palmer](https://github.com/robpalme) who supported the design of isolated declarations._
+_本节由支持了独立声明生成设计的 [Rob Palmer](https://github.com/robpalme) 共同撰写。_
 
-Declaration files (a.k.a. `.d.ts` files) describe the shape of existing libraries and modules to TypeScript.
-This lightweight description includes the library's type signatures and excludes implementation details such as the function bodies.
-They are published so that TypeScript can efficiently check your usage of a library without needing to analyse the library itself.
-Whilst it is possible to handwrite declaration files, if you are authoring typed code, it's much safer and simpler to let TypeScript generate them automatically from source files using `--declaration`.
+声明文件（即 `.d.ts` 文件）用于向 TypeScript 描述现有库和模块的类型结构。
+这种轻量级的描述仅包含库的类型签名，剥离了函数体等具体实现细节。
+发布声明文件后，TypeScript 就能高效地检查你对该库的使用是否正确，而无需去分析库本身的实现代码。
+虽然可以手动编写声明文件，但如果你编写的是带有类型标注的代码，使用 `--declaration` 让 TypeScript 直接根据源码自动生成声明文件会更加安全且省心。
 
-The TypeScript compiler and its APIs have always had the job of generating declaration files;
-however, there are some use-cases where you might want to use other tools, or where the traditional build process doesn't scale.
+一直以来，生成声明文件都是 TypeScript 编译器及其 API 的职责；
+然而在某些场景下，你可能希望使用其他工具，或者传统的构建流程在大规模场景下遇到了扩展性瓶颈。
 
-### Use-case: Faster Declaration Emit Tools
+### 使用场景：更快速的声明生成工具
 
-Imagine if you wanted to create a faster tool to generate declaration files, perhaps as part of a publishing service or a new bundler.
-Whilst there is a thriving ecosystem of blazing fast tools that can turn TypeScript into JavaScript, the same is not true for turning TypeScript into declaration files.
-The reason is that TypeScript's inference allows us to write code without explicitly declaring types, meaning declaration emit can be complex.
+设想一下，如果你想打造一个更快的声明文件生成工具，例如将其作为发布服务或新型打包器（bundler）的一部分。
+尽管社区中已有蓬勃发展、速度极快的工具生态可以将 TypeScript 转译为 JavaScript，但在将 TypeScript 转换为声明文件方面却非如此。
+究其原因，是因为 TypeScript 强大的类型推断允许我们在不显式声明类型的情况下编写代码，这也意味着生成声明文件的逻辑极其复杂。
 
-Let's consider a simple example of a function that adds two imported variables.
+我们来看一个将两个导入变量相加的简单函数示例：
 
 ```ts
 // util.ts
@@ -490,41 +490,41 @@ export function add() {
 }
 ```
 
-Even if the only thing we want to do is generate `add.d.ts`, TypeScript needs to crawl into another imported file (`util.ts`), infer that the type of `one` and `two` are strings, and then calculate that the `+` operator on two strings will lead to a `string` return type.
+即使我们仅仅想要生成 `add.d.ts`，TypeScript 也必须深入跟踪到另一个导入的文件（`util.ts`），推断出 `one` 和 `two` 的类型为字符串，然后再计算出两个字符串相加操作（`+`）会得到 `string` 类型的返回值：
 
 ```ts
 // add.d.ts
 export declare function add(): string
 ```
 
-While this inference is important for the developer experience, it means that tools that want to generate declaration files would need to replicate parts of the type-checker including inference and the ability to resolve module specifiers to follow the imports.
+虽然这种推断对于开发体验至关重要，但它也意味着任何想要生成声明文件的第三方工具，都必须重新实现类型检查器的部分核心能力，包括类型推断以及解析模块说明符以跟踪导入关系的能力。
 
-### Use-case: Parallel Declaration Emit and Parallel Checking
+### 使用场景：并行声明生成与并行类型检查
 
-Imagine if you had a monorepo containing many projects and a multi-core CPU that just wished it could help you check your code faster.
-Wouldn't it be great if we could check all those projects at the same time by running each project on a different core?
+设想你有一个包含众多项目的 Monorepo，以及一颗渴望帮你更快完成代码检查的多核 CPU。
+如果我们能让每个项目在不同的 CPU 核心上同时运行，并行检查所有项目，岂不是很棒？
 
-Unfortunately we don't have the freedom to do all the work in parallel.
-The reason is that we have to build those projects in dependency order, because each project is checking against the declaration files of their dependencies.
-So we must build the dependency first to generate the declaration files.
-TypeScript's project references feature works the same way, building the set of projects in "topological" dependency order.
+遗憾的是，我们并不能随心所欲地并行执行所有工作。
+原因在于我们必须按照依赖顺序构建这些项目，因为每个项目都需要依赖其上游项目的声明文件来进行类型检查。
+因此，必须先构建上游依赖以生成声明文件。
+TypeScript 的项目引用（project references）特性也是以同样的方式工作，即按照“拓扑”依赖顺序依次构建项目集合。
 
-As an example, if we have two projects called `backend` and `frontend`, and they both depend on a project called `core`, TypeScript can't start type-checking either `frontend` or `backend` until `core` has been built and its declaration files have been generated.
+例如，如果我们有两个项目 `backend` 和 `frontend`，它们都依赖名为 `core` 的项目，那么在 `core` 完成构建并生成声明文件之前，TypeScript 无法开始对 `frontend` 或 `backend` 进行类型检查。
 
-![frontend and backend point to core, other stuff might point to each of those](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2024/04/5-5-beta-isolated-declarations-deps.png)
+![frontend 和 backend 指向 core，其他内容可能分别指向它们](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2024/04/5-5-beta-isolated-declarations-deps.png)
 
-In the above graph, you can see that we have a bottleneck.
-Whilst we can build `frontend` and `backend` in parallel, we need to first wait for `core` to finish building before either can start.
+在上图中可以看到一个明显的瓶颈。
+虽然我们可以并行构建 `frontend` 和 `backend`，但必须首先等待 `core` 构建完成，两者的构建才能启动。
 
-How could we improve upon this?
-Well, if a fast tool could generate all those declaration files for `core` _in parallel_, TypeScript then could immediately follow that by type-checking `core`, `frontend`, and `backend` also _in parallel_.
+我们该如何改善这一现状？
+设想一下，如果有一个快速工具能够*并行*为 `core` 生成所有声明文件，那么 TypeScript 紧接着就可以*同时并行*对 `core`、`frontend` 和 `backend` 进行类型检查。
 
-### Solution: Explicit Types!
+### 解决方案：显式类型标注！
 
-The common requirement in both use-cases is that we need a cross-file type-checker to generate declaration files.
-Which is a lot to ask from the tooling community.
+在这两个使用场景中，共同的痛点在于生成声明文件都需要一个跨文件的类型检查器。
+而这对工具链生态社区来说要求过高了。
 
-As a more complex example, if we want a declaration file for the following code...
+再看一个更复杂的例子，如果我们想为以下代码生成声明文件……
 
 ```ts
 import { add } from './add'
@@ -536,21 +536,21 @@ export function foo() {
 }
 ```
 
-...we would need to generate a signature for `foo`.
-Well that requires looking at the implementation of `foo`.
-`foo` just returns `x`, so getting the type of `x` requires looking at the implementation of `add`.
-But that might require looking at the implementation of `add`'s dependencies, and so on.
-What we're seeing here is that generating declaration files requires a whole lot of logic to figure out the types of different places that might not even be local to the current file.
+……我们需要为 `foo` 生成签名。
+这需要检查 `foo` 的实现；
+而 `foo` 只是返回了 `x`，因此获取 `x` 的类型又需要检查 `add` 的实现；
+这甚至可能进一步需要检查 `add` 的依赖项的实现，以此类推。
+由此可见，生成声明文件需要大量的逻辑来推导不同位置的类型，而这些位置甚至可能不在当前文件内。
 
-Still, for developers looking for fast iteration time and fully parallel builds, there is another way of thinking about this problem.
-A declaration file only requires the types of the public API of a module - in other words, the types of the things that are exported.
-If, controversially, developers are willing to explicitly write out the types of the things they export, tools could generate declaration files without needing to look at the implementation of the module - and without reimplementing a full type-checker.
+不过，对于追求极致迭代速度和完全并行构建的开发者而言，还有另一种思考该问题的角度：
+声明文件仅仅需要模块公共 API 的类型——换句话说，只需导出内容的类型。
+如果开发者愿意做出权衡，显式标注其导出的所有实体的类型，工具就能在无需分析模块实现代码、也无需重新实现完整类型检查器的情况下，直接生成声明文件。
 
-This is where the new `--isolatedDeclarations` option comes in.
-`--isolatedDeclarations` reports errors when a module can't be reliably transformed without a type-checker.
-More plainly, it makes TypeScript report errors if you have a file that isn't sufficiently annotated on its exports.
+这就是全新 `--isolatedDeclarations` 选项发挥作用的地方。
+`--isolatedDeclarations` 会在模块在没有类型检查器就无法可靠转换时报错。
+更直白地说，如果某个文件未对其导出内容提供充分的类型标注，TypeScript 就会报错。
 
-That means in the above example, we would see an error like the following:
+这意味着在上面的例子中，我们会看到如下报错：
 
 ```ts
 export function foo() {
@@ -561,16 +561,16 @@ export function foo() {
 }
 ```
 
-### Why are errors desirable?
+### 为什么报错是件好事？
 
-Because it means that TypeScript can
+因为这意味着 TypeScript 能够：
 
-1. Tell us up-front whether other tools will have issues with generating declaration files
-2. Provide a quick fix to help add these missing annotations.
+1. 提前告知我们其他第三方工具在生成声明文件时是否会遇到问题；
+2. 提供快速修复（Quick Fix）来帮助自动添加这些缺失的类型标注。
 
-This mode doesn't require annotations _everywhere_ though.
-For locals, these can be ignored, since they don't affect the public API.
-For example, the following code would **not** produce an error:
+不过，该模式并不会要求*处处*都添加类型标注。
+对于局部变量，由于它们不会影响公共 API，因此可以忽略。
+例如，以下代码**不会**产生错误：
 
 ```ts
 import { add } from './add'
@@ -582,7 +582,7 @@ export function foo(): string {
 }
 ```
 
-There are also certain expressions where the type is "trivial" to calculate.
+对于某些类型推导显而易见（"trivial"）的表达式，同样不需要显式标注：
 
 ```ts
 // No error on 'x'.
@@ -602,40 +602,40 @@ export function z() {
 }
 ```
 
-### Using `isolatedDeclarations`
+### 使用 `isolatedDeclarations`
 
-`isolatedDeclarations` requires that either the `declaration` or `composite` flags are also set.
+`isolatedDeclarations` 要求同时启用 `declaration` 或 `composite` 标志。
 
-Note that `isolatedDeclarations` does not change how TypeScript performs emit - just how it reports errors.
-Importantly, and similar to `isolatedModules`, enabling the feature in TypeScript won't immediately bring about the potential benefits discussed here.
-So please be patient and look forward to future developments in this space.
-Keeping tool authors in mind, we should also recognize that today, not all of TypeScript's declaration emit can be easily replicated by other tools wanting to use it as a guide.
-That's something we're actively working on improving.
+请注意，`isolatedDeclarations` 并不会改变 TypeScript 本身生成代码的方式，而只是改变了其报告错误的方式。
+同样重要的是，类似于 `isolatedModules`，仅在 TypeScript 中启用该选项并不会立即带来本文讨论的潜在收益。
+因此请保持耐心，期待该领域未来的工具生态演进。
+考虑到工具作者的需求，我们也必须承认，目前并非所有 TypeScript 的声明生成逻辑都能被其他以此为参考的工具轻松复制。
+这正是我们目前正在积极改进的方向。
 
-On top of this, isolated declarations are still a new feature, and we're actively working on improving the experience.
-Some scenarios, like using computed property declarations in classes and object literals, are not _yet_ supported under `isolatedDeclarations`.
-Keep an eye on this space, and feel free to provide us with feedback.
+此外，独立声明生成仍是一项新特性，我们正在积极优化其体验。
+某些场景（例如在类和对象字面量中使用计算属性声明）在 `isolatedDeclarations` 下*暂未*获得支持。
+敬请关注后续进展，并随时向我们提供反馈。
 
-We also feel it is worth calling out that `isolatedDeclarations` should be adopted on a case-by-case basis.
-There are some developer ergonomics that are lost when using `isolatedDeclarations`, and thus it may not be the right choice if your setup is not leveraging the two scenarios mentioned earlier.
-For others, the work on `isolatedDeclarations` has already uncovered many optimizations and opportunities to unlock different parallel build strategies.
-In the meantime, if you're willing to make the trade-offs, we believe `isolatedDeclarations` can be a powerful tool to speed up your build process as external tooling becomes more widely available.
+我们还认为有必要指出，是否采用 `isolatedDeclarations` 应根据实际情况具体权衡。
+启用 `isolatedDeclarations` 会在一定程度上牺牲开发人体工程学体验（developer ergonomics），因此如果你的构建环境并未利用前文提到的两种场景，它可能并不是最佳选择。
+而对于其他场景，围绕 `isolatedDeclarations` 的工作已经挖掘出许多优化点，并解锁了多种不同的并行构建策略。
+与此同时，如果你愿意做出权衡，随着外部工具链生态的日益成熟，我们相信 `isolatedDeclarations` 将成为加速构建流程的强大工具。
 
-For more information, read up on the [Isolated Declarations: State of the Feature](https://github.com/microsoft/TypeScript/issues/58944) discussion on the TypeScript issue tracker.
+欲了解更多信息，请查阅 TypeScript 问题追踪器上的 [Isolated Declarations: State of the Feature](https://github.com/microsoft/TypeScript/issues/58944) 讨论。
 
-### Credit
+### 致谢
 
-Work on `isolatedDeclarations` has been a long-time collaborative effort between the TypeScript team and the infrastructure and tooling teams within Bloomberg and Google.
-Individuals like Hana Joo from Google who implemented [the quick fix for isolated declaration errors](https://github.com/microsoft/TypeScript/pull/58260) (more on that soon), as well as Ashley Claymore, Jan Kühle, Lisa Velden, Rob Palmer, and Thomas Chetwin have been involved in discussion, specification, and implementation for many months.
-But we feel it is specifically worth calling out the tremendous amount of work provided by [Titian Cernicova-Dragomir](https://github.com/dragomirtitian) from Bloomberg.
-Titian has been instrumental in driving the implementation of `isolatedDeclarations` and has been a contributor to the TypeScript project for years prior.
+`isolatedDeclarations` 的工作是 TypeScript 团队与 Bloomberg 和 Google 内部基础设施及工具团队长期合作的成果。
+来自 Google 的 Hana Joo 实现了[针对独立声明错误的快速修复](https://github.com/microsoft/TypeScript/pull/58260)（稍后详述），Ashley Claymore、Jan Kühle、Lisa Velden、Rob Palmer 和 Thomas Chetwin 也参与了数月以来的讨论、规范制定和实现工作。
+而我们尤为想感谢来自 Bloomberg 的 [Titian Cernicova-Dragomir](https://github.com/dragomirtitian) 所付出的巨大努力。
+Titian 在推动 `isolatedDeclarations` 的落地实现中发挥了举足轻重的作用，多年来也是 TypeScript 项目的核心贡献者。
 
-While the feature involved many changes, you can see [the core work for Isolated Declarations here](https://github.com/microsoft/TypeScript/pull/58201).
+尽管该特性涉及大量变动，你可以在此处查看[独立声明生成的核心工作](https://github.com/microsoft/TypeScript/pull/58201)。
 
-## The `${configDir}` Template Variable for Configuration Files
+## 配置文件中的 `${configDir}` 模板变量
 
-It's common in many codebases to reuse a shared `tsconfig.json` file that acts as a "base" for other configuration files.
-This is done by using the `extends` field in a `tsconfig.json` file.
+在许多代码库中，通常会复用一个共享的 `tsconfig.json` 文件作为其他配置文件的“基础配置（base）”。
+这可以通过在 `tsconfig.json` 文件中使用 `extends` 字段来实现：
 
 ```json
 {
@@ -646,9 +646,9 @@ This is done by using the `extends` field in a `tsconfig.json` file.
 }
 ```
 
-One of the issues with this is that all paths in the `tsconfig.json` file are relative to the location of the file itself.
-This means that if you have a shared `tsconfig.base.json` file that is used by multiple projects, relative paths often won't be useful in the derived projects.
-For example, imagine the following `tsconfig.base.json`:
+但这种方式存在一个问题：`tsconfig.json` 文件中的所有路径都是相对于该文件自身所在位置解析的。
+这意味着如果你有一个被多个项目共享的 `tsconfig.base.json` 文件，其中的相对路径在派生项目中往往无法按预期工作。
+例如，设想有如下 `tsconfig.base.json`：
 
 ```json5
 {
@@ -659,19 +659,19 @@ For example, imagine the following `tsconfig.base.json`:
 }
 ```
 
-If author's intent was that every `tsconfig.json` that extends this file should
+如果作者的本意是让每个继承此配置的 `tsconfig.json` 都能：
 
-1. output to a `dist` directory relative to the derived `tsconfig.json` , and
-1. have a `custom-types` directory relative to the derived `tsconfig.json`,
+1. 输出到相对于派生 `tsconfig.json` 的 `dist` 目录；
+1. 拥有相对于派生 `tsconfig.json` 的 `custom-types` 目录，
 
-then this would not work.
-The `typeRoots` paths would be relative to the location of the shared `tsconfig.base.json` file, not the project that extends it.
-Each project that extends this shared file would need to declare its own `outDir` and `typeRoots` with identical contents.
-This could be frustrating and hard to keep in sync between projects, and while the example above is using `typeRoots`, this is a common problem for `paths` and other options.
+那么上述配置将无法满足需求。
+`typeRoots` 的路径会相对于共享的 `tsconfig.base.json` 所在位置解析，而不是相对于继承它的派生项目。
+每个继承该文件的项目都必须重复声明内容完全相同的 `outDir` 和 `typeRoots`。
+这不仅令人繁琐，且难以在项目之间保持同步。虽然上例使用的是 `typeRoots`，但对于 `paths` 等其他选项也同样存在该问题。
 
-To solve this, TypeScript 5.5 introduces a new template variable `${configDir}`.
-When `${configDir}` is written in certain path fields of a `tsconfig.json` or `jsconfig.json` files, this variable is substituted with the containing directory of the configuration file in a given compilation.
-This means that the above `tsconfig.base.json` could be rewritten as:
+为了解决该问题，TypeScript 5.5 引入了全新的模板变量 `${configDir}`。
+当在 `tsconfig.json` 或 `jsconfig.json` 文件的特定路径字段中写入 `${configDir}` 时，该变量会在特定编译中被替换为当前配置文件的所在目录。
+这意味着上述 `tsconfig.base.json` 可以重写为：
 
 ```json5
 {
@@ -685,172 +685,172 @@ This means that the above `tsconfig.base.json` could be rewritten as:
 }
 ```
 
-Now, when a project extends this file, the paths will be relative to the derived `tsconfig.json`, not the shared `tsconfig.base.json` file.
-This makes it easier to share configuration files across projects and ensures that the configuration files are more portable.
+现在，当项目继承此文件时，路径将相对于派生的 `tsconfig.json` 解析，而非共享的 `tsconfig.base.json` 文件。
+这使得在跨项目共享配置文件时更加容易，并确保配置文件具备更高的可移植性。
 
-If you intend to make a `tsconfig.json` file extendable, consider if a `./` should instead be written with `${configDir}`.
+如果你计划让某个 `tsconfig.json` 文件可被继承，请考虑是否应该将 `./` 改写为 `${configDir}`。
 
-For more information, see [the proposal issue](https://github.com/microsoft/TypeScript/issues/57485) and [the implementing pull request](https://github.com/microsoft/TypeScript/pull/58042).
+欲了解更多信息，请查阅[提案 Issue](https://github.com/microsoft/TypeScript/issues/57485) 以及[实现该特性的 Pull Request](https://github.com/microsoft/TypeScript/pull/58042)。
 
-## Consulting `package.json` Dependencies for Declaration File Generation
+## 声明文件生成时参考 `package.json` 中的依赖
 
-Previously, TypeScript would often issue an error message like
+以往，TypeScript 经常会抛出类似如下的错误信息：
 
 ```
 The inferred type of "X" cannot be named without a reference to "Y". This is likely not portable. A type annotation is necessary.
 ```
 
-This was often due to TypeScript's declaration file generation finding itself in the contents of files that were never explicitly imported in a program.
-Generating an import to such a file could be risky if the path ended up being relative.
-Still, for codebases with explicit dependencies in the `dependencies` (or `peerDependencies` and `optionalDependencies`) of a `package.json`, generating such an import should be safe under certain resolution modes.
-So in TypeScript 5.5, we're more lenient when that's the case, and many occurrences of this error should disappear.
+这通常是因为 TypeScript 生成声明文件时触及了程序中从未显式导入的文件内容。
+如果最终生成的路径是相对路径，为此类文件生成导入可能会存在风险。
+然而，对于在 `package.json` 的 `dependencies`（或 `peerDependencies`、`optionalDependencies`）中显式列出依赖的代码库，在特定的解析模式下生成此类导入应该是安全的。
+因此在 TypeScript 5.5 中，对此类情况的处理更加宽容，该错误在很多场景下将不复存在。
 
-[See this pull request](https://github.com/microsoft/TypeScript/issues/42873) for more details on the change.
+更多关于该变动的详情，[请参见此 Pull Request](https://github.com/microsoft/TypeScript/issues/42873)。
 
-## Editor and Watch-Mode Reliability Improvements
+## 编辑器与监视模式可靠性改进
 
-TypeScript has either added some new functionality or fixed existing logic that makes `--watch` mode and TypeScript's editor integration feel more reliable.
-That should hopefully translate to fewer TSServer/editor restarts.
+TypeScript 添加了部分新功能并修复了现有逻辑，使 `--watch` 模式和 TypeScript 的编辑器集成更加稳定可靠。
+这有望显著减少 TSServer 和编辑器的重启次数。
 
-### Correctly Refresh Editor Errors in Configuration Files
+### 正确刷新配置文件中的编辑器错误
 
-TypeScript can generate errors for `tsconfig.json` files;
-however, those errors are actually generated from loading a project, and editors typically don't directly request those errors for `tsconfig.json` files.
-While this sounds like a technical detail, it means that when all errors issued in a `tsconfig.json` are fixed, TypeScript doesn't issue a new fresh empty set of errors, and users are left with stale errors unless they reload their editor.
+TypeScript 会针对 `tsconfig.json` 文件生成错误提示；
+然而，这些错误实际上是在加载项目时生成的，且编辑器通常不会直接针对 `tsconfig.json` 文件请求这些错误信息。
+虽然这听起来像是一个技术细节，但它导致的结果是：当 `tsconfig.json` 中的所有错误都被修复后，TypeScript 并未发出全新的空错误集合，导致用户除非重载编辑器，否则仍会看到过期的陈旧错误提示。
 
-TypeScript 5.5 now intentionally issues an event to clear these out.
-[See more here](https://github.com/microsoft/TypeScript/pull/58120).
+TypeScript 5.5 现在会主动发送事件来清除这些陈旧错误。
+[详情请见此处](https://github.com/microsoft/TypeScript/pull/58120)。
 
-### Better Handling for Deletes Followed by Immediate Writes
+### 更好地处理“删除后立即写入”的操作
 
-Instead of overwriting files, some tools will opt to delete them and then create new files from scratch.
-This is the case when running `npm ci`, for instance.
+某些工具在更新文件时不会选择直接覆盖，而是先删除文件，然后再从头创建新文件。
+例如运行 `npm ci` 时就是如此。
 
-While this can be efficient for those tools, it can be problematic for TypeScript's editor scenarios where deleting a watched might dispose of it and all of its transitive dependencies.
-Deleting and creating a file in quick succession could lead to TypeScript tearing down an entire project and then rebuilding it from scratch.
+虽然这对这些工具而言很高效，但在 TypeScript 的编辑器场景下却可能引发问题：删除被监视的文件可能会销毁该文件及其所有传递依赖项。
+文件在短时间内被连续删除并重新创建，可能会导致 TypeScript 销毁整个项目然后从头重建。
 
-TypeScript 5.5 now has a more nuanced approach by keeping parts of a deleted project around until it picks up on a new creation event.
-This should make operations like `npm ci` work a lot better with TypeScript.
-See [more information on the approach here](https://github.com/microsoft/TypeScript/pull/57492).
+TypeScript 5.5 采取了更加精细的处理策略：保留被删除项目的部分内容，直到捕获到新的文件创建事件。
+这应该会使 `npm ci` 等操作在配合 TypeScript 使用时顺畅得多。
+关于该策略的更多信息，[请参见此处](https://github.com/microsoft/TypeScript/pull/57492)。
 
-### Symlinks are Tracked in Failed Resolutions
+### 在模块解析失败时跟踪符号链接（Symlinks）
 
-When TypeScript fails to resolve a module, it will still need to watch for any failed lookup paths in case the module is added later.
-Previously this was not done for symlinked directories, which could cause reliability issues in monorepo-like scenarios when a build occurred in one project but was not witnessed in the other.
-This should be fixed in TypeScript 5.5, and means you won't need to restart your editor as often.
+当 TypeScript 解析模块失败时，仍需监视所有查找失败的路径，以防后续添加了该模块。
+过去对于符号链接目录并没有执行此操作，在 Monorepo 类场景中，某一个项目完成构建后另一个项目可能无法感知到变动，从而引发稳定性问题。
+该问题在 TypeScript 5.5 中已得到修复，这意味着你不再需要频繁重启编辑器。
 
-[See more information here](https://github.com/microsoft/TypeScript/pull/58139).
+[更多信息请参见此处](https://github.com/microsoft/TypeScript/pull/58139)。
 
-### Project References Contribute to Auto-Imports
+### 项目引用参与自动导入补全
 
-Auto-imports no longer requires at least one explicit import to dependent projects in a project reference setup.
-Instead, auto-import completions should just work across anything you've listed in the `references` field of your `tsconfig.json`.
+在配置了项目引用的工程中，自动导入不再需要先对依赖项目至少显式导入一次。
+现在，只要在 `tsconfig.json` 的 `references` 字段中列出了该项目，自动导入补全就能直接跨项目生效。
 
-[See more on the implementing pull request](https://github.com/microsoft/TypeScript/pull/55955).
+[详情请见实现该特性的 Pull Request](https://github.com/microsoft/TypeScript/pull/55955)。
 
-## Performance and Size Optimizations
+## 性能与体积优化
 
-### Monomorphized Objects in Language Service and Public API
+### 语言服务与公共 API 中的单态化对象
 
-In TypeScript 5.0, we ensured that our [`Node`](https://github.com/microsoft/TypeScript/pull/51682) and [`Symbol`](https://github.com/microsoft/TypeScript/pull/51880) objects had a consistent set of properties with a consistent initialization order.
-Doing so helps reduce polymorphism in different operations, which allows runtimes to fetch properties more quickly.
+在 TypeScript 5.0 中，我们确保了 [`Node`](https://github.com/microsoft/TypeScript/pull/51682) 与 [`Symbol`](https://github.com/microsoft/TypeScript/pull/51880) 对象拥有一致的属性集以及一致的初始化顺序。
+这样做有助于减少各项操作中的多态性（polymorphism），让运行时引擎能够更快地访问对象属性。
 
-By making this change, we witnessed impressive speed wins in the compiler;
-however, most of these changes were performed on internal allocators for our data structures.
-The language service, along with TypeScript's public API, uses a different set of allocators for certain objects.
-This allowed the TypeScript compiler to be a bit leaner, as data used only for the language service would never be used in the compiler.
+通过这一改进，编译器获得了令人瞩目的速度提升；
+然而，当时的大多数优化都是针对数据结构的内部内存分配器进行的。
+语言服务以及 TypeScript 的公共 API 对某些对象使用了另一套不同的分配器。
+这曾让 TypeScript 编译器更加精简，因为仅用于语言服务的数据无需加载到编译器中。
 
-In TypeScript 5.5, the same monomorphization work has been done for the language service and public API.
-What this means is that your editor experience, and any build tools that use the TypeScript API, will get a decent amount faster.
-In fact, in our benchmarks, we've seen a **5-8% speedup in build times** when using the public TypeScript API's allocators, and **language service operations getting 10-20% faster**.
-While this does imply an increase in memory, we believe that tradeoff is worth it and hope to find ways to reduce that memory overhead.
-Things should feel a lot snappier now.
+在 TypeScript 5.5 中，语言服务与公共 API 也应用了相同的单态化（monomorphization）优化。
+这意味着你的编辑器体验以及任何使用 TypeScript API 的构建工具都将获得可观的速度提升。
+事实上，在我们的基准测试中，使用公共 TypeScript API 的分配器时**构建时间缩短了 5-8%**，且**语言服务操作速度提升了 10-20%**。
+尽管这会带来一定的内存开销增加，但我们认为这一权衡是非常值得的，并希望后续能找到降低内存开销的方法。
+现在的操作响应应该会流畅得多。
 
-For more information, [see the change here](https://github.com/microsoft/TypeScript/pull/58045).
+更多信息，[请参见此处变更](https://github.com/microsoft/TypeScript/pull/58045)。
 
-### Monomorphized Control Flow Nodes
+### 控制流节点的单态化
 
-In TypeScript 5.5, nodes of the control flow graph have been monomorphized so that they always hold a consistent shape.
-By doing so, check times will often be reduced by about 1%.
+在 TypeScript 5.5 中，控制流图（control flow graph）的节点已被单态化，以始终保持一致的结构形状。
+通过这种方式，类型检查耗时通常能减少约 1%。
 
-[See this change here](https://github.com/microsoft/TypeScript/pull/57977).
+[更多信息请参见此处变更](https://github.com/microsoft/TypeScript/pull/57977)。
 
-### Optimizations on our Control Flow Graph
+### 控制流图优化
 
-In many cases, control flow analysis will traverse nodes that don't provide any new information.
-We observed that in the absence of any early termination or effects in the antecedents (or "dominators") of certain nodes meant that those nodes could always be skipped over.
-As such, TypeScript now constructs its control flow graphs to take advantage of this by linking to an earlier node that _does_ provide interesting information for control flow analysis.
-This yields a flatter control flow graph, which can be more efficient to traverse.
-This optimization has yielded modest gains, but with up to 2% reductions in build time on certain codebases.
+在很多情况下，控制流分析会遍历一些无法提供任何新信息的节点。
+我们观察到，如果某些节点的前驱节点（或“支配节点（dominators）”）中不存在任何提前终止或副作用，则这些节点完全可以直接跳过。
+因此，TypeScript 现在利用这一特点来构建控制流图：直接链接到更早的*确实*能为控制流分析提供有用信息的节点。
+这使得控制流图更加扁平，遍历效率更高。
+该优化带来了可观的收益，在某些代码库中能减少高达 2% 的构建时间。
 
-You can [read more here](https://github.com/microsoft/TypeScript/pull/58013).
+你可以[在此阅读更多内容](https://github.com/microsoft/TypeScript/pull/58013)。
 
-### Skipped Checking in `transpileModule` and `transpileDeclaration`
+### 在 `transpileModule` 与 `transpileDeclaration` 中跳过类型检查
 
-TypeScript's `transpileModule` API can be used for compiling a single TypeScript file's contents into JavaScript.
-Similarly, the `transpileDeclaration` API (see below) can be used to generate a declaration file for a single TypeScript file.
-One of the issues with these APIs is that TypeScript internally would perform a full type-checking pass over the entire contents of the file before emitting the output.
-This was necessary to collect certain information which would later be used for the emit phase.
+TypeScript 的 `transpileModule` API 可用于将单个 TypeScript 文件的内容编译为 JavaScript。
+类似地，`transpileDeclaration` API（见下文）可用于为单个 TypeScript 文件生成声明文件。
+这些 API 存在的一个问题在于，TypeScript 内部在输出生成结果之前，会对整个文件内容执行一次完整的类型检查。
+这是为了收集后续生成阶段所需的某些信息。
 
-In TypeScript 5.5, we've found a way to avoid performing a full check, only lazily collecting this information as necessary, and `transpileModule` and `transpileDeclaration` both enable this functionality by default.
-As a result, tools that integrate with these APIs, like [ts-loader](https://www.npmjs.com/package/ts-loader) with `transpileOnly` and [ts-jest](https://www.npmjs.com/package/ts-jest), should see a noticeable speedup.
-In our testing, [we generally witness around a 2x speed-up in build time using `transpileModule`](https://github.com/microsoft/TypeScript/pull/58364#issuecomment-2138580690).
+在 TypeScript 5.5 中，我们找到了一种避免进行完整检查的方法，仅在必要时按需延迟收集这些信息，且 `transpileModule` 和 `transpileDeclaration` 均已默认启用此项功能。
+因此，集成了这些 API 的工具（例如配置了 `transpileOnly` 的 [ts-loader](https://www.npmjs.com/package/ts-loader) 以及 [ts-jest](https://www.npmjs.com/package/ts-jest)）应该能看到明显的速度提升。
+在我们的测试中，[使用 `transpileModule` 通常能获得约 2 倍的构建速度提升](https://github.com/microsoft/TypeScript/pull/58364#issuecomment-2138580690)。
 
-### TypeScript Package Size Reduction
+### 缩减 TypeScript 软件包体积
 
-Further leveraging [our transition to modules in 5.0](https://devblogs.microsoft.com/typescript/typescripts-migration-to-modules/), we've significantly reduced TypeScript's overall package size [by making `tsserver.js` and `typingsInstaller.js` import from a common API library instead of having each of them produce standalone bundles](https://github.com/microsoft/TypeScript/pull/55326).
+进一步借助 [5.0 中向模块化的迁移](https://devblogs.microsoft.com/typescript/typescripts-migration-to-modules/)，我们[让 `tsserver.js` 和 `typingsInstaller.js` 从公共 API 库导入，而不是各自生成独立的打包产物](https://github.com/microsoft/TypeScript/pull/55326)，从而大幅减小了 TypeScript 整体的软件包体积。
 
-This reduces TypeScript's size on disk from 30.2 MB to 20.4 MB, and reduces its packed size from 5.5 MB to 3.7 MB!
+这使得 TypeScript 在磁盘上的体积从 30.2 MB 缩减至 20.4 MB，压缩打包后的体积也从 5.5 MB 缩减至 3.7 MB！
 
-### Node Reuse in Declaration Emit
+### 声明生成中的语法节点复用
 
-As part of the work to enable `isolatedDeclarations`, we've substantially improved how often TypeScript can directly copy your input source code when producing declaration files.
+作为支持 `isolatedDeclarations` 的一部分工作，我们大幅提升了 TypeScript 在生成声明文件时直接复用输入源代码的频率。
 
-For example, let's say you wrote
+例如，假设你写了：
 
 ```ts
 export const strBool: string | boolean = 'hello'
 export const boolStr: boolean | string = 'world'
 ```
 
-Note that the union types are equivalent, but the order of the union is different.
-When emitting the declaration file, TypeScript has two equivalent output possibilities.
+请注意，这两个联合类型是等价的，但联合成员的顺序不同。
+在生成声明文件时，TypeScript 有两种等价的输出方案。
 
-The first is to use a consistent canonical representation for each type:
+第一种是为每种类型使用一致的规范化表示形式：
 
 ```ts
 export const strBool: string | boolean
 export const boolStr: string | boolean
 ```
 
-The second is to re-use the type annotations exactly as written:
+第二种是直接原样复用书写的类型标注：
 
 ```ts
 export const strBool: string | boolean
 export const boolStr: boolean | string
 ```
 
-The second approach is generally preferable for a few reasons:
+第二种方法通常更受青睐，原因如下：
 
-- Many equivalent representations still encode some level of intent that is better to preserve in the declaration file
-- Producing a fresh representation of a type can be somewhat expensive, so avoiding is better
-- User-written types are usually shorter than generated type representations
+- 许多等价的类型表示仍蕴含着某种代码意图，在声明文件中保留这些意图往往更好
+- 重新生成类型的规范化表示开销较大，能省则省
+- 用户手写的类型通常比自动生成的类型表示更简短
 
-In 5.5, we've greatly improved the number of places where TypeScript can correctly identify places where it's safe and correct to print back types exactly as they were written in the input file.
-Many of these cases are invisible performance improvements - TypeScript would generate fresh sets of syntax nodes and serialize them into a string.
-Instead, TypeScript can now operate over the original syntax nodes directly, which is much cheaper and faster.
+在 5.5 中，TypeScript 能够准确识别更多场景，安全且正确地将输入文件中原样书写的类型直接输出。
+其中许多场景带来了无形的性能提升——以往 TypeScript 会生成全新的语法节点并将其序列化为字符串；
+而现在，TypeScript 可以直接对原始语法节点进行操作，成本更低、速度更快。
 
-### Caching Contextual Types from Discriminated Unions
+### 缓存可辨识联合的上下文类型
 
-When TypeScript asks for the contextual type of an expression like an object literal, it will often encounter a union type.
-In those cases, TypeScript tries to filter out members of the union based on known properties with well known values (i.e. discriminant properties).
-This work can be fairly expensive, especially if you end up with an object consisting of many many properties.
-In TypeScript 5.5, [much of the computation is cached once so that TypeScript doesn't need to recompute it for every property in the object literal](https://github.com/microsoft/TypeScript/pull/58372).
-Performing this optimization shaved 250ms off of compiling the TypeScript compiler itself.
+当 TypeScript 查询对象字面量等表达式的上下文类型（contextual type）时，经常会遇到联合类型。
+在这些情况下，TypeScript 会尝试根据具有确定值的已知属性（即可辨识属性 / discriminant properties）来过滤联合类型的成员。
+这项工作可能相当耗时，尤其是当对象包含大量属性时。
+在 TypeScript 5.5 中，[大部分计算结果会被缓存一次，这样 TypeScript 就无需为对象字面量中的每个属性都重复计算](https://github.com/microsoft/TypeScript/pull/58372)。
+这项优化让编译 TypeScript 编译器本身的时间缩短了 250ms。
 
-## Easier API Consumption from ECMAScript Modules
+## 在 ECMAScript 模块中更轻松地调用 API
 
-Previously, if you were writing an ECMAScript module in Node.js, named imports were not available from the `typescript` package.
+此前，如果你在 Node.js 中编写 ECMAScript 模块，是无法从 `typescript` 软件包中使用具名导入（named imports）的：
 
 ```ts
 import { createSourceFile } from 'typescript' // ❌ error
@@ -861,8 +861,8 @@ ts.createSourceFile // ❌ undefined???
 ts.default.createSourceFile // ✅ works - but ugh!
 ```
 
-This is because [cjs-module-lexer](https://github.com/nodejs/cjs-module-lexer) did not recognize the pattern of TypeScript's generated CommonJS code.
-This has been fixed, and users can now use named imports from the TypeScript npm package with ECMAScript modules in Node.js.
+这是因为 [cjs-module-lexer](https://github.com/nodejs/cjs-module-lexer) 无法识别 TypeScript 生成的 CommonJS 代码模式。
+该问题现已修复，用户现在可以在 Node.js 的 ECMAScript 模块中直接从 TypeScript npm 包中使用具名导入：
 
 ```ts
 import { createSourceFile } from 'typescript' // ✅ works now!
@@ -871,31 +871,29 @@ import * as ts from 'typescript'
 ts.createSourceFile // ✅ works now!
 ```
 
-For more information, [see the change here](https://github.com/microsoft/TypeScript/pull/57133).
+更多信息，[请参见此处变更](https://github.com/microsoft/TypeScript/pull/57133)。
 
-## The `transpileDeclaration` API
+## `transpileDeclaration` API
 
-TypeScript's API exposes a function called `transpileModule`.
-It's intended to make it easy to compile a single file of TypeScript code.
-Because it doesn't have access to an entire _program_, the caveat is that it may not produce the right output if the code violates any errors under the `isolatedModules` option.
+TypeScript 的 API 提供了一个名为 `transpileModule` 的函数，旨在方便地编译单个 TypeScript 文件。
+由于它无法访问整个*程序（Program）*上下文，其限制在于：如果代码违反了 `isolatedModules` 选项下的规则并报错，它可能无法生成正确的输出。
 
-In TypeScript 5.5, we've added a new similar API called `transpileDeclaration`.
-This API is similar to `transpileModule`, but it's specifically designed to generate a single _declaration file_ based on some input source text.
-Just like `transpileModule`, it doesn't have access to a full program, and a similar caveat applies: it only generates an accurate declaration file if the input code is free of errors under the new `isolatedDeclarations` option.
+在 TypeScript 5.5 中，我们添加了一个类似的新 API：`transpileDeclaration`。
+该 API 类似于 `transpileModule`，但专门用于根据输入的源代码文本生成单个*声明文件*。
+与 `transpileModule` 一样，它同样无法访问完整的程序上下文，也有类似的限制：只有在输入代码符合全新的 `isolatedDeclarations` 选项且没有任何错误时，它才能生成准确的声明文件。
 
-If desired, this function can be used to parallelize declaration emit across all files under `isolatedDeclarations` mode.
+如有需要，可以使用该函数在 `isolatedDeclarations` 模式下跨所有文件并行生成声明文件。
 
-For more information, [see the implementation here](https://github.com/microsoft/TypeScript/pull/58261).
+更多信息，[请参见此处的实现](https://github.com/microsoft/TypeScript/pull/58261)。
 
-## Notable Behavioral Changes
+## 显著的行为变更
 
-This section highlights a set of noteworthy changes that should be acknowledged and understood as part of any upgrade.
-Sometimes it will highlight deprecations, removals, and new restrictions.
-It can also contain bug fixes that are functionally improvements, but which can also affect an existing build by introducing new errors.
+本节列出了一系列值得关注的变更，在版本升级时应予以了解和注意。
+这些内容可能包括废弃项、移除项以及新的语法限制，也可能包含功能改进类的 Bug 修复（但可能会引入新的错误并影响现有构建）。
 
-### Disabling Features Deprecated in TypeScript 5.0
+### 禁用 TypeScript 5.0 中废弃的特性
 
-TypeScript 5.0 deprecated the following options and behaviors:
+TypeScript 5.0 废弃了以下编译选项和行为：
 
 - `charset`
 - `target: ES3`
@@ -907,27 +905,27 @@ TypeScript 5.0 deprecated the following options and behaviors:
 - `suppressImplicitAnyIndexErrors`
 - `out`
 - `preserveValueImports`
-- `prepend` in project references
-- implicitly OS-specific `newLine`
+- 项目引用中的 `prepend`
+- 隐式与操作系统相关的 `newLine`
 
-To continue using the deprecated options above, developers using TypeScript 5.0 and other more recent versions have had to specify a new option called `ignoreDeprecations` with the value `"5.0"`.
+为了继续使用上述已废弃的选项，使用 TypeScript 5.0 及更高版本的开发者此前必须指定一个名为 `ignoreDeprecations` 且值为 `"5.0"` 的新选项。
 
-In TypeScript 5.5, these options no longer have any effect.
-To help with a smooth upgrade path, you may still specify them in your tsconfig, but these will be an error to specify in TypeScript 6.0.
-See also the [Flag Deprecation Plan](https://github.com/microsoft/TypeScript/issues/51000) which outlines our deprecation strategy.
+在 TypeScript 5.5 中，这些选项不再产生任何效果。
+为了保证平滑升级，你仍可以在 tsconfig 中指定它们，但在 TypeScript 6.0 中指定它们将会报错。
+另请参阅概述了我们废弃策略的 [Flag Deprecation Plan](https://github.com/microsoft/TypeScript/issues/51000)。
 
-[More information around these deprecation plans is available on GitHub](https://github.com/microsoft/TypeScript/issues/51909), which contains suggestions in how to best adapt your codebase.
+[GitHub 上提供了关于这些废弃计划的更多信息](https://github.com/microsoft/TypeScript/issues/51909)，其中包含如何最好地调整代码库的建议。
 
-### `lib.d.ts` Changes
+### `lib.d.ts` 变更
 
-Types generated for the DOM may have an impact on type-checking your codebase.
-For more information, [see the DOM updates for TypeScript 5.5](https://github.com/microsoft/TypeScript/pull/58211).
+为 DOM 生成的类型可能会对你代码库的类型检查产生影响。
+欲了解更多信息，[请参见 TypeScript 5.5 的 DOM 更新](https://github.com/microsoft/TypeScript/pull/58211)。
 
-### Stricter Parsing for Decorators
+### 更严格的装饰器语法解析
 
-Since TypeScript originally introduced support for decorators, the specified grammar for the proposal has been tightened up.
-TypeScript is now stricter about what forms it allows.
-While rare, existing decorators may need to be parenthesized to avoid errors.
+自 TypeScript 最初引入对装饰器的支持以来，该规范提案的语法规则已变得更加严格。
+TypeScript 现在对其允许的形式进行了更严格的约束。
+虽然这种情况较为少见，但部分既有的装饰器可能需要添加括号以避免报错。
 
 ```ts
 class DecoratorProvider {
@@ -947,11 +945,11 @@ class D extends DecoratorProvider {
 }
 ```
 
-See [more information on the change here](https://github.com/microsoft/TypeScript/pull/57749).
+更多关于该变更的信息，[请参见此处](https://github.com/microsoft/TypeScript/pull/57749)。
 
-### `undefined` is No Longer a Definable Type Name
+### `undefined` 不再可用作可定义的类型名称
 
-TypeScript has always disallowed type alias names that conflict with built-in types:
+TypeScript 一直以来都禁止类型别名与内置类型名称冲突：
 
 ```ts
 // Illegal
@@ -964,16 +962,16 @@ type object = any;
 type any = any;
 ```
 
-Due to a bug, this logic didn't also apply to the built-in type `undefined`.
-In 5.5, this is now correctly identified as an error:
+由于一个 Bug，该逻辑此前并未应用到内置的 `undefined` 类型上。
+在 5.5 中，这现在会被正确识别为错误：
 
 ```ts
 // Now also illegal
 type undefined = any
 ```
 
-Bare references to type aliases named `undefined` never actually worked in the first place.
-You could define them, but you couldn't use them as an unqualified type name.
+事实上，对名为 `undefined` 的类型别名的裸引用从一开始就无法正常工作。
+你可以定义它们，但无法将它们作为未限定作用域的类型名称来使用。
 
 ```ts
 export type undefined = string
@@ -982,20 +980,20 @@ export const m: undefined = ''
 // Errors in 5.4 and earlier - the local definition of 'undefined' was not even consulted.
 ```
 
-For more information, [see the change here](https://github.com/microsoft/TypeScript/pull/57575).
+更多信息，[请参见此处变更](https://github.com/microsoft/TypeScript/pull/57575)。
 
-### Simplified Reference Directive Declaration Emit
+### 简化声明生成中的引用指令（Reference Directive）
 
-When producing a declaration file, TypeScript would synthesize a reference directive when it believed one was required.
-For example, all Node.js modules are declared ambiently, so cannot be loaded by module resolution alone.
-A file like:
+在生成声明文件时，如果 TypeScript 认为需要引用指令（reference directive），便会自动合成一条。
+例如，所有 Node.js 模块都是环境声明（ambiently declared），因此无法仅靠模块解析加载。
+类似如下的文件：
 
 ```tsx
 import path from 'path'
 export const myPath = path.parse(__filename)
 ```
 
-Would emit a declaration file like:
+以往会生成如下声明文件：
 
 ```tsx
 /// <reference types="node" />
@@ -1003,13 +1001,11 @@ import path from 'path'
 export declare const myPath: path.ParsedPath
 ```
 
-Even though the reference directive never appeared in the original source.
+即使该引用指令从未在原始源码中出现过。
 
-Similarly, TypeScript also _removed_ reference directives that it did not believe needed to be a part of the output.
-For example, let's imagine we had a reference directive to `jest`;
-however, imagine the reference directive isn't necessary to generate the declaration file.
-TypeScript would simply drop it.
-So in the following example:
+类似地，TypeScript 还会*移除*它认为不需要作为输出一部分的引用指令。
+例如，假设我们有一条指向 `jest` 的引用指令，但在生成声明文件时并不需要它，TypeScript 就会直接将其丢弃。
+因此在以下示例中：
 
 ```tsx
 /// <reference types="jest" />
@@ -1017,7 +1013,7 @@ import path from 'path'
 export const myPath = path.parse(__filename)
 ```
 
-TypeScript would still emit:
+TypeScript 依然会生成：
 
 ```tsx
 /// <reference types="node" />
@@ -1025,23 +1021,23 @@ import path from 'path'
 export declare const myPath: path.ParsedPath
 ```
 
-In the course of working on `isolatedDeclarations`, we realized that this logic was untenable for anyone attempting to implement a declaration emitter without type checking or using more than a single file's context.
-This behavior is also hard to understand from a user's perspective; whether or not a reference directive appeared in the emitted file seems inconsistent and difficult to predict unless you understand exactly what's going on during typechecking.
-To prevent declaration emit from being different when `isolatedDeclarations` was enabled, we knew that our emit needed to change.
+在开发 `isolatedDeclarations` 的过程中，我们意识到对于任何尝试在不进行类型检查、或不依赖单文件以外上下文的情况下实现声明生成器的工具而言，这种逻辑是站不住脚的。
+从用户的角度来看，这种行为也很难理解：引用指令是否会出现在生成的文件中显得很不一致且难以预测，除非你完全清楚类型检查期间发生了什么。
+为了防止启用 `isolatedDeclarations` 时声明生成的结果出现差异，我们必须改变现有的生成机制。
 
-Through [experimentation](https://github.com/microsoft/TypeScript/pull/57569), we found that nearly all cases where TypeScript synthesized reference directives were just to pull in `node` or `react`.
-These are cases where the expectation is that a downstream user already references those types through tsconfig.json `"types"` or library imports, so no longer synthesizing these reference directives would be unlikely to break anyone.
-It's worth noting that this is already how it works for `lib.d.ts`; TypeScript doesn't synthesize a reference to `lib="es2015"` when a module exports a `WeakMap`, instead assuming that a downstream user will have included that as part of their environment.
+通过[实验探究](https://github.com/microsoft/TypeScript/pull/57569)，我们发现 TypeScript 自动合成引用指令的场景几乎全是为了引入 `node` 或 `react`。
+在这些场景中，通常预期下游用户已经通过 tsconfig.json 的 `"types"` 或库导入引用了这些类型，因此不再自动合成这些引用指令基本不会对任何人造成破坏。
+值得一提的是，`lib.d.ts` 本身就是这样工作的：当一个模块导出 `WeakMap` 时，TypeScript 并不会自动合成对 `lib="es2015"` 的引用，而是假定下游用户已经在其环境中包含了该库。
 
-For reference directives that had been written by library authors (not synthesized), [further experimentation](https://github.com/microsoft/TypeScript/pull/57656) showed that nearly all were removed, never showing up in the output.
-Most reference directives that were preserved were broken and likely not intended to be preserved.
+而对于库作者手写的引用指令（非自动合成），[进一步的实验](https://github.com/microsoft/TypeScript/pull/57656)表明它们几乎全被移除了，从未出现在输出中。
+绝大多数被保留下来的引用指令反而存在问题，且很可能并非作者本意希望保留的。
 
-Given those results, we decided to greatly simplfy reference directives in declaration emit in TypeScript 5.5.
-A more consistent strategy will help library authors and consumers have better control of their declaration files.
+基于这些实验结果，我们决定在 TypeScript 5.5 中大幅简化声明生成中的引用指令处理。
+采用更一致的策略将有助于库作者和使用者更好地掌控其声明文件。
 
-Reference directives are no longer synthesized.
-User-written reference directives are no longer preserved, unless annotated with a new `preserve="true"` attribute.
-Concretely, an input file like:
+不再自动合成引用指令。
+用户手写的引用指令也不会再被保留，除非添加了全新的 `preserve="true"` 属性进行标注。
+具体而言，对于如下输入文件：
 
 ```tsx
 /// <reference types="some-lib" preserve="true" />
@@ -1050,7 +1046,7 @@ import path from 'path'
 export const myPath = path.parse(__filename)
 ```
 
-will emit:
+将生成：
 
 ```tsx
 /// <reference types="some-lib" preserve="true" />
@@ -1058,6 +1054,6 @@ import path from 'path'
 export declare const myPath: path.ParsedPath
 ```
 
-Adding `preserve="true"` is backwards compatible with older versions of TypeScript as unknown attributes are ignored.
+添加 `preserve="true"` 对旧版本的 TypeScript 是向后兼容的，因为未知的属性会被直接忽略。
 
-This change also improved performance; in our benchmarks, the emit stage saw a 1-4% improvement in projects with declaration emit enabled.
+此项变更还带来了性能提升：在我们的基准测试中，启用了声明生成的项目在生成阶段（emit stage）获得了 1-4% 的性能改进。

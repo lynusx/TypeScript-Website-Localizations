@@ -2,20 +2,20 @@
 title: TypeScript 4.2
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-4-2.html
-oneline: TypeScript 4.2 Release Notes
+oneline: TypeScript 4.2 发布说明
 ---
 
-## Smarter Type Alias Preservation
+## 更智能的类型别名保留
 
-TypeScript has a way to declare new names for types called type aliases.
-If you're writing a set of functions that all work on `string | number | boolean`, you can write a type alias to avoid repeating yourself over and over again.
+TypeScript 提供了一种为类型声明新名称的方式，称为类型别名（type alias）。
+如果你编写的一组函数都要处理 `string | number | boolean`，可以通过编写类型别名来避免重复书写这些类型。
 
 ```ts
 type BasicPrimitive = number | string | boolean
 ```
 
-TypeScript has always used a set of rules and guesses for when to reuse type aliases when printing out types.
-For example, take the following code snippet.
+在打印类型时，TypeScript 一直以来都是通过一套规则和推测来决定何时复用类型别名。
+例如下面这段代码：
 
 ```ts
 export type BasicPrimitive = number | string | boolean
@@ -26,10 +26,10 @@ export function doStuff(value: BasicPrimitive) {
 }
 ```
 
-If we hover our mouse over `x` in an editor like Visual Studio, Visual Studio Code, or [the TypeScript Playground](https://www.typescriptlang.org/play?ts=4.1.3#code/KYDwDg9gTgLgBDAnmYcBCBDAzgSwMYAKUOAtjjDgG6oC8cAdgK4kBGwUcAPnFjMfQHMucFhAgAbYBnoBuAFBzQkWHABmjengoR6cACYQAyjEarVACkoZxjYAC502fEVLkqwAJRwA3nLj+4SXgQODorG2B5ALgoYBMoXRB5AF8gA), we'll get a quick info panel that shows the type `BasicPrimitive`.
-Likewise, if we get the declaration file output (`.d.ts` output) for this file, TypeScript will say that `doStuff` returns `BasicPrimitive`.
+如果我们在 Visual Studio、Visual Studio Code 或 [TypeScript 演练场](https://www.typescriptlang.org/play?ts=4.1.3#code/KYDwDg9gTgLgBDAnmYcBCBDAzgSwMYAKUOAtjjDgG6oC8cAdgK4kBGwUcAPnFjMfQHMucFhAgAbYBnoBuAFBzQkWHABmjengoR6cACYQAyjEarVACkoZxjYAC502fEVLkqwAJRwA3nLj+4SXgQODorG2B5ALgoYBMoXRB5AF8gA)等编辑器中将鼠标悬停在 `x` 上，会弹出一个快速信息提示面板，显示类型为 `BasicPrimitive`。
+同样，如果为该文件生成声明文件（`.d.ts` 输出），TypeScript 也会表明 `doStuff` 的返回类型是 `BasicPrimitive`。
 
-However, what happens if we return a `BasicPrimitive` or `undefined`?
+然而，如果我们返回 `BasicPrimitive` 或 `undefined` 会发生什么？
 
 ```ts
 export type BasicPrimitive = number | string | boolean
@@ -43,26 +43,26 @@ export function doStuff(value: BasicPrimitive) {
 }
 ```
 
-We can see what happens [in the TypeScript 4.1 playground](https://www.typescriptlang.org/play?ts=4.1.3#code/KYDwDg9gTgLgBDAnmYcBCBDAzgSwMYAKUOAtjjDgG6oC8cAdgK4kBGwUcAPnFjMfQHMucFhAgAbYBnoBuALAAoRQHplcABIRqHCPTgByACYQAyjEYAzC-pHBxEAO4IIPYKgcALDPAAqyYCZ4xGDwhjhYYOIYiFhwFtAIHqhQwOZQekgoAHQqagDqqGQCHvBe1HCgKHgwwIZw5M5wYPzw2Lm5cJ2YuITEZBTl3Iz0hsAWOPS1HR0sjPBs9k5+KIHB8AAsWQBMADT18BO8UnVhEVExcG0Kqh2dTKzswrz8QtyiElJ6QyNjE1PXykUlWg8Asw2qOF0cGMZksFgAFJQMOJGMAAFzobD4IikchUYAASjgAG9FJ1yTgLHB4QBZbweLJQaTGEjwokAHjgAAYsgBWImkhTk4WdFJpPTDUbjSaGeRC4UAX0UZOFYsY6TgSJRwDlcAVQA).
-While we might want TypeScript to display the return type of `doStuff` as `BasicPrimitive | undefined`, it instead displays `string | number | boolean | undefined`!
-What gives?
+我们可以[在 TypeScript 4.1 演练场中](https://www.typescriptlang.org/play?ts=4.1.3#code/KYDwDg9gTgLgBDAnmYcBCBDAzgSwMYAKUOAtjjDgG6oC8cAdgK4kBGwUcAPnFjMfQHMucFhAgAbYBnoBuALAAoRQHplcABIRqHCPTgByACYQAyjEYAzC-pHBxEAO4IIPYKgcALDPAAqyYCZ4xGDwhjhYYOIYiFhwFtAIHqhQwOZQekgoAHQqagDqqGQCHvBe1HCgKHgwwIZw5M5wYPzw2Lm5cJ2YuITEZBTl3Iz0hsAWOPS1HR0sjPBs9k5+KIHB8AAsWQBMADT18BO8UnVhEVExcG0Kqh2dTKzswrz8QtyiElJ6QyNjE1PXykUlWg8Asw2qOF0cGMZksFgAFJQMOJGMAAFzobD4IikchUYAASjgAG9FJ1yTgLHB4QBZbweLJQaTGEjwokAHjgAAYsgBWImkhTk4WdFJpPTDUbjSaGeRC4UAX0UZOFYsY6TgSJRwDlcAVQA)看到实际效果。
+虽然我们可能希望 TypeScript 将 `doStuff` 的返回类型显示为 `BasicPrimitive | undefined`，但它实际显示的却是 `string | number | boolean | undefined`！
+这是怎么回事呢？
 
-Well this has to do with how TypeScript represents types internally.
-When creating a union type out of one or more union types, it will always _normalize_ those types into a new flattened union type - but doing that loses information.
-The type-checker would have to find every combination of types from `string | number | boolean | undefined` to see what type aliases could have been used, and even then, there might be multiple type aliases to `string | number | boolean`.
+这与 TypeScript 内部表示类型的方式有关。
+当由一个或多个联合类型创建联合类型时，TypeScript 总是会将这些类型*规范化（normalize）*为一个新的扁平联合类型——但这样做会丢失原始信息。
+类型检查器必须在 `string | number | boolean | undefined` 的每种类型组合中进行查找，以推断可能使用了哪些类型别名；即便如此，也可能存在多个指向 `string | number | boolean` 的类型别名。
 
-In TypeScript 4.2, our internals are a little smarter.
-We keep track of how types were constructed by keeping around parts of how they were originally written and constructed over time.
-We also keep track of, and differentiate, type aliases to instances of other aliases!
+在 TypeScript 4.2 中，内部机制变得更加智能。
+我们通过保留类型最初的书写方式和构造过程的部分信息，来追踪类型的构造方式。
+我们还会追踪并区分指向其他别名实例的类型别名！
 
-Being able to print back the types based on how you used them in your code means that as a TypeScript user, you can avoid some unfortunately humongous types getting displayed, and that often translates to getting better `.d.ts` file output, error messages, and in-editor type displays in quick info and signature help.
-This can help TypeScript feel a little bit more approachable for newcomers.
+能够根据你在代码中的使用方式回显类型，意味着作为 TypeScript 用户，你可以避免看到那些冗长臃肿的类型展示。这通常也会带来更好的 `.d.ts` 文件输出、更清晰的错误提示，以及编辑器内更友好的悬停信息和签名帮助。
+这有助于让初学者感到 TypeScript 更加易于上手。
 
-For more information, check out [the first pull request that improves various cases around preserving union type aliases](https://github.com/microsoft/TypeScript/pull/42149), along with [a second pull request that preserves indirect aliases](https://github.com/microsoft/TypeScript/pull/42284).
+欲了解更多信息，请查看[改进保留联合类型别名多种场景的首个 Pull Request](https://github.com/microsoft/TypeScript/pull/42149)，以及[保留间接别名的第二个 Pull Request](https://github.com/microsoft/TypeScript/pull/42284)。
 
-## Leading/Middle Rest Elements in Tuple Types
+## 元组类型中更灵活的 Rest 元素
 
-In TypeScript, tuple types are meant to model arrays with specific lengths and element types.
+在 TypeScript 中，元组类型用于为具有固定长度和特定元素类型的数组建模。
 
 ```ts
 // A tuple that stores a pair of numbers
@@ -72,8 +72,8 @@ let a: [number, number] = [1, 2]
 let b: [string, number, boolean] = ['hello', 42, true]
 ```
 
-Over time, TypeScript's tuple types have become more and more sophisticated, since they're also used to model things like parameter lists in JavaScript.
-As a result, they can have optional elements and rest elements, and can even have labels for tooling and readability.
+随着时间的推移，TypeScript 的元组类型变得越来越强大，因为它们还被用于对 JavaScript 中的参数列表等结构进行建模。
+因此，元组类型不仅支持可选元素和 rest 元素，还可以带有标签以改善工具支持和可读性。
 
 ```ts twoslash
 // A tuple that has either one or two strings.
@@ -93,10 +93,10 @@ e = ['hello', 'world', false]
 e = ['hello', 'world', true, false, true]
 ```
 
-In TypeScript 4.2, rest elements specifically been expanded in how they can be used.
-In prior versions, TypeScript only allowed `...rest` elements at the very last position of a tuple type.
+在 TypeScript 4.2 中，rest 元素的使用方式得到了专门扩展。
+在先前的版本中，TypeScript 只允许在元组类型的最末尾位置放置 `...rest` 元素。
 
-However, now rest elements can occur _anywhere_ within a tuple - with only a few restrictions.
+而现在，除了少数限制外，rest 元素可以出现在元组内的*任意位置*。
 
 ```ts twoslash
 let foo: [...string[], number]
@@ -112,8 +112,8 @@ bar = [true, 'some text', false]
 bar = [true, 'some', 'separated', 'text', false]
 ```
 
-The only restriction is that a rest element can be placed anywhere in a tuple, so long as it's not followed by another optional element or rest element.
-In other words, only one rest element per tuple, and no optional elements after rest elements.
+唯一的限制是：rest 元素可以放置在元组中的任意位置，只要其后不紧跟另一个可选元素或 rest 元素即可。
+换句话说，每个元组中只能有一个 rest 元素，且 rest 元素之后不能出现可选元素。
 
 ```ts twoslash
 // @errors: 1265 1266
@@ -129,7 +129,7 @@ let StealersWheel: [...Clown[], 'me', ...Joker[]]
 let StringsAndMaybeBoolean: [...string[], boolean?]
 ```
 
-These non-trailing rest elements can be used to model functions that take any number of leading arguments, followed by a few fixed ones.
+这些非末尾的 rest 元素可以用来为接收任意数量的前置参数、后跟若干固定参数的函数建模。
 
 ```ts twoslash
 declare function doStuff(
@@ -140,28 +140,28 @@ doStuff(/*shouldCapitalize:*/ false)
 doStuff('fee', 'fi', 'fo', 'fum', /*shouldCapitalize:*/ true)
 ```
 
-Even though JavaScript doesn't have any syntax to model leading rest parameters, we were still able to declare `doStuff` as a function that takes leading arguments by declaring the `...args` rest parameter with _a tuple type that uses a leading rest element_.
-This can help model lots of existing JavaScript out there!
+尽管 JavaScript 本身没有任何语法来表达前置 rest 形参，但我们仍然可以通过使用*包含前置 rest 元素的元组类型*来声明 `...args` rest 形参，从而将 `doStuff` 声明为接收前置参数的函数。
+这有助于为现实中现有的许多 JavaScript 模式建模！
 
-For more details, [see the original pull request](https://github.com/microsoft/TypeScript/pull/41544).
+欲了解更多详情，请[参见原始 Pull Request](https://github.com/microsoft/TypeScript/pull/41544)。
 
-## Stricter Checks For The `in` Operator
+## 更严格的 `in` 运算符类型检查
 
-In JavaScript, it is a runtime error to use a non-object type on the right side of the `in` operator.
-TypeScript 4.2 ensures this can be caught at design-time.
+在 JavaScript 中，如果将非对象类型作为 `in` 运算符的右操作数，会在运行时抛出错误。
+TypeScript 4.2 确保在设计时即可捕获该错误。
 
 ```ts twoslash
 // @errors: 2361 2322
 'foo' in 42
 ```
 
-This check is fairly conservative for the most part, so if you have received an error about this, it is likely an issue in the code.
+在大多数情况下，该检查相当保守，因此如果你收到了相关错误，通常意味着代码本身存在问题。
 
-A big thanks to our external contributor [Jonas Hübotter](https://github.com/jonhue) for [their pull request](https://github.com/microsoft/TypeScript/pull/41928)!
+非常感谢外部贡献者 [Jonas Hübotter](https://github.com/jonhue) 提交的 [Pull Request](https://github.com/microsoft/TypeScript/pull/41928)！
 
 ## `--noPropertyAccessFromIndexSignature`
 
-Back when TypeScript first introduced index signatures, you could only get properties declared by them with "bracketed" element access syntax like `person["name"]`.
+当 TypeScript 最初引入索引签名时，你只能通过“括号”元素访问语法（如 `person["name"]`）来获取由索引签名声明的属性。
 
 ```ts twoslash
 interface SomeType {
@@ -174,8 +174,8 @@ function doStuff(value: SomeType) {
 }
 ```
 
-This ended up being cumbersome in situations where we need to work with objects that have arbitrary properties.
-For example, imagine an API where it's common to misspell a property name by adding an extra `s` character at the end.
+在需要处理具有任意属性的对象时，这种方式显得较为繁琐。
+例如，设想一个常见的 API 场景，开发者可能会误在属性名末尾多拼写一个 `s`：
 
 ```ts twoslash
 interface Options {
@@ -196,10 +196,10 @@ function processOptions(opts: Options) {
 }
 ```
 
-To make these types of situations easier, a while back, TypeScript made it possible to use "dotted" property access syntax like `person.name` when a type had a string index signature.
-This also made it easier to transition existing JavaScript code over to TypeScript.
+为了方便处理这类情况，TypeScript 在早前版本中允许当类型包含字符串索引签名时，使用“点”属性访问语法（如 `person.name`）。
+这也使得将现有 JavaScript 代码迁移到 TypeScript 变得更加轻松。
 
-However, loosening the restriction also meant that misspelling an explicitly declared property became much easier.
+然而，放宽这一限制也意味着更容易拼错显式声明的属性。
 
 ```ts twoslash
 interface Options {
@@ -223,19 +223,19 @@ function processOptions(opts: Options) {
 }
 ```
 
-In some cases, users would prefer to explicitly opt into the index signature - they would prefer to get an error message when a dotted property access doesn't correspond to a specific property declaration.
+在某些情况下，用户希望显式启用索引签名访问——即当点语法访问的属性未对应任何显式属性声明时，编译器能够报错。
 
-That's why TypeScript introduces a new flag called [`noPropertyAccessFromIndexSignature`](/tsconfig#noPropertyAccessFromIndexSignature).
-Under this mode, you'll be opted in to TypeScript's older behavior that issues an error.
-This new setting is not under the [`strict`](/tsconfig#strict) family of flags, since we believe users will find it more useful on certain codebases than others.
+为此，TypeScript 引入了一个名为 [`noPropertyAccessFromIndexSignature`](/tsconfig#noPropertyAccessFromIndexSignature) 的新编译选项。
+在此模式下，将恢复 TypeScript 以往报错的行为。
+该新选项不属于 [`strict`](/tsconfig#strict) 严格模式家族，因为我们认为某些代码库比其他代码库更能从中受益。
 
-You can understand this feature in more detail by reading up on the corresponding [pull request](https://github.com/microsoft/TypeScript/pull/40171/).
-We'd also like to extend a big thanks to [Wenlu Wang](https://github.com/Kingwl) who sent us this pull request!
+你可以通过阅读对应的 [Pull Request](https://github.com/microsoft/TypeScript/pull/40171/) 详细了解该特性。
+同时我们还要非常感谢提交此 Pull Request 的 [Wenlu Wang](https://github.com/Kingwl)！
 
-## `abstract` Construct Signatures
+## `abstract` 构造签名
 
-TypeScript allows us to mark a class as _abstract_.
-This tells TypeScript that the class is only meant to be extended from, and that certain members need to be filled in by any subclass to actually create an instance.
+TypeScript 允许我们将类标记为*抽象（abstract）*。
+这告诉 TypeScript 该类仅用于被继承，并且其实例化需要子类填补特定的未实现成员。
 
 ```ts twoslash
 // @errors: 2511
@@ -262,7 +262,7 @@ class Square extends Shape {
 new Square(42)
 ```
 
-To make sure this restriction in `new`-ing up `abstract` classes is consistently applied, you can't assign an `abstract` class to anything that expects a construct signature.
+为了确保无法直接 `new` 实例化 `abstract` 类的限制得到一致贯彻，你不能将 `abstract` 类赋值给任何期望普通构造签名的类型。
 
 ```ts twoslash
 // @errors: 2322
@@ -277,7 +277,7 @@ interface HasArea {
 let Ctor: new () => HasArea = Shape
 ```
 
-This does the right thing in case we intend to run code like `new Ctor`, but it's overly-restrictive in case we want to write a subclass of `Ctor`.
+当我们试图运行类似 `new Ctor` 的代码时，这无疑是正确的行为；但如果我们的目的是编写 `Ctor` 的子类，这种限制就显得过于严格了。
 
 ```ts twoslash
 // @errors: 2345
@@ -300,7 +300,7 @@ function makeSubclassWithArea(Ctor: new () => HasArea) {
 let MyShape = makeSubclassWithArea(Shape)
 ```
 
-It also doesn't work well with built-in helper types like `InstanceType`.
+它在配合诸如 `InstanceType` 这样的内置工具类型使用时也会出现问题：
 
 ```ts twoslash
 // @errors: 2344
@@ -311,7 +311,7 @@ abstract class Shape {
 type MyInstance = InstanceType<typeof Shape>
 ```
 
-That's why TypeScript 4.2 allows you to specify an `abstract` modifier on constructor signatures.
+为此，TypeScript 4.2 允许你在构造签名上指定 `abstract` 修饰符。
 
 ```ts twoslash {5}
 abstract class Shape {
@@ -326,11 +326,11 @@ interface HasArea {
 let Ctor: abstract new () => HasArea = Shape
 ```
 
-Adding the `abstract` modifier to a construct signature signals that you can pass in `abstract` constructors.
-It doesn't stop you from passing in other classes/constructor functions that are "concrete" - it really just signals that there's no intent to run the constructor directly, so it's safe to pass in either class type.
+在构造签名上添加 `abstract` 修饰符表明可以传入 `abstract` 构造函数。
+这并不会阻止你传入其他“具体（concrete）”的类或构造函数——它只是表明无意直接调用该构造函数，因此传入任意一种类都是安全的。
 
-This feature allows us to write _mixin factories_ in a way that supports abstract classes.
-For example, in the following code snippet, we're able to use the mixin function `withStyles` with the `abstract` class `SuperClass`.
+该特性使我们能够以支持抽象类的方式编写*混入工厂（mixin factory）*。
+例如在以下代码片段中，我们可以将混入函数 `withStyles` 与 `abstract` 类 `SuperClass` 一起使用：
 
 ```ts twoslash
 abstract class SuperClass {
@@ -356,24 +356,24 @@ class SubClass extends withStyles(SuperClass) {
 }
 ```
 
-Note that `withStyles` is demonstrating a specific rule, where a class (like `StyledClass`) that extends a value that's generic and bounded by an abstract constructor (like `Ctor`) has to also be declared `abstract`.
-This is because there's no way to know if a class with _more_ abstract members was passed in, and so it's impossible to know whether the subclass implements all the abstract members.
+请注意，`withStyles` 演示了一条特定规则：当一个类（如 `StyledClass`）继承自一个泛型且受抽象构造函数约束的值（如 `Ctor`）时，该类也必须声明为 `abstract`。
+这是因为无法预知传入的类是否包含*更多*的抽象成员，因此无法确定子类是否实现了所有抽象成员。
 
-You can read up more on abstract construct signatures [on its pull request](https://github.com/microsoft/TypeScript/pull/36392).
+你可以[在 Pull Request 中](https://github.com/microsoft/TypeScript/pull/36392)了解关于抽象构造签名的更多内容。
 
-## Understanding Your Project Structure With `--explainFiles`
+## 使用 `--explainFiles` 了解项目结构
 
-A surprisingly common scenario for TypeScript users is to ask "why is TypeScript including this file?".
-Inferring the files of your program turns out to be a complicated process, and so there are lots of reasons why a specific combination of `lib.d.ts` got used, why certain files in `node_modules` are getting included, and why certain files are being included even though we thought specifying [`exclude`](/tsconfig#exclude) would keep them out.
+TypeScript 用户经常会遇到一个出奇常见的疑问：“为什么 TypeScript 会包含这个文件？”。
+推断项目包含哪些文件实际上是一个复杂的过程：某个特定版本的 `lib.d.ts` 为何被使用、`node_modules` 中的某些文件为何被包含，以及明明指定了 [`exclude`](/tsconfig#exclude) 某些文件为何仍然被包含在内，背后都有很多可能的原因。
 
-That's why TypeScript now provides an [`explainFiles`](/tsconfig#explainFiles) flag.
+为此，TypeScript 现在提供了一个 [`explainFiles`](/tsconfig#explainFiles) 编译选项。
 
 ```sh
 tsc --explainFiles
 ```
 
-When using this option, the TypeScript compiler will give some very verbose output about why a file ended up in your program.
-To read it more easily, you can forward the output to a file, or pipe it to a program that can easily view it.
+使用此选项时，TypeScript 编译器将输出非常详细的信息，说明某个文件为何会最终包含在程序中。
+为了更方便查看，你可以将输出重定向到文件，或者通过管道传递给便于查看的工具程序。
 
 ```sh
 # Forward output to a text file
@@ -385,7 +385,7 @@ tsc --explainFiles | less
 tsc --explainFiles | code -
 ```
 
-Typically, the output will start out by listing out reasons for including `lib.d.ts` files, then for local files, and then `node_modules` files.
+通常情况下，输出会首先列出包含各个 `lib.d.ts` 文件的原因，接着是本地文件，最后是 `node_modules` 文件。
 
 ```
 TS_Compiler_Directory/4.2.2/lib/lib.es5.d.ts
@@ -411,16 +411,16 @@ foo.ts
   Matched by include pattern '**/*' in 'tsconfig.json'
 ```
 
-Right now, we make no guarantees about the output format - it might change over time.
-On that note, we're interested in improving this format if you have any suggestions!
+目前，我们不对输出格式做任何保证——它可能会随时间变化。
+顺便一提，如果你有任何建议，我们非常乐意进一步改进这一格式！
 
-For more information, [check out the original pull request](https://github.com/microsoft/TypeScript/pull/40011)!
+欲了解更多信息，请[查看原始 Pull Request](https://github.com/microsoft/TypeScript/pull/40011)！
 
-## Improved Uncalled Function Checks in Logical Expressions
+## 逻辑表达式中未调用函数检查的改进
 
-Thanks to further improvements from [Alex Tarasyuk](https://github.com/a-tarasyuk), TypeScript's uncalled function checks now apply within `&&` and `||` expressions.
+感谢 [Alex Tarasyuk](https://github.com/a-tarasyuk) 的进一步改进，TypeScript 的未调用函数检查现已扩展至 `&&` 和 `||` 表达式中。
 
-Under [`strictNullChecks`](/tsconfig#strictNullChecks), the following code will now error.
+在启用了 [`strictNullChecks`](/tsconfig#strictNullChecks) 的情况下，以下代码现在会报错：
 
 ```ts
 function shouldDisplayElement(element: Element) {
@@ -436,24 +436,24 @@ function getVisibleItems(elements: Element[]) {
 }
 ```
 
-For more details, [check out the pull request here](https://github.com/microsoft/TypeScript/issues/40197).
+欲了解更多详情，请[在此查看 Pull Request](https://github.com/microsoft/TypeScript/issues/40197)。
 
-## Destructured Variables Can Be Explicitly Marked as Unused
+## 解构变量可显式标记为未使用
 
-Thanks to another pull request from [Alex Tarasyuk](https://github.com/a-tarasyuk), you can now mark destructured variables as unused by prefixing them with an underscore (the `_` character).
+感谢 [Alex Tarasyuk](https://github.com/a-tarasyuk) 提交的另一个 Pull Request，你现在可以通过在解构变量名前添加下划线前缀（`_` 字符）来将其显式标记为未使用。
 
 ```ts
 let [_first, second] = getValues()
 ```
 
-Previously, if `_first` was never used later on, TypeScript would issue an error under [`noUnusedLocals`](/tsconfig#noUnusedLocals).
-Now, TypeScript will recognize that `_first` was intentionally named with an underscore because there was no intent to use it.
+以前，如果 `_first` 在后续代码中从未被使用，TypeScript 会在开启 [`noUnusedLocals`](/tsconfig#noUnusedLocals) 时报错。
+现在，TypeScript 会识别出 `_first` 是有意以下划线命名的，表示无意使用该变量。
 
-For more details, take a look at [the full change](https://github.com/microsoft/TypeScript/pull/41378).
+欲了解更多详情，请查看[完整的变更内容](https://github.com/microsoft/TypeScript/pull/41378)。
 
-## Relaxed Rules Between Optional Properties and String Index Signatures
+## 放宽可选属性与字符串索引签名之间的规则
 
-String index signatures are a way of typing dictionary-like objects, where you want to allow access with arbitrary keys:
+字符串索引签名是一种为字典类对象定义类型的方式，允许使用任意键进行访问：
 
 ```ts twoslash
 const movieWatchCount: { [key: string]: number } = {}
@@ -463,8 +463,8 @@ function watchMovie(title: string) {
 }
 ```
 
-Of course, for any movie title not yet in the dictionary, `movieWatchCount[title]` will be `undefined` (TypeScript 4.1 added the option [`noUncheckedIndexedAccess`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#checked-indexed-accesses---nouncheckedindexedaccess) to include `undefined` when reading from an index signature like this).
-Even though it's clear that there must be some strings not present in `movieWatchCount`, previous versions of TypeScript treated optional object properties as unassignable to otherwise compatible index signatures, due to the presence of `undefined`.
+当然，对于字典中尚不存在的任何电影名称，`movieWatchCount[title]` 的值都将是 `undefined`（TypeScript 4.1 添加了 [`noUncheckedIndexedAccess`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#checked-indexed-accesses---nouncheckedindexedaccess) 选项，使从这类索引签名中读取时类型包含 `undefined`）。
+尽管很显然 `movieWatchCount` 中肯定存在某些未包含的字符串键，但由于 `undefined` 的存在，之前版本的 TypeScript 认为可选对象属性无法赋值给在其他方面兼容的索引签名。
 
 ```ts twoslash
 type WesAndersonWatchCount = {
@@ -483,7 +483,7 @@ const movieWatchCount: { [key: string]: number } = wesAndersonWatchCount
 //        Type 'undefined' is not assignable to type 'number'. (2322)
 ```
 
-TypeScript 4.2 allows this assignment. However, it does _not_ allow the assignment of non-optional properties with `undefined` in their types, nor does it allow writing `undefined` to a specific key:
+TypeScript 4.2 允许这种赋值。但是，它*不*允许赋值类型中包含 `undefined` 的非可选属性，也不允许向特定键写入 `undefined`：
 
 ```ts twoslash
 // @errors: 2322
@@ -503,7 +503,7 @@ const movieWatchCount: { [key: string]: number } = batmanWatchCount
 movieWatchCount["It's the Great Pumpkin, Charlie Brown"] = undefined
 ```
 
-The new rule also does not apply to number index signatures, since they are assumed to be array-like and dense:
+新规则同样不适用于数字索引签名，因为它们被假定为类似数组且密集的：
 
 ```ts twoslash
 // @errors: 2322
@@ -513,27 +513,27 @@ declare let numberKeys: { 42?: string }
 sortOfArrayish = numberKeys
 ```
 
-You can get a better sense of this change [by reading up on the original PR](https://github.com/microsoft/TypeScript/pull/41921).
+你可以[通过阅读原始 PR](https://github.com/microsoft/TypeScript/pull/41921) 进一步了解这一变更。
 
-## Declare Missing Helper Function
+## 声明缺失的辅助函数
 
-Thanks to [a community pull request](https://github.com/microsoft/TypeScript/pull/41215) from [Alexander Tarasyuk](https://github.com/a-tarasyuk), we now have a quick fix for declaring new functions and methods based on the call-site!
+感谢 [Alexander Tarasyuk](https://github.com/a-tarasyuk) 提交的[社区 Pull Request](https://github.com/microsoft/TypeScript/pull/41215)，我们现在拥有了一个基于调用点快速生成新函数和新方法的快速修复（Quick Fix）！
 
-![An un-declared function `foo` being called, with a quick fix scaffolding out the new contents of the file](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/01/addMissingFunction-4.2.gif)
+![调用未声明的函数 foo，并通过快速修复搭建新文件内容的示意图](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/01/addMissingFunction-4.2.gif)
 
-## Breaking Changes
+## 破坏性改动
 
-We always strive to minimize breaking changes in a release.
-TypeScript 4.2 contains some breaking changes, but we believe they should be manageable in an upgrade.
+我们始终致力于在每个版本中尽可能减少破坏性改动。
+TypeScript 4.2 包含一些破坏性改动，但我们相信这些改动在升级时是可控的。
 
-### `lib.d.ts` Updates
+### `lib.d.ts` 更新
 
-As with every TypeScript version, declarations for `lib.d.ts` (especially the declarations generated for web contexts), have changed.
-There are various changes, though `Intl` and `ResizeObserver`'s may end up being the most disruptive.
+与每个 TypeScript 版本一样，`lib.d.ts` 的声明（特别是为 Web 上下文生成的声明）发生了一些改动。
+改动涉及多个方面，其中关于 `Intl` 和 `ResizeObserver` 的变更可能影响最大。
 
-### `noImplicitAny` Errors Apply to Loose `yield` Expressions
+### `noImplicitAny` 错误适用于松散的 `yield` 表达式
 
-When the value of a `yield` expression is captured, but TypeScript can't immediately figure out what type you intend for it to receive (i.e. the `yield` expression isn't contextually typed), TypeScript will now issue an implicit `any` error.
+当捕获了 `yield` 表达式的返回值，但 TypeScript 无法直接推断出其期望接收的类型时（即该 `yield` 表达式没有上下文类型），TypeScript 现在会报告隐式 `any` 错误。
 
 ```ts twoslash
 // @errors: 7057
@@ -561,35 +561,35 @@ function* g4(): Generator<number, void, string> {
 }
 ```
 
-See more details in [the corresponding changes](https://github.com/microsoft/TypeScript/pull/41348).
+更多详情请参阅[对应的变更](https://github.com/microsoft/TypeScript/pull/41348)。
 
-### Expanded Uncalled Function Checks
+### 扩大未调用函数的检查范围
 
-As described above, uncalled function checks will now operate consistently within `&&` and `||` expressions when using [`strictNullChecks`](/tsconfig#strictNullChecks).
-This can be a source of new breaks, but is typically an indication of a logic error in existing code.
+如前所述，在使用 [`strictNullChecks`](/tsconfig#strictNullChecks) 时，未调用函数检查现在会在 `&&` 和 `||` 表达式中一致生效。
+这可能会引发新的编译报错，但通常表明现有代码中存在逻辑错误。
 
-### Type Arguments in JavaScript Are Not Parsed as Type Arguments
+### JavaScript 中的类型实参不再被解析为类型实参
 
-Type arguments were already not allowed in JavaScript, but in TypeScript 4.2, the parser will parse them in a more spec-compliant way.
-So when writing the following code in a JavaScript file:
+JavaScript 中原本就不允许使用类型实参，但在 TypeScript 4.2 中，解析器将以更符合规范的方式对其进行解析。
+因此，在 JavaScript 文件中编写如下代码时：
 
 ```ts
 f<T>(100)
 ```
 
-TypeScript will parse it as the following JavaScript:
+TypeScript 会将其解析为如下 JavaScript：
 
 ```js
 f < T > 100
 ```
 
-This may impact you if you were leveraging TypeScript's API to parse type constructs in JavaScript files, which may have occurred when trying to parse Flow files.
+如果你使用 TypeScript 的 API 来解析 JavaScript 文件中的类型结构（例如在尝试解析 Flow 文件时），这可能会对你产生影响。
 
-See [the pull request](https://github.com/microsoft/TypeScript/pull/41928) for more details on what's checked.
+关于具体检查内容的更多细节，请参阅 [Pull Request](https://github.com/microsoft/TypeScript/pull/41928)。
 
-### Tuple size limits for spreads
+### 展开操作中元组大小的限制
 
-Tuple types can be made by using any sort of spread syntax (`...`) in TypeScript.
+在 TypeScript 中，可以通过任意展开语法（`...`）构造元组类型。
 
 ```ts
 // Tuple types with spread elements
@@ -601,14 +601,14 @@ const numStr = [123, 'hello'] as const
 const numStrNumStr = [...numStr, ...numStr] as const
 ```
 
-Sometimes these tuple types can accidentally grow to be huge, and that can make type-checking take a long time.
-Instead of letting the type-checking process hang (which is especially bad in editor scenarios), TypeScript has a limiter in place to avoid doing all that work.
+有时这些元组类型可能会意外变得极其庞大，导致类型检查耗时过长。
+为了防止类型检查过程挂起（这在编辑器场景下体验尤为糟糕），TypeScript 引入了一个限制器以避免执行所有不必要的工作。
 
-You can [see this pull request](https://github.com/microsoft/TypeScript/pull/42448) for more details.
+你可以[查看此 Pull Request](https://github.com/microsoft/TypeScript/pull/42448) 了解更多详情。
 
-### `.d.ts` Extensions Cannot Be Used In Import Paths
+### 导入路径中不能使用 `.d.ts` 扩展名
 
-In TypeScript 4.2, it is now an error for your import paths to contain `.d.ts` in the extension.
+在 TypeScript 4.2 中，导入路径的扩展名中包含 `.d.ts` 现在属于错误。
 
 ```ts
 // must be changed to something like
@@ -617,8 +617,8 @@ In TypeScript 4.2, it is now an error for your import paths to contain `.d.ts` i
 import { Foo } from './foo.d.ts'
 ```
 
-Instead, your import paths should reflect whatever your loader will do at runtime.
-Any of the following imports might be usable instead.
+相反，你的导入路径应当反映加载器在运行时的行为。
+可以使用以下任意一种导入方式代替：
 
 ```ts
 import { Foo } from './foo'
@@ -626,14 +626,14 @@ import { Foo } from './foo.js'
 import { Foo } from './foo/index.js'
 ```
 
-### Reverting Template Literal Inference
+### 回退模板字面量推断
 
-This change removed a feature from TypeScript 4.2 beta.
-If you haven't yet upgraded past our last stable release, you won't be affected, but you may still be interested in the change.
+这项变更移除了 TypeScript 4.2 Beta 中的一项功能。
+如果你尚未升级到上一个稳定版本之后，你将不会受到影响，但你可能仍对该改动感兴趣。
 
-The beta version of TypeScript 4.2 included a change in inference to template strings.
-In this change, template string literals would either be given template string types or simplify to multiple string literal types.
-These types would then _widen_ to `string` when assigning to mutable variables.
+TypeScript 4.2 Beta 版本包含了一项针对模板字符串推断的改动。
+在该改动中，模板字符串字面量要么被赋予模板字符串类型，要么简化为多个字符串字面量类型。
+当赋值给可变变量时，这些类型随后会*拓宽（widen）*为 `string`。
 
 ```ts
 declare const yourName: string
@@ -647,7 +647,7 @@ const bar = `hello ${yourName}`
 let baz = `hello ${yourName}`
 ```
 
-This is similar to how string literal inference works.
+这类似于字符串字面量推断的工作方式：
 
 ```ts
 // 'bar' has type '"hello"'.
@@ -657,11 +657,11 @@ const bar = 'hello'
 let baz = 'hello'
 ```
 
-For that reason, we believed that making template string expressions have template string types would be "consistent";
-however, from what we've seen and heard, that isn't always desirable.
+因此，我们原本认为让模板字符串表达式具有模板字符串类型会更具“一致性”；
+然而从我们收集到的反馈来看，这并不总是符合预期的。
 
-In response, we've reverted this feature (and potential breaking change).
-If you _do_ want a template string expression to be given a literal-like type, you can always add `as const` to the end of it.
+因此，我们回退了这一特性（以及潜在的破坏性改动）。
+如果你*确实*希望模板字符串表达式获得类似字面量的类型，可以随时在其末尾添加 `as const`。
 
 ```ts
 declare const yourName: string
@@ -674,8 +674,8 @@ const bar = `hello ${yourName}` as const
 const baz = `hello ${yourName}`
 ```
 
-### TypeScript's `lift` Callback in `visitNode` Uses a Different Type
+### `visitNode` 中的 `lift` 回调使用不同类型
 
-TypeScript has a `visitNode` function that takes a `lift` function.
-`lift` now expects a `readonly Node[]` instead of a `NodeArray<Node>`.
-This is technically an API breaking change which you can read more on [here](https://github.com/microsoft/TypeScript/pull/42000).
+TypeScript 包含一个接收 `lift` 函数的 `visitNode` 函数。
+`lift` 现在期望接收 `readonly Node[]` 而非 `NodeArray<Node>`。
+从技术上讲，这是一项 API 破坏性改动，你可以[在此](https://github.com/microsoft/TypeScript/pull/42000)了解更多详情。

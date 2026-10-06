@@ -1,27 +1,25 @@
 ---
-title: Utility Types
+title: 实用类型
 layout: docs
 permalink: /zh/docs/handbook/utility-types.html
-oneline: Types which are globally included in TypeScript
+oneline: TypeScript 全局内置的工具类型
 translatable: true
 ---
 
-TypeScript provides several utility types to facilitate common type transformations. These utilities are available globally.
+TypeScript 提供了多种实用类型来促进常见的类型转换。这些工具类型在全局范围内均可使用。
 
 ## `Awaited<Type>`
 
 <blockquote class=bg-reading>
 
-Released:
+发布版本：
 [4.5](/docs/handbook/release-notes/typescript-4-5.html#the-awaited-type-and-promise-improvements)
 
 </blockquote>
 
-This type is meant to model operations like `await` in `async` functions, or the
-`.then()` method on `Promise`s - specifically, the way that they recursively
-unwrap `Promise`s.
+该类型用于模拟 `async` 函数中的 `await` 操作，或 `Promise` 上的 `.then()` 方法——具体来说，就是它们递归解包 `Promise` 的行为。
 
-##### Example
+##### 示例
 
 ```ts twoslash
 type A = Awaited<Promise<string>>
@@ -38,14 +36,14 @@ type C = Awaited<boolean | Promise<number>>
 
 <blockquote class=bg-reading>
 
-Released:  
+发布版本：  
 [2.1](/docs/handbook/release-notes/typescript-2-1.html#partial-readonly-record-and-pick)
 
 </blockquote>
 
-Constructs a type with all properties of `Type` set to optional. This utility will return a type that represents all subsets of a given type.
+构造一个将 `Type` 的所有属性都设置为可选的类型。该工具类型将返回一个表示给定类型的所有子集的类型。
 
-##### Example
+##### 示例
 
 ```ts twoslash
 interface Todo {
@@ -71,14 +69,14 @@ const todo2 = updateTodo(todo1, {
 
 <blockquote class=bg-reading>
 
-Released:  
+发布版本：  
 [2.8](/docs/handbook/release-notes/typescript-2-8.html#improved-control-over-mapped-type-modifiers)
 
 </blockquote>
 
-Constructs a type consisting of all properties of `Type` set to required. The opposite of [`Partial`](#partialtype).
+构造一个由 `Type` 的所有属性设置为必选组成的类型。与 [`Partial`](#partialtype) 相反。
 
-##### Example
+##### 示例
 
 ```ts twoslash
 // @errors: 2741
@@ -96,14 +94,14 @@ const obj2: Required<Props> = { a: 5 }
 
 <blockquote class=bg-reading>
 
-Released:  
+发布版本：  
 [2.1](/docs/handbook/release-notes/typescript-2-1.html#partial-readonly-record-and-pick)
 
 </blockquote>
 
-Constructs a type with all properties of `Type` set to `readonly`, meaning the properties of the constructed type cannot be reassigned.
+构造一个将 `Type` 的所有属性都设置为 `readonly` 的类型，这意味着所构造类型的属性不能被重新赋值。
 
-##### Example
+##### 示例
 
 ```ts twoslash
 // @errors: 2540
@@ -118,7 +116,7 @@ const todo: Readonly<Todo> = {
 todo.title = 'Hello'
 ```
 
-This utility is useful for representing assignment expressions that will fail at runtime (i.e. when attempting to reassign properties of a [frozen object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze)).
+该工具类型可用于表示在运行时会失败的赋值表达式（例如尝试为[冻结对象](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze)的属性重新赋值）。
 
 ##### `Object.freeze`
 
@@ -130,14 +128,14 @@ function freeze<Type>(obj: Type): Readonly<Type>
 
 <blockquote class=bg-reading>
 
-Released:  
+发布版本：  
 [2.1](/docs/handbook/release-notes/typescript-2-1.html#partial-readonly-record-and-pick)
 
 </blockquote>
 
-Constructs an object type whose property keys are `Keys` and whose property values are `Type`. This utility can be used to map the properties of a type to another type.
+构造一个对象类型，其属性键为 `Keys`，属性值为 `Type`。该工具类型可用于将某种类型的属性映射到另一种类型。
 
-##### Example
+##### 示例
 
 ```ts twoslash
 type CatName = 'miffy' | 'boris' | 'mordred'
@@ -161,14 +159,14 @@ cats.boris
 
 <blockquote class=bg-reading>
 
-Released:  
+发布版本：  
 [2.1](/docs/handbook/release-notes/typescript-2-1.html#partial-readonly-record-and-pick)
 
 </blockquote>
 
-Constructs a type by picking the set of properties `Keys` (string literal or union of string literals) from `Type`.
+从 `Type` 中选取一组属性 `Keys`（字符串字面量或字符串字面量的联合）来构造一个类型。
 
-##### Example
+##### 示例
 
 ```ts twoslash
 interface Todo {
@@ -192,14 +190,14 @@ todo
 
 <blockquote class=bg-reading>
 
-Released:  
+发布版本：  
 [3.5](/docs/handbook/release-notes/typescript-3-5.html#the-omit-helper-type)
 
 </blockquote>
 
-Constructs a type by picking all properties from `Type` and then removing `Keys` (string literal or union of string literals). The opposite of [`Pick`](#picktype-keys).
+从 `Type` 中选取所有属性后从中移除 `Keys`（字符串字面量或字符串字面量的联合）来构造一个类型。与 [`Pick`](#picktype-keys) 相反。
 
-##### Example
+##### 示例
 
 ```ts twoslash
 interface Todo {
@@ -235,14 +233,14 @@ todoInfo
 
 <blockquote class=bg-reading>
 
-Released:  
+发布版本：  
 [2.8](/docs/handbook/release-notes/typescript-2-8.html#predefined-conditional-types)
 
 </blockquote>
 
-Constructs a type by excluding from `UnionType` all union members that are assignable to `ExcludedMembers`.
+通过从 `UnionType` 中排除所有可赋值给 `ExcludedMembers` 的联合成员来构造一个类型。
 
-##### Example
+##### 示例
 
 ```ts twoslash
 type T0 = Exclude<'a' | 'b' | 'c', 'a'>
@@ -265,14 +263,14 @@ type T3 = Exclude<Shape, { kind: 'circle' }>
 
 <blockquote class=bg-reading>
 
-Released:  
+发布版本：  
 [2.8](/docs/handbook/release-notes/typescript-2-8.html#predefined-conditional-types)
 
 </blockquote>
 
-Constructs a type by extracting from `Type` all union members that are assignable to `Union`.
+通过从 `Type` 中提取所有可赋值给 `Union` 的联合成员来构造一个类型。
 
-##### Example
+##### 示例
 
 ```ts twoslash
 type T0 = Extract<'a' | 'b' | 'c', 'a' | 'f'>
@@ -293,14 +291,14 @@ type T2 = Extract<Shape, { kind: 'circle' }>
 
 <blockquote class=bg-reading>
 
-Released:  
+发布版本：  
 [2.8](/docs/handbook/release-notes/typescript-2-8.html#predefined-conditional-types)
 
 </blockquote>
 
-Constructs a type by excluding `null` and `undefined` from `Type`.
+通过从 `Type` 中排除 `null` 和 `undefined` 来构造一个类型。
 
-##### Example
+##### 示例
 
 ```ts twoslash
 type T0 = NonNullable<string | number | undefined>
@@ -313,16 +311,16 @@ type T1 = NonNullable<string[] | null | undefined>
 
 <blockquote class=bg-reading>
 
-Released:  
+发布版本：  
 [3.1](https://github.com/microsoft/TypeScript/pull/26243)
 
 </blockquote>
 
-Constructs a tuple type from the types used in the parameters of a function type `Type`.
+根据函数类型 `Type` 的参数所使用的类型来构造一个元组类型。
 
-For overloaded functions, this will be the parameters of the _last_ signature; see [Inferring Within Conditional Types](/docs/handbook/2/conditional-types.html#inferring-within-conditional-types).
+对于重载函数，这将是*最后一个*签名的参数；参见[在条件类型中进行推断](/docs/handbook/2/conditional-types.html#inferring-within-conditional-types)。
 
-##### Example
+##### 示例
 
 ```ts twoslash
 // @errors: 2344
@@ -350,14 +348,14 @@ type T7 = Parameters<Function>
 
 <blockquote class=bg-reading>
 
-Released:  
+发布版本：  
 [3.1](https://github.com/microsoft/TypeScript/pull/26243)
 
 </blockquote>
 
-Constructs a tuple or array type from the types of a constructor function type. It produces a tuple type with all the parameter types (or the type `never` if `Type` is not a function).
+根据构造函数类型的类型构造一个元组或数组类型。它会生成一个包含所有参数类型的元组类型（如果 `Type` 不是函数，则生成类型 `never`）。
 
-##### Example
+##### 示例
 
 ```ts twoslash
 // @errors: 2344
@@ -384,16 +382,16 @@ type T5 = ConstructorParameters<Function>
 
 <blockquote class=bg-reading>
 
-Released:  
+发布版本：  
 [2.8](/docs/handbook/release-notes/typescript-2-8.html#predefined-conditional-types)
 
 </blockquote>
 
-Constructs a type consisting of the return type of function `Type`.
+构造一个由函数 `Type` 的返回类型组成的类型。
 
-For overloaded functions, this will be the return type of the _last_ signature; see [Inferring Within Conditional Types](/docs/handbook/2/conditional-types.html#inferring-within-conditional-types).
+对于重载函数，这将是*最后一个*签名的返回类型；参见[在条件类型中进行推断](/docs/handbook/2/conditional-types.html#inferring-within-conditional-types)。
 
-##### Example
+##### 示例
 
 ```ts twoslash
 // @errors: 2344 2344
@@ -423,14 +421,14 @@ type T8 = ReturnType<Function>
 
 <blockquote class=bg-reading>
 
-Released:  
+发布版本：  
 [2.8](/docs/handbook/release-notes/typescript-2-8.html#predefined-conditional-types)
 
 </blockquote>
 
-Constructs a type consisting of the instance type of a constructor function in `Type`.
+构造一个由 `Type` 中构造函数的实例类型组成的类型。
 
-##### Example
+##### 示例
 
 ```ts twoslash
 // @errors: 2344 2344
@@ -456,15 +454,14 @@ type T4 = InstanceType<Function>
 
 <blockquote class=bg-reading>
 
-Released:  
+发布版本：  
 [5.4](/docs/handbook/release-notes/typescript-5-4.html#the-noinfer-utility-type)
 
 </blockquote>
 
-Blocks inferences to the contained type. Other than blocking inferences, `NoInfer<Type>` is
-identical to `Type`.
+阻止对所包含类型的推断。除了阻止推断之外，`NoInfer<Type>` 与 `Type` 完全相同。
 
-##### Example
+##### 示例
 
 ```ts
 function createStreetLight<C extends string>(
@@ -482,14 +479,14 @@ createStreetLight(['red', 'yellow', 'green'], 'blue') // Error
 
 <blockquote class=bg-reading>
 
-Released:  
+发布版本：  
 [3.3](https://github.com/microsoft/TypeScript/pull/28920)
 
 </blockquote>
 
-Extracts the type of the [this](/docs/handbook/functions.html#this-parameters) parameter for a function type, or [unknown](/docs/handbook/release-notes/typescript-3-0.html#new-unknown-top-type) if the function type has no `this` parameter.
+提取函数类型的 [this](/docs/handbook/functions.html#this-parameters) 参数的类型；如果该函数类型没有 `this` 参数，则为 [unknown](/docs/handbook/release-notes/typescript-3-0.html#new-unknown-top-type)。
 
-##### Example
+##### 示例
 
 ```ts twoslash
 function toHex(this: Number) {
@@ -505,14 +502,14 @@ function numberToString(n: ThisParameterType<typeof toHex>) {
 
 <blockquote class=bg-reading>
 
-Released:  
+发布版本：  
 [3.3](https://github.com/microsoft/TypeScript/pull/28920)
 
 </blockquote>
 
-Removes the [`this`](/docs/handbook/functions.html#this-parameters) parameter from `Type`. If `Type` has no explicitly declared `this` parameter, the result is simply `Type`. Otherwise, a new function type with no `this` parameter is created from `Type`. Generics are erased and only the last overload signature is propagated into the new function type.
+从 `Type` 中移除 [`this`](/docs/handbook/functions.html#this-parameters) 参数。如果 `Type` 没有显式声明 `this` 参数，则结果就是 `Type`。否则，将从 `Type` 创建一个不带 `this` 参数的新函数类型。泛型会被抹除，且只有最后一个重载签名会被保留到新的函数类型中。
 
-##### Example
+##### 示例
 
 ```ts twoslash
 function toHex(this: Number) {
@@ -528,14 +525,14 @@ console.log(fiveToHex())
 
 <blockquote class=bg-reading>
 
-Released:  
+发布版本：  
 [2.3](https://github.com/microsoft/TypeScript/pull/14141)
 
 </blockquote>
 
-This utility does not return a transformed type. Instead, it serves as a marker for a contextual [`this`](/docs/handbook/functions.html#this) type. Note that the [`noImplicitThis`](/tsconfig#noImplicitThis) flag must be enabled to use this utility.
+该工具类型不返回转换后的类型。相反，它用作上下文 [`this`](/docs/handbook/functions.html#this) 类型的标记。请注意，必须启用 [`noImplicitThis`](/tsconfig#noImplicitThis) 标志才能使用此工具类型。
 
-##### Example
+##### 示例
 
 ```ts twoslash
 // @noImplicitThis: true
@@ -565,11 +562,11 @@ obj.y = 20
 obj.moveBy(5, 5)
 ```
 
-In the example above, the `methods` object in the argument to `makeObject` has a contextual type that includes `ThisType<D & M>` and therefore the type of [this](/docs/handbook/functions.html#this) in methods within the `methods` object is `{ x: number, y: number } & { moveBy(dx: number, dy: number): void }`. Notice how the type of the `methods` property simultaneously is an inference target and a source for the `this` type in methods.
+在上面的示例中，传给 `makeObject` 的参数中的 `methods` 对象具有包含 `ThisType<D & M>` 的上下文类型，因此 `methods` 对象内部的方法中 [this](/docs/handbook/functions.html#this) 的类型为 `{ x: number, y: number } & { moveBy(dx: number, dy: number): void }`。请注意 `methods` 属性的类型是如何同时充当推断目标以及方法中 `this` 类型的来源的。
 
-The `ThisType<T>` marker interface is simply an empty interface declared in `lib.d.ts`. Beyond being recognized in the contextual type of an object literal, the interface acts like any empty interface.
+`ThisType<T>` 标记接口只是 `lib.d.ts` 中声明的一个空接口。除了在对象字面量的上下文类型中被识别之外，该接口的表现与任何空接口无异。
 
-## Intrinsic String Manipulation Types
+## 内置字符串操作类型
 
 ### `Uppercase<StringType>`
 
@@ -579,4 +576,4 @@ The `ThisType<T>` marker interface is simply an empty interface declared in `lib
 
 ### `Uncapitalize<StringType>`
 
-To help with string manipulation around template string literals, TypeScript includes a set of types which can be used in string manipulation within the type system. You can find those in the [Template Literal Types](/docs/handbook/2/template-literal-types.html#uppercasestringtype) documentation.
+为了便于在模板字符串字面量中进行字符串操作，TypeScript 包含了一组可在类型系统中用于字符串操作的类型。你可以在[模板字面量类型](/docs/handbook/2/template-literal-types.html#uppercasestringtype)文档中找到它们。

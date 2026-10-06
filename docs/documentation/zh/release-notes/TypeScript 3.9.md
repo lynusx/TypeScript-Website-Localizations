@@ -2,13 +2,12 @@
 title: TypeScript 3.9
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-3-9.html
-oneline: TypeScript 3.9 Release Notes
+oneline: TypeScript 3.9 发布说明
 ---
 
-## Improvements in Inference and `Promise.all`
+## 推断与 `Promise.all` 的改进
 
-Recent versions of TypeScript (around 3.7) have had updates to the declarations of functions like `Promise.all` and `Promise.race`.
-Unfortunately, that introduced a few regressions, especially when mixing in values with `null` or `undefined`.
+TypeScript 最近的几个版本（大约在 3.7 左右）更新了诸如 `Promise.all` 和 `Promise.race` 等函数的声明。然而，这引入了一些退化问题，尤其是在混用带有 `null` 或 `undefined` 的值时。
 
 ```ts
 interface Lion {
@@ -30,27 +29,19 @@ async function visitZoo(
 }
 ```
 
-This is strange behavior!
-The fact that `sealExhibit` contained an `undefined` somehow poisoned type of `lion` to include `undefined`.
+这是一种反常的行为！`sealExhibit` 包含 `undefined` 的事实，不知为何“污染”了 `lion` 的类型，使其也包含了 `undefined`。
 
-Thanks to [a pull request](https://github.com/microsoft/TypeScript/pull/34501) from [Jack Bates](https://github.com/jablko), this has been fixed with improvements in our inference process in TypeScript 3.9.
-The above no longer errors.
-If you've been stuck on older versions of TypeScript due to issues around `Promise`s, we encourage you to give 3.9 a shot!
+感谢 [Jack Bates](https://github.com/jablko) 提交的 [Pull Request](https://github.com/microsoft/TypeScript/pull/34501)，TypeScript 3.9 通过改进推断过程修复了这个问题。上述代码现在不再报错。如果你之前因为 `Promise` 相关的问题而停留在旧版本，我们建议你尝试一下 3.9！
 
-### What About the `awaited` Type?
+### 那么 `awaited` 类型呢？
 
-If you've been following our issue tracker and design meeting notes, you might be aware of some work around [a new type operator called `awaited`](https://github.com/microsoft/TypeScript/pull/35998).
-This goal of this type operator is to accurately model the way that `Promise` unwrapping works in JavaScript.
+如果你一直在关注我们的 issue 跟踪器和设计会议记录，可能会了解到我们围绕[名为 `awaited` 的新类型运算符](https://github.com/microsoft/TypeScript/pull/35998)所做的工作。该类型运算符的目标是准确模拟 JavaScript 中 `Promise` 解包的运作方式。
 
-We initially anticipated shipping `awaited` in TypeScript 3.9, but as we've run early TypeScript builds with existing codebases, we've realized that the feature needs more design work before we can roll it out to everyone smoothly.
-As a result, we've decided to pull the feature out of our main branch until we feel more confident.
-We'll be experimenting more with the feature, but we won't be shipping it as part of this release.
+我们最初计划在 TypeScript 3.9 中发布 `awaited`，但在现有代码库中运行早期构建版本后，我们意识到该特性在能够顺利推向所有人之前还需要更多的设计工作。因此，我们决定将其从主分支中撤出，直到我们更有信心为止。我们将对该特性进行更多实验，但不会在本次发布中提供。
 
-## Speed Improvements
+## 速度与性能提升
 
-TypeScript 3.9 ships with many new speed improvements.
-Our team has been focusing on performance after observing extremely poor editing/compilation speed with packages like material-ui and styled-components.
-We've dived deep here, with a series of different pull requests that optimize certain pathological cases involving large unions, intersections, conditional types, and mapped types.
+TypeScript 3.9 带来了诸多新的速度改进。在观察到诸如 material-ui 和 styled-components 等包在编辑和编译速度上表现极差之后，我们的团队一直专注于性能优化。我们深入剖析了这些问题，通过一系列不同的 Pull Request 优化了涉及大型联合类型、交叉类型、条件类型和映射类型的某些病态场景：
 
 - https://github.com/microsoft/TypeScript/pull/36576
 - https://github.com/microsoft/TypeScript/pull/36590
@@ -59,19 +50,15 @@ We've dived deep here, with a series of different pull requests that optimize ce
 - https://github.com/microsoft/TypeScript/pull/36754
 - https://github.com/microsoft/TypeScript/pull/36696
 
-Each of these pull requests gains about a 5-10% reduction in compile times on certain codebases.
-In total, we believe we've achieved around a 40% reduction in material-ui's compile time!
+这些 Pull Request 中的每一个都能在特定代码库上将编译时间减少约 5-10%。总计下来，我们相信 material-ui 的编译时间减少了约 40%！
 
-We also have some changes to file renaming functionality in editor scenarios.
-We heard from the Visual Studio Code team that when renaming a file, just figuring out which import statements needed to be updated could take between 5 to 10 seconds.
-TypeScript 3.9 addresses this issue by [changing the internals of how the compiler and language service caches file lookups](https://github.com/microsoft/TypeScript/pull/37055).
+我们还针对编辑器场景中的文件重命名功能进行了一些调整。我们从 Visual Studio Code 团队获悉，在重命名文件时，仅仅确定需要更新哪些导入语句就可能花费 5 到 10 秒。TypeScript 3.9 通过[改变编译器和语言服务缓存文件查找的内部机制](https://github.com/microsoft/TypeScript/pull/37055)解决了这个问题。
 
-While there's still room for improvement, we hope this work translates to a snappier experience for everyone!
+虽然仍有改进空间，但我们希望这些成果能为每个人带来更加流畅迅捷的体验！
 
-## `// @ts-expect-error` Comments
+## `// @ts-expect-error` 注释指令
 
-Imagine that we're writing a library in TypeScript and we're exporting some function called `doStuff` as part of our public API.
-The function's types declare that it takes two `string`s so that other TypeScript users can get type-checking errors, but it also does a runtime check (maybe only in development builds) to give JavaScript users a helpful error.
+假设我们正在用 TypeScript 编写一个库，并导出一个名为 `doStuff` 的函数作为公共 API 的一部分。该函数的类型声明指定它接收两个 `string` 参数，以便其他 TypeScript 用户可以获得类型检查报错；但它同时还执行运行时检查（可能仅在开发构建中），以便向 JavaScript 用户提供有用的错误提示。
 
 ```ts
 function doStuff(abc: string, xyz: string) {
@@ -82,8 +69,7 @@ function doStuff(abc: string, xyz: string) {
 }
 ```
 
-So TypeScript users will get a helpful red squiggle and an error message when they misuse this function, and JavaScript users will get an assertion error.
-We'd like to test this behavior, so we'll write a unit test.
+因此，当 TypeScript 用户误用此函数时会看到红色的波浪线和错误消息，而 JavaScript 用户则会得到断言错误。我们希望对此行为进行测试，于是编写了一个单元测试：
 
 ```ts
 expect(() => {
@@ -91,7 +77,7 @@ expect(() => {
 }).toThrow()
 ```
 
-Unfortunately if our tests are written in TypeScript, TypeScript will give us an error!
+遗憾的是，如果我们的测试也是用 TypeScript 编写的，TypeScript 就会向我们报错！
 
 ```ts
 doStuff(123, 456)
@@ -99,56 +85,52 @@ doStuff(123, 456)
 // error: Type 'number' is not assignable to type 'string'.
 ```
 
-That's why TypeScript 3.9 brings a new feature: `// @ts-expect-error` comments.
-When a line is preceded by a `// @ts-expect-error` comment, TypeScript will suppress that error from being reported;
-but if there's no error, TypeScript will report that `// @ts-expect-error` wasn't necessary.
+这就是为什么 TypeScript 3.9 带来了一项新特性：`// @ts-expect-error` 注释。
+当某一行前面带有 `// @ts-expect-error` 注释时，TypeScript 将抑制该错误的报告；但如果该行并没有错误，TypeScript 则会提示 `// @ts-expect-error` 是多余的。
 
-As a quick example, the following code is okay
+举个简单的例子，以下代码是正常的：
 
 ```ts
 // @ts-expect-error
 console.log(47 * 'octopus')
 ```
 
-while the following code
+而以下代码：
 
 ```ts
 // @ts-expect-error
 console.log(1 + 1)
 ```
 
-results in the error
+则会导致报错：
 
 ```
 Unused '@ts-expect-error' directive.
 ```
 
-We'd like to extend a big thanks to [Josh Goldberg](https://github.com/JoshuaKGoldberg), the contributor who implemented this feature.
-For more information, you can take a look at [the `ts-expect-error` pull request](https://github.com/microsoft/TypeScript/pull/36014).
+我们非常感谢实现该特性的贡献者 [Josh Goldberg](https://github.com/JoshuaKGoldberg)。有关更多信息，你可以查看 [关于 `ts-expect-error` 的 Pull Request](https://github.com/microsoft/TypeScript/pull/36014)。
 
-### `ts-ignore` or `ts-expect-error`?
+### 应该选择 `ts-ignore` 还是 `ts-expect-error`？
 
-In some ways `// @ts-expect-error` can act as a suppression comment, similar to `// @ts-ignore`.
-The difference is that `// @ts-ignore` will do nothing if the following line is error-free.
+在某些方面，`// @ts-expect-error` 可以充当错误抑制注释，类似于 `// @ts-ignore`。不同之处在于，如果下一行没有错误，`// @ts-ignore` 什么都不会做。
 
-You might be tempted to switch existing `// @ts-ignore` comments over to `// @ts-expect-error`, and you might be wondering which is appropriate for future code.
-While it's entirely up to you and your team, we have some ideas of which to pick in certain situations.
+你可能会想把现有的 `// @ts-ignore` 注释替换为 `// @ts-expect-error`，并且想知道在未来的代码中哪一个更合适。虽然这完全取决于你和你的团队，但在某些特定场景下，我们有一些选择建议。
 
-Pick `ts-expect-error` if:
+在以下情况下选择 `ts-expect-error`：
 
-- you're writing test code where you actually want the type system to error on an operation
-- you expect a fix to be coming in fairly quickly and you just need a quick workaround
-- you're in a reasonably-sized project with a proactive team that wants to remove suppression comments as soon as affected code is valid again
+- 你正在编写测试代码，确实希望类型系统对某项操作报错
+- 你预期修复很快就会到来，只需要一个临时的通融方案
+- 你的项目规模适中，团队积极主动，希望在受影响代码恢复有效后立即移除抑制注释
 
-Pick `ts-ignore` if:
+在以下情况下选择 `ts-ignore`：
 
-- you have a larger project and new errors have appeared in code with no clear owner
-- you are in the middle of an upgrade between two different versions of TypeScript, and a line of code errors in one version but not another.
-- you honestly don't have the time to decide which of these options is better.
+- 你的项目规模较大，且在归属不明确的代码中出现了新错误
+- 你正处于两个不同 TypeScript 版本之间的升级过程中，某行代码在一个版本中报错但在另一个版本中不报错
+- 你确实没有时间去权衡这两种选项哪一个更优
 
-## Uncalled Function Checks in Conditional Expressions
+## 条件表达式中未调用的函数检查
 
-In TypeScript 3.7 we introduced _uncalled function checks_ to report an error when you've forgotten to call a function.
+在 TypeScript 3.7 中，我们引入了未调用函数检查，以便在你忘记调用函数时报告错误。
 
 ```ts
 function hasImportantPermissions(): boolean {
@@ -164,8 +146,7 @@ if (hasImportantPermissions) {
 }
 ```
 
-However, this error only applied to conditions in `if` statements.
-Thanks to [a pull request](https://github.com/microsoft/TypeScript/pull/36402) from [Alexander Tarasyuk](https://github.com/a-tarasyuk), this feature is also now supported in ternary conditionals (i.e. the `cond ? trueExpr : falseExpr` syntax).
+然而，该错误此前仅适用于 `if` 语句中的条件。感谢 [Alexander Tarasyuk](https://github.com/a-tarasyuk) 提交的 [Pull Request](https://github.com/microsoft/TypeScript/pull/36402)，该特性现在在三元条件表达式（即 `cond ? trueExpr : falseExpr` 语法）中也得到了支持。
 
 ```ts
 declare function listFilesOfDirectory(dirPath: string): string[]
@@ -190,42 +171,39 @@ function getAllFiles(startFileName: string) {
 
 https://github.com/microsoft/TypeScript/issues/36048
 
-## Editor Improvements
+## 编辑器改进
 
-The TypeScript compiler not only powers the TypeScript editing experience in most major editors, it also powers the JavaScript experience in the Visual Studio family of editors and more.
-Using new TypeScript/JavaScript functionality in your editor will differ depending on your editor, but
+TypeScript 编译器不仅驱动着大多数主流编辑器中的 TypeScript 编辑体验，还驱动着 Visual Studio 系列编辑器等工具中的 JavaScript 体验。在编辑器中使用新的 TypeScript/JavaScript 功能因具体编辑器而异，但：
 
-- Visual Studio Code supports [selecting different versions of TypeScript](https://code.visualstudio.com/docs/typescript/typescript-compiling#_using-the-workspace-version-of-typescript). Alternatively, there's the [JavaScript/TypeScript Nightly Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-next) to stay on the bleeding edge (which is typically very stable).
-- Visual Studio 2017/2019 have [the SDK installers above] and [MSBuild installs](https://www.nuget.org/packages/Microsoft.TypeScript.MSBuild).
-- Sublime Text 3 supports [selecting different versions of TypeScript](https://github.com/microsoft/TypeScript-Sublime-Plugin#note-using-different-versions-of-typescript)
+- Visual Studio Code 支持[选择不同版本的 TypeScript](https://code.visualstudio.com/docs/typescript/typescript-compiling#_using-the-workspace-version-of-typescript)。此外，还可以使用 [JavaScript/TypeScript Nightly 扩展](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-next)来体验前沿版本（通常非常稳定）。
+- Visual Studio 2017/2019 提供了上述 SDK 安装程序以及 [MSBuild 安装包](https://www.nuget.org/packages/Microsoft.TypeScript.MSBuild)。
+- Sublime Text 3 支持[选择不同版本的 TypeScript](https://github.com/microsoft/TypeScript-Sublime-Plugin#note-using-different-versions-of-typescript)。
 
-### CommonJS Auto-Imports in JavaScript
+### JavaScript 中的 CommonJS 模块自动导入
 
-One great new improvement is in auto-imports in JavaScript files using CommonJS modules.
+一个极佳的新改进是对使用 CommonJS 模块的 JavaScript 文件进行自动导入。
 
-In older versions, TypeScript always assumed that regardless of your file, you wanted an ECMAScript-style import like
+在旧版本中，TypeScript 总是假定无论你的文件如何，你都希望使用 ECMAScript 风格的导入，例如：
 
 ```js
 import * as fs from 'fs'
 ```
 
-However, not everyone is targeting ECMAScript-style modules when writing JavaScript files.
-Plenty of users still use CommonJS-style `require(...)` imports like so
+然而，并非每个人在编写 JavaScript 文件时都面向 ECMAScript 风格的模块。许多用户仍在使用 CommonJS 风格的 `require(...)` 导入，如下所示：
 
 ```js
 const fs = require('fs')
 ```
 
-TypeScript now automatically detects the types of imports you're using to keep your file's style clean and consistent.
+TypeScript 现在会自动检测你所使用的导入风格，以保持文件风格整洁且一致。
 
 <video src="https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2020/03/ERkaliGU0AA5anJ1.mp4"></video>
 
-For more details on the change, see [the corresponding pull request](https://github.com/microsoft/TypeScript/pull/37027).
+有关该变更的更多详情，请参见[对应的 Pull Request](https://github.com/microsoft/TypeScript/pull/37027)。
 
-### Code Actions Preserve Newlines
+### 代码操作保留换行符
 
-TypeScript's refactorings and quick fixes often didn't do a great job of preserving newlines.
-As a really basic example, take the following code.
+TypeScript 的重构和快速修复此前在保留换行符方面表现得不够理想。以一个非常基础的代码为例：
 
 ```ts
 const maxValue = 100
@@ -241,7 +219,7 @@ for (let i = 0; i <= maxValue; i++) {
 /*end*/
 ```
 
-If we highlighted the range from `/*start*/` to `/*end*/` in our editor to extract to a new function, we'd end up with code like the following.
+如果我们在编辑器中高亮从 `/*start*/` 到 `/*end*/` 的范围以提取为新函数，最终会得到如下代码：
 
 ```ts
 const maxValue = 100
@@ -258,10 +236,10 @@ function printSquares() {
 }
 ```
 
-![Extracting the for loop to a function in older versions of TypeScript. A newline is not preserved.](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2020/03/printSquaresWithoutNewlines-3.9.gif.gif)
+![在旧版本 TypeScript 中将 for 循环提取为函数。换行符未被保留。](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2020/03/printSquaresWithoutNewlines-3.9.gif.gif)
 
-That's not ideal - we had a blank line between each statement in our `for` loop, but the refactoring got rid of it!
-TypeScript 3.9 does a little more work to preserve what we write.
+这并不理想——我们在 `for` 循环中的每条语句之间都留了空行，但重构却移除了它！
+TypeScript 3.9 做了额外的工作来保留我们的书写格式。
 
 ```ts
 const maxValue = 100
@@ -279,13 +257,13 @@ function printSquares() {
 }
 ```
 
-![Extracting the for loop to a function in TypeScript 3.9. A newline is preserved.](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2020/03/printSquaresWithNewlines-3.9.gif.gif)
+![在 TypeScript 3.9 中将 for 循环提取为函数。换行符得以保留。](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2020/03/printSquaresWithNewlines-3.9.gif.gif)
 
-You can see more about the implementation [in this pull request](https://github.com/microsoft/TypeScript/pull/36688)
+你可以在[此 Pull Request](https://github.com/microsoft/TypeScript/pull/36688) 中了解有关实现的更多信息。
 
-### Quick Fixes for Missing Return Expressions
+### 缺失返回值表达式的快速修复
 
-There are occasions where we might forget to return the value of the last statement in a function, especially when adding curly braces to arrow functions.
+有时我们可能会忘记返回函数中最后一条语句的值，尤其是在给箭头函数添加花括号时：
 
 ```ts
 // before
@@ -297,16 +275,15 @@ let f2 = () => {
 }
 ```
 
-Thanks to [a pull request](https://github.com/microsoft/TypeScript/pull/26434) from community member [Wenlu Wang](https://github.com/Kingwl), TypeScript can provide a quick-fix to add missing `return` statements, remove curly braces, or add parentheses to arrow function bodies that look suspiciously like object literals.
+感谢社区成员 [王文璐（Wenlu Wang）](https://github.com/Kingwl) 提交的 [Pull Request](https://github.com/microsoft/TypeScript/pull/26434)，TypeScript 现在可以提供快速修复来添加缺失的 `return` 语句、移除花括号，或者为看似对象字面量的箭头函数体添加圆括号。
 
-![TypeScript fixing an error where no expression is returned by adding a `return` statement or removing curly braces.](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2020/04/missingReturnValue-3-9.gif)
+![TypeScript 通过添加 `return` 语句或移除花括号来修复未返回表达式的错误。](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2020/04/missingReturnValue-3-9.gif)
 
-### Support for "Solution Style" `tsconfig.json` Files
+### 支持“解决方案风格”的 `tsconfig.json` 文件
 
-Editors need to figure out which configuration file a file belongs to so that it can apply the appropriate options and figure out which other files are included in the current "project".
-By default, editors powered by TypeScript's language server do this by walking up each parent directory to find a `tsconfig.json`.
+编辑器需要确定某个文件属于哪个配置文件，以便应用适当的选项并弄清当前“项目”中包含哪些其他文件。默认情况下，基于 TypeScript 语言服务的编辑器通过向上遍历每个父目录来查找 `tsconfig.json`。
 
-One case where this slightly fell over is when a `tsconfig.json` simply existed to reference other `tsconfig.json` files.
+然而，当某个 `tsconfig.json` 的存在仅仅是为了引用其他 `tsconfig.json` 文件时，就会出现问题：
 
 ```jsonc tsconfig
 // tsconfig.json
@@ -320,65 +297,58 @@ One case where this slightly fell over is when a `tsconfig.json` simply existed 
 }
 ```
 
-This file that really does nothing but manage other project files is often called a "solution" in some environments.
-Here, none of these `tsconfig.*.json` files get picked up by the server, but we'd really like the language server to understand that the current `.ts` file probably belongs to one of the mentioned projects in this root `tsconfig.json`.
+这种除了管理其他项目文件外实际上不做任何事情的文件，在某些环境中通常被称为“解决方案”。在此场景下，语言服务不会加载这些 `tsconfig.*.json` 文件中的任何一个，但我们非常希望语言服务能够理解当前 `.ts` 文件可能属于该根 `tsconfig.json` 中提及的项目之一。
 
-TypeScript 3.9 adds support to editing scenarios for this configuration.
-For more details, take a look at [the pull request that added this functionality](https://github.com/microsoft/TypeScript/pull/37239).
+TypeScript 3.9 在编辑场景中添加了对此类配置的支持。有关更多详情，请查看[添加此功能的 Pull Request](https://github.com/microsoft/TypeScript/pull/37239)。
 
-## Breaking Changes
+## 破坏性变更
 
-### Parsing Differences in Optional Chaining and Non-Null Assertions
+### 可选链与非空断言中的解析差异
 
-TypeScript recently implemented the optional chaining operator, but we've received user feedback that the behavior of optional chaining (`?.`) with the non-null assertion operator (`!`) is extremely counter-intuitive.
+TypeScript 最近实现了可选链运算符，但我们收到了用户反馈，指出可选链（`?.`）与非空断言运算符（`!`）结合使用时的行为极度反直觉。
 
-Specifically, in previous versions, the code
+具体而言，在之前的版本中，代码：
 
 ```ts
 foo?.bar!.baz
 ```
 
-was interpreted to be equivalent to the following JavaScript.
+被解释为等同于以下 JavaScript 代码：
 
 ```js
 ;(foo?.bar).baz
 ```
 
-In the above code the parentheses stop the "short-circuiting" behavior of optional chaining, so if `foo` is `undefined`, accessing `baz` will cause a runtime error.
+在上述代码中，圆括号阻止了可选链的“短路”行为，因此如果 `foo` 是 `undefined`，访问 `baz` 将导致运行时错误。
 
-The Babel team who pointed this behavior out, and most users who provided feedback to us, believe that this behavior is wrong.
-We do too!
-The thing we heard the most was that the `!` operator should just "disappear" since the intent was to remove `null` and `undefined` from the type of `bar`.
+指出这种行为的 Babel 团队以及向我们提供反馈的大多数用户都认为这种行为是不正确的。我们也这么认为！我们听到的最普遍的看法是：`!` 运算符应该直接“消失”，因为其本意只是从 `bar` 的类型中移除 `null` 和 `undefined`。
 
-In other words, most people felt that the original snippet should be interpreted as
+换句话说，大多数人认为原始代码片段应该被解释为：
 
 ```js
 foo?.bar.baz
 ```
 
-which just evaluates to `undefined` when `foo` is `undefined`.
+当 `foo` 为 `undefined` 时，它只会求值为 `undefined`。
 
-This is a breaking change, but we believe most code was written with the new interpretation in mind.
-Users who want to revert to the old behavior can add explicit parentheses around the left side of the `!` operator.
+这是一项破坏性变更，但我们相信大多数代码在编写时都是基于新的解释预期的。希望恢复旧行为的用户可以在 `!` 运算符左侧显式添加圆括号：
 
 ```ts
 foo?.bar!.baz
 ```
 
-### `}` and `>` are Now Invalid JSX Text Characters
+### `}` 和 `>` 现在是无效的 JSX 文本字符
 
-The JSX Specification forbids the use of the `}` and `>` characters in text positions.
-TypeScript and Babel have both decided to enforce this rule to be more conformant.
-The new way to insert these characters is to use an HTML escape code (e.g. `<span> 2 &gt 1 </span>`) or insert an expression with a string literal (e.g. `<span> 2 {">"} 1 </span>`).
+JSX 规范禁止在文本位置使用 `}` 和 `>` 字符。为了更好地符合规范，TypeScript 和 Babel 均已决定强制执行此规则。插入这些字符的新方式是使用 HTML 转义实体（例如 `<span> 2 &gt 1 </span>`）或插入带有字符串字面量的表达式（例如 `<span> 2 {">"} 1 </span>`）。
 
-Luckily, thanks to the [pull request](https://github.com/microsoft/TypeScript/pull/36636) enforcing this from [Brad Zacher](https://github.com/bradzacher), you'll get an error message along the lines of
+幸运的是，感谢 [Brad Zacher](https://github.com/bradzacher) 提交的用于强制执行此规则的 [Pull Request](https://github.com/microsoft/TypeScript/pull/36636)，你将收到类似如下的错误消息：
 
 ```
 Unexpected token. Did you mean `{'>'}` or `&gt;`?
 Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
 ```
 
-For example:
+例如：
 
 ```tsx
 let directions = <span>Navigate to: Menu Bar > Tools > Options</span>;
@@ -386,12 +356,11 @@ let directions = <span>Navigate to: Menu Bar > Tools > Options</span>;
 // Unexpected token. Did you mean `{'>'}` or `&gt;`?
 ```
 
-That error message came with a handy quick fix, and thanks to [Alexander Tarasyuk](https://github.com/a-tarasyuk), [you can apply these changes in bulk](https://github.com/microsoft/TypeScript/pull/37436) if you have a lot of errors.
+该错误消息附带了一个便捷的快速修复功能；感谢 [Alexander Tarasyuk](https://github.com/a-tarasyuk)，如果存在大量错误，[你可以批量应用这些更改](https://github.com/microsoft/TypeScript/pull/37436)。
 
-### Stricter Checks on Intersections and Optional Properties
+### 对交叉类型与可选属性进行更严格的检查
 
-Generally, an intersection type like `A & B` is assignable to `C` if either `A` or `B` is assignable to `C`; however, sometimes that has problems with optional properties.
-For example, take the following:
+通常情况下，如果 `A` 或 `B` 中有任意一个可以赋值给 `C`，那么像 `A & B` 这样的交叉类型就可以赋值给 `C`；然而，这在涉及可选属性时有时会出现问题。例如以下代码：
 
 ```ts
 interface A {
@@ -413,10 +382,9 @@ declare let y: C
 y = x
 ```
 
-In previous versions of TypeScript, this was allowed because while `A` was totally incompatible with `C`, `B` _was_ compatible with `C`.
+在较早版本的 TypeScript 中，这是被允许的，因为虽然 `A` 与 `C` 完全不兼容，但 `B` **确实**与 `C` 兼容。
 
-In TypeScript 3.9, so long as every type in an intersection is a concrete object type, the type system will consider all of the properties at once.
-As a result, TypeScript will see that the `a` property of `A & B` is incompatible with that of `C`:
+在 TypeScript 3.9 中，只要交叉类型中的每个类型都是具体对象类型，类型系统就会同时考虑所有的属性。因此，TypeScript 会发现 `A & B` 的 `a` 属性与 `C` 的 `a` 属性不兼容：
 
 ```
 Type 'A & B' is not assignable to type 'C'.
@@ -424,12 +392,11 @@ Type 'A & B' is not assignable to type 'C'.
     Type 'number' is not assignable to type 'boolean | undefined'.
 ```
 
-For more information on this change, [see the corresponding pull request](https://github.com/microsoft/TypeScript/pull/37195).
+有关此变更的更多信息，请[参见对应的 Pull Request](https://github.com/microsoft/TypeScript/pull/37195)。
 
-### Intersections Reduced By Discriminant Properties
+### 通过判别式属性缩减交叉类型
 
-There are a few cases where you might end up with types that describe values that just don't exist.
-For example
+在某些情况下，你可能会得到描述根本不存在的值的类型。例如：
 
 ```ts
 declare function smushObjects<T, U>(x: T, y: U): T & U
@@ -451,30 +418,25 @@ let z = smushObjects(x, y)
 console.log(z.kind)
 ```
 
-This code is slightly weird because there's really no way to create an intersection of a `Circle` and a `Square` - they have two incompatible `kind` fields.
-In previous versions of TypeScript, this code was allowed and the type of `kind` itself was `never` because `"circle" & "square"` described a set of values that could `never` exist.
+这段代码有些奇特，因为实际上根本无法创建 `Circle` 和 `Square` 的交叉——它们具有两个不兼容的 `kind` 字段。在 TypeScript 之前的版本中，这段代码是被允许的，`kind` 本身的类型为 `never`，因为 `"circle" & "square"` 描述了一组永远不可能存在的值。
 
-In TypeScript 3.9, the type system is more aggressive here - it notices that it's impossible to intersect `Circle` and `Square` because of their `kind` properties.
-So instead of collapsing the type of `z.kind` to `never`, it collapses the type of `z` itself (`Circle & Square`) to `never`.
-That means the above code now errors with:
+在 TypeScript 3.9 中，类型系统在此处更加严格——它注意到由于两者的 `kind` 属性，`Circle` 和 `Square` 无法进行交叉。因此，它不再仅仅将 `z.kind` 的类型折叠为 `never`，而是将 `z` 本身的类型（`Circle & Square`）直接折叠为 `never`。这意味着上述代码现在会报错：
 
 ```
 Property 'kind' does not exist on type 'never'.
 ```
 
-Most of the breaks we observed seem to correspond with slightly incorrect type declarations.
-For more details, [see the original pull request](https://github.com/microsoft/TypeScript/pull/36696).
+我们观察到的大多数破坏性报错似乎都与存在细微错误的类型声明有关。更多详情，请[查看原始 Pull Request](https://github.com/microsoft/TypeScript/pull/36696)。
 
-### Getters/Setters are No Longer Enumerable
+### Getter/Setter 不再可枚举
 
-In older versions of TypeScript, `get` and `set` accessors in classes were emitted in a way that made them enumerable; however, this wasn't compliant with the ECMAScript specification which states that they must be non-enumerable.
-As a result, TypeScript code that targeted ES5 and ES2015 could differ in behavior.
+在旧版本的 TypeScript 中，类中的 `get` 和 `set` 访问器在编译输出时被设为可枚举；然而，这并不符合 ECMAScript 规范关于访问器必须不可枚举的规定。因此，目标为 ES5 和 ES2015 的 TypeScript 代码在行为上可能会有所不同。
 
-Thanks to [a pull request](https://github.com/microsoft/TypeScript/pull/32264) from GitHub user [pathurs](https://github.com/pathurs), TypeScript 3.9 now conforms more closely with ECMAScript in this regard.
+感谢 GitHub 用户 [pathurs](https://github.com/pathurs) 提交的 [Pull Request](https://github.com/microsoft/TypeScript/pull/32264)，TypeScript 3.9 现在在这方面更加严格地遵循了 ECMAScript 规范。
 
-### Type Parameters That Extend `any` No Longer Act as `any`
+### 继承 `any` 的类型参数不再表现为 `any`
 
-In previous versions of TypeScript, a type parameter constrained to `any` could be treated as `any`.
+在较早版本的 TypeScript 中，约束为 `any` 的类型参数可以被当作 `any` 处理。
 
 ```ts
 function foo<T extends any>(arg: T) {
@@ -482,7 +444,7 @@ function foo<T extends any>(arg: T) {
 }
 ```
 
-This was an oversight, so TypeScript 3.9 takes a more conservative approach and issues an error on these questionable operations.
+这属于设计上的疏漏，因此 TypeScript 3.9 采取了更稳妥的处理方式，对此类存疑操作报告错误。
 
 ```ts
 function foo<T extends any>(arg: T) {
@@ -492,19 +454,15 @@ function foo<T extends any>(arg: T) {
 }
 ```
 
-### `export *` is Always Retained
+### `export *` 始终被保留
 
-In previous TypeScript versions, declarations like `export * from "foo"` would be dropped in our JavaScript output if `foo` didn't export any values.
-This sort of emit is problematic because it's type-directed and can't be emulated by Babel.
-TypeScript 3.9 will always emit these `export *` declarations.
-In practice, we don't expect this to break much existing code.
+在以往的 TypeScript 版本中，如果 `foo` 未导出任何值，诸如 `export * from "foo"` 的声明就会在 JavaScript 输出中被丢弃。这种编译发射方式存在问题，因为它是类型导向的，Babel 无法对其进行模拟。TypeScript 3.9 将始终生成这些 `export *` 声明。在实际场景中，我们预计这不会对太多现有代码造成影响。
 
-### More libdom.d.ts refinements
+### 针对 libdom.d.ts 的更多调整
 
-We are continuing to move more of TypeScript's built-in .d.ts library (lib.d.ts and family) to be generated from Web IDL files directly from the DOM specification.
-As a result some vendor-specific types related to media access have been removed.
+我们正在继续将更多 TypeScript 内置的 .d.ts 库（lib.d.ts 系列）迁移为直接从 DOM 规范的 Web IDL 文件生成。因此，一些与媒体访问相关的厂商特有类型已被移除。
 
-Adding this file to an ambient `*.d.ts` to your project will bring them back:
+在项目的环境声明 `*.d.ts` 文件中添加以下内容即可恢复它们：
 
 <!-- prettier-ignore -->
 ```ts

@@ -1,10 +1,10 @@
 ---
-title: 'Module: Function'
+title: 模块函数 .d.ts
 layout: docs
 permalink: /zh/docs/handbook/declaration-files/templates/module-function-d-ts.html
 ---
 
-For example, when you want to work with JavaScript code which looks like:
+例如，当你需要配合如下形式的 JavaScript 代码使用时：
 
 ```ts
 import greeter from 'super-greeter'
@@ -13,7 +13,7 @@ greeter(2)
 greeter('Hello world')
 ```
 
-To handle both importing via UMD and modules:
+为了同时支持通过 UMD 和模块导入：
 
 ```ts
 // Type definitions for [~THE LIBRARY NAME~] [~OPTIONAL VERSION NUMBER~]

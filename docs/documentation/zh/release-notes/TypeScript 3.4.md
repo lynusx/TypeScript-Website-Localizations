@@ -2,13 +2,13 @@
 title: TypeScript 3.4
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-3-4.html
-oneline: TypeScript 3.4 Release Notes
+oneline: TypeScript 3.4 发布说明
 ---
 
-## Faster subsequent builds with the `--incremental` flag
+## 使用 `--incremental` 标志加快后续构建
 
-TypeScript 3.4 introduces a new flag called [`incremental`](/tsconfig#incremental) which tells TypeScript to save information about the project graph from the last compilation.
-The next time TypeScript is invoked with [`incremental`](/tsconfig#incremental), it will use that information to detect the least costly way to type-check and emit changes to your project.
+TypeScript 3.4 引入了一个名为 [`incremental`](/tsconfig#incremental) 的新标志，用于指示 TypeScript 保存上次编译的项目图（project graph）信息。
+下次使用 [`incremental`](/tsconfig#incremental) 调用 TypeScript 时，它将利用这些信息以开销最小的方式对项目进行类型检查并输出改动。
 
 ```jsonc tsconfig
 // tsconfig.json
@@ -21,12 +21,12 @@ The next time TypeScript is invoked with [`incremental`](/tsconfig#incremental),
 }
 ```
 
-By default with these settings, when we run `tsc`, TypeScript will look for a file called `.tsbuildinfo` in the output directory (`./lib`).
-If `./lib/.tsbuildinfo` doesn't exist, it'll be generated.
-But if it does, `tsc` will try to use that file to incrementally type-check and update our output files.
+在使用上述配置时，默认情况下当我们运行 `tsc`，TypeScript 会在输出目录（`./lib`）中查找名为 `.tsbuildinfo` 的文件。
+如果 `./lib/.tsbuildinfo` 不存在，它会被自动生成。
+但如果它已存在，`tsc` 将尝试利用该文件进行增量类型检查并更新输出文件。
 
-These `.tsbuildinfo` files can be safely deleted and don't have any impact on our code at runtime - they're purely used to make compilations faster.
-We can also name them anything that we want, and place them anywhere we want using the [`tsBuildInfoFile`](/tsconfig#tsBuildInfoFile) option.
+这些 `.tsbuildinfo` 文件可以安全地删除，并且在运行时对代码没有任何影响——它们纯粹用于加快编译速度。
+我们还可以随意为其命名，并通过 [`tsBuildInfoFile`](/tsconfig#tsBuildInfoFile) 选项将其放置在任何位置。
 
 ```jsonc tsconfig
 // front-end.tsconfig.json
@@ -40,23 +40,23 @@ We can also name them anything that we want, and place them anywhere we want usi
 }
 ```
 
-### Composite projects
+### 复合项目
 
-Part of the intent with composite projects (`tsconfig.json`s with [`composite`](/tsconfig#composite) set to `true`) is that references between different projects can be built incrementally.
-As such, composite projects will **always** produce `.tsbuildinfo` files.
+复合项目（即将 [`composite`](/tsconfig#composite) 设置为 `true` 的 `tsconfig.json`）的部分初衷在于使不同项目之间的引用能够以增量方式构建。
+因此，复合项目**始终**会生成 `.tsbuildinfo` 文件。
 
 ### `outFile`
 
-When [`outFile`](/tsconfig#outFile) is used, the build information file's name will be based on the output file's name.
-As an example, if our output JavaScript file is `./output/foo.js`, then under the [`incremental`](/tsconfig#incremental) flag, TypeScript will generate the file `./output/foo.tsbuildinfo`.
-As above, this can be controlled with the [`tsBuildInfoFile`](/tsconfig#tsBuildInfoFile) option.
+当使用 [`outFile`](/tsconfig#outFile) 时，构建信息文件的名称将基于输出文件的名称确定。
+例如，如果输出的 JavaScript 文件是 `./output/foo.js`，那么在 [`incremental`](/tsconfig#incremental) 标志下，TypeScript 将生成 `./output/foo.tsbuildinfo` 文件。
+与前面一样，这可以通过 [`tsBuildInfoFile`](/tsconfig#tsBuildInfoFile) 选项进行控制。
 
-## Higher order type inference from generic functions
+## 泛型函数的更高阶类型推断
 
-TypeScript 3.4 can now produce generic function types when inference from other generic functions produces free type variables for inferences.
-This means many function composition patterns now work better in 3.4.
+TypeScript 3.4 现在可以在从其他泛型函数推断产生用于推断的自由类型变量时，生成泛型函数类型。
+这意味着在 3.4 中，许多函数组合模式的表现得到了显著改善。
 
-To get more specific, let's build up some motivation and consider the following `compose` function:
+更具体地说，为了说明其动机，让我们考虑以下 `compose` 函数：
 
 ```ts
 function compose<A, B, C>(f: (arg: A) => B, g: (arg: B) => C): (arg: A) => C {
@@ -64,15 +64,15 @@ function compose<A, B, C>(f: (arg: A) => B, g: (arg: B) => C): (arg: A) => C {
 }
 ```
 
-`compose` takes two other functions:
+`compose` 接收另外两个函数：
 
-- `f` which takes some argument (of type `A`) and returns a value of type `B`
-- `g` which takes an argument of type `B` (the type `f` returned), and returns a value of type `C`
+- `f`：接收某个参数（类型为 `A`），并返回类型为 `B` 的值
+- `g`：接收类型为 `B`（即 `f` 返回的类型）的参数，并返回类型为 `C` 的值
 
-`compose` then returns a function which feeds its argument through `f` and then `g`.
+接着 `compose` 返回一个函数，该函数将接收的参数先传给 `f`，再将结果传给 `g`。
 
-When calling this function, TypeScript will try to figure out the types of `A`, `B`, and `C` through a process called _type argument inference_.
-This inference process usually works pretty well:
+当调用该函数时，TypeScript 将通过称为*类型参数推断*（type argument inference）的过程尝试推导出 `A`、`B` 和 `C` 的类型。
+这种推断过程通常运行良好：
 
 ```ts
 interface Person {
@@ -95,8 +95,8 @@ const getDisplayNameLength = compose(getDisplayName, getLength)
 getDisplayNameLength({ name: 'Person McPersonface', age: 42 })
 ```
 
-The inference process is fairly straightforward here because `getDisplayName` and `getLength` use types that can easily be referenced.
-However, in TypeScript 3.3 and earlier, generic functions like `compose` didn't work so well when passed other generic functions.
+这里的推断过程相当直接，因为 `getDisplayName` 和 `getLength` 使用的都是易于引用的具体类型。
+然而，在 TypeScript 3.3 及更早版本中，当向类似 `compose` 这样的泛型函数传入其他泛型函数时，效果并不理想。
 
 ```ts
 interface Box<T> {
@@ -119,24 +119,24 @@ makeBoxedArray('hello!').value[0].toUpperCase()
 // error: Property 'toUpperCase' does not exist on type '{}'.
 ```
 
-In older versions, TypeScript would infer the empty object type (`{}`) when inferring from other type variables like `T` and `U`.
+在旧版本中，当从其他类型变量（如 `T` 和 `U`）进行推断时，TypeScript 会推断为空对象类型（`{}`）。
 
-During type argument inference in TypeScript 3.4, for a call to a generic function that returns a function type, TypeScript _will_, as appropriate, propagate type parameters from generic function arguments onto the resulting function type.
+在 TypeScript 3.4 的类型参数推断过程中，对于返回函数类型的泛型函数调用，TypeScript _会_在适当时将泛型函数参数中的类型参数传递到结果函数类型中。
 
-In other words, instead of producing the type
+换句话说，TypeScript 3.4 不再生成如下类型：
 
 ```ts
 ;(arg: {}) => Box<{}[]>
 ```
 
-TypeScript 3.4 produces the type
+而是生成如下类型：
 
 ```ts
 ;<T>(arg: T) => Box<T[]>
 ```
 
-Notice that `T` has been propagated from `makeArray` into the resulting type's type parameter list.
-This means that genericity from `compose`'s arguments has been preserved and our `makeBoxedArray` sample will just work!
+注意，`T` 已从 `makeArray` 传递到结果类型的类型参数列表中。
+这意味着来自 `compose` 参数的泛型特性得到了保留，我们的 `makeBoxedArray` 示例即可正常工作！
 
 ```ts
 interface Box<T> {
@@ -158,16 +158,16 @@ const makeBoxedArray = compose(makeArray, makeBox)
 makeBoxedArray('hello!').value[0].toUpperCase()
 ```
 
-For more details, you can [read more at the original change](https://github.com/Microsoft/TypeScript/pull/30215).
+更多详细信息，请参阅[原始变更 PR](https://github.com/Microsoft/TypeScript/pull/30215)。
 
-## Improvements for `ReadonlyArray` and `readonly` tuples
+## `ReadonlyArray` 与 `readonly` 元组的改进
 
-TypeScript 3.4 makes it a little bit easier to use read-only array-like types.
+TypeScript 3.4 让只读类数组类型的使用变得更加轻松。
 
-### A new syntax for `ReadonlyArray`
+### `ReadonlyArray` 的新语法
 
-The `ReadonlyArray` type describes `Array`s that can only be read from.
-Any variable with a reference to a `ReadonlyArray` can't add, remove, or replace any elements of the array.
+`ReadonlyArray` 类型用于描述只能读取的 `Array`。
+任何持有 `ReadonlyArray` 引用的变量都无法添加、删除或替换数组中的任何元素。
 
 ```ts
 function foo(arr: ReadonlyArray<string>) {
@@ -176,10 +176,10 @@ function foo(arr: ReadonlyArray<string>) {
 }
 ```
 
-While it's good practice to use `ReadonlyArray` over `Array` when no mutation is intended, it's often been a pain given that arrays have a nicer syntax.
-Specifically, `number[]` is a shorthand version of `Array<number>`, just as `Date[]` is a shorthand for `Array<Date>`.
+虽然在不打算修改数组时使用 `ReadonlyArray` 替代 `Array` 是一种良好的实践，但鉴于常规数组具有更简洁的语法，此前使用它往往有些繁琐。
+具体而言，`number[]` 是 `Array<number>` 的简写形式，正如 `Date[]` 是 `Array<Date>` 的简写一样。
 
-TypeScript 3.4 introduces a new syntax for `ReadonlyArray` using a new `readonly` modifier for array types.
+TypeScript 3.4 针对数组类型引入了全新的 `readonly` 修饰符，为 `ReadonlyArray` 提供了新的简写语法。
 
 ```ts
 function foo(arr: readonly string[]) {
@@ -188,11 +188,11 @@ function foo(arr: readonly string[]) {
 }
 ```
 
-### `readonly` tuples
+### `readonly` 元组
 
-TypeScript 3.4 also introduces new support for `readonly` tuples.
-We can prefix any tuple type with the `readonly` keyword to make it a `readonly` tuple, much like we now can with array shorthand syntax.
-As you might expect, unlike ordinary tuples whose slots could be written to, `readonly` tuples only permit reading from those positions.
+TypeScript 3.4 还引入了对 `readonly` 元组的支持。
+我们可以像使用数组简写语法一样，在任何元组类型前添加 `readonly` 关键字将其声明为 `readonly` 元组。
+正如你所预期的那样，常规元组的各个槽位是可写的，而 `readonly` 元组只允许从这些位置读取。
 
 ```ts
 function foo(pair: readonly [string, string]) {
@@ -201,12 +201,12 @@ function foo(pair: readonly [string, string]) {
 }
 ```
 
-The same way that ordinary tuples are types that extend from `Array` - a tuple with elements of type <code>T<sub>1</sub></code>, <code>T<sub>2</sub></code>, ... <code>T<sub>n</sub></code> extends from <code>Array&lt; T<sub>1</sub> \| T<sub>2</sub> \| ... T<sub>n</sub> &gt;</code> - `readonly` tuples are types that extend from `ReadonlyArray`. So a `readonly` tuple with elements <code>T<sub>1</sub></code>, <code>T<sub>2</sub></code>, ... <code>T<sub>n</sub></code> extends from <code>ReadonlyArray< T<sub>1</sub> \| T<sub>2</sub> | ... T<sub>n</sub></code>.
+正如常规元组是继承自 `Array` 的类型——元素类型为 <code>T<sub>1</sub></code>、<code>T<sub>2</sub></code>、……<code>T<sub>n</sub></code> 的元组继承自 <code>Array&lt; T<sub>1</sub> \| T<sub>2</sub> \| ... T<sub>n</sub> &gt;</code>——`readonly` 元组则是继承自 `ReadonlyArray` 的类型。因此，元素类型为 <code>T<sub>1</sub></code>、<code>T<sub>2</sub></code>、……<code>T<sub>n</sub></code> 的 `readonly` 元组继承自 <code>ReadonlyArray< T<sub>1</sub> \| T<sub>2</sub> | ... T<sub>n</sub></code>。
 
-### `readonly` mapped type modifiers and `readonly` arrays
+### `readonly` 映射类型修饰符与 `readonly` 数组
 
-In earlier versions of TypeScript, we generalized mapped types to operate differently on array-like types.
-This meant that a mapped type like `Boxify` could work on arrays and tuples alike.
+在 TypeScript 的早期版本中，我们对映射类型进行了泛化，使其能够对类数组类型进行差异化处理。
+这意味着像 `Boxify` 这样的映射类型既可以作用于数组，也可以作用于元组。
 
 ```ts
 interface Box<T> {
@@ -227,7 +227,7 @@ type B = Boxify<number[]>
 type C = Boxify<[string, boolean]>
 ```
 
-Unfortunately, mapped types like the `Readonly` utility type were effectively no-ops on array and tuple types.
+遗憾的是，像 `Readonly` 工具类型这样的映射类型此前在数组和元组类型上实际上是空操作（no-op）。
 
 ```ts
 // lib.d.ts
@@ -247,7 +247,7 @@ type B = Readonly<number[]>
 type C = Readonly<[string, boolean]>
 ```
 
-In TypeScript 3.4, the `readonly` modifier in a mapped type will automatically convert array-like types to their corresponding `readonly` counterparts.
+在 TypeScript 3.4 中，映射类型中的 `readonly` 修饰符会自动将类数组类型转换为对应的 `readonly` 版本。
 
 ```ts
 // How code acts now *with* TypeScript 3.4
@@ -262,7 +262,7 @@ type B = Readonly<number[]>
 type C = Readonly<[string, boolean]>
 ```
 
-Similarly, you could write a utility type like `Writable` mapped type that strips away `readonly`-ness, and that would convert `readonly` array containers back to their mutable equivalents.
+类似地，你可以编写一个像 `Writable` 这样的映射类型来移除 `readonly` 特性，从而将 `readonly` 数组容器转换回可变版本。
 
 ```ts
 type Writable<T> = {
@@ -282,10 +282,10 @@ type B = Writable<readonly number[]>
 type C = Writable<readonly [string, boolean]>
 ```
 
-### Caveats
+### 注意事项
 
-Despite its appearance, the `readonly` type modifier can only be used for syntax on array types and tuple types.
-It is not a general-purpose type operator.
+需要注意的是，尽管形式如此，`readonly` 类型修饰符仅可用于数组类型和元组类型的语法中。
+它并不是通用的类型操作符。
 
 ```ts
 let err1: readonly Set<number> // error!
@@ -294,17 +294,17 @@ let err2: readonly Array<boolean> // error!
 let okay: readonly boolean[] // works fine
 ```
 
-You can [see more details in the pull request](https://github.com/Microsoft/TypeScript/pull/29435).
+更多详情可参阅[该 Pull Request](https://github.com/Microsoft/TypeScript/pull/29435)。
 
-## `const` assertions
+## `const` 断言
 
-TypeScript 3.4 introduces a new construct for literal values called _`const`_ assertions.
-Its syntax is a type assertion with `const` in place of the type name (e.g. `123 as const`).
-When we construct new literal expressions with `const` assertions, we can signal to the language that
+TypeScript 3.4 为字面量值引入了一种称为 _`const`_ 断言的新结构。
+其语法为以 `const` 替代类型名称的类型断言（例如 `123 as const`）。
+当使用 `const` 断言构造新的字面量表达式时，我们可以向语言提示：
 
-- no literal types in that expression should be widened (e.g. no going from `"hello"` to `string`)
-- object literals get `readonly` properties
-- array literals become `readonly` tuples
+- 该表达式中的字面量类型不应被拓宽（例如不会从 `"hello"` 拓宽为 `string`）
+- 对象字面量将获得 `readonly` 属性
+- 数组字面量将变为 `readonly` 元组
 
 ```ts
 // Type '"hello"'
@@ -317,7 +317,7 @@ let y = [10, 20] as const
 let z = { text: 'hello' } as const
 ```
 
-Outside of `.tsx` files, the angle bracket assertion syntax can also be used.
+在 `.tsx` 文件之外，也可以使用尖括号断言语法。
 
 ```ts
 // Type '"hello"'
@@ -330,7 +330,7 @@ let y = <const>[10, 20]
 let z = <const>{ text: 'hello' }
 ```
 
-This feature means that types that would otherwise be used just to hint immutability to the compiler can often be omitted.
+这项特性意味着，原本仅用于向编译器提示不可变性的类型注解往往可以省略。
 
 ```ts
 // Works with no types referenced or declared.
@@ -354,10 +354,10 @@ for (const shape of getShapes()) {
 }
 ```
 
-Notice the above needed no type annotations.
-The `const` assertion allowed TypeScript to take the most specific type of the expression.
+注意，上述代码无需任何类型注解。
+`const` 断言使 TypeScript 能够为表达式推导出最精确的类型。
 
-This can even be used to enable `enum`-like patterns in plain JavaScript code if you choose not to use TypeScript's `enum` construct.
+如果你选择不使用 TypeScript 的 `enum` 结构，这甚至可以用于在纯 JavaScript 代码中实现类似 `enum` 的模式。
 
 ```ts
 export const Colors = {
@@ -375,9 +375,9 @@ export default {
 } as const
 ```
 
-### Caveats
+### 注意事项
 
-One thing to note is that `const` assertions can only be applied immediately on simple literal expressions.
+需要注意的一点是，`const` 断言只能直接应用于简单的字面量表达式。
 
 ```ts
 // Error! A 'const' assertion can only be applied
@@ -390,7 +390,7 @@ let c = Math.random() < 0.5 ? (0 as const) : (1 as const)
 let d = 3_600_000 as const
 ```
 
-Another thing to keep in mind is that `const` contexts don't immediately convert an expression to be fully immutable.
+另一点需要记住的是，`const` 上下文并不会立即将表达式转换为完全不可变的状态。
 
 ```ts
 let arr = [1, 2, 3, 4]
@@ -406,12 +406,12 @@ foo.contents = [] // error!
 foo.contents.push(5) // ...works!
 ```
 
-For more details, you can [check out the respective pull request](https://github.com/Microsoft/TypeScript/pull/29510).
+更多详情请参阅[对应的 Pull Request](https://github.com/Microsoft/TypeScript/pull/29510)。
 
-## Type-checking for `globalThis`
+## 对 `globalThis` 的类型检查
 
-TypeScript 3.4 introduces support for type-checking ECMAScript's new `globalThis` - a global variable that, well, refers to the global scope.
-Unlike the above solutions, `globalThis` provides a standard way for accessing the global scope which can be used across different environments.
+TypeScript 3.4 引入了对 ECMAScript 新增的 `globalThis` 的类型检查支持——顾名思义，这是一个指向全局作用域的全局变量。
+与以往的解决方案不同，`globalThis` 提供了跨不同环境访问全局作用域的标准方式。
 
 ```ts
 // in a global file:
@@ -422,7 +422,7 @@ var abc = 100
 globalThis.abc = 200
 ```
 
-Note that global variables declared with `let` and `const` don't show up on `globalThis`.
+请注意，使用 `let` 和 `const` 声明的全局变量不会挂载到 `globalThis` 上。
 
 ```ts
 let answer = 42
@@ -431,7 +431,7 @@ let answer = 42
 globalThis.answer = 333333
 ```
 
-It's also important to note that TypeScript doesn't transform references to `globalThis` when compiling to older versions of ECMAScript.
-As such, unless you're targeting evergreen browsers (which already support `globalThis`), you may want to [use an appropriate polyfill](https://github.com/ljharb/globalThis) instead.
+同样需要注意的是，当编译为较低版本的 ECMAScript 时，TypeScript 并不会转换对 `globalThis` 的引用。
+因此，除非目标环境是现代常青浏览器（evergreen browsers，已原生支持 `globalThis`），否则你可能需要[使用相应的 polyfill](https://github.com/ljharb/globalThis)。
 
-For more details on the implementation, see [the feature's pull request](https://github.com/Microsoft/TypeScript/pull/29332).
+有关实现的更多详情，请参阅[该特性的 Pull Request](https://github.com/Microsoft/TypeScript/pull/29332)。

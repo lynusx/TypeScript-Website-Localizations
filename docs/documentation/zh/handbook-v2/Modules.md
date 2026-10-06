@@ -1,60 +1,60 @@
 ---
-title: Modules
+title: 模块
 layout: docs
 permalink: /zh/docs/handbook/2/modules.html
-oneline: 'How JavaScript handles communicating across file boundaries.'
+oneline: 'JavaScript 如何处理跨文件边界的代码通信。'
 ---
 
-JavaScript has a long history of different ways to handle modularizing code.
-Having been around since 2012, TypeScript has implemented support for a lot of these formats, but over time the community and the JavaScript specification has converged on a format called ES Modules (or ES6 modules). You might know it as the `import`/`export` syntax.
+JavaScript 在处理代码模块化方面有着悠久的历史，曾出现过多种不同的方案。
+TypeScript 自 2012 年诞生以来，实现了对其中许多模块格式的支持，但随着时间的推移，社区和 JavaScript 规范最终汇聚到了一种名为 ES Modules（或 ES6 模块）的格式上。你可能更熟悉它的 `import`/`export` 语法。
 
-ES Modules was added to the JavaScript spec in 2015, and by 2020 had broad support in most web browsers and JavaScript runtimes.
+ES Modules 于 2015 年被正式纳入 JavaScript 规范，并在 2020 年左右获得了绝大多数 Web 浏览器和 JavaScript 运行时环境的广泛支持。
 
-For focus, the handbook will cover both ES Modules and its popular pre-cursor CommonJS `module.exports =` syntax, and you can find information about the other module patterns in the reference section under [Modules](/docs/handbook/modules.html).
+为了聚焦重点，本手册将涵盖 ES Modules 及其广泛流行的前身 CommonJS 的 `module.exports =` 语法；你可以在参考部分的[模块](/docs/handbook/modules.html)章节中找到关于其他模块模式的详细信息。
 
-## How JavaScript Modules are Defined
+## JavaScript 模块是如何定义的
 
-In TypeScript, just as in ECMAScript 2015, any file containing a top-level `import` or `export` is considered a module.
+在 TypeScript 中，与 ECMAScript 2015 一样，任何包含顶层 `import` 或 `export` 的文件都被视为模块。
 
-Conversely, a file without any top-level import or export declarations is treated as a script whose contents are available in the global scope (and therefore to modules as well).
+相反，没有任何顶层 import 或 export 声明的文件会被视为脚本，其内容在全局作用域中可用（因此对各个模块也是可见的）。
 
-Modules are executed within their own scope, not in the global scope.
-This means that variables, functions, classes, etc. declared in a module are not visible outside the module unless they are explicitly exported using one of the export forms.
-Conversely, to consume a variable, function, class, interface, etc. exported from a different module, it has to be imported using one of the import forms.
+模块在其自身的作用域内执行，而不是在全局作用域内。
+这意味着在模块中声明的变量、函数、类等，除非使用某种导出语法显式导出，否则在模块外部是不可见的。
+反之，要想使用从其他模块导出的变量、函数、类、接口等，必须使用某种导入语法将其导入。
 
-## Non-modules
+## 非模块
 
-Before we start, it's important to understand what TypeScript considers a module.
-The JavaScript specification declares that any JavaScript files without an `import` declaration, `export`, or top-level `await` should be considered a script and not a module.
+在开始之前，了解 TypeScript 将什么视作模块非常重要。
+JavaScript 规范规定，任何不包含 `import` 声明、`export` 或顶层 `await` 的 JavaScript 文件都应被视为脚本，而非模块。
 
-Inside a script file variables and types are declared to be in the shared global scope, and it's assumed that you'll either use the [`outFile`](/tsconfig#outFile) compiler option to join multiple input files into one output file, or use multiple `<script>` tags in your HTML to load these files (in the correct order!).
+在脚本文件中，变量和类型都声明在共享的全局作用域内，此时通常预期你将通过 [`outFile`](/tsconfig#outFile) 编译器选项将多个输入文件合并为一个输出文件，或者在 HTML 中使用多个 `<script>` 标签来加载这些文件（且必须保证正确的加载顺序！）。
 
-If you have a file that doesn't currently have any `import`s or `export`s, but you want to be treated as a module, add the line:
+如果你手头有一个当前没有任何 `import` 或 `export` 的文件，但希望它被视为模块，只需添加这一行：
 
 ```ts twoslash
 export {}
 ```
 
-which will change the file to be a module exporting nothing. This syntax works regardless of your module target.
+这会将该文件转变为一个不导出任何内容的模块。无论你的模块目标（module target）设置如何，此语法都能生效。
 
-## Modules in TypeScript
+## TypeScript 中的模块
 
 <blockquote class='bg-reading'>
-   <p>Additional Reading:<br />
+   <p>延伸阅读：<br />
    <a href='https://exploringjs.com/impatient-js/ch_modules.html#overview-syntax-of-ecmascript-modules'>Impatient JS (Modules)</a><br/>
-   <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules'>MDN: JavaScript Modules</a><br/>
+   <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules'>MDN: JavaScript 模块</a><br/>
    </p>
 </blockquote>
 
-There are three main things to consider when writing module-based code in TypeScript:
+在 TypeScript 中编写基于模块的代码时，主要需要考虑三个方面：
 
-- **Syntax**: What syntax do I want to use to import and export things?
-- **Module Resolution**: What is the relationship between module names (or paths) and files on disk?
-- **Module Output Target**: What should my emitted JavaScript module look like?
+- **语法（Syntax）**：我想使用什么语法来导入和导出内容？
+- **模块解析（Module Resolution）**：模块名称（或路径）与磁盘上的文件之间存在什么对应关系？
+- **模块输出目标（Module Output Target）**：生成的 JavaScript 模块代码应该是什么样子的？
 
-### ES Module Syntax
+### ES 模块语法
 
-A file can declare a main export via `export default`:
+一个文件可以通过 `export default` 声明一个默认导出：
 
 ```ts twoslash
 // @filename: hello.ts
@@ -63,7 +63,7 @@ export default function helloWorld() {
 }
 ```
 
-This is then imported via:
+然后通过以下方式导入：
 
 ```ts twoslash
 // @filename: hello.ts
@@ -76,7 +76,7 @@ import helloWorld from './hello.js'
 helloWorld()
 ```
 
-In addition to the default export, you can have more than one export of variables and functions via the `export` by omitting `default`:
+除了默认导出外，你还可以通过省略 `default` 的 `export` 导出多个变量和函数：
 
 ```ts twoslash
 // @filename: maths.ts
@@ -92,7 +92,7 @@ export function absolute(num: number) {
 }
 ```
 
-These can be used in another file via the `import` syntax:
+这些内容可以在另一个文件中通过 `import` 语法引入并使用：
 
 ```ts twoslash
 // @filename: maths.ts
@@ -113,9 +113,9 @@ const absPhi = absolute(phi)
 //    ^?
 ```
 
-### Additional Import Syntax
+### 其他导入语法
 
-An import can be renamed using a format like `import {old as new}`:
+可以使用形如 `import {old as new}` 的格式对导入项进行重命名：
 
 ```ts twoslash
 // @filename: maths.ts
@@ -128,7 +128,7 @@ console.log(π)
 //          ^?
 ```
 
-You can mix and match the above syntax into a single `import`:
+你可以将上述语法混合搭配在单个 `import` 中：
 
 ```ts twoslash
 // @filename: maths.ts
@@ -145,7 +145,7 @@ console.log(π)
 //          ^?
 ```
 
-You can take all of the exported objects and put them into a single namespace using `* as name`:
+你可以使用 `* as name` 将所有导出的对象整合到一个命名空间中：
 
 ```ts twoslash
 // @filename: maths.ts
@@ -166,7 +166,7 @@ const positivePhi = math.absolute(math.phi)
 //    ^?
 ```
 
-You can import a file and _not_ include any variables into your current module via `import "./file"`:
+你可以通过 `import "./file"` 仅导入文件而*不*向当前模块中引入任何变量：
 
 ```ts twoslash
 // @filename: maths.ts
@@ -178,11 +178,11 @@ import './maths.js'
 console.log('3.14')
 ```
 
-In this case, the `import` does nothing. However, all of the code in `maths.ts` was evaluated, which could trigger side-effects which affect other objects.
+在这种情况下，`import` 并不会引入任何绑定。然而，`maths.ts` 中的所有代码都会被执行，这可能会触发影响其他对象的副作用（side-effects）。
 
-#### TypeScript Specific ES Module Syntax
+#### TypeScript 特有的 ES 模块语法
 
-Types can be exported and imported using the same syntax as JavaScript values:
+类型可以使用与 JavaScript 值相同的语法进行导出和导入：
 
 ```ts twoslash
 // @filename: animal.ts
@@ -198,11 +198,11 @@ import { Cat, Dog } from './animal.js'
 type Animals = Cat | Dog
 ```
 
-TypeScript has extended the `import` syntax with two concepts for declaring an import of a type:
+TypeScript 扩展了 `import` 语法，提供了两种声明类型导入的概念：
 
 ###### `import type`
 
-Which is an import statement which can _only_ import types:
+这是一种*只能*导入类型的导入语句：
 
 ```ts twoslash
 // @filename: animal.ts
@@ -220,9 +220,9 @@ import type { createCatName } from './animal.js'
 const name = createCatName()
 ```
 
-###### Inline `type` imports
+###### 内联 `type` 导入
 
-TypeScript 4.5 also allows for individual imports to be prefixed with `type` to indicate that the imported reference is a type:
+TypeScript 4.5 还允许为单个导入项添加 `type` 前缀，以指明导入的引用是一个类型：
 
 ```ts twoslash
 // @filename: animal.ts
@@ -237,11 +237,11 @@ export type Animals = Cat | Dog
 const name = createCatName()
 ```
 
-Together these allow a non-TypeScript transpiler like Babel, swc or esbuild to know what imports can be safely removed.
+结合这些语法，像 Babel、swc 或 esbuild 这样的非 TypeScript 转译器就能清楚地知道哪些导入可以安全地移除。
 
-#### ES Module Syntax with CommonJS Behavior
+#### 具有 CommonJS 行为特性的 ES 模块语法
 
-TypeScript has ES Module syntax which _directly_ correlates to a CommonJS and AMD `require`. Imports using ES Module are _for most cases_ the same as the `require` from those environments, but this syntax ensures you have a 1 to 1 match in your TypeScript file with the CommonJS output:
+TypeScript 提供了一种与 CommonJS 和 AMD 的 `require` *直接*对应的 ES 模块语法。在*大多数情况下*，使用 ES 模块导入与这些环境下的 `require` 行为相同，但该语法可确保你的 TypeScript 文件与 CommonJS 输出形成一一对应的关系：
 
 ```ts twoslash
 /// <reference types="node" />
@@ -251,15 +251,15 @@ import fs = require('fs')
 const code = fs.readFileSync('hello.ts', 'utf8')
 ```
 
-You can learn more about this syntax in the [modules reference page](/docs/handbook/modules.html#export--and-import--require).
+你可以在[模块参考页面](/docs/handbook/modules.html#export--and-import--require)中了解关于该语法的更多信息。
 
-## CommonJS Syntax
+## CommonJS 语法
 
-CommonJS is the format which most modules on npm are delivered in. Even if you are writing using the ES Modules syntax above, having a brief understanding of how CommonJS syntax works will help you debug easier.
+CommonJS 是 npm 上绝大多数模块采用的分发格式。即使你使用的是上述 ES 模块语法进行编写，简要了解 CommonJS 语法的工作原理也将有助于你更轻松地排查和调试问题。
 
-#### Exporting
+#### 导出
 
-Identifiers are exported via setting the `exports` property on a global called `module`.
+标识符是通过在全局对象 `module` 的 `exports` 属性上赋值来进行导出的。
 
 ```ts twoslash
 /// <reference types="node" />
@@ -277,7 +277,7 @@ module.exports = {
 }
 ```
 
-Then these files can be imported via a `require` statement:
+随后，这些文件可以通过 `require` 语句进行导入：
 
 ```ts twoslash
 // @module: commonjs
@@ -301,7 +301,7 @@ maths.pi
 //    ^?
 ```
 
-Or you can simplify a bit using the destructuring feature in JavaScript:
+或者你可以使用 JavaScript 的解构特性将其稍作简化：
 
 ```ts twoslash
 // @module: commonjs
@@ -325,34 +325,34 @@ squareTwo
 // ^?
 ```
 
-### CommonJS and ES Modules interop
+### CommonJS 与 ES 模块互操作性
 
-There is a mis-match in features between CommonJS and ES Modules regarding the distinction between a default import and a module namespace object import. TypeScript has a compiler flag to reduce the friction between the two different sets of constraints with [`esModuleInterop`](/tsconfig#esModuleInterop).
+在默认导入与模块命名空间对象导入之间的差异上，CommonJS 与 ES 模块在特性上存在不匹配。TypeScript 提供了一个编译器标志 [`esModuleInterop`](/tsconfig#esModuleInterop)，以减少两套不同约束体系之间的摩擦与冲突。
 
-## TypeScript's Module Resolution Options
+## TypeScript 的模块解析选项
 
-Module resolution is the process of taking a string from the `import` or `require` statement, and determining what file that string refers to.
+模块解析（Module resolution）是指从 `import` 或 `require` 语句中提取字符串，并确定该字符串所引用的文件的过程。
 
-TypeScript includes two resolution strategies: Classic and Node. Classic, the default when the compiler option [`module`](/tsconfig#module) is not `commonjs`, is included for backwards compatibility.
-The Node strategy replicates how Node.js works in CommonJS mode, with additional checks for `.ts` and `.d.ts`.
+TypeScript 包含两种解析策略：Classic 和 Node。当编译器选项 [`module`](/tsconfig#module) 不是 `commonjs` 时，默认使用 Classic 策略，保留它是为了向后兼容。
+Node 策略则复现了 Node.js 在 CommonJS 模式下的工作方式，并针对 `.ts` 和 `.d.ts` 文件增加了额外的检查。
 
-There are many TSConfig flags which influence the module strategy within TypeScript: [`moduleResolution`](/tsconfig#moduleResolution), [`baseUrl`](/tsconfig#baseUrl), [`paths`](/tsconfig#paths), [`rootDirs`](/tsconfig#rootDirs).
+TypeScript 中有许多 TSConfig 配置项会影响模块策略：[`moduleResolution`](/tsconfig#moduleResolution)、[`baseUrl`](/tsconfig#baseUrl)、[`paths`](/tsconfig#paths)、[`rootDirs`](/tsconfig#rootDirs)。
 
-For the full details on how these strategies work, you can consult the [Module Resolution](/docs/handbook/modules/reference.html#the-moduleresolution-compiler-option) reference page.
+关于这些策略工作机制的完整详情，你可以查阅[模块解析](/docs/handbook/modules/reference.html#the-moduleresolution-compiler-option)参考页面。
 
-## TypeScript's Module Output Options
+## TypeScript 的模块输出选项
 
-There are two options which affect the emitted JavaScript output:
+有两个选项会影响生成的 JavaScript 输出：
 
-- [`target`](/tsconfig#target) which determines which JS features are downleveled (converted to run in older JavaScript runtimes) and which are left intact
-- [`module`](/tsconfig#module) which determines what code is used for modules to interact with each other
+- [`target`](/tsconfig#target)：决定哪些 JS 特性会被降级（转换为可在较旧的 JavaScript 运行时中运行的代码），哪些特性会原样保留
+- [`module`](/tsconfig#module)：决定模块之间相互交互时所采用的代码格式
 
-Which [`target`](/tsconfig#target) you use is determined by the features available in the JavaScript runtime you expect to run the TypeScript code in. That could be: the oldest web browser you support, the lowest version of Node.js you expect to run on or could come from unique constraints from your runtime - like Electron for example.
+使用哪种 [`target`](/tsconfig#target) 取决于你期望运行 TypeScript 代码的 JavaScript 运行时所支持的特性。这可能取决于：你支持的最旧的 Web 浏览器、你期望运行的最低 Node.js 版本，或者来自运行时的独特约束——例如 Electron。
 
-All communication between modules happens via a module loader, the compiler option [`module`](/tsconfig#module) determines which one is used.
-At runtime the module loader is responsible for locating and executing all dependencies of a module before executing it.
+模块之间的所有通信都是通过模块加载器完成的，编译器选项 [`module`](/tsconfig#module) 决定了使用哪一个加载器。
+在运行时，模块加载器负责在执行某个模块之前定位并执行该模块的所有依赖项。
 
-For example, here is a TypeScript file using ES Modules syntax, showcasing a few different options for [`module`](/tsconfig#module):
+例如，下面是一个使用 ES 模块语法的 TypeScript 文件，展示了 [`module`](/tsconfig#module) 的几种不同配置选项：
 
 ```ts twoslash
 // @filename: constants.ts
@@ -397,10 +397,10 @@ import { valueOfPi } from './constants.js'
 export const twoPi = valueOfPi * 2
 ```
 
-> Note that ES2020 is effectively the same as the original `index.ts`.
+> 请注意，ES2020 的输出实际上与原本的 `index.ts` 完全一致。
 
-You can see all of the available options and what their emitted JavaScript code looks like in the [TSConfig Reference for `module`](/tsconfig#module).
+你可以在 [`module` 的 TSConfig 参考](/tsconfig#module)中查看所有可用选项以及它们生成的 JavaScript 代码。
 
-## TypeScript namespaces
+## TypeScript 命名空间
 
-TypeScript has its own module format called `namespaces` which pre-dates the ES Modules standard. This syntax has a lot of useful features for creating complex definition files, and still sees active use [in DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped). While not deprecated, the majority of the features in namespaces exist in ES Modules and we recommend you use that to align with JavaScript's direction. You can learn more about namespaces in [the namespaces reference page](/docs/handbook/namespaces.html).
+TypeScript 拥有自己的模块格式，称为命名空间（`namespaces`），它的出现早于 ES 模块标准。这种语法在创建复杂的类型声明文件时有许多实用的特性，并且至今仍[在 DefinitelyTyped 中](https://github.com/DefinitelyTyped/DefinitelyTyped)被广泛使用。尽管命名空间并未被废弃，但其绝大多数特性在 ES 模块中都已具备，我们推荐你使用 ES 模块以与 JavaScript 的发展方向保持一致。你可以在[命名空间参考页面](/docs/handbook/namespaces.html)中了解更多关于命名空间的内容。

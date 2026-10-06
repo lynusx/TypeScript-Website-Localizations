@@ -2,12 +2,12 @@
 title: TypeScript 4.1
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-4-1.html
-oneline: TypeScript 4.1 Release Notes
+oneline: TypeScript 4.1 发布说明
 ---
 
-## Template Literal Types
+## 模板字面量类型
 
-String literal types in TypeScript allow us to model functions and APIs that expect a set of specific strings.
+TypeScript 中的字符串字面量类型允许我们为期望接收一组特定字符串的函数和 API 建模。
 
 ```ts twoslash
 // @errors: 2345
@@ -18,10 +18,10 @@ function setVerticalAlignment(location: 'top' | 'middle' | 'bottom') {
 setVerticalAlignment('middel')
 ```
 
-This is pretty nice because string literal types can basically spell-check our string values.
+这非常棒，因为字符串字面量类型基本上可以为我们的字符串值提供拼写检查。
 
-We also like that string literals can be used as property names in mapped types.
-In this sense, they're also usable as building blocks:
+我们也很喜欢字符串字面量可以在映射类型中用作属性名。
+从这个意义上说，它们还可以作为构建基块：
 
 ```ts
 type Options = {
@@ -35,11 +35,11 @@ type Options = {
 //   };
 ```
 
-But there's another place that string literal types could be used as building blocks: building other string literal types.
+但字符串字面量类型还有另一个可以作为构建基块的地方：构建其他字符串字面量类型。
 
-That's why TypeScript 4.1 brings the template literal string type.
-It has the same syntax as [template literal strings in JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals), but is used in type positions.
-When you use it with concrete literal types, it produces a new string literal type by concatenating the contents.
+这就是为什么 TypeScript 4.1 引入了模板字面量类型。
+它具有与 [JavaScript 中的模板字面量字符串](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)相同的语法，但是用于类型位置。
+当与具体的字面量类型结合使用时，它通过拼接内容生成新的字符串字面量类型。
 
 ```ts twoslash
 type World = 'world'
@@ -48,8 +48,8 @@ type Greeting = `hello ${World}`
 //   ^?
 ```
 
-What happens when you have unions in substitution positions?
-It produces the set of every possible string literal that could be represented by each union member.
+当在插值位置传入联合类型时会发生什么？
+它会生成由每个联合类型成员所能表示的所有可能字符串字面量的集合。
 
 ```ts twoslash
 type Color = 'red' | 'blue'
@@ -59,9 +59,9 @@ type SeussFish = `${Quantity | Color} fish`
 //   ^?
 ```
 
-This can be used beyond cute examples in release notes.
-For example, several libraries for UI components have a way to specify both vertical and horizontal alignment in their APIs, often with both at once using a single string like `"bottom-right"`.
-Between vertically aligning with `"top"`, `"middle"`, and `"bottom"`, and horizontally aligning with `"left"`, `"center"`, and `"right"`, there are 9 possible strings where each of the former strings is connected with each of the latter strings using a dash.
+这项功能不仅限于发布说明中这些简短有趣的示例。
+例如，多个 UI 组件库都在其 API 中提供了同时指定垂直和水平对齐方式的方法，通常使用单个类似 `"bottom-right"` 的字符串一次性指定两者。
+在垂直对齐的 `"top"`、`"middle"`、`"bottom"` 与水平对齐的 `"left"`、`"center"`、`"right"` 之间，通过短横线将前者与后者拼接起来，共有 9 种可能的字符串。
 
 ```ts twoslash
 // @errors: 2345
@@ -82,11 +82,11 @@ setAlignment('top-middel') // error!
 setAlignment('top-pot') // error! but good doughnuts if you're ever in Seattle
 ```
 
-While there are **lots** of examples of this sort of API in the wild, this is still a bit of a toy example since we could write these out manually.
-In fact, for 9 strings, this is likely fine; but when you need a ton of strings, you should consider automatically generating them ahead of time to save work on every type-check (or just use `string`, which will be much simpler to comprehend).
+虽然在实际开发中存在**大量**此类 API 的用例，但这仍然算是一个简单的示例，因为我们本可以手动把它们列出来。
+事实上，对于 9 个字符串来说手动列出完全没问题；但当你需要大量字符串时，应该考虑提前自动生成它们以节省每次类型检查的工作量（或者直接使用 `string`，这样理解起来也简单得多）。
 
-Some of the real value comes from dynamically creating new string literals.
-For example, imagine a `makeWatchedObject` API that takes an object and produces a mostly identical object, but with a new `on` method to detect for changes to the properties.
+这项功能的真正价值很大程度上来自于动态创建新的字符串字面量。
+例如，设想一个 `makeWatchedObject` API，它接收一个对象并生成一个大体相同的对象，但附带一个新的 `on` 方法来监听属性的变更。
 
 ```ts
 let person = makeWatchedObject({
@@ -100,8 +100,8 @@ person.on('firstNameChanged', () => {
 })
 ```
 
-Notice that `on` listens on the event `"firstNameChanged"`, not just `"firstName"`.
-How would we type this?
+请注意，`on` 监听的是事件 `"firstNameChanged"`，而不仅仅是 `"firstName"`。
+我们该如何为其定义类型？
 
 ```ts twslash
 type PropEventSource<T> = {
@@ -113,7 +113,7 @@ type PropEventSource<T> = {
 declare function makeWatchedObject<T>(obj: T): T & PropEventSource<T>
 ```
 
-With this, we can build something that errors when we give the wrong property!
+有了这个定义，当我们传入错误的属性名时，TypeScript 就会报错！
 
 ```ts twoslash
 // @errors: 2345
@@ -135,8 +135,8 @@ person.on('firstName', () => {})
 person.on('frstNameChanged', () => {})
 ```
 
-We can also do something special in template literal types: we can _infer_ from substitution positions.
-We can make our last example generic to infer from parts of the `eventName` string to figure out the associated property.
+我们还可以在模板字面量类型中做一些特殊的操作：我们可以从插值位置进行_推断_（_infer_）。
+我们可以将上一个示例泛型化，从 `eventName` 字符串的各部分进行推断，从而确定对应的属性。
 
 ```ts twoslash
 type PropEventSource<T> = {
@@ -168,14 +168,14 @@ person.on('ageChanged', (newAge) => {
 })
 ```
 
-Here we made `on` into a generic method.
-When a user calls with the string `"firstNameChanged'`, TypeScript will try to infer the right type for `K`.
-To do that, it will match `K` against the content prior to `"Changed"` and infer the string `"firstName"`.
-Once TypeScript figures that out, the `on` method can fetch the type of `firstName` on the original object, which is `string` in this case.
-Similarly, when we call with `"ageChanged"`, it finds the type for the property `age` which is `number`).
+这里我们将 `on` 定义为了一个泛型方法。
+当用户使用字符串 `"firstNameChanged"` 调用它时，TypeScript 会尝试推断出 `K` 的正确类型。
+为此，它将 `K` 与 `"Changed"` 前面的内容进行匹配，推断出字符串 `"firstName"`。
+一旦 TypeScript 确定了这一点，`on` 方法就可以获取原始对象上 `firstName` 的类型（本例中为 `string`）。
+类似地，当我们使用 `"ageChanged"` 调用时，它会查找到属性 `age` 的类型（即 `number`）。
 
-Inference can be combined in different ways, often to deconstruct strings, and reconstruct them in different ways.
-In fact, to help with modifying these string literal types, we've added a few new utility type aliases for modifying casing in letters (i.e. converting to lowercase and uppercase characters).
+推断可以以不同的方式组合使用，通常用于解构字符串并以不同方式重构它们。
+实际上，为了帮助修改这些字符串字面量类型，我们新增了几个用于修改字母大小写的工具类型别名（即转换为小写和大写字符）。
 
 ```ts twoslash
 type EnthusiasticGreeting<T extends string> = `${Uppercase<T>}`
@@ -184,14 +184,14 @@ type HELLO = EnthusiasticGreeting<'hello'>
 //   ^?
 ```
 
-The new type aliases are `Uppercase`, `Lowercase`, `Capitalize` and `Uncapitalize`.
-The first two transform every character in a string, and the latter two transform only the first character in a string.
+新增的类型别名包括 `Uppercase`、`Lowercase`、`Capitalize` 和 `Uncapitalize`。
+前两者会转换字符串中的每一个字符，而后两者仅转换字符串的首字母。
 
-For more details, [see the original pull request](https://github.com/microsoft/TypeScript/pull/40336) and [the in-progress pull request to switch to type alias helpers](https://github.com/microsoft/TypeScript/pull/40580).
+欲了解更多详情，请[查看最初的 Pull Request](https://github.com/microsoft/TypeScript/pull/40336) 以及[切换为类型别名辅助类型的后续 Pull Request](https://github.com/microsoft/TypeScript/pull/40580)。
 
-## Key Remapping in Mapped Types
+## 映射类型中的键重映射
 
-Just as a refresher, a mapped type can create new object types based on arbitrary keys
+复习一下，映射类型可以基于任意键创建新的对象类型：
 
 ```ts
 type Options = {
@@ -205,7 +205,7 @@ type Options = {
 //   };
 ```
 
-or new object types based on other object types.
+或者基于其他对象类型创建新的对象类型：
 
 ```ts
 /// 'Partial<T>' is the same as 'T', but with each property marked optional.
@@ -214,9 +214,9 @@ type Partial<T> = {
 }
 ```
 
-Until now, mapped types could only produce new object types with keys that you provided them; however, lots of the time you want to be able to create new keys, or filter out keys, based on the inputs.
+在此之前，映射类型只能使用你提供的键来生成新的对象类型；然而在很多情况下，你希望能够根据输入创建新键，或者过滤掉某些键。
 
-That's why TypeScript 4.1 allows you to re-map keys in mapped types with a new `as` clause.
+这就是为什么 TypeScript 4.1 允许你在映射类型中通过全新的 `as` 子句来对键进行重映射（re-map）。
 
 ```ts
 type MappedTypeWithNewKeys<T> = {
@@ -226,7 +226,7 @@ type MappedTypeWithNewKeys<T> = {
 }
 ```
 
-With this new `as` clause, you can leverage features like template literal types to easily create property names based off of old ones.
+借助这个新的 `as` 子句，你可以利用模板字面量类型等特性，轻松基于旧属性名创建新的属性名。
 
 ```ts twoslash
 type Getters<T> = {
@@ -243,8 +243,8 @@ type LazyPerson = Getters<Person>
 //   ^?
 ```
 
-and you can even filter out keys by producing `never`.
-That means you don't have to use an extra `Omit` helper type in some cases.
+你甚至可以通过生成 `never` 来过滤掉键。
+这意味着在某些情况下你不再需要使用额外的 `Omit` 辅助类型。
 
 ```ts twoslash
 // Remove the 'kind' property
@@ -261,22 +261,22 @@ type KindlessCircle = RemoveKindField<Circle>
 //   ^?
 ```
 
-For more information, take a look at [the original pull request over on GitHub](https://github.com/microsoft/TypeScript/pull/40336).
+有关更多信息，请查看 [GitHub 上的原始 Pull Request](https://github.com/microsoft/TypeScript/pull/40336)。
 
-## Recursive Conditional Types
+## 递归条件类型
 
-In JavaScript it's fairly common to see functions that can flatten and build up container types at arbitrary levels.
-For example, consider the `.then()` method on instances of `Promise`.
-`.then(...)` unwraps each promise until it finds a value that's not "promise-like", and passes that value to a callback.
-There's also a relatively new `flat` method on `Array`s that can take a depth of how deep to flatten.
+在 JavaScript 中，能够展平或在任意嵌套层级构建容器类型的函数相当常见。
+例如，考虑 `Promise` 实例上的 `.then()` 方法。
+`.then(...)` 会不断解包每个 promise，直到找到一个非“Promise-like”的值，并将该值传递给回调函数。
+此外，`Array` 上还有一个相对较新的 `flat` 方法，它可以接收一个深度参数来指定展平层数。
 
-Expressing this in TypeScript's type system was, for all practical intents and purposes, not possible.
-While there were hacks to achieve this, the types ended up looking very unreasonable.
+从所有实际使用的角度来看，在以往的 TypeScript 类型系统中表达这一点几乎是不可能的。
+虽然有一些 hack 手段可以实现，但最终写出的类型看起来极不合理。
 
-That's why TypeScript 4.1 eases some restrictions on conditional types - so that they can model these patterns.
-In TypeScript 4.1, conditional types can now immediately reference themselves within their branches, making it easier to write recursive type aliases.
+因此，TypeScript 4.1 放宽了对条件类型的一些限制，使其能够对这些模式进行建模。
+在 TypeScript 4.1 中，条件类型现在可以直接在其分支内引用自身，从而更轻松地编写递归类型别名。
 
-For example, if we wanted to write a type to get the element types of nested arrays, we could write the following `deepFlatten` type.
+例如，如果我们想编写一个类型来获取嵌套数组的元素类型，可以编写如下的 `deepFlatten` 类型：
 
 ```ts
 type ElementType<T> = T extends ReadonlyArray<infer U> ? ElementType<U> : T
@@ -291,7 +291,7 @@ deepFlatten([[1], [2, 3]])
 deepFlatten([[1], [[2]], [[[3]]]])
 ```
 
-Similarly, in TypeScript 4.1 we can write an `Awaited` type to deeply unwrap `Promise`s.
+类似地，在 TypeScript 4.1 中，我们可以编写一个 `Awaited` 类型来深度解包 `Promise`：
 
 ```ts
 type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T
@@ -303,21 +303,21 @@ declare function customThen<T, U>(
 ): Promise<Awaited<U>>
 ```
 
-Keep in mind that while these recursive types are powerful, they should be used responsibly and sparingly.
+需要牢记的是，递归类型虽然功能强大，但应当谨慎且克制地使用。
 
-First off, these types can do a lot of work which means that they can increase type-checking time.
-Trying to model numbers in the Collatz conjecture or Fibonacci sequence might be fun, but don't ship that in `.d.ts` files on npm.
+首先，这些类型可能会执行大量的计算工作，这意味着它们会增加类型检查时间。
+在类型系统中为考拉兹猜想（Collatz conjecture）或斐波那契数列建模可能很有趣，但千万不要将其发布到 npm 上的 `.d.ts` 文件中。
 
-But apart from being computationally intensive, these types can hit an internal recursion depth limit on sufficiently-complex inputs.
-When that recursion limit is hit, that results in a compile-time error.
-In general, it's better not to use these types at all than to write something that fails on more realistic examples.
+除了计算开销巨大之外，面对足够复杂的输入时，这些类型可能会触及内部的递归深度上限。
+一旦触及递归上限，就会导致编译期错误。
+通常而言，宁可完全不使用这些类型，也不要编写在更实际的用例中可能报错的类型。
 
-See more [at the implementation](https://github.com/microsoft/TypeScript/pull/40002).
+欲了解更多信息，请[查看其实现 Pull Request](https://github.com/microsoft/TypeScript/pull/40002)。
 
-## Checked Indexed Accesses (`--noUncheckedIndexedAccess`)
+## 未检查的索引访问（`--noUncheckedIndexedAccess`）
 
-TypeScript has a feature called _index signatures_.
-These signatures are a way to signal to the type system that users can access arbitrarily-named properties.
+TypeScript 拥有一项称为“索引签名”（_index signatures_）的特性。
+这些签名用于告知类型系统：用户可以访问任意命名的属性。
 
 ```ts twoslash
 interface Options {
@@ -340,15 +340,15 @@ function checkOptions(opts: Options) {
 }
 ```
 
-In the above example, `Options` has an index signature that says any accessed property that's not already listed should have the type `string | number`.
-This is often convenient for optimistic code that assumes you know what you're doing, but the truth is that most values in JavaScript do not support every potential property name.
-Most types will not, for example, have a value for a property key created by `Math.random()` like in the previous example.
-For many users, this behavior was undesirable, and felt like it wasn't leveraging the full strict-checking of [`strictNullChecks`](/tsconfig#strictNullChecks).
+在上面的示例中，`Options` 具有一个索引签名，该签名表明任何未显式列出的被访问属性都应具有类型 `string | number`。
+对于假定开发者清楚自己在做什么的乐观代码而言，这通常很方便；但事实是，JavaScript 中的大多数值并不会支持每一个潜在的属性名。
+例如在前面的示例中，大多数类型不可能存在由 `Math.random()` 生成的属性键所对应的值。
+对许多用户来说，这种默认行为并不理想，感觉并没有充分发挥 [`strictNullChecks`](/tsconfig#strictNullChecks) 完整严格检查的能力。
 
-That's why TypeScript 4.1 ships with a new flag called [`noUncheckedIndexedAccess`](/tsconfig#noUncheckedIndexedAccess).
-Under this new mode, every property access (like `foo.bar`) or indexed access (like `foo["bar"]`) is considered potentially undefined.
-That means that in our last example, `opts.yadda` will have the type `string | number | undefined` as opposed to just `string | number`.
-If you need to access that property, you'll either have to check for its existence first or use a non-null assertion operator (the postfix `!` character).
+这就是为什么 TypeScript 4.1 引入了一个名为 [`noUncheckedIndexedAccess`](/tsconfig#noUncheckedIndexedAccess) 的新标志。
+在此新模式下，每次属性访问（如 `foo.bar`）或索引访问（如 `foo["bar"]`）都会被视为可能为 undefined。
+这意味着在上一个示例中，`opts.yadda` 的类型将是 `string | number | undefined`，而不是仅仅是 `string | number`。
+如果你需要访问该属性，要么必须先检查其是否存在，要么使用非空断言运算符（后缀 `!` 字符）。
 
 ```ts twoslash
 // @errors: 2532 18048
@@ -381,7 +381,7 @@ function checkOptions(opts: Options) {
 }
 ```
 
-One consequence of using [`noUncheckedIndexedAccess`](/tsconfig#noUncheckedIndexedAccess) is that indexing into an array is also more strictly checked, even in a bounds-checked loop.
+使用 [`noUncheckedIndexedAccess`](/tsconfig#noUncheckedIndexedAccess) 的一个连带影响是，数组索引访问也会受到更严格的检查，即使是在进行了边界检查的循环中也是如此。
 
 ```ts twoslash
 // @errors: 2532 18048
@@ -394,7 +394,7 @@ function screamLines(strs: string[]) {
 }
 ```
 
-If you don't need the indexes, you can iterate over individual elements by using a `for`-`of` loop or a `forEach` call.
+如果不需要索引，你可以使用 `for`-`of` 循环或 `forEach` 调用来遍历各个元素：
 
 ```ts twoslash
 // @noUncheckedIndexedAccess
@@ -411,37 +411,37 @@ function screamLines(strs: string[]) {
 }
 ```
 
-This flag can be handy for catching out-of-bounds errors, but it might be noisy for a lot of code, so it is not automatically enabled by the [`strict`](/tsconfig#strict) flag; however, if this feature is interesting to you, you should feel free to try it and determine whether it makes sense for your team's codebase!
+该标志对于捕获越界错误非常方便，但对很多代码来说可能会产生过多提示，因此它不会被 [`strict`](/tsconfig#strict) 标志自动启用；然而，如果你对这项特性感兴趣，不妨尝试一下，评估它是否适合你团队的代码库！
 
-You can learn more [at the implementing pull request](https://github.com/microsoft/TypeScript/pull/39560).
+你可以在[实现的 Pull Request](https://github.com/microsoft/TypeScript/pull/39560) 中了解更多。
 
-## `paths` without `baseUrl`
+## 无需 `baseUrl` 即可配置 `paths`
 
-Using path-mapping is fairly common - often it's to have nicer imports, often it's to simulate monorepo linking behavior.
+路径映射（path-mapping）的使用相当普遍——通常是为了让导入路径更优雅，或者为了模拟 monorepo 的链接行为。
 
-Unfortunately, specifying [`paths`](/tsconfig#paths) to enable path-mapping required also specifying an option called [`baseUrl`](/tsconfig#baseUrl), which allows bare specifier paths to be reached relative to the [`baseUrl`](/tsconfig#baseUrl) too.
-This also often caused poor paths to be used by auto-imports.
+遗憾的是，此前指定 [`paths`](/tsconfig#paths) 来启用路径映射时，必须同时指定名为 [`baseUrl`](/tsconfig#baseUrl) 的选项，这导致纯模块说明符（bare specifier）路径也会相对于 [`baseUrl`](/tsconfig#baseUrl) 解析。
+这还经常导致自动导入生成不良的路径。
 
-In TypeScript 4.1, the [`paths`](/tsconfig#paths) option can be used without [`baseUrl`](/tsconfig#baseUrl).
-This helps avoid some of these issues.
+在 TypeScript 4.1 中，[`paths`](/tsconfig#paths) 选项可以在没有 [`baseUrl`](/tsconfig#baseUrl) 的情况下独立使用。
+这有助于规避上述问题。
 
-## `checkJs` Implies `allowJs`
+## `checkJs` 隐式启用 `allowJs`
 
-Previously if you were starting a checked JavaScript project, you had to set both [`allowJs`](/tsconfig#allowJs) and [`checkJs`](/tsconfig#checkJs).
-This was a slightly annoying bit of friction in the experience, so [`checkJs`](/tsconfig#checkJs) now implies [`allowJs`](/tsconfig#allowJs) by default.
+此前，如果你要启动一个需要类型检查的 JavaScript 项目，必须同时设置 [`allowJs`](/tsconfig#allowJs) 和 [`checkJs`](/tsconfig#checkJs)。
+这在体验上造成了一些不必要的摩擦，因此 [`checkJs`](/tsconfig#checkJs) 现在默认隐式启用 [`allowJs`](/tsconfig#allowJs)。
 
-[See more details at the pull request](https://github.com/microsoft/TypeScript/pull/40275).
+[查看 Pull Request 了解更多详情](https://github.com/microsoft/TypeScript/pull/40275)。
 
-## React 17 JSX Factories
+## React 17 JSX 工厂
 
-TypeScript 4.1 supports React 17's upcoming `jsx` and `jsxs` factory functions through two new options for the [`jsx`](/tsconfig#jsx) compiler option:
+TypeScript 4.1 通过为 [`jsx`](/tsconfig#jsx) 编译器选项新增两个配置值，支持了 React 17 即将推出的 `jsx` 和 `jsxs` 工厂函数：
 
 - `react-jsx`
 - `react-jsxdev`
 
-These options are intended for production and development compiles respectively.
-Often, the options from one can extend from the other.
-For example, a `tsconfig.json` for production builds might look like the following:
+这两个选项分别用于生产环境和开发环境的编译。
+通常，其中一个配置可以继承自另一个配置。
+例如，用于生产构建的 `tsconfig.json` 可能如下所示：
 
 ```json tsconfig
 // ./src/tsconfig.json
@@ -456,7 +456,7 @@ For example, a `tsconfig.json` for production builds might look like the followi
 }
 ```
 
-and one for development builds might look like the following:
+而用于开发构建的配置可能如下所示：
 
 ```json tsconfig
 // ./src/tsconfig.dev.json
@@ -468,13 +468,13 @@ and one for development builds might look like the following:
 }
 ```
 
-For more information, [check out the corresponding PR](https://github.com/microsoft/TypeScript/pull/39199).
+欲了解更多信息，请[查看对应的 PR](https://github.com/microsoft/TypeScript/pull/39199)。
 
-## Editor Support for the JSDoc `@see` Tag
+## 编辑器支持 JSDoc `@see` 标签
 
-The JSDoc tag `@see` tag now has better support in editors for TypeScript and JavaScript.
-This allows you to use functionality like go-to-definition in a dotted name following the tag.
-For example, going to definition on `first` or `C` in the JSDoc comment just works in the following example:
+JSDoc 的 `@see` 标签在 TypeScript 和 JavaScript 编辑器中得到了更好的支持。
+这使得你可以在标签后面的点分隔名称上使用“跳转到定义”（go-to-definition）等功能。
+例如，在以下示例的 JSDoc 注释中，直接在 `first` 或 `C` 上跳转到定义即可正常工作：
 
 ```ts
 // @filename: first.ts
@@ -489,25 +489,25 @@ import * as first from './first'
 function related() {}
 ```
 
-Thanks to frequent contributor [Wenlu Wang](https://github.com/Kingwl) [for implementing this](https://github.com/microsoft/TypeScript/pull/39760)!
+感谢活跃贡献者 [Wenlu Wang](https://github.com/Kingwl) [实现了此功能](https://github.com/microsoft/TypeScript/pull/39760)！
 
-## Breaking Changes
+## 破坏性变更
 
-### `lib.d.ts` Changes
+### `lib.d.ts` 的变更
 
-`lib.d.ts` may have a set of changed APIs, potentially in part due to how the DOM types are automatically generated.
-One specific change is that `Reflect.enumerate` has been removed, as it was removed from ES2016.
+`lib.d.ts` 中有一组 API 发生了变更，部分原因可能是由于 DOM 类型的自动生成机制。
+其中一个具体的变更是移除了 `Reflect.enumerate`，因为它已在 ES2016 中被移除。
 
-### `abstract` Members Can't Be Marked `async`
+### `abstract` 成员不能标记为 `async`
 
-Members marked as `abstract` can no longer be marked as `async`.
-The fix here is to remove the `async` keyword, since callers are only concerned with the return type.
+标记为 `abstract` 的成员不能再被标记为 `async`。
+此处的修复方式是移除 `async` 关键字，因为调用方只关心返回类型。
 
-### `any`/`unknown` Are Propagated in Falsy Positions
+### `any`/`unknown` 会在假值位置传播
 
-Previously, for an expression like `foo && somethingElse`, the type of `foo` was `any` or `unknown`, the type of the whole that expression would be the type of `somethingElse`.
+此前，对于形如 `foo && somethingElse` 的表达式，当 `foo` 的类型为 `any` 或 `unknown` 时，整个表达式的类型就是 `somethingElse` 的类型。
 
-For example, previously the type for `x` here was `{ someProp: string }`.
+例如，此前这里 `x` 的类型是 `{ someProp: string }`：
 
 ```ts
 declare let foo: unknown
@@ -516,10 +516,10 @@ declare let somethingElse: { someProp: string }
 let x = foo && somethingElse
 ```
 
-However, in TypeScript 4.1, we are more careful about how we determine this type.
-Since nothing is known about the type on the left side of the `&&`, we propagate `any` and `unknown` outward instead of the type on the right side.
+然而在 TypeScript 4.1 中，我们在推断该类型时更加严谨。
+由于对 `&&` 左侧的类型一无所知，我们将 `any` 和 `unknown` 向外传播，而不是直接采用右侧的类型。
 
-The most common pattern we saw of this tended to be when checking compatibility with `boolean`s, especially in predicate functions.
+我们发现最常见的模式往往出现在与 `boolean` 检查兼容性的场景中，尤其是在谓词函数（predicate functions）中：
 
 ```ts
 function isThing(x: any): boolean {
@@ -527,11 +527,11 @@ function isThing(x: any): boolean {
 }
 ```
 
-Often the appropriate fix is to switch from `foo && someExpression` to `!!foo && someExpression`.
+通常，合适的修复方法是将 `foo && someExpression` 更改为 `!!foo && someExpression`。
 
-### `resolve`'s Parameters Are No Longer Optional in `Promise`s
+### `Promise` 中 `resolve` 的参数不再是可选的
 
-When writing code like the following
+编写如下代码时：
 
 ```ts
 new Promise((resolve) => {
@@ -542,7 +542,7 @@ new Promise((resolve) => {
 })
 ```
 
-You may get an error like the following:
+可能会遇到如下错误：
 
 ```
   resolve()
@@ -551,9 +551,9 @@ error TS2554: Expected 1 arguments, but got 0.
   An argument for 'value' was not provided.
 ```
 
-This is because `resolve` no longer has an optional parameter, so by default, it must now be passed a value.
-Often this catches legitimate bugs with using `Promise`s.
-The typical fix is to pass it the correct argument, and sometimes to add an explicit type argument.
+这是因为 `resolve` 的参数不再是可选的，因此默认情况下现在必须向其传递一个值。
+这往往能捕获使用 `Promise` 时实际存在的 bug。
+典型的修复方法是为其传递正确的参数，有时还需要添加显式的类型参数：
 
 ```ts
 new Promise<number>((resolve) => {
@@ -566,9 +566,9 @@ new Promise<number>((resolve) => {
 })
 ```
 
-However, sometimes `resolve()` really does need to be called without an argument.
-In these cases, we can give `Promise` an explicit `void` generic type argument (i.e. write it out as `Promise<void>`).
-This leverages new functionality in TypeScript 4.1 where a potentially-`void` trailing parameter can become optional.
+然而，有时 `resolve()` 确实需要在没有参数的情况下调用。
+在这些情况下，我们可以为 `Promise` 提供显式的 `void` 泛型类型参数（即写成 `Promise<void>`）。
+这利用了 TypeScript 4.1 中的新功能：可能为 `void` 的尾随参数可以变为可选参数。
 
 ```ts
 new Promise<void>((resolve) => {
@@ -580,14 +580,14 @@ new Promise<void>((resolve) => {
 })
 ```
 
-TypeScript 4.1 ships with a quick fix to help fix this break.
+TypeScript 4.1 提供了一个快速修复（quick fix）来帮助解决该破坏性变更。
 
-### Conditional Spreads Create Optional Properties
+### 条件展开会生成可选属性
 
-In JavaScript, object spreads (like `{ ...foo }`) don't operate over falsy values.
-So in code like `{ ...foo }`, `foo` will be skipped over if it's `null` or `undefined`.
+在 JavaScript 中，对象展开（如 `{ ...foo }`）不会作用于假值。
+因此在形如 `{ ...foo }` 的代码中，如果 `foo` 是 `null` 或 `undefined`，它会被跳过。
 
-Many users take advantage of this to spread properties "conditionally".
+许多用户利用这一特性来“条件式地”（conditionally）展开属性：
 
 ```ts
 interface Person {
@@ -618,21 +618,21 @@ function copyOwner(pet?: Animal) {
 }
 ```
 
-Here, if `pet` is defined, the properties of `pet.owner` will be spread in - otherwise, no properties will be spread into the returned object.
+这里，如果 `pet` 有定义，`pet.owner` 的属性就会被展开进去——否则，不会有任何属性展开到返回的对象中。
 
-The return type of `copyOwner` was previously a union type based on each spread:
+此前，`copyOwner` 的返回类型是基于每个展开生成的联合类型：
 
 ```
 { x: number } | { x: number, name: string, age: number, location: string }
 ```
 
-This modeled exactly how the operation would occur: if `pet` was defined, all the properties from `Person` would be present; otherwise, none of them would be defined on the result.
-It was an all-or-nothing operation.
+这精确地模拟了操作的实际执行过程：如果 `pet` 有定义，来自 `Person` 的所有属性都会存在；否则，返回结果中不会定义其中的任何属性。
+这是一个“全有或全无”（all-or-nothing）的操作。
 
-However, we've seen this pattern taken to the extreme, with hundreds of spreads in a single object, each spread potentially adding in hundreds or thousands of properties.
-It turns out that for various reasons, this ends up being extremely expensive, and usually for not much benefit.
+然而，我们看到这种模式被推向了极致：单个对象中包含数百个展开，每个展开可能添加数百或数千个属性。
+事实证明，由于种种原因，这最终会带来极高的计算开销，而通常并没有多大收益。
 
-In TypeScript 4.1, the returned type sometimes uses all-optional properties.
+在 TypeScript 4.1 中，返回的类型有时会采用全可选属性（all-optional properties）：
 
 ```
 {
@@ -643,16 +643,16 @@ In TypeScript 4.1, the returned type sometimes uses all-optional properties.
 }
 ```
 
-This ends up performing better and generally displaying better too.
+这最终带来了更好的性能，通常在展示上也更加清晰。
 
-For more details, [see the original change](https://github.com/microsoft/TypeScript/pull/40778).
-While this behavior is not entirely consistent right now, we expect a future release will produce cleaner and more predictable results.
+有关更多详细信息，请[参阅原始变更](https://github.com/microsoft/TypeScript/pull/40778)。
+虽然该行为目前尚未完全一致，但我们预计未来的版本会产生更清晰、更可预测的结果。
 
-### Unmatched parameters are no longer related
+### 不匹配的参数不再建立关联
 
-TypeScript would previously relate parameters that didn't correspond to each other by relating them to the type `any`.
-With [changes in TypeScript 4.1](https://github.com/microsoft/TypeScript/pull/41308), the language now skips this process entirely.
-This means that some cases of assignability will now fail, but it also means that some cases of overload resolution can fail as well.
-For example, overload resolution on `util.promisify` in Node.js may select a different overload in TypeScript 4.1, sometimes causing new or different errors downstream.
+此前，TypeScript 会通过将彼此不对应的参数关联到 `any` 类型来建立参数间的关联关系。
+随着 [TypeScript 4.1 中的变更](https://github.com/microsoft/TypeScript/pull/41308)，语言现在完全跳过了这一过程。
+这意味着某些可赋值性检查现在会失败，但这也意味着某些重载解析也可能会失败。
+例如，Node.js 中的 `util.promisify` 重载解析在 TypeScript 4.1 中可能会选择不同的重载，有时会导致下游出现新的或不同的错误。
 
-As a workaround, you may be best using a type assertion to squelch errors.
+作为临时通融方案，最好使用类型断言来消除错误。

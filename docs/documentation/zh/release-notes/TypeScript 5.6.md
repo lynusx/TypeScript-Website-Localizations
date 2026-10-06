@@ -2,12 +2,12 @@
 title: TypeScript 5.6
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-5-6.html
-oneline: TypeScript 5.6 Release Notes
+oneline: TypeScript 5.6 发布说明
 ---
 
-## Disallowed Nullish and Truthy Checks
+## 禁用无效的空值与真值检查
 
-Maybe you've written a regex and forgotten to call `.test(...)` on it:
+你可能曾写过一个正则表达式，却忘了调用其 `.test(...)` 方法：
 
 ```ts
 if (/0x[0-9a-f]/) {
@@ -16,7 +16,7 @@ if (/0x[0-9a-f]/) {
 }
 ```
 
-or maybe you've accidentally written `=>` (which creates an arrow function) instead of `>=` (the greater-than-or-equal-to operator):
+或者不小心将大于等于运算符 `>=` 误写成了箭头函数 `=>`：
 
 ```ts
 if ((x) => 0) {
@@ -25,7 +25,7 @@ if ((x) => 0) {
 }
 ```
 
-or maybe you've tried to use a default value with `??`, but mixed up the precedence of `??` and a comparison operator like `<`:
+或者你想用 `??` 提供默认值，却混淆了 `??` 与诸如 `<` 这类比较运算符的优先级：
 
 ```ts
 function isValid(
@@ -41,7 +41,7 @@ function isValid(
 }
 ```
 
-or maybe you've misplaced a parenthesis in a complex expression:
+又或者在复杂的表达式中把括号放错了位置：
 
 ```ts
 if (
@@ -53,12 +53,12 @@ if (
 }
 ```
 
-None of these examples do what the author intended, but they're all valid JavaScript code.
-Previously TypeScript also quietly accepted these examples.
+上述示例无一符合开发者的初衷，但它们全都是合法的 JavaScript 代码。
+在此之前，TypeScript 也会静默接受这些写法。
 
-But with a little bit of experimentation, we found that many _many_ bugs could be caught from flagging down suspicious examples like above.
-In TypeScript 5.6, the compiler now errors when it can syntactically determine a truthy or nullish check will always evaluate in a specific way.
-So in the above examples, you'll start to see errors:
+然而经过一些调研与尝试，我们发现标记出上述这类可疑代码可以捕获非常多的 Bug。
+在 TypeScript 5.6 中，当编译器能在语法层面上判定真值（truthy）或空值（nullish）检查的结果始终固定时，就会直接报错。
+因此，在上述示例中你将开始看到错误提示：
 
 ```ts
 if (/0x[0-9a-f]/) {
@@ -94,11 +94,11 @@ if (
 }
 ```
 
-Similar results can be achieved by enabling the ESLint `no-constant-binary-expression` rule, and you can [see some of the results they achieved in their blog post](https://eslint.org/blog/2022/07/interesting-bugs-caught-by-no-constant-binary-expression/);
-but the new checks TypeScript performs does not have perfect overlap with the ESLint rule, and we also believe there is a lot of value in having these checks built into TypeScript itself.
+通过启用 ESLint 的 `no-constant-binary-expression` 规则也能达到类似效果，你可以[在他们的博文中查看其捕获到的问题示例](https://eslint.org/blog/2022/07/interesting-bugs-caught-by-no-constant-binary-expression/)；
+不过 TypeScript 引入的新检查与 ESLint 规则并不完全重叠，而且我们相信将这些检查直接内置到 TypeScript 中具有巨大价值。
 
-Note that certain expressions are still allowed, even if they are always truthy or nullish.
-Specifically, `true`, `false`, `0`, and `1` are all still allowed despite always being truthy or falsy, since code like the following:
+需要说明的是，某些特定表达式即使始终为真或为空值，依然是被允许的。
+具体而言，`true`、`false`、`0` 和 `1` 尽管恒为真值或假值，但仍旧被允许使用，因为类似下面的代码：
 
 ```ts
 while (true) {
@@ -112,7 +112,7 @@ while (true) {
 }
 ```
 
-is still idiomatic and useful, and code like the following:
+依旧是符合习惯且非常实用的，而像下面这样的代码：
 
 ```ts
 if (true || inDebuggingOrDevelopmentEnvironment()) {
@@ -120,20 +120,20 @@ if (true || inDebuggingOrDevelopmentEnvironment()) {
 }
 ```
 
-is useful while iterating/debugging code.
+在代码迭代与调试过程中也同样很有用。
 
-If you're curious about the implementation or the sorts of bugs it catches, take a look at [the pull request that implemented this feature](https://github.com/microsoft/TypeScript/pull/59217).
+如果你对该功能的具体实现或它能捕获的 Bug 类型感兴趣，可以查看[实现该特性的 Pull Request](https://github.com/microsoft/TypeScript/pull/59217)。
 
-## Iterator Helper Methods
+## 迭代器帮助方法
 
-JavaScript has a notion of _iterables_ (things which we can iterate over by calling a `[Symbol.iterator]()` and getting an iterator) and _iterators_ (things which have a `next()` method which we can call to try to get the next value as we iterate).
-By and large, you don't typically have to think about these things when you toss them into a `for`/`of` loop, or `[...spread]` them into a new array.
-But TypeScript does model these with the types `Iterable` and `Iterator` (and even `IterableIterator` which acts as both!), and these types describe the minimal set of members you need for constructs like `for`/`of` to work on them.
+JavaScript 中有*可迭代对象*（iterable，即可以通过调用 `[Symbol.iterator]()` 获取迭代器的对象）和*迭代器*（iterator，即包含 `next()` 方法、在迭代过程中可调用其获取下一个值的对象）的概念。
+大体上，当你把它们直接传入 `for`/`of` 循环，或通过 `[...spread]` 展开到新数组中时，通常不需要去思考这些细节。
+但 TypeScript 通过 `Iterable` 和 `Iterator` 类型（甚至是兼具二者特性的 `IterableIterator`）对它们进行了建模，这些类型描述了让 `for`/`of` 等语法结构正常工作所需的最少成员集合。
 
-`Iterable`s (and `IterableIterator`s) are nice because they can be used in all sorts of places in JavaScript - but a lot of people found themselves missing methods on `Array`s like `map`, `filter`, and for some reason `reduce`.
-That's why [a recent proposal was brought forward in ECMAScript](https://github.com/tc39/proposal-iterator-helpers) to add many methods (and more) from `Array` onto most of the `IterableIterator`s that are produced in JavaScript.
+`Iterable`（以及 `IterableIterator`）非常灵活，可以用于 JavaScript 的各种场景——但许多开发者发现它们缺少 `Array` 上那些便捷的方法，如 `map`、`filter`，甚至 `reduce`。
+正因如此，[ECMAScript 最近提出了一项新提案](https://github.com/tc39/proposal-iterator-helpers)，将 `Array` 的众多方法（以及更多新增方法）引入到 JavaScript 生成的大多数 `IterableIterator` 上。
 
-For example, every generator now produces an object that also has a `map` method and a `take` method.
+例如，现在每个生成器（generator）生成的对象都拥有了 `map` 和 `take` 方法：
 
 ```ts
 function* positiveIntegers() {
@@ -157,7 +157,7 @@ for (const value of evenNumbers.take(5)) {
 }
 ```
 
-The same is true for methods like `keys()`, `values()`, and `entries()` on `Map`s and `Set`s.
+`Map` 和 `Set` 上的 `keys()`、`values()` 和 `entries()` 等方法所返回的对象同样如此：
 
 ```ts
 function invertKeysAndValues<K, V>(map: Map<K, V>): Map<V, K> {
@@ -165,7 +165,7 @@ function invertKeysAndValues<K, V>(map: Map<K, V>): Map<V, K> {
 }
 ```
 
-You can also extend the new `Iterator` object:
+你还可以继承新的 `Iterator` 对象：
 
 ```ts
 /**
@@ -183,25 +183,24 @@ const zeroes = new Zeroes()
 const ones = zeroes.map((x) => x + 1)
 ```
 
-And you can adapt any existing `Iterable`s or `Iterator`s into this new type with `Iterator.from`:
+并且你可以通过 `Iterator.from` 将现有的任何 `Iterable` 或 `Iterator` 包装为这种新类型：
 
 ```ts
 Iterator.from(...).filter(someFunction);
 ```
 
-Now, we have to talk about naming.
+现在，我们必须讨论一下命名问题。
 
-Earlier we mentioned that TypeScript has types for `Iterable` and `Iterator`;
-however, like we mentioned, these act sort of like "protocols" to ensure certain operations work.
-_That means that not every value that is declared `Iterable` or `Iterator` in TypeScript will have those methods we mentioned above._
+前面我们提到过，TypeScript 本身就拥有 `Iterable` 和 `Iterator` 类型；
+但正如前文所述，它们更像是某种“协议”，用于确保特定操作能够顺利执行。
+_这意味着，在 TypeScript 中被声明为 `Iterable` 或 `Iterator` 的值，并不一定都拥有上面提到的那些辅助方法。_
 
-But there is still a new **runtime value** called `Iterator`.
-You can reference `Iterator`, as well as `Iterator.prototype`, as actual values in JavaScript.
-This is a bit awkward since TypeScript already defines its own thing called `Iterator` purely for type-checking.
-So due to this unfortunate name clash, TypeScript needs to introduce a separate type to describe these native/built-in iterable iterators.
+然而，运行时现在确实存在一个名为 `Iterator` 的**运行时实体**。
+你可以在 JavaScript 中将 `Iterator` 以及 `Iterator.prototype` 作为实际的值来引用。
+这带来了一丝尴尬，因为 TypeScript 此前已经为纯类型检查定义了名为 `Iterator` 的类型。
+由于这个不巧的名称冲突，TypeScript 需要引入一个独立的类型来描述这些原生的/内置的可迭代迭代器（iterable iterator）。
 
-TypeScript 5.6 introduces a new type called `IteratorObject`.
-It is defined as follows:
+TypeScript 5.6 引入了一个名为 `IteratorObject` 的新类型，其定义如下：
 
 ```ts
 interface IteratorObject<
@@ -213,17 +212,17 @@ interface IteratorObject<
 }
 ```
 
-Lots of built-in collections and methods produce subtypes of `IteratorObject`s (like `ArrayIterator`, `SetIterator`, `MapIterator`, and more), and both the core JavaScript and DOM types in `lib.d.ts`, along with `@types/node`, have been updated to use this new type.
+许多内置集合与方法都会生成 `IteratorObject` 的子类型（例如 `ArrayIterator`、`SetIterator`、`MapIterator` 等），并且 `lib.d.ts` 中的核心 JavaScript 与 DOM 类型，以及 `@types/node`，均已更新以使用该新类型。
 
-Similarly, there is a `AsyncIteratorObject` type for parity.
-`AsyncIterator` does not yet exist as a runtime value in JavaScript that brings the same methods for `AsyncIterable`s, [but it is an active proposal](https://github.com/tc39/proposal-async-iterator-helpers) and this new type prepares for it.
+类似地，为了保持对称，还提供了 `AsyncIteratorObject` 类型。
+虽然在 JavaScript 中 `AsyncIterator` 作为一个为 `AsyncIterable` 提供同等方法的运行时值尚未正式落地，[但这属于正在推进中的提案](https://github.com/tc39/proposal-async-iterator-helpers)，新类型已经提前为其做好了准备。
 
-We'd like to thank [Kevin Gibbons](https://github.com/bakkot) who contributed [the changes for these types](https://github.com/microsoft/TypeScript/pull/58222), and who is one of the co-authors of [the proposal](https://github.com/tc39/proposal-iterator-helpers).
+感谢 [Kevin Gibbons](https://github.com/bakkot) 贡献了[这些类型的改动](https://github.com/microsoft/TypeScript/pull/58222)，他也是[该提案](https://github.com/tc39/proposal-iterator-helpers)的共同作者之一。
 
-## Strict Builtin Iterator Checks (and `--strictBuiltinIteratorReturn`)
+## 严格的内置迭代器检查（与 `--strictBuiltinIteratorReturn`）
 
-When you call the `next()` method on an `Iterator<T, TReturn>`, it returns an object with a `value` and a `done` property.
-This is modeled with the type `IteratorResult`.
+当你在 `Iterator<T, TReturn>` 上调用 `next()` 方法时，它会返回一个包含 `value` 和 `done` 属性的对象。
+这在类型系统中通过 `IteratorResult` 进行建模：
 
 ```ts
 type IteratorResult<T, TReturn = any> =
@@ -240,8 +239,8 @@ interface IteratorReturnResult<TReturn> {
 }
 ```
 
-The naming here is inspired by the way a generator function works.
-Generator functions can `yield` values, and then `return` a final value - but the types between the two can be unrelated.
+此处的命名灵感来源于生成器函数的工作方式。
+生成器函数可以 `yield` 产出值，并在最后 `return` 返回一个最终值——但二者的类型可以毫无关联：
 
 ```ts
 function abc123() {
@@ -259,10 +258,10 @@ iter.next() // { value: "c", done: false }
 iter.next() // { value: 123, done: true }
 ```
 
-With the new `IteratorObject` type, we discovered some difficulties in allowing safe implementations of `IteratorObject`s.
-At the same time, there's been a long standing unsafety with `IteratorResult` in cases where `TReturn` was `any` (the default!).
-For example, let's say we have an `IteratorResult<string, any>`.
-If we end up reaching for the `value` of this type, we'll end up with `string | any`, which is just `any`.
+随着新的 `IteratorObject` 类型的引入，我们发现在安全实现 `IteratorObject` 方面存在一些困难。
+与此同时，在 `TReturn` 为 `any`（默认值！）的情况下，`IteratorResult` 一直存在长期以来的类型不安全性。
+例如，假设我们有一个 `IteratorResult<string, any>`。
+如果我们直接访问该类型的 `value`，最终得到的类型将是 `string | any`，也就是 `any`：
 
 ```ts
 function* uppercase(iter: Iterator<string, any>) {
@@ -277,10 +276,10 @@ function* uppercase(iter: Iterator<string, any>) {
 }
 ```
 
-It would be hard to fix this on every `Iterator` today without introducing a lot of breaks, but we can at least fix it with most `IteratorObject`s that get created.
+要在如今现有的每一个 `Iterator` 上修正该问题而不引发大量的破坏性变更，几乎是不可能的；但我们至少可以在创建大多数 `IteratorObject` 时解决它。
 
-TypeScript 5.6 introduces a new intrinsic type called `BuiltinIteratorReturn` and a new `--strict`-mode flag called `--strictBuiltinIteratorReturn`.
-Whenever `IteratorObject`s are used in places like `lib.d.ts`, they are always written with `BuiltinIteratorReturn` type for `TReturn` (though you'll see the more-specific `MapIterator`, `ArrayIterator`, `SetIterator` more often).
+TypeScript 5.6 引入了一个名为 `BuiltinIteratorReturn` 的全新内置固有类型，以及一个新的 `--strict` 模式标志 `--strictBuiltinIteratorReturn`。
+无论在 `lib.d.ts` 等何处使用 `IteratorObject`，它们的 `TReturn` 都会标注为 `BuiltinIteratorReturn` 类型（尽管你更常看到的会是更具体的 `MapIterator`、`ArrayIterator`、`SetIterator` 等）：
 
 ```ts
 interface MapIterator<T> extends IteratorObject<
@@ -313,8 +312,8 @@ interface Map<K, V> {
 }
 ```
 
-By default, `BuiltinIteratorReturn` is `any`, but when `--strictBuiltinIteratorReturn` is enabled (possibly via `--strict`), it is `undefined`.
-Under this new mode, if we use `BuiltinIteratorReturn`, our earlier example now correctly errors:
+默认情况下，`BuiltinIteratorReturn` 为 `any`；但当启用了 `--strictBuiltinIteratorReturn`（包括通过 `--strict` 间接启用）时，它将变为 `undefined`。
+在此新模式下，若使用 `BuiltinIteratorReturn`，我们前面的示例现在就会正确地报错：
 
 ```ts
 function* uppercase(iter: Iterator<string, BuiltinIteratorReturn>) {
@@ -334,14 +333,14 @@ function* uppercase(iter: Iterator<string, BuiltinIteratorReturn>) {
 }
 ```
 
-You'll typically see `BuiltinIteratorReturn` paired up with `IteratorObject` throughout `lib.d.ts`.
-In general, we recommend being more explicit around the `TReturn` in your own code when possible.
+在整个 `lib.d.ts` 中，你通常会看到 `BuiltinIteratorReturn` 与 `IteratorObject` 搭配使用。
+一般而言，我们建议在编写自己的代码时尽可能明确指定 `TReturn` 类型。
 
-For more information, you can [read up on the feature here](https://github.com/microsoft/TypeScript/pull/58243).
+有关更多信息，你可以[在此阅读该特性的详细说明](https://github.com/microsoft/TypeScript/pull/58243)。
 
-## Support for Arbitrary Module Identifiers
+## 支持任意模块标识符
 
-JavaScript allows modules to export bindings with invalid identifier names as string literals:
+JavaScript 允许模块以字符串字面量的形式导出非法标识符名称的绑定：
 
 ```ts
 const banana = '🍌'
@@ -349,7 +348,7 @@ const banana = '🍌'
 export { banana as '🍌' }
 ```
 
-Likewise, it allows modules to grab imports with these arbitrary names and bind them to valid identifiers:
+同样，它也允许模块导入这些任意名称并将它们绑定到合法的标识符上：
 
 ```ts
 import { '🍌' as banana } from './foo'
@@ -364,28 +363,27 @@ function eat(food: string) {
 eat(banana)
 ```
 
-This seems like a cute party trick (if you're as fun as we are at parties), but it has its uses for interoperability with other languages (typically via JavaScript/WebAssembly boundaries), since other languages may have different rules for what constitutes a valid identifier.
-It can also be useful for tools that generate code, like esbuild [with its `inject` feature](https://esbuild.github.io/api/#inject).
+这看起来可能只是个有趣的小把戏，但在与其他语言进行互操作时（通常跨越 JavaScript/WebAssembly 边界）它非常有用，因为其他语言对于合法标识符的判定规则可能有所不同。
+它对于诸如 esbuild [的 `inject` 特性](https://esbuild.github.io/api/#inject) 等代码生成工具也同样有用。
 
-TypeScript 5.6 now allows you to use these arbitrary module identifiers in your code!
-We'd like to thank [Evan Wallace](https://github.com/evanw) who [contributed this change to TypeScript](https://github.com/microsoft/TypeScript/pull/58640)!
+TypeScript 5.6 现在允许你在代码中使用这些任意模块标识符！
+感谢 [Evan Wallace](https://github.com/evanw) 为 TypeScript [贡献了此改动](https://github.com/microsoft/TypeScript/pull/58640)！
 
-## The `--noUncheckedSideEffectImports` Option
+## `--noUncheckedSideEffectImports` 选项
 
-In JavaScript it's possible to `import` a module without actually importing any values from it.
+在 JavaScript 中，可以通过 `import` 导入一个模块而无需从其实际导入任何值：
 
 ```ts
 import 'some-module'
 ```
 
-These imports are often called _side effect imports_ because the only useful behavior they can provide is by executing some side effect (like registering a global variable, or adding a polyfill to a prototype).
+这类导入通常被称为*副作用导入*（side effect import），因为它们唯一能提供的有效行为就是执行某些副作用（例如注册全局变量，或向原型链添加 polyfill）。
 
-In TypeScript, this syntax has had a pretty strange quirk: if the `import` could be resolved to a valid source file, then TypeScript would load and check the file.
-On the other hand, if no source file could be found, TypeScript would silently ignore the `import`!
+在 TypeScript 中，该语法曾有一个相当奇怪的怪癖：如果该 `import` 能解析到有效的源文件，TypeScript 就会加载并检查该文件；反之，若找不到对应的源文件，TypeScript 却会静默忽略该 `import`！
 
-This is surprising behavior, but it partially stems from modeling patterns in the JavaScript ecosystem.
-For example, this syntax has also been used with special loaders in bundlers to load CSS or other assets.
-Your bundler might be configured in such a way where you can include specific `.css` files by writing something like the following:
+这种行为令人意外，但它在一定程度上源于对 JavaScript 生态中常见模式的适配。
+例如，在打包工具中配合特定的 loader 加载 CSS 或其他资源时常常会使用这种语法。
+你的打包工具可能进行了相应配置，允许通过如下代码引入特定的 `.css` 文件：
 
 ```tsx
 import './button-component.css'
@@ -395,9 +393,9 @@ export function Button() {
 }
 ```
 
-Still, this masks potential typos on side effect imports.
-That's why TypeScript 5.6 introduces a new compiler option called `--noUncheckedSideEffectImports`, to catch these cases.
-When `--noUncheckedSideEffectImports` is enabled, TypeScript will now error if it can't find a source file for a side effect import.
+然而，这也掩盖了副作用导入中潜在的拼写错误。
+正因如此，TypeScript 5.6 引入了全新的编译器选项 `--noUncheckedSideEffectImports`，专门用来捕获此类问题。
+启用 `--noUncheckedSideEffectImports` 后，如果 TypeScript 找不到副作用导入对应的源文件，就会直接报错：
 
 ```ts
 import 'oops-this-module-does-not-exist'
@@ -405,9 +403,9 @@ import 'oops-this-module-does-not-exist'
 // error: Cannot find module 'oops-this-module-does-not-exist' or its corresponding type declarations.
 ```
 
-When enabling this option, some working code may now receive an error, like in the CSS example above.
-To work around this, users who want to just write side effect `import`s for assets might be better served by writing what's called an _ambient module declaration_ with a wildcard specifier.
-It would go in a global file and look something like the following:
+启用该选项后，某些原本能够正常工作的代码可能会出现错误，例如上面提到的 CSS 示例。
+为了解决这一问题，如果开发者仅希望对静态资源使用副作用 `import`，可以通过编写包含通配符标识符的*环境模块声明*（ambient module declaration）来处理。
+该声明可以放在全局文件中，形如：
 
 ```ts
 // ./src/globals.d.ts
@@ -416,92 +414,90 @@ It would go in a global file and look something like the following:
 declare module '*.css' {}
 ```
 
-In fact, you might already have a file like this in your project!
-For example, running something like `vite init` might create a similar `vite-env.d.ts`.
+实际上，你的项目中可能已经存在类似的文件了！
+例如运行 `vite init` 等脚手架可能会自动生成类似的 `vite-env.d.ts`。
 
-While this option is currently off by default, we encourage users to give it a try!
+虽然该选项目前默认处于关闭状态，但我们非常鼓励大家尝试使用！
 
-For more information, [check out the implementation here](https://github.com/microsoft/TypeScript/pull/58941).
+欲了解更多信息，请[查看此处的具体实现](https://github.com/microsoft/TypeScript/pull/58941)。
 
-## The `--noCheck` Option
+## `--noCheck` 选项
 
-TypeScript 5.6 introduces a new compiler option, `--noCheck`, which allows you to skip type checking for all input files.
-This avoids unnecessary type-checking when performing any semantic analysis necessary for emitting output files.
+TypeScript 5.6 引入了一个新的编译器选项 `--noCheck`，允许你跳过对所有输入文件的类型检查。
+这可以避免在进行生成输出文件所需的任何语义分析时，执行不必要的类型检查。
 
-One scenario for this is to separate JavaScript file generation from type-checking so that the two can be run as separate phases.
-For example, you could run `tsc --noCheck` while iterating, and then `tsc --noEmit` for a thorough type check.
-You could also run the two tasks in parallel, even in `--watch` mode, though note you'd probably want to specify a separate `--tsBuildInfoFile` path if you're truly running them at the same time.
+应用场景之一是将 JavaScript 文件的生成与类型检查分离，使两者作为独立的阶段运行。
+例如，你可以在迭代时运行 `tsc --noCheck`，而在需要彻底检查时运行 `tsc --noEmit`。
+你也可以并行运行这两个任务，甚至在 `--watch` 模式下运行，不过请注意，如果确实同时运行它们，可能需要指定独立的 `--tsBuildInfoFile` 路径。
 
-`--noCheck` is also useful for emitting declaration files in a similar fashion.
-In a project where `--noCheck` is specified on a project that conforms to `--isolatedDeclarations`, TypeScript can quickly generate declaration files without a type-checking pass.
-The generated declaration files will rely purely on quick syntactic transformations.
+`--noCheck` 在类似模式下对于生成声明文件同样非常有用。
+在符合 `--isolatedDeclarations` 规范的项目中指定 `--noCheck`，TypeScript 可以在无需经历类型检查阶段的情况下快速生成声明文件。
+生成的声明文件将纯粹依赖快速的句法转换。
 
-Note that in cases where `--noCheck` is specified, but a project does _not_ use `--isolatedDeclarations`, TypeScript may still perform as much type-checking as necessary to generate `.d.ts` files.
-In this sense, `--noCheck` is a bit of a misnomer; however, the process will be lazier than a full type-check, only calculating the types of unannotated declarations.
-This should be much faster than a full type-check.
+需要注意的是，在指定了 `--noCheck` 但项目*未*使用 `--isolatedDeclarations` 的情况下，TypeScript 仍可能会执行生成 `.d.ts` 文件所必需的类型检查。
+从这个角度来看，`--noCheck` 的名称有些不尽如人意；然而，该过程比完整的类型检查要更加惰性，它仅计算未显式标注类型的声明的类型。
+这理应比完整的类型检查快得多。
 
-`noCheck` is also available via the TypeScript API as a standard option.
-Internally, `transpileModule` and `transpileDeclaration` already used `noCheck` to speed things up (at least as of TypeScript 5.5).
-Now any build tool should be able to leverage the flag, taking a variety of custom strategies to coordinate and speed up builds.
+`noCheck` 也可以通过 TypeScript API 作为标准选项使用。
+在内部，`transpileModule` 和 `transpileDeclaration` 已经通过使用 `noCheck` 来加速处理（至少自 TypeScript 5.5 起）。
+现在任何构建工具都能够利用该标志，采用各种自定义策略来协调并加速构建。
 
-For more information, see [the work done in TypeScript 5.5 to power up `noCheck` internally](https://github.com/microsoft/TypeScript/pull/58364), along with the relevant work to make it publicly available [on the command line](https://github.com/microsoft/TypeScript/pull/58839) and
+欲了解更多信息，请参阅[在 TypeScript 5.5 中从内部增强 `noCheck` 的相关工作](https://github.com/microsoft/TypeScript/pull/58364)，以及使其在[命令行中](https://github.com/microsoft/TypeScript/pull/58839)和
 
-## Allow `--build` with Intermediate Errors
+## 允许 `--build` 在存在中间错误时继续构建
 
-TypeScript's concept of _project references_ allows you to organize your codebase into multiple projects and create dependencies between them.
-Running the TypeScript compiler in `--build` mode (or `tsc -b` for short) is the built-in way of actually conducting that build across projects and figuring out which projects and files need to be compiled.
+TypeScript 的*项目引用*（project references）概念允许你将代码库组织为多个项目并在它们之间建立依赖关系。
+以 `--build` 模式运行 TypeScript 编译器（简写为 `tsc -b`）是跨项目执行构建并计算出哪些项目与文件需要编译的内置方式。
 
-Previously, using `--build` mode would assume `--noEmitOnError` and immediately stop the build if any errors were encountered.
-This meant that "downstream" projects could never be checked and built if any of their "upstream" dependencies had build errors.
-In theory, this is a very cromulent approach - if a project has errors, it is not necessarily in a coherent state for its dependencies.
+此前，使用 `--build` 模式会默认假设 `--noEmitOnError`，并在遇到任何错误时立即终止构建。
+这意味着如果任何“上游”依赖存在构建错误，“下游”项目就完全无法进行检查和构建。
+在理论上，这种方式无可挑剔——毕竟如果一个项目存在错误，它对于下游依赖而言未必处于自洽状态。
 
-In reality, this sort of rigidity made things like upgrades a pain.
-For example, if `projectB` depends on `projectA`, then people more familiar with `projectB` can't proactively upgrade their code until their dependencies are upgraded.
-They are blocked by work on upgrading `projectA` first.
+但在实际开发中，这种僵化性给升级等工作带来了极大痛苦。
+例如，若 `projectB` 依赖于 `projectA`，即便对 `projectB` 更熟悉的开发者想要主动升级自身代码，也必须等到依赖升级完成才行，他们会直接受阻于升级 `projectA` 的进度。
 
-As of TypeScript 5.6, `--build` mode will continue to build projects even if there are intermediate errors in dependencies.
-In the face of intermediate errors, they will be reported consistently and output files will be generated on a best-effort basis;
-however, the build will continue to completion on the specified project.
+自 TypeScript 5.6 起，即使依赖项中存在中间错误，`--build` 模式仍将继续构建后续项目。
+遇到中间错误时，这些错误会被如实报告，编译器会尽力生成输出文件，并且构建流程会一直推进，直至指定项目完成。
 
-If you want to stop the build on the first project with errors, you can use a new flag called `--stopOnBuildErrors`.
-This can be useful when running in a CI environment, or when iterating on a project that's heavily depended upon by other projects.
+如果你希望在第一个出现错误的项目处就中止构建，可以使用新增的标志 `--stopOnBuildErrors`。
+这在 CI 环境中，或者在对被大量其他项目深度依赖的底层项目进行迭代时非常有用。
 
-Note that to accomplish this, TypeScript now always emits a `.tsbuildinfo` file for any project in a `--build` invocation (even if `--incremental`/`--composite` is not specified).
-This is to keep track of the state of how `--build` was invoked and what work needs to be performed in the future.
+请注意，为了实现此功能，现在只要在 `--build` 调用中涉及的任何项目，TypeScript 都会始终生成 `.tsbuildinfo` 文件（即使未显式指定 `--incremental` 或 `--composite`）。
+这是为了记录 `--build` 的调用状态以及后续需要执行的工作。
 
-You can [read more about this change here on the implementation](https://github.com/microsoft/TypeScript/pull/58838).
+你可以在[具体的实现 PR 中阅读有关此改动的更多信息](https://github.com/microsoft/TypeScript/pull/58838)。
 
-## Region-Prioritized Diagnostics in Editors
+## 编辑器中的区域优先诊断
 
-When TypeScript's language service is asked for the _diagnostics_ for a file (things like errors, suggestions, and deprecations), it would typically require checking the _entire file_.
-Most of the time this is fine, but in extremely large files it can incur a delay.
-That can be frustrating because fixing a typo should feel like a quick operation, but can take _seconds_ in a big-enough file.
+当 TypeScript 语言服务被请求获取某个文件的*诊断信息*（diagnostics，如错误、建议与弃用提示）时，通常需要检查*整个文件*。
+大部分情况下这没什么问题，但在超大文件中可能会引发明显的延迟。
+这往往令人沮丧，因为修改一个拼写错误本应是一个快速操作，但在足够大的文件中却可能要等待数秒之久。
 
-To address this, TypeScript 5.6 introduces a new feature called _region-prioritized diagnostics_ or _region-prioritized checking_.
-Instead of just requesting diagnostics for a set of files, editors can now also provide a relevant region of a given file - and the intent is that this will typically be the region of the file that is currently visible to a user.
-The TypeScript language server can then choose to provide two sets of diagnostics: one for the region, and one for the file in its entirety.
-This allows editing to feel _way_ more responsive in large files so you're not waiting as long for thoes red squiggles to disappear.
+为了解决这个问题，TypeScript 5.6 引入了一项名为*区域优先诊断*（region-prioritized diagnostics）或*区域优先检查*（region-prioritized checking）的新特性。
+编辑器现在不仅可以请求一组文件的诊断信息，还可以提供指定文件的相关区域——通常是用户当前在屏幕上可见的文件区域。
+TypeScript 语言服务器随后可以选择返回两组诊断信息：一组针对该局部区域，另一组针对整个完整文件。
+这样一来，在超大文件中进行编辑时，响应速度会有显著提升，你不再需要苦苦等待那些红色波浪线消失。
 
-For some specific numbers, in our testing [on TypeScript's own `checker.ts`](https://github.com/microsoft/TypeScript/blob/7319968e90600102892a79142fb804bcbe384160/src/compiler/checker.ts), a full semantic diagnostics response took 3330ms.
-In contrast, the response for the first region-based diagnostics response took 143ms!
-While the remaining whole-file response took about 3200ms, this can make a huge difference for quick edits.
+来看一些具体数据：在针对 [TypeScript 自身的 `checker.ts`](https://github.com/microsoft/TypeScript/blob/7319968e90600102892a79142fb804bcbe384160/src/compiler/checker.ts) 进行测试时，完整的语义诊断响应耗时 3330 毫秒；
+相比之下，首次基于区域的诊断响应仅耗时 143 毫秒！
+虽然剩余的全文件诊断仍需约 3200 毫秒，但这对于快速编辑体验而言带来了质的飞跃。
 
-This feature also includes quite a bit of work to also make diagnostics report more consistently throughout your experience.
-Due the way our type-checker leverages caching to avoid work, subsequent checks between the same types could often have a different (typically shorter) error message.
-Technically, lazy out-of-order checking could cause diagnostics to report differently between two locations in an editor - even before this feature - but we didn't want to exacerbate the issue.
-With recent work, we've ironed out many of these error inconsistencies.
+这项特性还涵盖了大量工作，以确保在整个使用体验中诊断信息的报告更加一致。
+由于类型检查器利用缓存来避免重复工作，相同类型之间的后续检查往往会产生不同（通常更简短）的错误信息。
+从技术上讲，即使在此特性出现之前，惰性、非顺序的检查就可能导致编辑器中不同位置报告的诊断信息不一致——但我们不希望加剧这个问题。
+通过最近的改进，我们已经消除了许多这类错误信息不一致的情况。
 
-Currently, this functionality is available in Visual Studio Code for TypeScript 5.6 and later.
+目前，Visual Studio Code 针对 TypeScript 5.6 及更高版本已提供该功能。
 
-For more detailed information, [take a look at the implementation and write-up here](https://github.com/microsoft/TypeScript/pull/57842).
+欲了解更多详细信息，请[查看此处的实现与说明](https://github.com/microsoft/TypeScript/pull/57842)。
 
-## Granular Commit Characters
+## 细粒度的补全提交字符
 
-TypeScript's language service now provides its own _commit characters_ for each completion item.
-Commit characters are specific characters that, when typed, will automatically commit the currently-suggested completion item.
+TypeScript 语言服务现在为每个自动补全项提供了独立的*提交字符*（commit characters）。
+提交字符指的是特定字符：当键入该字符时，编辑器会自动确认（提交）当前建议的补全项。
 
-What this means is that over time your editor will now more frequently commit to the currently-suggested completion item when you type certain characters.
-For example, take the following code:
+这意味着，当你在键入特定字符时，编辑器将能够更智能、更频繁地采纳当前建议的补全项。
+以如下代码为例：
 
 ```ts
 declare let food: {
@@ -511,25 +507,25 @@ declare let food: {
 let f = (foo/**/
 ```
 
-If our cursor is at `/**/`, it's unclear if the code we're writing is going to be something like `let f = (food.eat())` or `let f = (foo, bar) => foo + bar`.
-You could imagine that the editor might be able to auto-complete differently depending on which character we type out next.
-For instance, if we type in the period/dot character (`.`), we probably want the editor to complete with the variable `food`;
-but if we type the comma character (`,`), we might be writing out a parameter in an arrow function.
+当光标位于 `/**/` 处时，尚无法确定我们要编写的代码是像 `let f = (food.eat())` 这样，还是像 `let f = (foo, bar) => foo + bar` 这样。
+你可以想象，根据接下来键入的字符不同，编辑器本应能够给出不同的自动补全行为。
+例如，如果我们键入点号（`.`），我们大概率希望编辑器补全变量 `food`；
+但如果键入逗号（`,`），我们可能是在为箭头函数声明形参。
 
-Unfortunately, previously TypeScript just signaled to editors that the current text might define a new parameter name so that _no_ commit characters were safe.
-So hitting a `.` wouldn't do anything even if it was "obvious" that the editor should auto-complete with the word `food`.
+遗憾的是，此前 TypeScript 仅仅向编辑器提示当前文本可能正在定义一个新的参数名，导致*没有任何*提交字符是安全的。
+因此，即便编辑器“显而易见”应该自动补全为单词 `food`，按下 `.` 也不会产生任何效果。
 
-TypeScript now explicitly lists which characters are safe to commit for each completion item.
-While this won't _immediately_ change your day-to-day experience, editors that support these commit characters should see behavioral improvements over time.
-To see those improvements right now, you can now [use the TypeScript nightly extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-next) with [Visual Studio Code Insiders](https://code.visualstudio.com/insiders/).
-Hitting `.` in the code above correctly auto-completes with `food`.
+现在，TypeScript 会针对每个补全项显式列出哪些字符可以安全用于提交。
+虽然这不会*立刻*颠覆你的日常开发体验，但支持这些提交字符的编辑器体验会随着时间推移不断改善。
+如果想立刻体验这些改进，你可以配合 [Visual Studio Code Insiders](https://code.visualstudio.com/insiders/) 使用 [TypeScript Nightly 扩展](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-next)。
+在上述代码中按下 `.` 将正确自动补全为 `food`。
 
-For more information, see [the pull request that added commit characters](https://github.com/microsoft/TypeScript/pull/59339) along with our [adjustments to commit characters depending on context](https://github.com/microsoft/TypeScript/pull/59523).
+欲了解更多信息，请参阅[添加提交字符的 Pull Request](https://github.com/microsoft/TypeScript/pull/59339) 以及[根据上下文调整提交字符的相关改动](https://github.com/microsoft/TypeScript/pull/59523)。
 
-## Exclude Patterns for Auto-Imports
+## 自动导入的排除模式
 
-TypeScript's language service now allows you to specify a list of regular expression patterns which will filter away auto-import suggestions from certain specifiers.
-For example, if you want to exclude all "deep" imports from a package like `lodash`, you could configure the following preference in Visual Studio Code:
+TypeScript 语言服务现在允许你指定一组正则表达式模式，用于过滤掉来自某些模块标识符的自动导入建议。
+例如，若要排除像 `lodash` 这类包的所有“深层”导入，可以在 Visual Studio Code 中配置如下首选项：
 
 ```json5
 {
@@ -537,7 +533,7 @@ For example, if you want to exclude all "deep" imports from a package like `loda
 }
 ```
 
-Or going the other way, you might want to disallow importing from the entry-point of a package:
+反过来，如果你希望禁止直接从包的入口点导入：
 
 ```json5
 {
@@ -545,7 +541,7 @@ Or going the other way, you might want to disallow importing from the entry-poin
 }
 ```
 
-One could even avoid `node:` imports by using the following setting:
+甚至可以通过如下设置避免 `node:` 协议导入：
 
 ```json5
 {
@@ -553,8 +549,8 @@ One could even avoid `node:` imports by using the following setting:
 }
 ```
 
-Note that if you want to specify certain flags like `i` or `u`, you will need to surround your regular expression with slashes.
-When providing surrounding slashes, you'll need to escape other inner slashes.
+注意，如果你需要指定正则表达式标志（如 `i` 或 `u`），需要用斜杠包裹正则表达式。
+使用斜杠包裹时，需要对内部的其他斜杠进行转义：
 
 ```json5
 {
@@ -566,32 +562,31 @@ When providing surrounding slashes, you'll need to escape other inner slashes.
 }
 ```
 
-In Visual Studio Code, the same settings can be applied for JavaScript through `javascript.preferences.autoImportSpecifierExcludeRegexes`.
+在 Visual Studio Code 中，通过 `javascript.preferences.autoImportSpecifierExcludeRegexes` 也可以将相同的设置应用于 JavaScript。
 
-For more information, [see the implementation here](https://github.com/microsoft/TypeScript/pull/59543).
+欲了解更多信息，请[查看此处的具体实现](https://github.com/microsoft/TypeScript/pull/59543)。
 
-## Notable Behavioral Changes
+## 显著的行为变更
 
-This section highlights a set of noteworthy changes that should be acknowledged and understood as part of any upgrade.
-Sometimes it will highlight deprecations, removals, and new restrictions.
-It can also contain bug fixes that are functionally improvements, but which can also affect an existing build by introducing new errors.
+本节重点介绍在任何版本升级过程中都应知晓并理解的重要变更。
+内容可能涵盖弃用项、移除项和新增的限制规则，也包括在功能上属于修复与改进、但可能因引入新错误而影响现有构建的改动。
 
 ### `lib.d.ts`
 
-Types generated for the DOM may have an impact on type-checking your codebase.
-For more information, [see linked issues related to DOM and `lib.d.ts` updates for this version of TypeScript](https://github.com/microsoft/TypeScript/issues/58764).
+针对 DOM 生成的类型可能会对代码库的类型检查产生影响。
+欲了解更多信息，请[查看与本版本 TypeScript 的 DOM 及 `lib.d.ts` 更新相关的议题](https://github.com/microsoft/TypeScript/issues/58764)。
 
-### `.tsbuildinfo` is Always Written
+### `.tsbuildinfo` 总是会被写入
 
-To enable `--build` to continue building projects even if there are intermediate errors in dependencies, and to support `--noCheck` on the command line, TypeScript now always emits a `.tsbuildinfo` file for any project in a `--build` invocation.
-This happens regardless of whether `--incremental` is actually on.
-[See more information here](https://github.com/microsoft/TypeScript/pull/58626).
+为了使 `--build` 能够在依赖存在中间错误时仍继续构建项目，并支持在命令行中使用 `--noCheck`，TypeScript 现在在每次 `--build` 调用中都会始终为所有项目生成 `.tsbuildinfo` 文件。
+无论实际上是否启用了 `--incremental`，都会生成该文件。
+[在此查看更多信息](https://github.com/microsoft/TypeScript/pull/58626)。
 
-### Respecting File Extensions and `package.json` from within `node_modules`
+### 遵循 `node_modules` 内部的文件后缀与 `package.json`
 
-Before Node.js implemented support for ECMAScript modules in v12, there was never a good way for TypeScript to know whether `.d.ts` files it found in `node_modules` represented JavaScript files authored as CommonJS or ECMAScript modules.
-When the vast majority of npm was CommonJS-only, this didn't cause many problems - if in doubt, TypeScript could just assume that everything behaved like CommonJS.
-Unfortunately, if that assumption was wrong it could allow unsafe imports:
+在 Node.js v12 实现对 ECMAScript 模块的支持之前，TypeScript 始终无法准确判断在 `node_modules` 中发现的 `.d.ts` 文件究竟代表用 CommonJS 还是 ECMAScript 编写的 JavaScript 文件。
+当 npm 上绝大多数模块都只支持 CommonJS 时，这并没有引起太多问题——遇到存疑情况时，TypeScript 直接假定所有代码都遵循 CommonJS 规范即可。
+不幸的是，如果这一假定不成立，就可能导致不安全的导入：
 
 ```ts
 // node_modules/dep/index.d.ts
@@ -604,15 +599,15 @@ import dep from 'dep'
 dep.doSomething()
 ```
 
-In practice, this didn't come up very often.
-But in the years since Node.js started supporting ECMAScript modules, the share of ESM on npm has grown.
-Fortunately, Node.js also introduced a mechanism that can help TypeScript determine if a file is an ECMAScript module or a CommonJS module: the `.mjs` and `.cjs` file extensions and the `package.json` `"type"` field.
-TypeScript 4.7 added support for understanding these indicators, as well as authoring `.mts` and `.cts` files;
-however, TypeScript would _only_ read those indicators under `--module node16` and `--module nodenext`, so the unsafe import above was still a problem for anyone using `--module esnext` and `--moduleResolution bundler`, for example.
+在实际开发中这种情况并不常出现。
+但自从 Node.js 开始支持 ECMAScript 模块以来的几年里，npm 上 ESM 的占比不断增加。
+幸运的是，Node.js 还引入了一种机制来帮助 TypeScript 判断文件是 ECMAScript 模块还是 CommonJS 模块：`.mjs` 和 `.cjs` 文件后缀以及 `package.json` 中的 `"type"` 字段。
+TypeScript 4.7 添加了对这些标识的识别支持，以及编写 `.mts` 和 `.cts` 文件的能力；
+然而，TypeScript *仅*在 `--module node16` 和 `--module nodenext` 下才会读取这些标识，因此上述不安全的导入对于使用 `--module esnext` 和 `--moduleResolution bundler` 的用户来说依然是个隐患。
 
-To solve this, TypeScript 5.6 collects module format information and uses it to resolve ambiguities like the one in the example above in _all_ `module` modes (except `amd`, `umd`, and `system`).
-Format-specific file extensions (`.mts` and `.cts`) are respected anywhere they're found, and the `package.json` `"type"` field is consulted inside `node_modules` dependencies, regardless of the `module` setting.
-Previously, it was technically possible to produce CommonJS output into a `.mjs` file or vice versa:
+为了解决这个问题，TypeScript 5.6 会收集模块格式信息，并在*所有* `module` 模式（`amd`、`umd` 和 `system` 除外）下利用这些信息来解决类似上例中的歧义。
+无论出现在何处，特定格式的文件后缀（`.mts` 和 `.cts`）都会受到遵循，并且无论 `module` 设置为何，都会参考 `node_modules` 依赖内部的 `package.json` `"type"` 字段。
+此前，在技术上是有可能将 CommonJS 输出写入 `.mjs` 文件的，反之亦然：
 
 ```ts
 // main.mts
@@ -624,18 +619,18 @@ Object.defineProperty(exports, '__esModule', { value: true })
 exports.default = 'oops'
 ```
 
-Now, `.mts` files never emit CommonJS output, and `.cts` files never emit ESM output.
+现在，`.mts` 文件绝不会输出 CommonJS 代码，而 `.cts` 文件也绝不会输出 ESM 代码。
 
-Note that much of this behavior was provided in pre-release versions of TypeScript 5.5 ([implementation details here](https://github.com/microsoft/TypeScript/pull/57896)), but in 5.6 this behavior is only extended to files within `node_modules`.
+请注意，该行为的大部分在 TypeScript 5.5 预览版本中便已提供（[实现细节参见此处](https://github.com/microsoft/TypeScript/pull/57896)），而在 5.6 中，该行为仅被扩展至 `node_modules` 内部的文件。
 
-More details are available [on the change here](https://github.com/microsoft/TypeScript/pull/58825).
+有关此改动的更多细节可[在此查看](https://github.com/microsoft/TypeScript/pull/58825)。
 
-### Correct `override` Checks on Computed Properties
+### 计算属性上正确的 `override` 检查
 
-Previously, computed properties marked with `override` did not correctly check for the existence of a base class member.
-Similarly, if you used `noImplicitOverride`, you would not get an error if you _forgot_ to add an `override` modifier to a computed property.
+此前，带有 `override` 修饰符的计算属性未能正确检查基类成员是否存在。
+同样地，如果你使用了 `noImplicitOverride`，若*遗漏*为计算属性添加 `override` 修饰符，也不会收到任何报错。
 
-TypeScript 5.6 now correctly checks computed properties in both cases.
+TypeScript 5.6 现在对这两种情况下的计算属性均进行正确检查：
 
 ```ts
 const foo = Symbol('foo')
@@ -656,4 +651,4 @@ class Derived extends Base {
 }
 ```
 
-This fix was contributed thanks to [Oleksandr Tarasiuk](https://github.com/a-tarasyuk) in [this pull request](https://github.com/microsoft/TypeScript/pull/57146).
+感谢 [Oleksandr Tarasiuk](https://github.com/a-tarasyuk) 在[此 Pull Request](https://github.com/microsoft/TypeScript/pull/57146) 中贡献了该修复。

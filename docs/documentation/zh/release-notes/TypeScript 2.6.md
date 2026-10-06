@@ -2,22 +2,22 @@
 title: TypeScript 2.6
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-2-6.html
-oneline: TypeScript 2.6 Release Notes
+oneline: TypeScript 2.6 发布说明
 ---
 
-## Strict function types
+## 严格函数类型检查
 
-TypeScript 2.6 introduces a new strict checking flag, [`strictFunctionTypes`](/tsconfig#strictFunctionTypes).
-The [`strictFunctionTypes`](/tsconfig#strictFunctionTypes) switch is part of the [`strict`](/tsconfig#strict) family of switches, meaning that it defaults to on in [`strict`](/tsconfig#strict) mode.
-You can opt-out by setting `--strictFunctionTypes false` on your command line or in your tsconfig.json.
+TypeScript 2.6 引入了一个新的严格检查标志 [`strictFunctionTypes`](/tsconfig#strictFunctionTypes)。
+[`strictFunctionTypes`](/tsconfig#strictFunctionTypes) 是 [`strict`](/tsconfig#strict) 系列标志之一，这意味着它在 [`strict`](/tsconfig#strict) 模式下默认开启。
+你可以在命令行中使用 `--strictFunctionTypes false` 或在 tsconfig.json 中将其关闭。
 
-Under [`strictFunctionTypes`](/tsconfig#strictFunctionTypes) function type parameter positions are checked _contravariantly_ instead of _bivariantly_.
-For some background on what variance means for function types check out [What are covariance and contravariance?](https://web.archive.org/web/20220823104433/https://www.stephanboyer.com/post/132/what-are-covariance-and-contravariance).
+启用 [`strictFunctionTypes`](/tsconfig#strictFunctionTypes) 后，函数类型的参数位置将进行**逆变**检查，而非**双变**检查。
+若想了解协变与逆变的背景知识，请参阅[《什么是协变和逆变？》](https://web.archive.org/web/20220823104433/https://www.stephanboyer.com/post/132/what-are-covariance-and-contravariance)。
 
-The stricter checking applies to all function types, _except_ those originating in method or constructor declarations.
-Methods are excluded specifically to ensure generic classes and interfaces (such as `Array<T>`) continue to mostly relate covariantly.
+更严格的检查适用于所有函数类型，但**方法**或**构造函数**声明中的函数类型除外。
+之所以将方法排除在外，是为了确保泛型类和接口（如 `Array<T>`）仍能以协变方式正常工作。
 
-Consider the following example in which `Animal` is the supertype of `Dog` and `Cat`:
+请看下面的示例，其中 `Animal` 是 `Dog` 和 `Cat` 的父类型：
 
 ```ts
 declare let f1: (x: Animal) => void
@@ -28,13 +28,13 @@ f2 = f1 // Ok
 f2 = f3 // Error
 ```
 
-The first assignment is permitted in default type checking mode, but flagged as an error in strict function types mode.
-Intuitively, the default mode permits the assignment because it is _possibly_ sound, whereas strict function types mode makes it an error because it isn't _provably_ sound.
-In either mode the third assignment is an error because it is _never_ sound.
+第一个赋值在默认类型检查模式下是允许的，但在严格函数类型模式下会报错。
+直觉上，默认模式允许该赋值，是因为它**可能**是安全的；而严格函数类型模式将其视为错误，因为无法**确定**它是安全的。
+在任何模式下，第三个赋值都是错误的，因为它**永远**不安全。
 
-Another way to describe the example is that the type `(x: T) => void` is _bivariant_ (i.e. covariant _or_ contravariant) for `T` in default type checking mode, but _contravariant_ for `T` in strict function types mode.
+换一种描述方式：在默认类型检查模式下，类型 `(x: T) => void` 对 `T` 是**双变**的（即协变**或**逆变）；而在严格函数类型模式下，对 `T` 是**逆变**的。
 
-##### Example
+##### 示例
 
 ```ts
 interface Comparer<T> {
@@ -48,14 +48,14 @@ animalComparer = dogComparer // Error
 dogComparer = animalComparer // Ok
 ```
 
-The first assignment is now an error. Effectively, `T` is contravariant in `Comparer<T>` because it is used only in function type parameter positions.
+第一个赋值现在会报错。实际上，`T` 在 `Comparer<T>` 中是逆变的，因为它只出现在函数类型的参数位置。
 
-By the way, note that whereas some languages (e.g. C# and Scala) require variance annotations (`out`/`in` or `+`/`-`), variance emerges naturally from the actual use of a type parameter within a generic type due to TypeScript's structural type system.
+顺便提一下，与某些语言（如 C# 和 Scala）需要显式标注方差（`out`/`in` 或 `+`/`-`）不同，TypeScript 的结构化类型系统会根据类型参数在泛型类型中的实际使用方式自然推导出方差。
 
-##### Note
+##### 注意
 
-Under [`strictFunctionTypes`](/tsconfig#strictFunctionTypes) the first assignment is still permitted if `compare` was declared as a method.
-Effectively, `T` is bivariant in `Comparer<T>` because it is used only in method parameter positions.
+在 [`strictFunctionTypes`](/tsconfig#strictFunctionTypes) 下，如果 `compare` 被声明为方法，第一个赋值仍然是允许的。
+这是因为 `T` 在 `Comparer<T>` 中是双变的——它只出现在方法参数位置。
 
 ```ts
 interface Comparer<T> {
@@ -69,7 +69,7 @@ animalComparer = dogComparer // Ok because of bivariance
 dogComparer = animalComparer // Ok
 ```
 
-TypeScript 2.6 also improves type inference involving contravariant positions:
+TypeScript 2.6 还改进了逆变位置上的类型推断：
 
 ```ts
 function combine<T>(...funcs: ((x: T) => void)[]): (x: T) => void {
@@ -84,17 +84,17 @@ function dogFunc(x: Dog) {}
 let combined = combine(animalFunc, dogFunc) // (x: Dog) => void
 ```
 
-Above, all inferences for `T` originate in contravariant positions, and we therefore infer the _best common subtype_ for `T`.
-This contrasts with inferences from covariant positions, where we infer the _best common supertype_.
+在上面的例子中，所有对 `T` 的推断都来自逆变位置，因此我们推断出 `T` 的**最优公共子类型**。
+这与来自协变位置的推断相反——协变位置推断的是**最优公共父类型**。
 
-## Cache tagged template objects in modules
+## 在模块中缓存带标签的模板对象
 
-TypeScript 2.6 fixes the tagged string template emit to align better with the ECMAScript spec.
-As per the [ECMAScript spec](https://tc39.github.io/ecma262/#sec-gettemplateobject), every time a template tag is evaluated, the _same_ template strings object (the same `TemplateStringsArray`) should be passed as the first argument.
-Before TypeScript 2.6, the generated output was a completely new template object each time.
-Though the string contents are the same, this emit affects libraries that use the identity of the string for cache invalidation purposes, e.g. [lit-html](https://github.com/PolymerLabs/lit-html/issues/58).
+TypeScript 2.6 修复了带标签模板字符串的代码生成，使其更符合 ECMAScript 规范。
+根据 [ECMAScript 规范](https://tc39.github.io/ecma262/#sec-gettemplateobject)，每次对模板标签求值时，应将**相同的**模板字符串对象（即同一个 `TemplateStringsArray`）作为第一个参数传入。
+在 TypeScript 2.6 之前，每次生成的都是全新的模板对象。
+虽然字符串内容相同，但这种行为会影响依赖字符串标识进行缓存失效的库，例如 [lit-html](https://github.com/PolymerLabs/lit-html/issues/58)。
 
-##### Example
+##### 示例
 
 ```ts
 export function id(x: TemplateStringsArray) {
@@ -108,7 +108,7 @@ export function templateObjectFactory() {
 let result = templateObjectFactory() === templateObjectFactory() // true in TS 2.6
 ```
 
-Results in the following generated code:
+生成的代码如下：
 
 ```js
 'use strict'
@@ -135,17 +135,17 @@ function templateObjectFactory() {
 var result = templateObjectFactory() === templateObjectFactory()
 ```
 
-> Note: This change brings a new emit helper, `__makeTemplateObject`;
-> if you are using [`importHelpers`](/tsconfig#importHelpers) with [`tslib`](https://github.com/Microsoft/tslib), an updated to version 1.8 or later.
+> 注意：此变更引入了一个新的生成辅助函数 `__makeTemplateObject`；
+> 如果你将 [`importHelpers`](/tsconfig#importHelpers) 与 [`tslib`](https://github.com/Microsoft/tslib) 配合使用，则需要更新到 1.8 或更高版本。
 
-## Localized diagnostics on the command line
+## 命令行本地化诊断信息
 
-TypeScript 2.6 npm package ships with localized versions of diagnostic messages for 13 languages.
-The localized messages are available when using the `--locale` flag on the command line.
+TypeScript 2.6 的 npm 包内置了 13 种语言的本地化诊断信息。
+使用命令行的 `--locale` 标志即可显示对应语言的本地化消息。
 
-##### Example
+##### 示例
 
-Error messages in Russian:
+俄语错误信息：
 
 ```sh
 c:\ts>tsc --v
@@ -159,7 +159,7 @@ c:\ts>tsc --locale ru --pretty c:\test\a.ts
       ~
 ```
 
-And help in Japanese:
+日语帮助信息：
 
 ```sh
 PS C:\ts> tsc --v
@@ -210,11 +210,11 @@ wn' 'es2016.array.include' 'es2017.object' 'es2017.sharedmemory' 'es2017.string'
  @<ファイル>
 ```
 
-## Suppress errors in .ts files using '// @ts-ignore' comments
+## 使用 '// @ts-ignore' 注释抑制 .ts 文件中的错误
 
-TypeScript 2.6 supports suppressing errors in .ts files using `// @ts-ignore` comments placed above the offending lines.
+TypeScript 2.6 支持在 .ts 文件中通过 `// @ts-ignore` 注释来抑制错误，该注释需放在出错行的上方。
 
-##### Example
+##### 示例
 
 ```ts
 if (false) {
@@ -223,29 +223,29 @@ if (false) {
 }
 ```
 
-A `// @ts-ignore` comment suppresses all errors that originate on the following line.
-It is recommended practice to have the remainder of the comment following `@ts-ignore` explain which error is being suppressed.
+`// @ts-ignore` 注释会抑制紧随其后那一行产生的所有错误。
+建议在 `@ts-ignore` 之后的注释中说明被抑制的是哪个错误。
 
-Please note that this comment only suppresses the error reporting, and we recommend you use this comments _very sparingly_.
+请注意，此注释仅抑制错误上报，我们建议**非常谨慎**地使用它。
 
-## Faster `tsc --watch`
+## 更快的 `tsc --watch`
 
-TypeScript 2.6 brings a faster `--watch` implementation.
-The new version optimizes code generation and checking for code bases using ES modules.
-Changes detected in a module file will result in _only_ regenerating the changed module, and files that depend on it, instead of the whole project.
-Projects with a large number of files should reap the most benefit from this change.
+TypeScript 2.6 带来了更快的 `--watch` 实现。
+新版本针对使用 ES 模块的代码库优化了代码生成和类型检查流程。
+当某个模块文件发生变更时，只会重新生成该模块及其依赖文件，而非重新构建整个项目。
+文件数量较多的项目将从中获益最大。
 
-The new implementation also brings performance enhancements to watching in tsserver.
-The watcher logic has been completely rewritten to respond faster to change events.
+新实现还提升了 tsserver 中监听模式的性能。
+监听逻辑已全面重写，能够更快地响应文件变更事件。
 
-## Write-only references now flagged as unused
+## 只写引用现在也会被标记为未使用
 
-TypeScript 2.6 adds revised implementation the [`noUnusedLocals`](/tsconfig#noUnusedLocals) and [`noUnusedParameters`](/tsconfig#noUnusedParameters) [compiler options](/docs/handbook/compiler-options.html).
-Declarations are only written to but never read from are now flagged as unused.
+TypeScript 2.6 修订了 [`noUnusedLocals`](/tsconfig#noUnusedLocals) 和 [`noUnusedParameters`](/tsconfig#noUnusedParameters) [编译器选项](/docs/handbook/compiler-options.html)的实现。
+只被写入、从未被读取的声明现在也会被标记为未使用。
 
-##### Example
+##### 示例
 
-Below both `n` and `m` will be marked as unused, because their values are never _read_. Previously TypeScript would only check whether their values were _referenced_.
+下面的 `n` 和 `m` 都会被标记为未使用，因为它们的值从未被**读取**。而此前 TypeScript 只会检查它们的值是否被**引用**。
 
 ```ts
 function f(n: number) {
@@ -260,9 +260,9 @@ class C {
 }
 ```
 
-Also functions that are only called within their own bodies are considered unused.
+此外，只在自身函数体内被调用的函数也会被视为未使用。
 
-##### Example
+##### 示例
 
 ```ts
 function f() {

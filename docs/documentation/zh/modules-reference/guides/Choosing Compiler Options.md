@@ -1,19 +1,19 @@
 ---
-title: Modules - Choosing Compiler Options
-short: Choosing Compiler Options
+title: 模块 - 选择编译器选项
+short: 选择编译器选项
 layout: docs
 permalink: /zh/docs/handbook/modules/guides/choosing-compiler-options.html
-oneline: How to choose compiler options that reflect your module environment
+oneline: 如何选择能够反映模块环境的编译器选项
 translatable: true
 ---
 
-## I’m writing an app
+## 我正在编写应用
 
-A single tsconfig.json can only represent a single environment, both in terms of what globals are available and in terms of how modules behave. If your app contains server code, DOM code, web worker code, test code, and code to be shared by all of those, each of those should have its own tsconfig.json, connected with [project references](https://www.typescriptlang.org/docs/handbook/project-references.html#handbook-content). Then, use this guide once for each tsconfig.json. For library-like projects within an app, especially ones that need to run in multiple runtime environments, use the “[I’m writing a library](#im-writing-a-library)” section.
+单个 tsconfig.json 只能代表单一环境，无论是在可用的全局变量方面，还是在模块的行为方式方面。如果你的应用包含服务端代码、DOM 代码、Web Worker 代码、测试代码以及需要被所有这些代码共享的代码，那么每一部分都应该有其独立的 tsconfig.json，并通过[项目引用（Project References）](https://www.typescriptlang.org/docs/handbook/project-references.html#handbook-content)关联起来。然后，对每个 tsconfig.json 分别参考本指南进行配置。对于应用内类似库的项目（尤其是需要在多个运行时环境中运行的项目），请参阅“[我正在编写库](#im-writing-a-library)”一节。
 
-### I’m using a bundler
+### 我正在使用打包工具
 
-In addition to adopting the following settings, it’s also recommended _not_ to set `{ "type": "module" }` or use `.mts` files in bundler projects for now. [Some bundlers](https://andrewbranch.github.io/interop-test/#synthesizing-default-exports-for-cjs-modules) adopt different ESM/CJS interop behavior under these circumstances, which TypeScript cannot currently analyze with `"moduleResolution": "bundler"`. See [issue #54102](https://github.com/microsoft/TypeScript/issues/54102) for more information.
+除了采用以下配置之外，目前还建议在打包工具项目中**不要**设置 `{ "type": "module" }` 或使用 `.mts` 文件。[某些打包工具](https://andrewbranch.github.io/interop-test/#synthesizing-default-exports-for-cjs-modules)在这些情况下会采用不同的 ESM/CJS 互操作行为，而 TypeScript 目前在 `"moduleResolution": "bundler"` 下无法对此进行分析。有关更多信息，请参阅 [issue #54102](https://github.com/microsoft/TypeScript/issues/54102)。
 
 ```json5
 {
@@ -40,9 +40,9 @@ In addition to adopting the following settings, it’s also recommended _not_ to
 }
 ```
 
-### I’m compiling and running the outputs in Node.js
+### 我正在编译输出并在 Node.js 中运行
 
-Remember to set `"type": "module"` or use `.mts` files if you intend to emit ES modules.
+如果你打算生成 ES 模块，请记得设置 `"type": "module"` 或使用 `.mts` 文件。
 
 ```json5
 {
@@ -66,17 +66,17 @@ Remember to set `"type": "module"` or use `.mts` files if you intend to emit ES 
 }
 ```
 
-### I’m using ts-node
+### 我正在使用 ts-node
 
-ts-node attempts to be compatible with the same code and the same tsconfig.json settings that can be used to [compile and run the JS outputs in Node.js](#im-compiling-and-running-the-outputs-in-node). Refer to [ts-node documentation](https://typestrong.org/ts-node/) for more details.
+ts-node 致力于兼容可用于[在 Node.js 中编译和运行 JS 输出](#im-compiling-and-running-the-outputs-in-node)的相同代码与相同 tsconfig.json 配置。详情请参阅 [ts-node 文档](https://typestrong.org/ts-node/)。
 
-### I’m using tsx
+### 我正在使用 tsx
 
-Whereas ts-node makes minimal modifications to Node.js’s module system by default, [tsx](https://github.com/esbuild-kit/tsx) behaves more like a bundler, allowing extensionless/index module specifiers and arbitrary mixing of ESM and CJS. Use the same settings for tsx as you [would for a bundler](#im-using-a-bundler).
+ts-node 默认对 Node.js 的模块系统做出的修改极小，而 [tsx](https://github.com/esbuild-kit/tsx) 的行为则更接近打包工具，允许不带扩展名/目录索引的模块标识符，以及 ESM 和 CJS 的任意混用。针对 tsx，请采用与[打包工具相同的配置](#im-using-a-bundler)。
 
-### I’m writing ES modules for the browser, with no bundler or module compiler
+### 我正在为浏览器编写 ES 模块，不使用打包工具或模块编译器
 
-TypeScript does not currently have options dedicated to this scenario, but you can approximate them by using a combination of the `nodenext` ESM module resolution algorithm and `paths` as a substitute for URL and import map support.
+TypeScript 目前没有专门针对该场景的选项，但你可以结合使用 `nodenext` 的 ESM 模块解析算法以及 `paths`（作为 URL 和 import map 支持的替代方案）来模拟该环境。
 
 ```json5
 // tsconfig.json
@@ -103,7 +103,7 @@ TypeScript does not currently have options dedicated to this scenario, but you c
 }
 ```
 
-This setup allows explicitly listed HTTPS imports to use locally-installed type declaration files, while erroring on imports that would normally resolve in node_modules:
+这种配置允许明确列出的 HTTPS 导入使用本地安装的类型声明文件，同时对通常会在 node_modules 中解析的导入报错：
 
 ```ts
 import {} from 'lodash'
@@ -111,7 +111,7 @@ import {} from 'lodash'
 // File '/project/empty-file.ts' is not a module. ts(2306)
 ```
 
-Alternatively, you can use [import maps](https://github.com/WICG/import-maps) to explicitly map a list of bare specifiers to URLs in the browser, while relying on `nodenext`’s default node_modules lookups, or on `paths`, to direct TypeScript to type declaration files for those bare specifier imports:
+或者，你也可以使用 [import maps](https://github.com/WICG/import-maps) 在浏览器中明确将裸说明符（bare specifier）列表映射到 URL，同时依靠 `nodenext` 默认的 node_modules 查找机制或 `paths`，引导 TypeScript 找到这些裸说明符导入对应的类型声明文件：
 
 ```html
 <script type="importmap">
@@ -129,11 +129,11 @@ import {} from 'lodash'
 // TypeScript: ./node_modules/@types/lodash/index.d.ts
 ```
 
-## I’m writing a library
+## 我正在编写库
 
 <!-- TODO: I might move all this to a guide/appendix on library publishing and link -->
 
-Choosing compilation settings as a library author is a fundamentally different process from choosing settings as an app author. When writing an app, settings are chosen that reflect the runtime environment or bundler—typically a single entity with known behavior. When writing a library, you would ideally check your code under _all possible_ library consumer compilation settings. Since this is impractical, you can instead use the strictest possible settings, since satisfying those tends to satisfy all others.
+作为库作者选择编译配置，与作为应用开发者选择配置的过程有着本质的不同。在编写应用时，选择的配置旨在反映运行时环境或打包工具——这通常是一个行为明确的单一实体。而在编写库时，理想情况下应该在库使用者**所有可能的**编译配置下检查你的代码。但鉴于这并不现实，你可以转而采用最严格的配置，因为满足了最严格的配置往往就能满足其他所有配置。
 
 ```json5
 {
@@ -151,33 +151,33 @@ Choosing compilation settings as a library author is a fundamentally different p
 }
 ```
 
-Let’s examine why we picked each of these settings:
+让我们来看看为什么选择其中的每一项配置：
 
-- **`module: "node18"`**. When a codebase is compatible with Node.js’s module system, it almost always works in bundlers as well. If you’re using a third-party emitter to emit ESM outputs, ensure that you set `"type": "module"` in your package.json so TypeScript checks your code as ESM, which uses a stricter module resolution algorithm in Node.js than CommonJS does. As an example, let’s look at what would happen if a library were to compile with `"moduleResolution": "bundler"`:
+- **`module: "node18"`**。当代码库与 Node.js 的模块系统兼容时，它几乎也总能正常运行于打包工具中。如果你使用第三方编译器生成 ESM 输出，请确保在 package.json 中设置了 `"type": "module"`，以便 TypeScript 将你的代码按 ESM 进行检查，因为 Node.js 中 ESM 的模块解析算法比 CommonJS 更为严格。作为示例，让我们看看如果库使用 `"moduleResolution": "bundler"` 进行编译会发生什么：
 
   ```ts
   export * from './utils'
   ```
 
-  Assuming `./utils.ts` (or `./utils/index.ts`) exists, a bundler would be fine with this code, so `"moduleResolution": "bundler"` doesn’t complain. Compiled with `"module": "esnext"`, the output JavaScript for this export statement will look exactly the same as the input. If that JavaScript were published to npm, it would be usable by projects that use a bundler, but it would cause an error when run in Node.js:
+  假设存在 `./utils.ts`（或 `./utils/index.ts`），打包工具处理这段代码没有任何问题，因此 `"moduleResolution": "bundler"` 不会报错。当使用 `"module": "esnext"` 编译时，该导出语句生成的 JavaScript 输出将与输入完全一致。如果该 JavaScript 被发布到 npm，使用打包工具的项目可以正常使用它，但在 Node.js 中运行时则会导致错误：
 
   ```
   Error [ERR_MODULE_NOT_FOUND]: Cannot find module '.../node_modules/dependency/utils' imported from .../node_modules/dependency/index.js
   Did you mean to import ./utils.js?
   ```
 
-  On the other hand, if we had written:
+  另一方面，如果我们写成：
 
   ```ts
   export * from './utils.js'
   ```
 
-  This would produce output that works both in Node.js _and_ in bundlers.
+  这将生成既能在 Node.js 中运行、**也能**在打包工具中运行的输出代码。
 
-  In short, `"moduleResolution": "bundler"` is infectious, allowing code that only works in bundlers to be produced. Likewise, `"moduleResolution": "nodenext"` is only checking that the output works in Node.js, but in most cases, module code that works in Node.js will work in other runtimes and in bundlers.
+  简而言之，`"moduleResolution": "bundler"` 具有传染性，容易产生只能在打包工具中运行的代码。同样，`"moduleResolution": "nodenext"` 虽然只检查输出是否能在 Node.js 中运行，但在大多数情况下，能在 Node.js 中运行的模块代码在其他运行时和打包工具中也能正常工作。
 
-- **`target: "es2020"`**. Setting this value to the _lowest_ ECMAScript version that you intend to support ensures the emitted code will not use language features introduced in a later version. Since `target` also implies a corresponding value for `lib`, this also ensures you don’t access globals that may not be available in older environments.
-- **`strict: true`**. Without this, you may write type-level code that ends up in your output `.d.ts` files and errors when a consumer compiles with `strict` enabled. For example, this `extends` clause:
+- **`target: "es2020"`**。将该值设置为你打算支持的**最低** ECMAScript 版本，可确保生成的代码不会使用更高版本中引入的语言特性。由于 `target` 还会隐含相应的 `lib` 值，这也能确保你不会访问在较旧环境中可能不存在的全局变量。
+- **`strict: true`**。如果不启用此选项，你编写的类型层面代码最终可能会出现在输出的 `.d.ts` 文件中，并在使用者开启 `strict` 编译时发生报错。例如，下面的 `extends` 子句：
   ```ts
   export interface Super {
     foo: string
@@ -186,29 +186,29 @@ Let’s examine why we picked each of these settings:
     foo: string | undefined
   }
   ```
-  is only an error under `strictNullChecks`. On the other hand, it’s very difficult to write code that errors only when `strict` is _disabled_, so it’s highly recommended for libraries to compile with `strict`.
-- **`verbatimModuleSyntax: true`**. This setting protects against a few module-related pitfalls that can cause problems for library consumers. First, it prevents writing any import statements that could be interpreted ambiguously based on the user’s value of `esModuleInterop` or `allowSyntheticDefaultImports`. Previously, it was often suggested that libraries compile without `esModuleInterop`, since its use in libraries could force users to adopt it too. However, it’s also possible to write imports that only work _without_ `esModuleInterop`, so neither value for the setting guarantees portability for libraries. `verbatimModuleSyntax` does provide such a guarantee.[^1] Second, it prevents the use of `export default` in modules that will be emitted as CommonJS, which can require bundler users and Node.js ESM users to consume the module differently. See the appendix on [ESM/CJS Interop](/docs/handbook/modules/appendices/esm-cjs-interop.html#library-code-needs-special-considerations) for more details.
-- **`declaration: true`** emits type declaration files alongside the output JavaScript. This is needed for consumers of the library to have any type information.
-- **`sourceMap: true`** and **`declarationMap: true`** emit source maps for the output JavaScript and type declaration files, respectively. These are only useful if the library also ships its source (`.ts`) files. By shipping source maps and source files, consumers of the library will be able to debug the library code somewhat more easily. By shipping declaration maps and source files, consumers will be able to see the original TypeScript sources when they run Go To Definition on imports from the libraries. Both of these represent a tradeoff between developer experience and library size, so it’s up to you whether to include them.
-- **`rootDir: "src"`** and **`outDir: "dist"`**. Using a separate output directory is always a good idea, but it’s _necessary_ for libraries that publish their input files. Otherwise, [extension substitution](/docs/handbook/modules/reference.html#file-extension-substitution) will cause the library’s consumers to load the library’s `.ts` files instead of `.d.ts` files, causing type errors and performance problems.
+  只有在开启 `strictNullChecks` 时才会报错。另一方面，几乎不可能写出仅在**关闭** `strict` 时报错的代码，因此强烈建议库在编译时开启 `strict`。
+- **`verbatimModuleSyntax: true`**。该选项可以防范几种可能会给库使用者带来困扰的模块相关陷阱。首先，它能防止写出根据使用者的 `esModuleInterop` 或 `allowSyntheticDefaultImports` 配置产生歧义解释的 import 语句。此前，人们常建议库在编译时不启用 `esModuleInterop`，因为在库中使用它可能会迫使使用者也必须开启它。然而，同样有可能写出**只有在未启用** `esModuleInterop` 时才能正常工作的导入，因此该选项的任意取值都无法保证库的可移植性。而 `verbatimModuleSyntax` 确实提供了这种保证。[^1] 其次，它能防止在将被输出为 CommonJS 的模块中使用 `export default`，因为这可能要求打包工具使用者和 Node.js ESM 使用者以不同的方式使用该模块。详情请参阅关于 [ESM/CJS 互操作性](/docs/handbook/modules/appendices/esm-cjs-interop.html#library-code-needs-special-considerations)的附录。
+- **`declaration: true`** 会随同输出的 JavaScript 一起生成类型声明文件。库的使用者需要这些文件来获取类型信息。
+- **`sourceMap: true`** 与 **`declarationMap: true`** 分别为输出的 JavaScript 和类型声明文件生成 source map。只有当库同时发布其源文件（`.ts`）时，它们才有意义。通过附带 source map 和源文件，库的使用者能相对更轻松地调试库代码。通过附带 declaration map 和源文件，使用者在对库的导入执行“跳转到定义（Go To Definition）”时能够直接查看原始的 TypeScript 源码。这两项配置都体现了开发体验与库体积之间的权衡，因此是否包含它们取决于你自己。
+- **`rootDir: "src"`** 与 **`outDir: "dist"`**。使用单独的输出目录始终是一个好做法，而对于发布输入源文件的库来说更是**必不可少**。否则，[扩展名替换（extension substitution）](/docs/handbook/modules/reference.html#file-extension-substitution)会导致库的使用者加载库的 `.ts` 文件而非 `.d.ts` 文件，从而引发类型错误和性能问题。
 
-### Considerations for bundling libraries
+### 打包库时的考量
 
-If you’re using a bundler to emit your library, then all your (non-externalized) imports will be processed by the bundler with known behavior, not by your users’ unknowable environments. In this case, you can use `"module": "esnext"` and `"moduleResolution": "bundler"`, but only with two caveats:
+如果你使用打包工具来生成库的输出，那么所有（未被外部化/externalized 的）导入都将由打包工具按照其明确的行为进行处理，而不是由用户不可预知的环境处理。在这种情况下，你可以使用 `"module": "esnext"` 和 `"moduleResolution": "bundler"`，但需注意以下两点：
 
-1. TypeScript cannot model module resolution when some files are bundled and some are externalized. When bundling libraries with dependencies, it’s common to bundle the first-party library source code into a single file, but leave imports of external dependencies as real imports in the bundled output. This essentially means module resolution is split between the bundler and the end user’s environment. To model this in TypeScript, you would want to process bundled imports with `"moduleResolution": "bundler"` and externalized imports with `"moduleResolution": "nodenext"` (or with multiple options to check that everything will work in a range of end-user environments). But TypeScript cannot be configured to use two different module resolution settings in the same compilation. As a consequence, using `"moduleResolution": "bundler"` may allow imports of externalized dependencies that would work in a bundler but are unsafe in Node.js. On the other hand, using `"moduleResolution": "nodenext"` may impose overly strict requirements on bundled imports.
-2. You must ensure that your declaration files get bundled as well. Recall the [first rule of declaration files](/docs/handbook/modules/theory.html#the-role-of-declaration-files): every declaration file represents exactly one JavaScript file. If you use `"moduleResolution": "bundler"` and use a bundler to emit an ESM bundle while using `tsc` to emit many individual declaration files, your declaration files may cause errors when consumed under `"module": "nodenext"`. For example, an input file like:
+1. 当部分文件被打包而部分文件被外部化时，TypeScript 无法对模块解析进行建模。在打包带有依赖项的库时，通常会将第一方库源码打包进单个文件中，但在打包输出中将外部依赖项的导入保留为真正的导入。这本质上意味着模块解析被拆分在打包工具与最终用户环境之间。要在 TypeScript 中模拟这一点，你会希望使用 `"moduleResolution": "bundler"` 处理被打包的导入，并使用 `"moduleResolution": "nodenext"`（或使用多种选项进行检查，以确保在各种最终用户环境中均可正常工作）处理被外部化的导入。但 TypeScript 无法配置为在同一次编译中使用两种不同的模块解析设置。因此，使用 `"moduleResolution": "bundler"` 可能会允许在打包工具中有效但在 Node.js 中不安全的外部依赖项导入。另一方面，使用 `"moduleResolution": "nodenext"` 则可能会对打包导入施加过于严格的要求。
+2. 你必须确保声明文件也一同被打包。回顾[声明文件的第一法则](/docs/handbook/modules/theory.html#the-role-of-declaration-files)：每个声明文件精确代表一个 JavaScript 文件。如果你使用 `"moduleResolution": "bundler"` 并通过打包工具输出 ESM bundle，同时使用 `tsc` 生成众多独立的声明文件，那么在 `"module": "nodenext"` 下使用时，你的声明文件可能会引发错误。例如，如下输入文件：
 
    ```ts
    import { Component } from './extensionless-relative-import'
    ```
 
-   will have its import erased by the JS bundler, but produce a declaration file with an identical import statement. That import statement, however, will contain an invalid module specifier in Node.js, since it’s missing a file extension. For Node.js users, TypeScript will error on the declaration file and infect types referencing `Component` with `any`, assuming the dependency will crash at runtime.
+   其导入语句会被 JS 打包工具消除，但生成的声明文件中却包含完全相同的 import 语句。然而在 Node.js 中，该 import 语句将包含一个无效的模块标识符，因为它缺少文件扩展名。对于 Node.js 用户，TypeScript 会在声明文件上报错，并将引用 `Component` 的类型污染为 `any`（假定该依赖项在运行时会崩溃）。
 
-   If your TypeScript bundler does not produce bundled declaration files, use `"moduleResolution": "nodenext"` to ensure that the imports preserved in your declaration files will be compatible with end-users’ TypeScript settings. Even better, consider not bundling your library.
+   如果你的 TypeScript 打包工具不会生成打包后的声明文件，请使用 `"moduleResolution": "nodenext"`，以确保保留在声明文件中的导入与最终用户的 TypeScript 配置兼容。更进一步地说，甚至可以考虑不对你的库进行打包。
 
-### Notes on dual-emit solutions
+### 双重输出（Dual-emit）方案的注意事项
 
-A single TypeScript compilation (whether emitting or just type checking) assumes that each input file will only produce one output file. Even if `tsc` isn’t emitting anything, the type checking it performs on imported names rely on knowledge about how the output file will behave at runtime, based on the module- and emit-related options set in the tsconfig.json. While third-party emitters are generally safe to use in combination with `tsc` type checking as long as `tsc` can be configured to understand what the other emitter will emit, any solution that emits two different sets of outputs with different module formats while only type checking once leaves (at least) one of the outputs unchecked. Because external dependencies may expose different APIs to CommonJS and ESM consumers, there’s no configuration you can use to guarantee in a single compilation that both outputs will be type-safe. In practice, most dependencies follow best practices and dual-emit outputs work. Running tests and [static analysis](https://npmjs.com/package/@arethetypeswrong/cli) against all output bundles before publishing significantly reduces the chance of a serious problem going unnoticed.
+单次 TypeScript 编译（无论是输出文件还是仅进行类型检查）都假定每个输入文件只产生一个输出文件。即使 `tsc` 不输出任何内容，它对导入名称执行的类型检查也依赖于 tsconfig.json 中设置的模块与输出相关选项，借此获知输出文件在运行时的行为。虽然只要能配置 `tsc` 理解其他编译工具的输出内容，将第三方编译器与 `tsc` 类型检查结合使用通常是安全的，但任何只进行一次类型检查却输出两套不同模块格式产物的方案，都会导致（至少）其中一套输出产物未经检查。因为外部依赖项可能向 CommonJS 和 ESM 使用者暴露不同的 API，所以没有任何配置能保证在单次编译中两套输出都是类型安全的。在实践中，大多数依赖项都遵循最佳实践，双重输出产物通常能正常工作。在发布之前对所有输出 bundle 运行测试和[静态分析](https://npmjs.com/package/@arethetypeswrong/cli)，能显著降低严重问题未被察觉的风险。
 
-[^1]: `verbatimModuleSyntax` can only work when the JS emitter emits the same module kind as `tsc` would given the tsconfig.json, source file extension, and package.json `"type"`. The option works by enforcing that the `import`/`require` written is identical to the `import`/`require` emitted. Any configuration that produces both an ESM and a CJS output from the same source file is fundamentally incompatible with `verbatimModuleSyntax`, since its whole purpose is to prevent you from writing `import` anywhere that a `require` would be emitted. `verbatimModuleSyntax` can also be defeated by configuring a third-party emitter to emit a different module kind than `tsc` would—for example, by setting `"module": "esnext"` in tsconfig.json while configuring Babel to emit CommonJS.
+[^1]: `verbatimModuleSyntax` 仅在 JS 编译器输出与 `tsc` 根据 tsconfig.json、源文件扩展名以及 package.json 中的 `"type"` 所推导出的相同模块类型时才有效。该选项的作用原理是强制保证手写的 `import`/`require` 与输出的 `import`/`require` 完全相同。任何从同一源文件同时生成 ESM 和 CJS 输出的配置在根本上都与 `verbatimModuleSyntax` 不兼容，因为该选项的全部目的就是防止你在任何会输出 `require` 的地方书写 `import`。如果将第三方编译器配置为输出与 `tsc` 不同的模块类型，`verbatimModuleSyntax` 也会失效——例如，在 tsconfig.json 中设置 `"module": "esnext"`，同时却配置 Babel 输出 CommonJS。

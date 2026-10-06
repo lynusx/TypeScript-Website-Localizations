@@ -2,43 +2,43 @@
 title: ASP.NET Core
 layout: docs
 permalink: /zh/docs/handbook/asp-net-core.html
-oneline: Using TypeScript in ASP.NET Core
+oneline: 在 ASP.NET Core 中使用 TypeScript
 ---
 
-## Install ASP.NET Core and TypeScript
+## 安装 ASP.NET Core 和 TypeScript
 
-First, install [ASP.NET Core](https://dotnet.microsoft.com/apps/aspnet) if you need it. This quick-start guide requires Visual Studio 2015 or 2017.
+首先，如有需要请安装 [ASP.NET Core](https://dotnet.microsoft.com/apps/aspnet)。本快速入门指南需要 Visual Studio 2015 或 2017。
 
-Next, if your version of Visual Studio does not already have the latest TypeScript, you can [install it](https://www.typescriptlang.org/index.html#download-links).
+接下来，如果你使用的 Visual Studio 版本尚未安装最新的 TypeScript，可以[下载并安装](https://www.typescriptlang.org/index.html#download-links)。
 
-## Create a new project
+## 创建新项目
 
-1. Choose **File**
-2. Choose **New Project** (Ctrl + Shift + N)
-3. Search for **.NET Core** in the project search bar
-4. Select **ASP.NET Core Web Application** and press the _Next_ button
+1. 选择**文件（File）**
+2. 选择**新建项目（New Project）**（Ctrl + Shift + N）
+3. 在项目搜索栏中搜索 **.NET Core**
+4. 选择 **ASP.NET Core Web Application** 并点击 _Next_ 按钮
 
 ![Visual Studio Project Window Screenshot](/images/tutorials/aspnet/createwebapp.png)
 
-5. Name your project and solution. After select the _Create_ button
+5. 为你的项目和解决方案命名。随后点击 _Create_ 按钮
 
 ![Visual Studio New Project Window Screenshot](/images/tutorials/aspnet/namewebapp.png)
 
-6. In the last window, select the **Empty** template and press the _Create_ button
+6. 在最后一个窗口中，选择 **Empty** 模板并点击 _Create_ 按钮
 
 ![Visual Studio Web Application Screenshot](/images/tutorials/aspnet/emptytemplate.png)
 
-Run the application and make sure that it works.
+运行应用程序，确认其能够正常工作。
 
-![A screenshot of Edge showing "Hello World" as success](/images/tutorials/aspnet/workingsite.png)
+![Edge 显示“Hello World”表示运行成功的屏幕截图](/images/tutorials/aspnet/workingsite.png)
 
-### Set up the server
+### 配置服务器
 
-Open **Dependencies > Manage NuGet Packages > Browse.** Search and install `Microsoft.AspNetCore.StaticFiles` and `Microsoft.TypeScript.MSBuild`:
+打开**依赖项（Dependencies）> 管理 NuGet 程序包（Manage NuGet Packages）> 浏览（Browse）**。搜索并安装 `Microsoft.AspNetCore.StaticFiles` 和 `Microsoft.TypeScript.MSBuild`：
 
 ![The Visual Studio search for Nuget](/images/tutorials/aspnet/downloaddependency.png)
 
-Open up your `Startup.cs` file and edit your `Configure` function to look like this:
+打开 `Startup.cs` 文件，将 `Configure` 函数修改为如下形式：
 
 ```cs
 public void Configure(IApplicationBuilder app, IHostEnvironment env)
@@ -53,25 +53,25 @@ public void Configure(IApplicationBuilder app, IHostEnvironment env)
 }
 ```
 
-You may need to restart VS for the red squiggly lines below `UseDefaultFiles` and `UseStaticFiles` to disappear.
+你可能需要重启 Visual Studio，以使 `UseDefaultFiles` 和 `UseStaticFiles` 下方的红色波浪线消失。
 
-## Add TypeScript
+## 添加 TypeScript
 
-Next we will add a new folder and call it `scripts`.
+接下来，我们将添加一个新文件夹并将其命名为 `scripts`。
 
 ![The Path of "Add" then "New Folder" in Visual Studio from a Web Project](/images/tutorials/aspnet/newfolder.png)
 
 ![](/images/tutorials/aspnet/scripts.png)
 
-## Add TypeScript code
+## 添加 TypeScript 代码
 
-Right click on `scripts` and click **New Item**. Then choose **TypeScript File** and name the file `app.ts`
+右键单击 `scripts` 文件夹并选择**新建项（New Item）**。接着选择 **TypeScript 文件（TypeScript File）**，将文件命名为 `app.ts`
 
 ![A highlight of the new folder](/images/tutorials/aspnet/tsfile.png)
 
-### Add example code
+### 添加示例代码
 
-Add the following code to the `app.ts` file.
+在 `app.ts` 文件中添加以下代码：
 
 ```ts
 function sayHello() {
@@ -83,15 +83,15 @@ function sayHello() {
 }
 ```
 
-## Set up the build
+## 配置构建流程
 
-_Configure the TypeScript compiler_
+_配置 TypeScript 编译器_
 
-First we need to tell TypeScript how to build. Right click on `scripts` and click **New Item**. Then choose **TypeScript Configuration File** and use the default name of `tsconfig.json`
+首先我们需要告诉 TypeScript 如何进行构建。右键单击 `scripts` 并选择**新建项（New Item）**。接着选择 **TypeScript 配置文件（TypeScript Configuration File）**，并保留默认名称 `tsconfig.json`
 
 ![A screenshot showing the new file dialogue with TypeScript JSON Config selected](/images/tutorials/aspnet/tsconfig.png)
 
-Replace the contents of the `tsconfig.json` file with:
+将 `tsconfig.json` 文件的内容替换为：
 
 ```json tsconfig
 {
@@ -106,22 +106,22 @@ Replace the contents of the `tsconfig.json` file with:
 }
 ```
 
-- [`noEmitOnError`](/tsconfig#noEmitOnError) : Do not emit outputs if any errors were reported.
-- [`noImplicitAny`](/tsconfig#noImplicitAny) : Raise error on expressions and declarations with an implied `any` type.
-- [`sourceMap`](/tsconfig#sourceMap) : Generates corresponding `.map` file.
-- [`target`](/tsconfig#target) : Specify ECMAScript target version.
+- [`noEmitOnError`](/tsconfig#noEmitOnError) : 如果报告了任何错误，则不输出产物。
+- [`noImplicitAny`](/tsconfig#noImplicitAny) : 在隐含 `any` 类型的表达式和声明上引发错误。
+- [`sourceMap`](/tsconfig#sourceMap) : 生成对应的 `.map` 文件。
+- [`target`](/tsconfig#target) : 指定 ECMAScript 目标版本。
 
-Note: `"ESNext"` targets latest supported
+注意：`"ESNext"` 针对最新支持的版本
 
-[`noImplicitAny`](/tsconfig#noImplicitAny) is good idea whenever you’re writing new code — you can make sure that you don’t write any untyped code by mistake. `"compileOnSave"` makes it easy to update your code in a running web app.
+在编写新代码时，启用 [`noImplicitAny`](/tsconfig#noImplicitAny) 是一个好习惯——这样可以确保你不会误写出未声明类型的代码。`"compileOnSave"` 则便于在运行中的 Web 应用里即时更新代码。
 
-#### _Set up NPM_
+#### _配置 NPM_
 
-We need to setup NPM so that JavaScript packages can be downloaded. Right click on the project and select **New Item**. Then choose **NPM Configuration File** and use the default name of `package.json`.
+我们需要配置 NPM，以便下载 JavaScript 依赖包。右键单击项目并选择**新建项（New Item）**。然后选择 **NPM 配置文件（NPM Configuration File）**，并使用默认名称 `package.json`。
 
 ![Screenshot of VS showing new file dialog with 'npm configuration file' selected](/images/tutorials/aspnet/packagejson.png)
 
-Inside the `"devDependencies"` section of the `package.json` file, add _gulp_ and _del_
+在 `package.json` 文件的 `"devDependencies"` 部分中，添加 _gulp_ 和 _del_
 
 ```json tsconfig
 "devDependencies": {
@@ -130,15 +130,15 @@ Inside the `"devDependencies"` section of the `package.json` file, add _gulp_ an
 }
 ```
 
-Visual Studio should start installing gulp and del as soon as you save the file. If not, right-click package.json and then Restore Packages.
+保存文件后，Visual Studio 应立即开始安装 gulp 和 del。如果没有自动安装，请右键单击 package.json，然后选择“还原程序包（Restore Packages）”。
 
-After you should see an `npm` folder in your solution explorer
+随后，你应该会在解决方案资源管理器中看到一个 `npm` 文件夹
 
 ![Screenshot of VS showing npm folder](/images/tutorials/aspnet/npm.png)
 
-#### _Set up gulp_
+#### _配置 gulp_
 
-Right click on the project and click **New Item**. Then choose **JavaScript File** and use the name of `gulpfile.js`
+右键单击项目并选择**新建项（New Item）**。接着选择 **JavaScript 文件（JavaScript File）**，并将其命名为 `gulpfile.js`
 
 ```js
 /// <binding AfterBuild='default' Clean='clean' />
@@ -164,19 +164,19 @@ gulp.task('default', function (done) {
 })
 ```
 
-The first line tells Visual Studio to run the task ‘default’ after the build finishes. It will also run the ‘clean’ task when you ask Visual Studio to clean the build.
+第一行代码指示 Visual Studio 在构建完成后运行 ‘default’ 任务。当你要求 Visual Studio 清理构建时，它还会运行 ‘clean’ 任务。
 
-Now right-click on `gulpfile.js` and click Task Runner Explorer.
+现在右键单击 `gulpfile.js`，然后选择“任务运行程序资源管理器（Task Runner Explorer）”。
 
 ![Screenshot of right clicking on the "Gulpfile.js" with 'Task Runner Explorer' selected](/images/tutorials/aspnet/taskrunner.png)
 
-If ‘default’ and ‘clean’ tasks don’t show up, refresh the explorer:
+如果 ‘default’ 和 ‘clean’ 任务没有显示出来，请刷新资源管理器：
 
 ![Screenshot of task explorer with "Gulpfile.js" in it](/images/tutorials/aspnet/taskrunnerrefresh.png)
 
-## Write a HTML page
+## 编写 HTML 页面
 
-Right click on the `wwwroot` folder (if you don't see the folder try building the project) and add a New Item named `index.html` inside. Use the following code for `index.html`
+右键单击 `wwwroot` 文件夹（如果看不到该文件夹，请尝试构建项目），在其中添加一个名为 `index.html` 的新建项。为 `index.html` 使用以下代码
 
 ```
 <!DOCTYPE html>
@@ -196,20 +196,20 @@ Right click on the `wwwroot` folder (if you don't see the folder try building th
 </html>
 ```
 
-## Test
+## 测试
 
-1. Run the project
-2. As you type on the boxes you should see the message appear/change!
+1. 运行项目
+2. 当你在输入框中打字时，应该会看到提示信息实时出现/变化！
 
 ![A GIF of Edge showing the code you have just wrote](https://media.giphy.com/media/U3mTibRAx34DG3zhAN/giphy.gif)
 
-## Debug
+## 调试
 
-1. In Edge, press F12 and click the Debugger tab.
-2. Look in the first localhost folder, then scripts/app.ts
-3. Put a breakpoint on the line with return.
-4. Type in the boxes and confirm that the breakpoint hits in TypeScript code and that inspection works correctly.
+1. 在 Edge 浏览器中，按 F12 并点击“调试器（Debugger）”标签页。
+2. 找到第一个 localhost 文件夹，然后展开 scripts/app.ts
+3. 在带有 return 的行上设置一个断点。
+4. 在输入框中打字，确认断点能够在 TypeScript 代码中命中，并且变量检查功能正常工作。
 
 ![An image showing the debugger running the code you have just wrote](/images/tutorials/aspnet/debugger.png)
 
-Congrats you've built your own .NET Core project with a TypeScript frontend.
+恭喜，你已经成功构建了拥有 TypeScript 前端的 .NET Core 项目！

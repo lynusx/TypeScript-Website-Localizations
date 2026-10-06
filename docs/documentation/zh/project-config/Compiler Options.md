@@ -1,16 +1,14 @@
 ---
-title: tsc CLI Options
+title: tsc CLI 选项
 layout: docs
 permalink: /zh/docs/handbook/compiler-options.html
-oneline: A very high-level overview of the CLI compiler options for tsc
+oneline: tsc CLI 编译器选项的概要总览
 disable_toc: true
 ---
 
-## Using the CLI
+## 使用 CLI
 
-Running `tsc` locally will compile the closest project defined by a `tsconfig.json`, or you can compile a set of TypeScript
-files by passing in a glob of files you want. When input files are specified on the command line, `tsconfig.json` files are
-ignored.
+在本地运行 `tsc` 将编译由最近的 `tsconfig.json` 定义的项目，或者你也可以通过传入所需文件的 glob 来编译一组 TypeScript 文件。当在命令行中指定了输入文件时，`tsconfig.json` 文件将被忽略。
 
 ```sh
 # Run a compile based on a backwards look through the fs for a tsconfig.json
@@ -32,16 +30,16 @@ tsc index.js --declaration --emitDeclarationOnly
 tsc app.ts util.ts --target esnext --outfile index.js
 ```
 
-## Compiler Options
+## 编译器选项
 
-**If you're looking for more information about the compiler options in a tsconfig, check out the [TSConfig Reference](/tsconfig)**
+**如果你正在寻找有关 tsconfig 中编译器选项的更多信息，请查看 [TSConfig 参考](/tsconfig)**
 
-<!-- Start of replacement  --><h3>CLI Commands</h3>
+<!-- Start of replacement  --><h3>CLI 命令</h3>
 <table class="cli-option" width="100%">
   <thead>
     <tr>
-      <th>Flag</th>
-      <th>Type</th>
+      <th>标志</th>
+      <th>类型</th>
     </tr>
   </thead>
   <tbody>
@@ -51,7 +49,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Show all compiler options.</p>
+<p>显示所有编译器选项。</p>
 </td></tr>
 
 <tr class='even' name='help'>
@@ -60,7 +58,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Gives local information for help on the CLI.</p>
+<p>提供 CLI 本地帮助信息。</p>
 </td></tr>
 
 <tr class='odd' name='ignoreConfig'>
@@ -69,7 +67,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Ignore the tsconfig found and build with commandline options and files.</p>
+<p>忽略找到的 tsconfig，并使用命令行选项和文件进行构建。</p>
 </td></tr>
 
 <tr class='even' name='init'>
@@ -78,7 +76,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Initializes a TypeScript project and creates a tsconfig.json file.</p>
+<p>初始化一个 TypeScript 项目并创建 tsconfig.json 文件。</p>
 </td></tr>
 
 <tr class='odd' name='listFilesOnly'>
@@ -87,7 +85,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Print names of files that are part of the compilation and then stop processing.</p>
+<p>打印参与编译的文件名称，然后停止处理。</p>
 </td></tr>
 
 <tr class='even' name='locale'>
@@ -96,7 +94,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Set the language of the messaging from TypeScript. This does not affect emit.</p>
+<p>设置 TypeScript 输出消息的语言。此选项不影响代码生成（emit）。</p>
 </td></tr>
 
 <tr class='odd' name='project'>
@@ -105,7 +103,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Compile the project given the path to its configuration file, or to a folder with a 'tsconfig.json'.</p>
+<p>根据给定的配置文件路径或包含 'tsconfig.json' 的文件夹路径编译项目。</p>
 </td></tr>
 
 <tr class='even' name='showConfig'>
@@ -114,7 +112,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Print the final configuration instead of building.</p>
+<p>打印最终配置而不是执行构建。</p>
 </td></tr>
 
 <tr class='odd' name='version'>
@@ -123,17 +121,17 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Print the compiler's version.</p>
+<p>打印编译器的版本。</p>
 </td></tr>
 
 </tbody></table>
 
-<h3>Build Options</h3>
+<h3>构建选项</h3>
 <table class="cli-option" width="100%">
   <thead>
     <tr>
-      <th>Flag</th>
-      <th>Type</th>
+      <th>标志</th>
+      <th>类型</th>
     </tr>
   </thead>
   <tbody>
@@ -143,7 +141,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Build one or more projects and their dependencies, if out of date</p>
+<p>构建一个或多个项目及其依赖项（若已过期）。</p>
 </td></tr>
 
 <tr class='even' name='clean'>
@@ -152,7 +150,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Delete the outputs of all projects.</p>
+<p>删除所有项目的输出内容。</p>
 </td></tr>
 
 <tr class='odd' name='dry'>
@@ -161,7 +159,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Show what would be built (or deleted, if specified with '--clean')</p>
+<p>显示将要构建的内容（如果指定了 '--clean'，则显示将要删除的内容）。</p>
 </td></tr>
 
 <tr class='even' name='force'>
@@ -170,7 +168,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Build all projects, including those that appear to be up to date.</p>
+<p>构建所有项目，包括那些看似已是最新的项目。</p>
 </td></tr>
 
 <tr class='odd' name='verbose'>
@@ -179,17 +177,17 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Enable verbose logging.</p>
+<p>启用详细日志记录。</p>
 </td></tr>
 
 </tbody></table>
 
-<h3>Watch Options</h3>
+<h3>Watch 选项</h3>
 <table class="cli-option" width="100%">
   <thead>
     <tr>
-      <th>Flag</th>
-      <th>Type</th>
+      <th>标志</th>
+      <th>类型</th>
     </tr>
   </thead>
   <tbody>
@@ -199,7 +197,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Remove a list of directories from the watch process.</p>
+<p>从监视流程中排除一组目录。</p>
 </td></tr>
 
 <tr class='even' name='excludeFiles'>
@@ -208,7 +206,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Remove a list of files from the watch mode's processing.</p>
+<p>在监视模式的处理中排除指定的文件列表。</p>
 </td></tr>
 
 <tr class='odd' name='fallbackPolling'>
@@ -217,7 +215,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Specify what approach the watcher should use if the system runs out of native file watchers.</p>
+<p>指定在系统耗尽原生文件监视器时，监视器应使用的后备策略。</p>
 </td></tr>
 
 <tr class='even' name='synchronousWatchDirectory'>
@@ -226,7 +224,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Synchronously call callbacks and update the state of directory watchers on platforms that don`t support recursive watching natively.</p>
+<p>在原生不支持递归监视的平台上，同步调用回调并更新目录监视器的状态。</p>
 </td></tr>
 
 <tr class='odd' name='watch'>
@@ -235,7 +233,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Watch input files.</p>
+<p>监视输入文件。</p>
 </td></tr>
 
 <tr class='even' name='watchDirectory'>
@@ -244,7 +242,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Specify how directories are watched on systems that lack recursive file-watching functionality.</p>
+<p>在缺乏递归文件监视功能的系统上，指定如何监视目录。</p>
 </td></tr>
 
 <tr class='odd' name='watchFile'>
@@ -253,18 +251,18 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Specify how the TypeScript watch mode works.</p>
+<p>指定 TypeScript 监视（watch）模式的工作方式。</p>
 </td></tr>
 
 </tbody></table>
 
-<h3>Compiler Flags</h3>
+<h3>编译器标志</h3>
 <table class="cli-option" width="100%">
   <thead>
     <tr>
-      <th>Flag</th>
-      <th>Type</th>
-      <th>Default</th>
+      <th>标志</th>
+      <th>类型</th>
+      <th>默认值</th>
     </tr>
   </thead>
   <tbody>
@@ -276,7 +274,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Enable importing files with any extension, provided a declaration file is present.</p>
+<p>允许导入具有任意扩展名的文件（只要存在对应的声明文件）。</p>
 </td></tr>
 
 <tr class='even' name='allowImportingTsExtensions'>
@@ -287,7 +285,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Allow imports to include TypeScript file extensions.</p>
+<p>允许导入语句中包含 TypeScript 文件扩展名。</p>
 </td></tr>
 
 <tr class='odd' name='allowJs'>
@@ -298,7 +296,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Allow JavaScript files to be a part of your program. Use the <code>checkJS</code> option to get errors from these files.</p>
+<p>允许 JavaScript 文件成为程序的一部分。使用 <code>checkJS</code> 选项可从这些文件中获取报错信息。</p>
 </td></tr>
 
 <tr class='even' name='allowSyntheticDefaultImports'>
@@ -309,7 +307,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Allow 'import x from y' when a module doesn't have a default export.</p>
+<p>当模块没有默认导出时，允许使用 'import x from y'。</p>
 </td></tr>
 
 <tr class='odd' name='allowUmdGlobalAccess'>
@@ -320,7 +318,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Allow accessing UMD globals from modules.</p>
+<p>允许在模块内部访问 UMD 全局变量。</p>
 </td></tr>
 
 <tr class='even' name='allowUnreachableCode'>
@@ -330,7 +328,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
   <td></td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Disable error reporting for unreachable code.</p>
+<p>禁用无法访问的代码的错误报告。</p>
 </td></tr>
 
 <tr class='odd' name='allowUnusedLabels'>
@@ -340,7 +338,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
   <td></td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Disable error reporting for unused labels.</p>
+<p>禁用未使用的标签的错误报告。</p>
 </td></tr>
 
 <tr class='even' name='alwaysStrict'>
@@ -351,7 +349,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Ensure 'use strict' is always emitted.</p>
+<p>确保始终输出 'use strict'。</p>
 </td></tr>
 
 <tr class='odd' name='assumeChangesOnlyAffectDirectDependencies'>
@@ -362,7 +360,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Have recompiles in projects that use <a href="#incremental"><code>incremental</code></a> and <code>watch</code> mode assume that changes within a file will only affect files directly depending on it.</p>
+<p>在使用 <a href="#incremental"><code>incremental</code></a> 和 <code>watch</code> 模式的项目中，假定文件内部的变更只会影响直接依赖该文件的文件。</p>
 </td></tr>
 
 <tr class='even' name='baseUrl'>
@@ -372,7 +370,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
   <td></td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Specify the base directory to resolve bare specifier module names.</p>
+<p>指定用于解析裸模块说明符的基础目录。</p>
 </td></tr>
 
 <tr class='odd' name='charset'>
@@ -383,7 +381,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>No longer supported. In early versions, manually set the text encoding for reading files.</p>
+<p>已不再支持。在早期版本中，用于手动指定读取文件时的文本编码。</p>
 </td></tr>
 
 <tr class='even' name='checkJs'>
@@ -394,7 +392,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Enable error reporting in type-checked JavaScript files.</p>
+<p>在进行类型检查的 JavaScript 文件中启用错误报告。</p>
 </td></tr>
 
 <tr class='odd' name='composite'>
@@ -405,7 +403,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Enable constraints that allow a TypeScript project to be used with project references.</p>
+<p>启用相关约束，以便 TypeScript 项目可以配合项目引用（Project References）使用。</p>
 </td></tr>
 
 <tr class='even' name='customConditions'>
@@ -415,7 +413,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
   <td></td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Conditions to set in addition to the resolver-specific defaults when resolving imports.</p>
+<p>解析导入时，在解析器特定默认条件之外额外设置的条件。</p>
 </td></tr>
 
 <tr class='odd' name='declaration'>
@@ -426,7 +424,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Generate .d.ts files from TypeScript and JavaScript files in your project.</p>
+<p>为项目中的 TypeScript 和 JavaScript 文件生成 .d.ts 文件。</p>
 </td></tr>
 
 <tr class='even' name='declarationDir'>
@@ -436,7 +434,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
   <td></td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Specify the output directory for generated declaration files.</p>
+<p>指定所生成声明文件的输出目录。</p>
 </td></tr>
 
 <tr class='odd' name='declarationMap'>
@@ -447,7 +445,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Create sourcemaps for d.ts files.</p>
+<p>为 d.ts 文件创建 Source Map。</p>
 </td></tr>
 
 <tr class='even' name='diagnostics'>
@@ -458,7 +456,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Output compiler performance information after building.</p>
+<p>在构建后输出编译器性能信息。</p>
 </td></tr>
 
 <tr class='odd' name='disableReferencedProjectLoad'>
@@ -469,7 +467,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Reduce the number of projects loaded automatically by TypeScript.</p>
+<p>减少 TypeScript 自动加载的项目数量。</p>
 </td></tr>
 
 <tr class='even' name='disableSizeLimit'>
@@ -480,7 +478,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Remove the 20mb cap on total source code size for JavaScript files in the TypeScript language server.</p>
+<p>解除 TypeScript 语言服务中对 JavaScript 文件源码总大小 20MB 的上限限制。</p>
 </td></tr>
 
 <tr class='odd' name='disableSolutionSearching'>
@@ -491,7 +489,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Opt a project out of multi-project reference checking when editing.</p>
+<p>在编辑时让项目不参与多项目引用检查。</p>
 </td></tr>
 
 <tr class='even' name='disableSourceOfProjectReferenceRedirect'>
@@ -502,7 +500,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Disable preferring source files instead of declaration files when referencing composite projects.</p>
+<p>在引用组合项目时，禁用优先使用源文件而非声明文件的行为。</p>
 </td></tr>
 
 <tr class='odd' name='downlevelIteration'>
@@ -513,7 +511,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Emit more compliant, but verbose and less performant JavaScript for iteration.</p>
+<p>为迭代操作生成更符合规范，但代码更繁琐且性能较低的 JavaScript。</p>
 </td></tr>
 
 <tr class='even' name='emitBOM'>
@@ -524,7 +522,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Emit a UTF-8 Byte Order Mark (BOM) in the beginning of output files.</p>
+<p>在输出文件的开头写入 UTF-8 字节顺序标记（BOM）。</p>
 </td></tr>
 
 <tr class='odd' name='emitDeclarationOnly'>
@@ -535,7 +533,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Only output d.ts files and not JavaScript files.</p>
+<p>仅输出 .d.ts 声明文件，而不输出 JavaScript 文件。</p>
 </td></tr>
 
 <tr class='even' name='emitDecoratorMetadata'>
@@ -546,7 +544,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Emit design-type metadata for decorated declarations in source files.</p>
+<p>为源文件中带装饰器的声明生成设计类型元数据。</p>
 </td></tr>
 
 <tr class='odd' name='erasableSyntaxOnly'>
@@ -557,7 +555,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Do not allow runtime constructs that are not part of ECMAScript.</p>
+<p>禁止使用不属于 ECMAScript 的运行时语法结构。</p>
 </td></tr>
 
 <tr class='even' name='esModuleInterop'>
@@ -568,7 +566,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Emit additional JavaScript to ease support for importing CommonJS modules. This enables <a href="#allowSyntheticDefaultImports"><code>allowSyntheticDefaultImports</code></a> for type compatibility.</p>
+<p>生成额外的 JavaScript 代码以更轻松地支持导入 CommonJS 模块。这同时会启用 <a href="#allowSyntheticDefaultImports"><code>allowSyntheticDefaultImports</code></a> 以实现类型兼容。</p>
 </td></tr>
 
 <tr class='odd' name='exactOptionalPropertyTypes'>
@@ -579,7 +577,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Interpret optional property types as written, rather than adding <code>undefined</code>.</p>
+<p>按字面定义解释可选属性类型，而不是自动添加 <code>undefined</code>。</p>
 </td></tr>
 
 <tr class='even' name='experimentalDecorators'>
@@ -590,7 +588,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Enable experimental support for TC39 stage 2 draft decorators.</p>
+<p>启用对 TC39 stage 2 草案装饰器的实验性支持。</p>
 </td></tr>
 
 <tr class='odd' name='explainFiles'>
@@ -601,7 +599,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Print files read during the compilation including why it was included.</p>
+<p>打印在编译期间读取的文件以及将其包含在内的原因。</p>
 </td></tr>
 
 <tr class='even' name='extendedDiagnostics'>
@@ -612,7 +610,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Output more detailed compiler performance information after building.</p>
+<p>在构建后输出更详细的编译器性能信息。</p>
 </td></tr>
 
 <tr class='odd' name='forceConsistentCasingInFileNames'>
@@ -623,7 +621,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Ensure that casing is correct in imports.</p>
+<p>确保导入语句中的文件名大小写完全一致。</p>
 </td></tr>
 
 <tr class='even' name='generateCpuProfile'>
@@ -634,7 +632,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Emit a v8 CPU profile of the compiler run for debugging.</p>
+<p>在编译器运行时生成 V8 CPU Profile 用于调试。</p>
 </td></tr>
 
 <tr class='odd' name='generateTrace'>
@@ -644,7 +642,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
   <td></td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Generates an event trace and a list of types.</p>
+<p>生成事件跟踪分析和类型列表。</p>
 </td></tr>
 
 <tr class='even' name='importHelpers'>
@@ -655,7 +653,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Allow importing helper functions from tslib once per project, instead of including them per-file.</p>
+<p>允许在每个项目中从 tslib 统一导入辅助函数，而不是在每个文件中重复包含它们。</p>
 </td></tr>
 
 <tr class='odd' name='importsNotUsedAsValues'>
@@ -666,7 +664,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Specify emit/checking behavior for imports that are only used for types.</p>
+<p>指定仅用于类型的导入的生成与检查行为。</p>
 </td></tr>
 
 <tr class='even' name='incremental'>
@@ -677,7 +675,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Save .tsbuildinfo files to allow for incremental compilation of projects.</p>
+<p>保存 .tsbuildinfo 文件以实现项目的增量编译。</p>
 </td></tr>
 
 <tr class='odd' name='inlineSourceMap'>
@@ -688,7 +686,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Include sourcemap files inside the emitted JavaScript.</p>
+<p>在生成的 JavaScript 文件中内联包含 sourcemap 内容。</p>
 </td></tr>
 
 <tr class='even' name='inlineSources'>
@@ -699,7 +697,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Include source code in the sourcemaps inside the emitted JavaScript.</p>
+<p>将源代码作为内联内容包含在生成的 JavaScript 中的 source map 内。</p>
 </td></tr>
 
 <tr class='odd' name='isolatedDeclarations'>
@@ -710,7 +708,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Require sufficient annotation on exports so other tools can trivially generate declaration files.</p>
+<p>要求在导出项上提供充分的类型注解，以便其他工具可以轻松生成声明文件。</p>
 </td></tr>
 
 <tr class='even' name='isolatedModules'>
@@ -721,7 +719,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Ensure that each file can be safely transpiled without relying on other imports.</p>
+<p>确保每个文件都能安全地转译，而无需依赖其他导入。</p>
 </td></tr>
 
 <tr class='odd' name='jsx'>
@@ -731,7 +729,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
   <td></td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Specify what JSX code is generated.</p>
+<p>指定生成何种 JSX 代码。</p>
 </td></tr>
 
 <tr class='even' name='jsxFactory'>
@@ -742,7 +740,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Specify the JSX factory function used when targeting React JSX emit, e.g. 'React.createElement' or 'h'.</p>
+<p>指定生成 React JSX 代码时使用的 JSX 工厂函数，例如 'React.createElement' 或 'h'。</p>
 </td></tr>
 
 <tr class='odd' name='jsxFragmentFactory'>
@@ -753,7 +751,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Specify the JSX Fragment reference used for fragments when targeting React JSX emit e.g. 'React.Fragment' or 'Fragment'.</p>
+<p>指定生成 React JSX 代码时片段所使用的 JSX 片段引用，例如 'React.Fragment' 或 'Fragment'。</p>
 </td></tr>
 
 <tr class='even' name='jsxImportSource'>
@@ -764,7 +762,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Specify module specifier used to import the JSX factory functions when using <code>jsx: react-jsx*</code>.</p>
+<p>在使用 <code>jsx: react-jsx*</code> 时，指定用于导入 JSX 工厂函数的模块标识符。</p>
 </td></tr>
 
 <tr class='odd' name='keyofStringsOnly'>
@@ -775,7 +773,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Make keyof only return strings instead of string, numbers or symbols. Legacy option.</p>
+<p>让 keyof 仅返回 string，而非 string、number 或 symbol。已废弃的历史选项。</p>
 </td></tr>
 
 <tr class='even' name='lib'>
@@ -785,7 +783,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
   <td></td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Specify a set of bundled library declaration files that describe the target runtime environment.</p>
+<p>指定一组描述目标运行时环境的内置库声明文件。</p>
 </td></tr>
 
 <tr class='odd' name='libReplacement'>
@@ -796,7 +794,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Enable substitution of default <code>lib</code> files with custom ones.</p>
+<p>允许使用自定义库文件替换默认的 <code>lib</code> 文件。</p>
 </td></tr>
 
 <tr class='even' name='listEmittedFiles'>
@@ -807,7 +805,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Print the names of emitted files after a compilation.</p>
+<p>在编译后输出生成的文件名称。</p>
 </td></tr>
 
 <tr class='odd' name='listFiles'>
@@ -818,7 +816,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Print all of the files read during the compilation.</p>
+<p>打印编译过程中读取的所有文件。</p>
 </td></tr>
 
 <tr class='even' name='mapRoot'>
@@ -828,7 +826,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
   <td></td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Specify the location where debugger should locate map files instead of generated locations.</p>
+<p>指定调试器查找 source map 文件的位置，而不是使用生成时的相对位置。</p>
 </td></tr>
 
 <tr class='odd' name='maxNodeModuleJsDepth'>
@@ -839,7 +837,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Specify the maximum folder depth used for checking JavaScript files from <code>node_modules</code>. Only applicable with <a href="#allowJs"><code>allowJs</code></a>.</p>
+<p>指定在 <code>node_modules</code> 中检查 JavaScript 文件时所允许的最大文件夹深度。仅适用于 <a href="#allowJs"><code>allowJs</code></a>。</p>
 </td></tr>
 
 <tr class='even' name='module'>
@@ -850,7 +848,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Specify what module code is generated.</p>
+<p>指定生成什么模块代码。</p>
 </td></tr>
 
 <tr class='odd' name='moduleDetection'>
@@ -861,7 +859,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Specify what method is used to detect whether a file is a script or a module.</p>
+<p>指定用于检测文件是脚本还是模块的方法。</p>
 </td></tr>
 
 <tr class='even' name='moduleResolution'>
@@ -872,7 +870,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Specify how TypeScript looks up a file from a given module specifier.</p>
+<p>指定 TypeScript 如何根据给定的模块说明符查找文件。</p>
 </td></tr>
 
 <tr class='odd' name='moduleSuffixes'>
@@ -882,7 +880,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
   <td></td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>List of file name suffixes to search when resolving a module.</p>
+<p>解析模块时要搜索的文件名后缀列表。</p>
 </td></tr>
 
 <tr class='even' name='newLine'>
@@ -893,7 +891,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Set the newline character for emitting files.</p>
+<p>设置生成文件时的换行字符。</p>
 </td></tr>
 
 <tr class='odd' name='noCheck'>
@@ -904,7 +902,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Disable full type checking (only critical parse and emit errors will be reported).</p>
+<p>禁用完整的类型检查（仅报告严重的解析和输出错误）。</p>
 </td></tr>
 
 <tr class='even' name='noEmit'>
@@ -915,7 +913,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Disable emitting files from a compilation.</p>
+<p>禁用在编译中输出文件。</p>
 </td></tr>
 
 <tr class='odd' name='noEmitHelpers'>
@@ -926,7 +924,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Disable generating custom helper functions like <code>__extends</code> in compiled output.</p>
+<p>禁用在编译输出中生成类似 <code>__extends</code> 的自定义辅助函数。</p>
 </td></tr>
 
 <tr class='even' name='noEmitOnError'>
@@ -937,7 +935,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Disable emitting files if any type checking errors are reported.</p>
+<p>报告任何类型检查错误时不生成文件。</p>
 </td></tr>
 
 <tr class='odd' name='noErrorTruncation'>
@@ -948,7 +946,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Disable truncating types in error messages.</p>
+<p>禁止在错误信息中截断类型。</p>
 </td></tr>
 
 <tr class='even' name='noFallthroughCasesInSwitch'>
@@ -959,7 +957,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Enable error reporting for fallthrough cases in switch statements.</p>
+<p>对 switch 语句中贯穿（fallthrough）的 case 分支启用错误报告。</p>
 </td></tr>
 
 <tr class='odd' name='noImplicitAny'>
@@ -970,7 +968,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Enable error reporting for expressions and declarations with an implied <code>any</code> type.</p>
+<p>为具有隐式 <code>any</code> 类型的表达式和声明启用错误报告。</p>
 </td></tr>
 
 <tr class='even' name='noImplicitOverride'>
@@ -981,7 +979,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Ensure overriding members in derived classes are marked with an override modifier.</p>
+<p>确保派生类中重写基类成员的方法都标记有 override 修饰符。</p>
 </td></tr>
 
 <tr class='odd' name='noImplicitReturns'>
@@ -992,7 +990,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Enable error reporting for codepaths that do not explicitly return in a function.</p>
+<p>对函数中未显式 return 的代码分支报错。</p>
 </td></tr>
 
 <tr class='even' name='noImplicitThis'>
@@ -1003,7 +1001,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Enable error reporting when <code>this</code> is given the type <code>any</code>.</p>
+<p>当 <code>this</code> 表达式具有隐含的 <code>any</code> 类型时启用错误报告。</p>
 </td></tr>
 
 <tr class='odd' name='noImplicitUseStrict'>
@@ -1014,7 +1012,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Disable adding 'use strict' directives in emitted JavaScript files.</p>
+<p>禁止在生成的 JavaScript 文件中添加 'use strict' 指令。</p>
 </td></tr>
 
 <tr class='even' name='noLib'>
@@ -1025,7 +1023,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Disable including any library files, including the default lib.d.ts.</p>
+<p>禁用包含任何库文件，包括默认的 lib.d.ts。</p>
 </td></tr>
 
 <tr class='odd' name='noPropertyAccessFromIndexSignature'>
@@ -1036,7 +1034,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Enforces using indexed accessors for keys declared using an indexed type.</p>
+<p>强制要求对使用索引类型声明的键使用索引访问器。</p>
 </td></tr>
 
 <tr class='even' name='noResolve'>
@@ -1047,7 +1045,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Disallow <code>import</code>s, <code>require</code>s or <code>&#x3C;reference></code>s from expanding the number of files TypeScript should add to a project.</p>
+<p>禁止通过 <code>import</code>、<code>require</code> 或 <code>&#x3C;reference></code> 增加 TypeScript 应添加到项目中的文件数量。</p>
 </td></tr>
 
 <tr class='odd' name='noStrictGenericChecks'>
@@ -1058,7 +1056,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Disable strict checking of generic signatures in function types.</p>
+<p>禁用函数类型中泛型签名的严格检查。</p>
 </td></tr>
 
 <tr class='even' name='noUncheckedIndexedAccess'>
@@ -1069,7 +1067,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Add <code>undefined</code> to a type when accessed using an index.</p>
+<p>当使用索引访问时，将 <code>undefined</code> 添加到类型中。</p>
 </td></tr>
 
 <tr class='odd' name='noUncheckedSideEffectImports'>
@@ -1080,7 +1078,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Check side effect imports.</p>
+<p>检查副作用导入。</p>
 </td></tr>
 
 <tr class='even' name='noUnusedLocals'>
@@ -1091,7 +1089,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Enable error reporting when local variables aren't read.</p>
+<p>当局部变量未被读取时启用报错。</p>
 </td></tr>
 
 <tr class='odd' name='noUnusedParameters'>
@@ -1102,7 +1100,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Raise an error when a function parameter isn't read.</p>
+<p>当函数参数未被读取时报错。</p>
 </td></tr>
 
 <tr class='even' name='out'>
@@ -1112,7 +1110,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
   <td></td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Deprecated setting. Use <a href="#outFile"><code>outFile</code></a> instead.</p>
+<p>已弃用的配置项。请改用 <a href="#outFile"><code>outFile</code></a>。</p>
 </td></tr>
 
 <tr class='odd' name='outDir'>
@@ -1122,7 +1120,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
   <td></td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Specify an output folder for all emitted files.</p>
+<p>为所有生成的文件指定输出目录。</p>
 </td></tr>
 
 <tr class='even' name='outFile'>
@@ -1132,7 +1130,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
   <td></td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Specify a file that bundles all outputs into one JavaScript file. If <a href="#declaration"><code>declaration</code></a> is true, also designates a file that bundles all .d.ts output.</p>
+<p>指定一个将所有输出打包合并为一个 JavaScript 文件的路径。如果 <a href="#declaration"><code>declaration</code></a> 为 true，还将指定一个打包所有 .d.ts 输出的文件。</p>
 </td></tr>
 
 <tr class='odd' name='paths'>
@@ -1142,7 +1140,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
   <td></td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Specify a set of entries that re-map imports to additional lookup locations.</p>
+<p>指定一组将导入重映射到其他查找位置的条目。</p>
 </td></tr>
 
 <tr class='even' name='plugins'>
@@ -1152,7 +1150,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
   <td></td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Specify a list of language service plugins to include.</p>
+<p>指定要引入的语言服务插件列表。</p>
 </td></tr>
 
 <tr class='odd' name='preserveConstEnums'>
@@ -1163,7 +1161,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Disable erasing <code>const enum</code> declarations in generated code.</p>
+<p>禁止在生成的代码中擦除 <code>const enum</code> 声明。</p>
 </td></tr>
 
 <tr class='even' name='preserveSymlinks'>
@@ -1174,7 +1172,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Disable resolving symlinks to their realpath. This correlates to the same flag in node.</p>
+<p>禁止将符号链接解析为其真实路径。这与 Node.js 中的同名标志相对应。</p>
 </td></tr>
 
 <tr class='odd' name='preserveValueImports'>
@@ -1185,7 +1183,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Preserve unused imported values in the JavaScript output that would otherwise be removed.</p>
+<p>在 JavaScript 输出中保留未使用的导入值（否则这些值会被移除）。</p>
 </td></tr>
 
 <tr class='even' name='preserveWatchOutput'>
@@ -1196,7 +1194,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Disable wiping the console in watch mode.</p>
+<p>在监视模式下禁止清空控制台屏幕。</p>
 </td></tr>
 
 <tr class='odd' name='pretty'>
@@ -1207,7 +1205,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Enable color and formatting in TypeScript's output to make compiler errors easier to read.</p>
+<p>在 TypeScript 输出中启用颜色和格式化，使编译器错误更易于阅读。</p>
 </td></tr>
 
 <tr class='even' name='reactNamespace'>
@@ -1218,7 +1216,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Specify the object invoked for <code>createElement</code>. This only applies when targeting <code>react</code> JSX emit.</p>
+<p>指定调用 <code>createElement</code> 的对象。这仅在针对 <code>react</code> JSX 输出时适用。</p>
 </td></tr>
 
 <tr class='odd' name='removeComments'>
@@ -1229,7 +1227,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Disable emitting comments.</p>
+<p>禁止生成注释。</p>
 </td></tr>
 
 <tr class='even' name='resolveJsonModule'>
@@ -1240,7 +1238,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Enable importing .json files.</p>
+<p>允许导入 .json 文件。</p>
 </td></tr>
 
 <tr class='odd' name='resolvePackageJsonExports'>
@@ -1251,7 +1249,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Use the package.json 'exports' field when resolving package imports.</p>
+<p>在解析包导入时使用 package.json 的 'exports' 字段。</p>
 </td></tr>
 
 <tr class='even' name='resolvePackageJsonImports'>
@@ -1262,7 +1260,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Use the package.json 'imports' field when resolving imports.</p>
+<p>在解析导入时使用 package.json 的 'imports' 字段。</p>
 </td></tr>
 
 <tr class='odd' name='rewriteRelativeImportExtensions'>
@@ -1273,7 +1271,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Rewrite <code>.ts</code>, <code>.tsx</code>, <code>.mts</code>, and <code>.cts</code> file extensions in relative import paths to their JavaScript equivalent in output files.</p>
+<p>在输出文件中将相对导入路径中的 <code>.ts</code>、<code>.tsx</code>、<code>.mts</code> 和 <code>.cts</code> 文件扩展名重写为对应的 JavaScript 扩展名。</p>
 </td></tr>
 
 <tr class='even' name='rootDir'>
@@ -1284,7 +1282,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Specify the root folder within your source files.</p>
+<p>指定源文件中的根目录。</p>
 </td></tr>
 
 <tr class='odd' name='rootDirs'>
@@ -1295,7 +1293,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Allow multiple folders to be treated as one when resolving modules.</p>
+<p>允许在解析模块时将多个文件夹视为同一个。</p>
 </td></tr>
 
 <tr class='even' name='skipDefaultLibCheck'>
@@ -1306,7 +1304,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Skip type checking .d.ts files that are included with TypeScript.</p>
+<p>跳过对 TypeScript 内置的 .d.ts 文件的类型检查。</p>
 </td></tr>
 
 <tr class='odd' name='skipLibCheck'>
@@ -1317,7 +1315,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Skip type checking all .d.ts files.</p>
+<p>跳过对所有 .d.ts 声明文件的类型检查。</p>
 </td></tr>
 
 <tr class='even' name='sourceMap'>
@@ -1328,7 +1326,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Create source map files for emitted JavaScript files.</p>
+<p>为生成的 JavaScript 文件创建 source map 文件。</p>
 </td></tr>
 
 <tr class='odd' name='sourceRoot'>
@@ -1338,7 +1336,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
   <td></td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Specify the root path for debuggers to find the reference source code.</p>
+<p>指定调试器查找引用源文件的根路径。</p>
 </td></tr>
 
 <tr class='even' name='stableTypeOrdering'>
@@ -1349,7 +1347,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Ensure types are ordered stably and deterministically across compilations.</p>
+<p>确保在不同编译之间类型以稳定且确定性的方式排序。</p>
 </td></tr>
 
 <tr class='odd' name='stopBuildOnErrors'>
@@ -1359,7 +1357,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
   <td></td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Skip building downstream projects on error in upstream project.</p>
+<p>在上游项目发生错误时跳过构建下游项目。</p>
 </td></tr>
 
 <tr class='even' name='strict'>
@@ -1370,7 +1368,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Enable all strict type-checking options.</p>
+<p>启用所有严格类型检查选项。</p>
 </td></tr>
 
 <tr class='odd' name='strictBindCallApply'>
@@ -1381,7 +1379,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Check that the arguments for <code>bind</code>, <code>call</code>, and <code>apply</code> methods match the original function.</p>
+<p>检查 <code>bind</code>、<code>call</code> 和 <code>apply</code> 方法的参数是否与原函数相匹配。</p>
 </td></tr>
 
 <tr class='even' name='strictBuiltinIteratorReturn'>
@@ -1392,7 +1390,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Built-in iterators are instantiated with a TReturn type of undefined instead of any.</p>
+<p>内置迭代器在实例化时的 TReturn 类型为 undefined 而不是 any。</p>
 </td></tr>
 
 <tr class='odd' name='strictFunctionTypes'>
@@ -1403,7 +1401,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>When assigning functions, check to ensure parameters and the return values are subtype-compatible.</p>
+<p>在对函数赋值时，检查确保参数和返回值满足子类型兼容性。</p>
 </td></tr>
 
 <tr class='even' name='strictNullChecks'>
@@ -1414,7 +1412,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>When type checking, take into account <code>null</code> and <code>undefined</code>.</p>
+<p>在进行类型检查时考虑 <code>null</code> 和 <code>undefined</code>。</p>
 </td></tr>
 
 <tr class='odd' name='strictPropertyInitialization'>
@@ -1425,7 +1423,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Check for class properties that are declared but not set in the constructor.</p>
+<p>检查类中已声明但在构造函数中未明确初始化的属性。</p>
 </td></tr>
 
 <tr class='even' name='stripInternal'>
@@ -1436,7 +1434,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Disable emitting declarations that have <code>@internal</code> in their JSDoc comments.</p>
+<p>禁止为 JSDoc 注释中带有 <code>@internal</code> 的代码生成声明。</p>
 </td></tr>
 
 <tr class='odd' name='suppressExcessPropertyErrors'>
@@ -1447,7 +1445,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Disable reporting of excess property errors during the creation of object literals.</p>
+<p>禁用在创建对象字面量时报告额外属性错误。</p>
 </td></tr>
 
 <tr class='even' name='suppressImplicitAnyIndexErrors'>
@@ -1458,7 +1456,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Suppress <a href="#noImplicitAny"><code>noImplicitAny</code></a> errors when indexing objects that lack index signatures.</p>
+<p>在对缺少索引签名的对象进行索引时，抑制 <a href="#noImplicitAny"><code>noImplicitAny</code></a> 错误。</p>
 </td></tr>
 
 <tr class='odd' name='target'>
@@ -1469,7 +1467,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Set the JavaScript language version for emitted JavaScript and include compatible library declarations.</p>
+<p>设置生成的 JavaScript 语言版本，并包含兼容的库声明。</p>
 </td></tr>
 
 <tr class='even' name='traceResolution'>
@@ -1480,7 +1478,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Log paths used during the <a href="#moduleResolution"><code>moduleResolution</code></a> process.</p>
+<p>记录 <a href="#moduleResolution"><code>moduleResolution</code></a> 过程中的路径查找信息。</p>
 </td></tr>
 
 <tr class='odd' name='tsBuildInfoFile'>
@@ -1491,7 +1489,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>The file to store <code>.tsbuildinfo</code> incremental build information in.</p>
+<p>用于存储 <code>.tsbuildinfo</code> 增量构建信息的文件。</p>
 </td></tr>
 
 <tr class='even' name='typeRoots'>
@@ -1501,7 +1499,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
   <td></td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Specify multiple folders that act like <code>./node_modules/@types</code>.</p>
+<p>指定多个行为类似于 <code>./node_modules/@types</code> 的目录。</p>
 </td></tr>
 
 <tr class='odd' name='types'>
@@ -1511,7 +1509,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
   <td></td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Specify type package names to be included without being referenced in a source file.</p>
+<p>指定包含的类型声明包名称，这些包无需在源文件中被显式引用。</p>
 </td></tr>
 
 <tr class='even' name='useDefineForClassFields'>
@@ -1522,7 +1520,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Emit ECMAScript-standard-compliant class fields.</p>
+<p>输出符合 ECMAScript 标准规范的类字段。</p>
 </td></tr>
 
 <tr class='odd' name='useUnknownInCatchVariables'>
@@ -1533,7 +1531,7 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description odd"><td colspan="3">
-<p>Default catch clause variables as <code>unknown</code> instead of <code>any</code>.</p>
+<p>将 catch 子句中的变量默认类型设为 <code>unknown</code> 而非 <code>any</code>。</p>
 </td></tr>
 
 <tr class='even' name='verbatimModuleSyntax'>
@@ -1544,14 +1542,14 @@ tsc app.ts util.ts --target esnext --outfile index.js
 </td>
 </tr>
 <tr class="option-description even"><td colspan="3">
-<p>Do not transform or elide any imports or exports not marked as type-only, ensuring they are written in the output file's format based on the 'module' setting.</p>
+<p>不转换也不省略任何未标记为仅类型的导入或导出，确保根据 'module' 设置将其写入输出文件的格式中。</p>
 </td></tr>
 
 </tbody></table>
 <!-- End of replacement  -->
 
-## Related
+## 相关内容
 
-- Every option is fully explained in the [TSConfig Reference](/tsconfig).
-- Learn how to use a [`tsconfig.json`](/docs/handbook/tsconfig-json.html) file.
-- Learn how to work in an [MSBuild project](/docs/handbook/compiler-options-in-msbuild.html).
+- 每个选项在 [TSConfig 参考](/tsconfig) 中都有完整解释。
+- 了解如何使用 [`tsconfig.json`](/docs/handbook/tsconfig-json.html) 文件。
+- 了解如何在 [MSBuild 项目](/docs/handbook/compiler-options-in-msbuild.html) 中工作。

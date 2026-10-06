@@ -1,10 +1,10 @@
 ---
-title: 'Global .d.ts'
+title: '全局库 .d.ts'
 layout: docs
 permalink: /zh/docs/handbook/declaration-files/templates/global-d-ts.html
 ---
 
-## Global Libraries
+## 全局库
 
 <!--
 TODO:
@@ -17,9 +17,9 @@ TODO:
 
 -->
 
-A _global_ library is one that can be accessed from the global scope (i.e. without using any form of `import`).
-Many libraries simply expose one or more global variables for use.
-For example, if you were using [jQuery](https://jquery.com/), the `$` variable can be used by simply referring to it:
+所谓全局（_global_）库，是指可以直接在全局作用域中访问的库（即无需使用任何形式的 `import`）。
+许多库只是简单地暴露一个或多个全局变量供使用。
+例如，如果你在使用 [jQuery](https://jquery.com/)，只需直接引用 `$` 变量即可：
 
 ```ts
 $(() => {
@@ -27,20 +27,20 @@ $(() => {
 })
 ```
 
-You'll usually see guidance in the documentation of a global library of how to use the library in an HTML script tag:
+在全局库的文档中，通常会指导你如何通过 HTML 的 script 标签来使用该库：
 
 ```html
 <script src="http://a.great.cdn.for/someLib.js"></script>
 ```
 
-Today, most popular globally-accessible libraries are actually written as UMD libraries (see below).
-UMD library documentation is hard to distinguish from global library documentation.
-Before writing a global declaration file, make sure the library isn't actually UMD.
+如今，大多数流行的、可在全局访问的库实际上都是以 UMD 库的形式编写的（见下文）。
+UMD 库的文档往往很难与全局库的文档区分开来。
+在编写全局声明文件之前，请确保该库并非实际上是一个 UMD 库。
 
-## Identifying a Global Library from Code
+## 从代码中识别全局库
 
-Global library code is usually extremely simple.
-A global "Hello, world" library might look like this:
+全局库的代码通常非常简单。
+一个全局的 “Hello, world” 库可能长这样：
 
 ```js
 function createGreeting(s) {
@@ -48,7 +48,7 @@ function createGreeting(s) {
 }
 ```
 
-or like this:
+或者长这样：
 
 ```js
 window.createGreeting = function (s) {
@@ -56,27 +56,27 @@ window.createGreeting = function (s) {
 }
 ```
 
-When looking at the code of a global library, you'll usually see:
+查看全局库的代码时，你通常会看到：
 
-- Top-level `var` statements or `function` declarations
-- One or more assignments to `window.someName`
-- Assumptions that DOM primitives like `document` or `window` exist
+- 顶层的 `var` 语句或 `function` 声明
+- 对 `window.someName` 的一次或多次赋值
+- 假定存在像 `document` 或 `window` 这样的 DOM 原语
 
-You _won't_ see:
+你_不会_看到：
 
-- Checks for, or usage of, module loaders like `require` or `define`
-- CommonJS/Node.js-style imports of the form `var fs = require("fs");`
-- Calls to `define(...)`
-- Documentation describing how to `require` or import the library
+- 对 `require` 或 `define` 等模块加载器的检测或使用
+- 形如 `var fs = require("fs");` 的 CommonJS/Node.js 风格导入
+- 对 `define(...)` 的调用
+- 描述如何 `require` 或导入该库的文档
 
-## Examples of Global Libraries
+## 全局库示例
 
-Because it's usually easy to turn a global library into a UMD library, very few popular libraries are still written in the global style.
-However, libraries that are small and require the DOM (or have _no_ dependencies) may still be global.
+因为将全局库转换为 UMD 库通常很容易，所以目前很少有流行库仍然采用全局风格编写。
+但是，体积较小且需要 DOM（或者_没有_任何依赖项）的库可能仍然是全局库。
 
-## Global Library Template
+## 全局库模板
 
-You can see an example DTS below:
+你可以参考下方的 DTS 示例模板：
 
 ```ts
 // Type definitions for [~THE LIBRARY NAME~] [~OPTIONAL VERSION NUMBER~]

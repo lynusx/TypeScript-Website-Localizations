@@ -1,21 +1,21 @@
 ---
-title: Enums
+title: 枚举
 layout: docs
 permalink: /zh/docs/handbook/enums.html
-oneline: How TypeScript enums work
+oneline: TypeScript 枚举的工作原理
 handbook: 'true'
 ---
 
-Enums are one of the few features TypeScript has which is not a type-level extension of JavaScript.
+枚举（Enums）是 TypeScript 中为数不多的几个不是 JavaScript 类型层面扩展的特性之一。
 
-Enums allow a developer to define a set of named constants.
-Using enums can make it easier to document intent, or create a set of distinct cases.
-TypeScript provides both numeric and string-based enums.
+枚举允许开发者定义一组具名常量。
+使用枚举可以更轻松地表达意图，或创建一组互不相同的分支情况。
+TypeScript 同时支持基于数字和基于字符串的枚举。
 
-## Numeric enums
+## 数字枚举
 
-We'll first start off with numeric enums, which are probably more familiar if you're coming from other languages.
-An enum can be defined using the `enum` keyword.
+我们首先从数字枚举开始介绍，如果你有其他编程语言的背景，可能会对它更为熟悉。
+可以使用 `enum` 关键字来定义枚举。
 
 ```ts twoslash
 enum Direction {
@@ -26,11 +26,11 @@ enum Direction {
 }
 ```
 
-Above, we have a numeric enum where `Up` is initialized with `1`.
-All of the following members are auto-incremented from that point on.
-In other words, `Direction.Up` has the value `1`, `Down` has `2`, `Left` has `3`, and `Right` has `4`.
+在上面的代码中，我们定义了一个数字枚举，其中 `Up` 初始化为 `1`。
+紧随其后的所有成员都会从该值开始自动自增。
+换句话说，`Direction.Up` 的值为 `1`，`Down` 为 `2`，`Left` 为 `3`，`Right` 为 `4`。
 
-If we wanted, we could leave off the initializers entirely:
+如果需要，我们也可以完全省略初始化器：
 
 ```ts twoslash
 enum Direction {
@@ -41,10 +41,10 @@ enum Direction {
 }
 ```
 
-Here, `Up` would have the value `0`, `Down` would have `1`, etc.
-This auto-incrementing behavior is useful for cases where we might not care about the member values themselves, but do care that each value is distinct from other values in the same enum.
+此时，`Up` 的值将为 `0`，`Down` 为 `1`，依此类推。
+这种自动自增的行为非常适合那些我们不在乎成员具体的值是多少，但要求同一枚举中每个值都互不相同的场景。
 
-Using an enum is simple: just access any member as a property off of the enum itself, and declare types using the name of the enum:
+使用枚举非常简单：只需像访问对象属性一样访问枚举的任意成员，并使用枚举名来声明类型：
 
 ```ts twoslash
 enum UserResponse {
@@ -59,9 +59,9 @@ function respond(recipient: string, message: UserResponse): void {
 respond('Princess Caroline', UserResponse.Yes)
 ```
 
-Numeric enums can be mixed in [computed and constant members (see below)](#computed-and-constant-members).
-The short story is, enums without initializers either need to be first, or have to come after numeric enums initialized with numeric constants or other constant enum members.
-In other words, the following isn't allowed:
+数字枚举可以混入[计算成员和常量成员（见下文）](#computed-and-constant-members)。
+简而言之，没有初始化器的枚举成员要么必须排在第一位，要么必须排在使用数值常量或其他常量枚举成员初始化的数字枚举成员之后。
+换句话说，以下写法是不被允许的：
 
 ```ts twoslash
 // @errors: 1061
@@ -73,10 +73,10 @@ enum E {
 }
 ```
 
-## String enums
+## 字符串枚举
 
-String enums are a similar concept, but have some subtle [runtime differences](#enums-at-runtime) as documented below.
-In a string enum, each member has to be constant-initialized with a string literal, or with another string enum member.
+字符串枚举是一个类似的概念，但在[运行时存在一些细微差异](#enums-at-runtime)，如下文所述。
+在字符串枚举中，每个成员都必须使用字符串字面量或另一个字符串枚举成员进行常量初始化。
 
 ```ts twoslash
 enum Direction {
@@ -87,12 +87,12 @@ enum Direction {
 }
 ```
 
-While string enums don't have auto-incrementing behavior, string enums have the benefit that they "serialize" well.
-In other words, if you were debugging and had to read the runtime value of a numeric enum, the value is often opaque - it doesn't convey any useful meaning on its own (though [reverse mapping](#reverse-mappings) can often help). String enums allow you to give a meaningful and readable value when your code runs, independent of the name of the enum member itself.
+虽然字符串枚举没有自动自增的行为，但字符串枚举的优势在于它们具有良好的“可序列化性”（serialize）。
+换言之，如果你在调试时需要读取数字枚举的运行时值，该值通常是不透明的——它本身无法传达任何有用的含义（尽管[反向映射](#reverse-mappings)通常有所帮助）。而字符串枚举允许你在代码运行时提供有意义且可读的值，且该值独立于枚举成员本身的名称。
 
-## Heterogeneous enums
+## 异构枚举（Heterogeneous enums）
 
-Technically enums can be mixed with string and numeric members, but it's not clear why you would ever want to do so:
+从技术上讲，枚举可以混合包含字符串和数字成员，但通常并不清楚为什么要这样做：
 
 ```ts twoslash
 enum BooleanLikeHeterogeneousEnum {
@@ -101,14 +101,14 @@ enum BooleanLikeHeterogeneousEnum {
 }
 ```
 
-Unless you're really trying to take advantage of JavaScript's runtime behavior in a clever way, it's advised that you don't do this.
+除非你确实想以某种巧妙的方式利用 JavaScript 的运行时行为，否则建议不要这样做。
 
-## Computed and constant members
+## 计算成员和常量成员
 
-Each enum member has a value associated with it which can be either _constant_ or _computed_.
-An enum member is considered constant if:
+每个枚举成员都有一个与之关联的值，该值可以是*常量*（constant）或*计算得出的*（computed）。
+在以下情况下，枚举成员被视为常量：
 
-- It is the first member in the enum and it has no initializer, in which case it's assigned the value `0`:
+- 它是枚举中的第一个成员且没有初始化器，此时它被赋值为 `0`：
 
   ```ts twoslash
   // E.X is constant:
@@ -117,8 +117,8 @@ An enum member is considered constant if:
   }
   ```
 
-- It does not have an initializer and the preceding enum member was a _numeric_ constant.
-  In this case the value of the current enum member will be the value of the preceding enum member plus one.
+- 它没有初始化器，且前一个枚举成员是*数字*常量。
+  此时当前枚举成员的值将是前一个枚举成员的值加一。
 
   ```ts twoslash
   // All enum members in 'E1' and 'E2' are constant.
@@ -136,19 +136,18 @@ An enum member is considered constant if:
   }
   ```
 
-- The enum member is initialized with a constant enum expression.
-  A constant enum expression is a subset of TypeScript expressions that can be fully evaluated at compile time.
-  An expression is a constant enum expression if it is:
+- 枚举成员使用常量枚举表达式进行初始化。
+  常量枚举表达式是 TypeScript 表达式的一个子集，可以在编译时完全求值。
+  满足以下条件的表达式即为常量枚举表达式：
+  1. 字面量枚举表达式（基本上就是字符串字面量或数字字面量）
+  2. 对先前定义的常量枚举成员的引用（可以来自不同的枚举）
+  3. 带括号的常量枚举表达式
+  4. 应用于常量枚举表达式的 `+`、`-`、`~` 一元运算符之一
+  5. 以常量枚举表达式作为操作数的 `+`、`-`、`*`、`/`、`%`、`<<`、`>>`、`>>>`、`&`、`|`、`^` 二元运算符
 
-  1. a literal enum expression (basically a string literal or a numeric literal)
-  2. a reference to previously defined constant enum member (which can originate from a different enum)
-  3. a parenthesized constant enum expression
-  4. one of the `+`, `-`, `~` unary operators applied to constant enum expression
-  5. `+`, `-`, `*`, `/`, `%`, `<<`, `>>`, `>>>`, `&`, `|`, `^` binary operators with constant enum expressions as operands
+  如果常量枚举表达式求值结果为 `NaN` 或 `Infinity`，则会在编译时报错。
 
-  It is a compile time error for constant enum expressions to be evaluated to `NaN` or `Infinity`.
-
-In all other cases enum member is considered computed.
+在所有其他情况下，枚举成员都被视为计算成员。
 
 ```ts twoslash
 enum FileAccess {
@@ -162,19 +161,19 @@ enum FileAccess {
 }
 ```
 
-## Union enums and enum member types
+## 联合枚举与枚举成员类型
 
-There is a special subset of constant enum members that aren't calculated: literal enum members.
-A literal enum member is a constant enum member with no initialized value, or with values that are initialized to
+常量枚举成员中存在一个无需计算的特殊子集：字面量枚举成员（literal enum members）。
+字面量枚举成员是指没有初始值，或者其初始值符合以下条件的常量枚举成员：
 
-- any string literal (e.g. `"foo"`, `"bar"`, `"baz"`)
-- any numeric literal (e.g. `1`, `100`)
-- a unary minus applied to any numeric literal (e.g. `-1`, `-100`)
+- 任何字符串字面量（例如 `"foo"`、`"bar"`、`"baz"`）
+- 任何数字字面量（例如 `1`、`100`）
+- 应用于任何数字字面量的一元减号（例如 `-1`、`-100`）
 
-When all members in an enum have literal enum values, some special semantics come into play.
+当枚举中的所有成员都具有字面量枚举值时，就会触发一些特殊的语义。
 
-The first is that enum members also become types as well!
-For example, we can say that certain members can _only_ have the value of an enum member:
+首先，枚举成员本身也可以作为类型使用！
+例如，我们可以指定某些成员*只能*拥有某个特定枚举成员的值：
 
 ```ts twoslash
 // @errors: 2322
@@ -199,10 +198,10 @@ let c: Circle = {
 }
 ```
 
-The other change is that enum types themselves effectively become a _union_ of each enum member.
-With union enums, the type system is able to leverage the fact that it knows the exact set of values that exist in the enum itself.
-Because of that, TypeScript can catch bugs where we might be comparing values incorrectly.
-For example:
+另一个变化是枚举类型本身实际上变成了每个枚举成员的*联合*（union）。
+通过联合枚举，类型系统能够利用它准确知晓枚举中存在哪些值这一特性。
+正因如此，TypeScript 能够捕获到我们可能错误比较值的地方。
+例如：
 
 ```ts twoslash
 // @errors: 2367
@@ -218,14 +217,14 @@ function f(x: E) {
 }
 ```
 
-In that example, we first checked whether `x` was _not_ `E.Foo`.
-If that check succeeds, then our `||` will short-circuit, and the body of the 'if' will run.
-However, if the check didn't succeed, then `x` can _only_ be `E.Foo`, so it doesn't make sense to see whether it's _not_ equal to `E.Bar`.
+在该示例中，我们首先检查了 `x` 是否*不为* `E.Foo`。
+如果该检查通过，那么 `||` 操作符就会发生短路，`if` 语句体就会执行。
+然而，如果检查未通过，那么 `x` *只能*是 `E.Foo`，因此再去检查它是否*不等于* `E.Bar` 就没有任何意义了。
 
-## Enums at runtime
+## 运行时中的枚举
 
-Enums are real objects that exist at runtime.
-For example, the following enum
+枚举是在运行时真实存在的对象。
+例如，以下枚举：
 
 ```ts twoslash
 enum E {
@@ -235,7 +234,7 @@ enum E {
 }
 ```
 
-can actually be passed around to functions
+实际上可以作为参数传递给函数：
 
 ```ts twoslash
 enum E {
@@ -252,9 +251,9 @@ function f(obj: { X: number }) {
 f(E)
 ```
 
-## Enums at compile time
+## 编译时中的枚举
 
-Even though Enums are real objects that exist at runtime, the `keyof` keyword works differently than you might expect for typical objects. Instead, use `keyof typeof` to get a Type that represents all Enum keys as strings.
+尽管枚举是在运行时真实存在的对象，但 `keyof` 关键字在枚举上的工作方式与对常规对象的预期有所不同。相反，你应该使用 `keyof typeof` 来获取一个将所有枚举键表示为字符串的类型。
 
 ```ts twoslash
 enum LogLevel {
@@ -281,10 +280,10 @@ function printImportant(key: LogLevelStrings, message: string) {
 printImportant('ERROR', 'This is a message')
 ```
 
-### Reverse mappings
+### 反向映射（Reverse mappings）
 
-In addition to creating an object with property names for members, numeric enums members also get a _reverse mapping_ from enum values to enum names.
-For example, in this example:
+除了为成员生成带有属性名的对象之外，数字枚举成员还会获得从枚举值到枚举名称的*反向映射*（reverse mapping）。
+例如，在下面这个例子中：
 
 ```ts twoslash
 enum Enum {
@@ -295,7 +294,7 @@ let a = Enum.A
 let nameOfA = Enum[a] // "A"
 ```
 
-TypeScript compiles this down to the following JavaScript:
+TypeScript 会将其编译为如下 JavaScript 代码：
 
 ```ts twoslash
 // @showEmit
@@ -307,17 +306,17 @@ let a = Enum.A
 let nameOfA = Enum[a] // "A"
 ```
 
-In this generated code, an enum is compiled into an object that stores both forward (`name` -> `value`) and reverse (`value` -> `name`) mappings.
-References to other enum members are always emitted as property accesses and never inlined.
+在这段生成的代码中，枚举被编译成一个同时存储正向映射（`name` -> `value`）和反向映射（`value` -> `name`）的对象。
+对其他枚举成员的引用始终会被生成为属性访问，绝不会被内联。
 
-Keep in mind that string enum members _do not_ get a reverse mapping generated at all.
+请牢记，字符串枚举成员*绝不会*生成反向映射。
 
-### `const` enums
+### `const` 枚举
 
-In most cases, enums are a perfectly valid solution.
-However sometimes requirements are tighter.
-To avoid paying the cost of extra generated code and additional indirection when accessing enum values, it's possible to use `const` enums.
-Const enums are defined using the `const` modifier on our enums:
+在大多数情况下，枚举都是非常理想的解决方案。
+然而，有时要求会更为严苛。
+为了避免在访问枚举值时承担额外生成代码以及额外间接访问的开销，可以使用 `const` 枚举。
+常量枚举通过在枚举上使用 `const` 修饰符来定义：
 
 ```ts twoslash
 const enum Enum {
@@ -326,9 +325,9 @@ const enum Enum {
 }
 ```
 
-Const enums can only use constant enum expressions and unlike regular enums they are completely removed during compilation.
-Const enum members are inlined at use sites.
-This is possible since const enums cannot have computed members.
+`const` 枚举只能使用常量枚举表达式，并且与常规枚举不同，它们在编译期间会被完全移除。
+`const` 枚举的成员会在使用处被内联。
+这是可行的，因为 `const` 枚举不能包含计算成员。
 
 ```ts twoslash
 const enum Direction {
@@ -341,7 +340,7 @@ const enum Direction {
 let directions = [Direction.Up, Direction.Down, Direction.Left, Direction.Right]
 ```
 
-in generated code will become
+在生成的代码中将变成：
 
 ```ts twoslash
 // @showEmit
@@ -355,36 +354,36 @@ const enum Direction {
 let directions = [Direction.Up, Direction.Down, Direction.Left, Direction.Right]
 ```
 
-#### Const enum pitfalls
+#### `const` 枚举的陷阱
 
-Inlining enum values is straightforward at first, but comes with subtle implications.
-These pitfalls pertain to _ambient_ const enums only (basically const enums in `.d.ts` files) and sharing them between projects, but if you are publishing or consuming `.d.ts` files, these pitfalls likely apply to you, because `tsc --declaration` transforms `.ts` files into `.d.ts` files.
+内联枚举值起初看起来很直观，但却伴随着一些微妙的影响。
+这些陷阱仅与*外部*（ambient）`const` 枚举（基本上就是 `.d.ts` 文件中的 `const` 枚举）以及在跨项目共享它们时有关；但如果你发布或使用 `.d.ts` 文件，这些陷阱很可能也会影响到你，因为 `tsc --declaration` 会将 `.ts` 文件转换为 `.d.ts` 文件。
 
-1. For the reasons laid out in the [`isolatedModules` documentation](/tsconfig#references-to-const-enum-members), that mode is fundamentally incompatible with ambient const enums.
-   This means if you publish ambient const enums, downstream consumers will not be able to use [`isolatedModules`](/tsconfig#isolatedModules) and those enum values at the same time.
-2. You can easily inline values from version A of a dependency at compile time, and import version B at runtime.
-   Version A and B's enums can have different values, if you are not very careful, resulting in [surprising bugs](https://github.com/microsoft/TypeScript/issues/5219#issue-110947903), like taking the wrong branches of `if` statements.
-   These bugs are especially pernicious because it is common to run automated tests at roughly the same time as projects are built, with the same dependency versions, which misses these bugs completely.
-3. [`importsNotUsedAsValues: "preserve"`](/tsconfig#importsNotUsedAsValues) will not elide imports for const enums used as values, but ambient const enums do not guarantee that runtime `.js` files exist.
-   The unresolvable imports cause errors at runtime.
-   The usual way to unambiguously elide imports, [type-only imports](/docs/handbook/modules/reference.html#type-only-imports-and-exports), [does not allow const enum values](https://github.com/microsoft/TypeScript/issues/40344), currently.
+1. 出于 [`isolatedModules` 文档](/tsconfig#references-to-const-enum-members) 中阐明的原因，该模式在根本上与外部 `const` 枚举不兼容。
+   这意味着如果你发布了外部 `const` 枚举，下游使用者将无法在开启 [`isolatedModules`](/tsconfig#isolatedModules) 的同时使用这些枚举值。
+2. 你很容易在编译时内联来自依赖项版本 A 的枚举值，而在运行时导入版本 B。
+   如果不非常小心，版本 A 和版本 B 的枚举可能会有不同的值，从而导致[令人匪夷所思的 bug](https://github.com/microsoft/TypeScript/issues/5219#issue-110947903)，例如走入错误的 `if` 分支。
+   这类 bug 尤为致命，因为通常自动化测试是在项目构建的同时使用相同的依赖版本运行的，从而会完全遗漏这类 bug。
+3. [`importsNotUsedAsValues: "preserve"`](/tsconfig#importsNotUsedAsValues) 不会省略用作值的 `const` 枚举的导入，但外部 `const` 枚举无法保证运行时 `.js` 文件的存在。
+   这些无法解析的导入会在运行时引发错误。
+   而明确省略导入的常规方式——[仅类型导入（type-only imports）](/docs/handbook/modules/reference.html#type-only-imports-and-exports)，目前[不允许使用 const 枚举值](https://github.com/microsoft/TypeScript/issues/40344)。
 
-Here are two approaches to avoiding these pitfalls:
+以下是避免这些陷阱的两种方法：
 
-1. Do not use const enums at all.
-   You can easily [ban const enums](https://typescript-eslint.io/linting/troubleshooting#how-can-i-ban-specific-language-feature) with the help of a linter.
-   Obviously this avoids any issues with const enums, but prevents your project from inlining its own enums.
-   Unlike inlining enums from other projects, inlining a project's own enums is not problematic and has performance implications.
-2. Do not publish ambient const enums, by deconstifying them with the help of [`preserveConstEnums`](/tsconfig#preserveConstEnums).
-   This is the approach taken internally by the [TypeScript project itself](https://github.com/microsoft/TypeScript/pull/5422).
-   [`preserveConstEnums`](/tsconfig#preserveConstEnums) emits the same JavaScript for const enums as plain enums.
-   You can then safely strip the `const` modifier from `.d.ts` files [in a build step](https://github.com/microsoft/TypeScript/blob/1a981d1df1810c868a66b3828497f049a944951c/Gulpfile.js#L144).
+1. 完全不使用 `const` 枚举。
+   借助 linter，你可以轻松[禁用 const 枚举](https://typescript-eslint.io/linting/troubleshooting#how-can-i-ban-specific-language-feature)。
+   显然这可以规避 `const` 枚举带来的任何问题，但会阻止你的项目内联自身的枚举。
+   与内联其他项目的枚举不同，内联项目自身的枚举并不会带来问题，并且对性能有所帮助。
+2. 不发布外部 `const` 枚举，借助 [`preserveConstEnums`](/tsconfig#preserveConstEnums) 将它们去常量化（deconstifying）。
+   这也是 [TypeScript 项目本身](https://github.com/microsoft/TypeScript/pull/5422) 内部采用的做法。
+   [`preserveConstEnums`](/tsconfig#preserveConstEnums) 会为 `const` 枚举生成与普通枚举相同的 JavaScript 代码。
+   然后，你可以在[构建步骤中](https://github.com/microsoft/TypeScript/blob/1a981d1df1810c868a66b3828497f049a944951c/Gulpfile.js#L144)安全地从 `.d.ts` 文件中剥离 `const` 修饰符。
 
-   This way downstream consumers will not inline enums from your project, avoiding the pitfalls above, but a project can still inline its own enums, unlike banning const enums entirely.
+   这样一来，下游使用者就不会内联来自你项目的枚举，从而规避了上述陷阱；同时与彻底禁用 `const` 枚举不同，项目自身依然可以内联自己的枚举。
 
-## Ambient enums
+## 外部枚举（Ambient enums）
 
-Ambient enums are used to describe the shape of already existing enum types.
+外部枚举用来描述已经存在的枚举类型的结构。
 
 ```ts twoslash
 declare enum Enum {
@@ -394,12 +393,12 @@ declare enum Enum {
 }
 ```
 
-One important difference between ambient and non-ambient enums is that, in regular enums, members that don't have an initializer will be considered constant if its preceding enum member is considered constant.
-By contrast, an ambient (and non-const) enum member that does not have an initializer is _always_ considered computed.
+外部枚举与非外部枚举之间的一个重要区别在于：在常规枚举中，如果前一个枚举成员被视为常量，那么没有初始化器的成员也将被视为常量。
+相比之下，没有初始化器的外部（且非 const）枚举成员*始终*被视为计算成员。
 
-## Objects vs Enums
+## 对象与枚举（Objects vs Enums）
 
-In modern TypeScript, you may not need an enum when an object with `as const` could suffice:
+在现代 TypeScript 中，当使用带有 `as const` 的对象就能满足需求时，你可能并不需要枚举：
 
 ```ts twoslash
 const enum EDirection {
@@ -433,4 +432,4 @@ walk(EDirection.Left)
 run(ODirection.Right)
 ```
 
-The biggest argument in favour of this format over TypeScript's `enum` is that it keeps your codebase aligned with the state of JavaScript, and [when/if](https://github.com/rbuckton/proposal-enum) enums are added to JavaScript then you can move to the additional syntax.
+相比 TypeScript 的 `enum`，支持这种格式的最大理由在于它能使你的代码库与 JavaScript 的现有规范保持一致；而[when/if](https://github.com/rbuckton/proposal-enum)枚举被正式添加到 JavaScript 中时，你便可以直接迁移到该语法。

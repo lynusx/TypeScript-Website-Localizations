@@ -2,12 +2,12 @@
 title: TypeScript 6.0
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-6-0.html
-oneline: TypeScript 6.0 Release Notes
+oneline: TypeScript 6.0 发布说明
 ---
 
-## Less Context-Sensitivity on `this`-less Functions
+## 针对无 `this` 函数的更少上下文敏感度
 
-When parameters don't have explicit types written out, TypeScript can usually infer them based on an expected type, or even through other arguments in the same function call.
+当参数未显式标注类型时，TypeScript 通常可以根据期望的类型、甚至是同一个函数调用中的其他参数来推断它们。
 
 ```ts
 declare function callIt<T>(obj: {
@@ -28,8 +28,8 @@ callIt({
 })
 ```
 
-Here, TypeScript can infer the type of `y` in the `consume` function based on the inferred `T` from the `produce` function, regardless of the order of the properties.
-But what about if these functions were written using _method syntax_ instead of arrow function syntax?
+在此处，无论属性的顺序如何，TypeScript 都能根据从 `produce` 函数推断出的 `T` 来推断 `consume` 函数中 `y` 的类型。
+但如果这些函数使用*方法语法*而非箭头函数语法来书写，情况又会如何？
 
 ```ts
 declare function callIt<T>(obj: {
@@ -60,12 +60,12 @@ callIt({
 })
 ```
 
-Strangely enough, the second call to `callIt` results in an error because TypeScript is not able to infer the type of `y` in the `consume` method.
-What's happening here is that when TypeScript is trying to find candidates for `T`, it will first skip over functions whose parameters don't have explicit types.
-It does this because certain functions may need the inferred type of `T` to be correctly checked - in our case, we need to know the type of `T` to analyze our `consume` function.
+奇怪的是，对 `callIt` 的第二次调用会导致错误，因为 TypeScript 无法推断 `consume` 方法中 `y` 的类型。
+之所以出现这种情况，是因为当 TypeScript 试图寻找 `T` 的候选类型时，首先会跳过那些参数没有显式类型的函数。
+之所以这样做，是因为某些函数可能需要 `T` 的推断类型才能被正确检查——在我们的示例中，我们需要知道 `T` 的类型才能分析 `consume` 函数。
 
-These functions are called _contextually sensitive functions_ - basically, functions that have parameters without explicit types.
-Eventually the type system will need to figure out types for these parameters - but this is a bit at odds with how inference works in generic functions because the two "pull" on types in different directions.
+这些函数被称为*上下文敏感函数*——本质上就是参数没有显式类型的函数。
+类型系统最终需要确定这些参数的类型，但这与泛型函数中的类型推断机制存在冲突，因为两者在推断类型时是在朝不同方向“拉扯”。
 
 ```ts
 function callFunc<T>(callback: (x: T) => void, value: T) {
@@ -78,12 +78,12 @@ callFunc((x) => x.toFixed(), 42)
 // but we also need to figure out the type of `T` to check the callback.
 ```
 
-To solve this, TypeScript skips over contextually sensitive functions during type argument inference, and instead checks and infers from other arguments first.
-If skipping over contextually sensitive functions doesn't work, inference just continues across any unchecked arguments, going left-to-right in the argument list.
-In the example immediately above, TypeScript will skip over the callback during inference for `T`, but will then look at the second argument, `42`, and infer that `T` is `number`.
-Then, when it comes back to check the callback, it will have a contextual type of `(x: number) => void`, which allows it to infer that `x` is a `number` as well.
+为了解决这个问题，TypeScript 在类型实参推断期间会跳过上下文敏感函数，而是优先检查其他参数并从中进行推断。
+如果跳过上下文敏感函数依然无法完成推断，类型推断就会继续按参数列表从左到右检查所有尚未检查的参数。
+在紧邻的上述示例中，TypeScript 在推断 `T` 时会先跳过回调函数，转而查看第二个参数 `42`，并推断出 `T` 为 `number`。
+随后，当回过头来检查回调函数时，回调函数便获得了 `(x: number) => void` 的上下文类型，从而也能推断出 `x` 同样是 `number`。
 
-So what's going on in our earlier examples?
+那么我们之前的例子中究竟发生了什么？
 
 ```ts
 // Arrow syntax - no errors.
@@ -106,25 +106,25 @@ callIt({
 })
 ```
 
-In both examples, `produce` is assigned a function with an explicitly-typed `x` parameter.
-Shouldn't they be checked identically?
+在这两个示例中，`produce` 都被赋予了一个带有显式类型参数 `x` 的函数。
+难道它们不应该以相同的方式被检查吗？
 
-The issue is subtle: most functions (like the ones using method syntax) have an implicit `this` parameter, but arrow functions do not.
-Any usage of `this` could require "pulling" on the type of `T` - for example, knowing the type of the containing object literal could in turn require the type of `consume`, which uses `T`.
+问题非常微妙：大多数函数（例如使用方法语法的函数）都具有隐式的 `this` 参数，但箭头函数则没有。
+任何对 `this` 的使用都可能需要反向“拉扯” `T` 的类型——例如，了解外层对象字面量的类型可能会进而需要 `consume` 的类型，而后者又依赖于 `T`。
 
-But we're not using `this`!
-Sure, the function might have a `this` value at runtime, but it's never used!
+但我们的代码中根本没有使用 `this`！
+诚然，该函数在运行时可能拥有一个 `this` 值，但它从未使用过！
 
-TypeScript 6.0 takes this into account when it decides if a function is contextually sensitive or not.
-If `this` is never actually _used_ in a function, then it is not considered contextually sensitive.
-That means these functions will be seen as higher-priority when it comes to type inference, and all of our examples above now work!
+TypeScript 6.0 在判断函数是否为上下文敏感函数时考虑到了这一点。
+如果在函数中从未实际*使用* `this`，那么该函数就不会被视作上下文敏感函数。
+这意味着在类型推断中，方法语法与箭头函数具有一致的推断顺序，这些无 `this` 函数（`this`-less functions）在类型推断时将被赋予更高优先级，统一了推断流与参数关系，实现了更强健的相互推断，我们上面所有的示例现在都能正常工作了！
 
-[This change was provided](https://github.com/microsoft/TypeScript/pull/62243) thanks to the work of [Mateusz Burzyński](https://github.com/Andarist).
+[该改动由](https://github.com/microsoft/TypeScript/pull/62243) [Mateusz Burzyński](https://github.com/Andarist) 贡献完成。
 
-## Subpath Imports Starting with `#/`
+## 以 `#/` 开头的子路径导入
 
-When Node.js added support for modules, it added a feature called ["subpath imports"](https://nodejs.org/api/packages.html#subpath-imports).
-This is basically [a field called `imports`](https://nodejs.org/api/packages.html#imports) which allows packages to create internal aliases for modules within their package.
+当 Node.js 增加对模块的支持时，它添加了一项名为[“子路径导入”](https://nodejs.org/api/packages.html#subpath-imports)的功能。
+这本质上是[一个名为 `imports` 的字段](https://nodejs.org/api/packages.html#imports)，允许 npm 包为其包内模块创建内部别名。
 
 ```json
 {
@@ -136,27 +136,27 @@ This is basically [a field called `imports`](https://nodejs.org/api/packages.htm
 }
 ```
 
-This allows modules in `my-package` to import from paths starting with `#root/`
+这使得 `my-package` 中的模块可以通过以 `#root/` 开头的路径进行导入：
 
 ```js
 import * as utils from '#root/utils.js'
 ```
 
-instead of using a relative path like the following.
+而无需使用如下所示的相对路径：
 
 ```js
 import * as utils from '../../utils.js'
 ```
 
-One minor annoyance with this feature has been that developers always had to write _something_ after the `#` when specifying a subpath import.
-Here, we used `root`, but it is a bit useless since there is no directory we're mapping over other than `./dist/`
+该特性的一个小缺憾是，开发者在指定子路径导入时，总是必须在 `#` 后面写上*某些字符*。
+在上述示例中我们使用了 `root`，但这显得有些多余，因为除了 `./dist/` 之外我们并没有映射其他目录。
 
-Developers who have used bundlers are also accustomed to using path-mapping to avoid long relative paths.
-A familiar convention with bundlers has been to use a simple `@/` as the prefix.
-Unfortunately, subpath imports could not start with `#/` at all, leading to a lot of confusion for developers trying to adopt them in their projects.
+使用过打包工具的开发者也习惯于使用路径映射来避免冗长的相对路径。
+打包工具中一个常见的约定是使用简单的 `@/` 作为前缀。
+遗憾的是，以往子路径导入完全不能以 `#/` 开头，这给尝试在项目中采用该功能的开发者带来了不少困惑。
 
-But more recently, [Node.js added support for subpath imports starting with `#/`](https://github.com/nodejs/node/pull/60864).
-This allows packages to use a simple `#/` prefix for their subpath imports without needing to add an extra segment.
+不过最近，[Node.js 增加了对以 `#/` 开头的子路径导入的支持](https://github.com/nodejs/node/pull/60864)。
+这允许包在子路径导入中直接使用简洁的 `#/` 前缀，而无需添加多余的路径段。
 
 ```json
 {
@@ -168,33 +168,31 @@ This allows packages to use a simple `#/` prefix for their subpath imports witho
 }
 ```
 
-This is supported in newer Node.js 20 releases, and so TypeScript now supports it under the options `nodenext` and `bundler` for the `--moduleResolution` setting.
+较新的 Node.js 20 版本已支持此语法，因此 TypeScript 现在也在 `--moduleResolution` 的 `nodenext` 和 `bundler` 选项下提供了对它的支持。
 
-This work was done thanks to [magic-akari](https://github.com/magic-akari), and [the implementing pull request can be found here](https://github.com/microsoft/TypeScript/pull/62844).
+感谢 [magic-akari](https://github.com/magic-akari) 完成了这项工作，[实现的 Pull Request 请参见此处](https://github.com/microsoft/TypeScript/pull/62844)。
 
-## Combining `--moduleResolution bundler` with `--module commonjs`
+## 组合使用 `--moduleResolution bundler` 与 `--module commonjs`
 
-TypeScript's `--moduleResolution bundler` setting was previously only allowed to be used with `--module esnext` or `--module preserve`;
-however, with the deprecation of `--moduleResolution node` (a.k.a. `--moduleResolution node10`), this new combination is often the most suitable upgrade path for many projects.
+TypeScript 的 `--moduleResolution bundler` 选项此前仅允许与 `--module esnext` 或 `--module preserve` 搭配使用；
+然而，随着 `--moduleResolution node`（又称 `--moduleResolution node10`）被废弃，对于许多项目而言，这一新的组合往往是最适合的升级过渡路径。
 
-Projects will often want to instead plan out a migration towards either
+项目通常需要根据项目类型（例如打包的 Web 应用、Bun 应用或 Node.js 应用），规划迁移到以下方案之一：
 
-- `--module preserve` and `--moduleResolution bundler`
+- `--module preserve` 搭配 `--moduleResolution bundler`
 - `--module nodenext`
 
-depending on your project type (e.g. bundled web app, Bun app, or Node.js app).
+更多信息请参阅[实现该功能的 Pull Request](https://github.com/microsoft/TypeScript/pull/62320)。
 
-More information can be found at [this implementing pull request](https://github.com/microsoft/TypeScript/pull/62320).
+## `--stableTypeOrdering` 标志
 
-## The `--stableTypeOrdering` Flag
+作为我们在 [TypeScript 原生重写](https://devblogs.microsoft.com/typescript/typescript-native-port/)方面持续推进工作的一部分，我们引入了一个名为 `--stableTypeOrdering` 的新标志，旨在协助从 6.0 迁移到 7.0。
 
-As part of our ongoing work on [TypeScript's native port](https://devblogs.microsoft.com/typescript/typescript-native-port/), we've introduced a new flag called `--stableTypeOrdering` intended to assist with 6.0-to-7.0 migrations.
+目前，TypeScript 按照遇到类型的顺序为类型分配类型 ID（内部跟踪编号），并使用这些 ID 以一致的方式对联合类型进行排序。
+属性的处理过程也类似。
+因此，程序中声明各元素的顺序可能会对诸如声明文件生成等操作产生出人意料的影响。
 
-Today, TypeScript assigns type IDs (internal tracking numbers) to types in the order they are encountered, and uses these IDs to sort union types in a consistent manner.
-A similar process occurs for properties.
-As a result, the order in which things are declared in a program can have possibly surprising effects on things like declaration emit.
-
-For example, consider the declaration emit from this file:
+例如，考虑此文件的声明文件输出：
 
 ```ts
 // Input: some-file.ts
@@ -208,7 +206,7 @@ export declare function foo(condition: boolean): 100 | 500
 //             Note the order of this union: 100, then 500.
 ```
 
-If we add an unrelated `const` _above_ `foo`, the declaration emit changes:
+如果在 `foo` _上方_ 添加一个无关的 `const`，生成的声明文件就会发生改变：
 
 ```ts
 // Input: some-file.ts
@@ -223,35 +221,35 @@ export declare function foo(condition: boolean): 500 | 100
 //                           Note the change in order here.
 ```
 
-This happens because the literal type `500` gets a lower type ID than `100` because it was processed first when analyzing the `const x` declaration.
-In very rare cases this change in ordering can even cause errors to appear or disappear based on program processing order, but in general, the main place you might notice this ordering is in the emitted declaration files, or in the way types are displayed in your editor.
+之所以会发生这种情况，是因为在分析 `const x` 声明时字面量类型 `500` 先被处理，从而获得了比 `100` 更小的类型 ID。
+在极少数情况下，这种顺序变化甚至可能导致某些类型错误根据程序处理顺序的不同而出现或消失；但通常而言，你主要会在生成的声明文件或编辑器中展示类型的方式中注意到这种顺序差异。
 
-One of the major architectural improvements in TypeScript 7 is parallel type checking, which dramatically improves overall check time.
-However, parallelism introduces a challenge: when different type-checkers visit nodes, types, and symbols in different orders, the internal IDs assigned to these constructs become non-deterministic.
-This in turn leads to confusing non-deterministic output, where two files with identical contents in the same program can produce different declaration files, or even calculate different errors when analyzing the same file.
-To fix this, TypeScript 7.0 sorts its internal objects (e.g. types and symbols) according to a deterministic algorithm based on the content of the object.
-This ensures that all checkers encounter the same object order regardless of how and when they were created.
-As a consequence, in the given example, TypeScript 7 will _always_ print `100 | 500`, removing the ordering instability entirely.
+TypeScript 7 的重大架构改进之一是并行类型检查，这极大地缩短了整体检查时间。
+然而，并行化带来了一个挑战：当不同的类型检查器以不同的顺序访问节点、类型和符号时，分配给这些结构的内部 ID 将变得非确定性。
+这进而会导致令人困惑的非确定性输出：同一个程序中内容完全相同的两个文件可能会生成不同的声明文件，甚至在分析同一个文件时计算出不同的错误。
+为了解决这个问题，TypeScript 7.0 根据对象内容采用确定性算法对其内部对象（例如类型和符号）进行排序。
+这确保了所有检查器无论在何时以及以何种方式创建对象，遇到的对象顺序都是完全相同的。
+因此，在上述示例中，TypeScript 7 将_始终_输出 `100 | 500`，彻底消除了顺序的不稳定性。
 
-This means that TypeScript 6 and 7 can and do sometimes display different ordering.
-While these ordering changes are almost always benign, if you're comparing compiler outputs between runs (for example, checking emitted declaration files in 6.0 vs 7.0), these different orderings can produce a lot of noise that makes it difficult to assess correctness.
-Occasionally though, you may witness a change in ordering that causes a type error to appear or disappear, which can be even more confusing.
+这意味着 TypeScript 6 和 7 有时确实会显示不同的顺序。
+尽管这些顺序变化绝大多数情况下是良性的，但如果你要在不同运行之间对比编译器输出（例如检查 6.0 与 7.0 生成的声明文件），这些不同的顺序会产生大量噪音，从而难以评估输出的正确性。
+偶尔你还可能遇到因顺序变更而导致类型错误出现或消失的情况，这可能会更加令人困惑。
 
-To help with this situation, in 6.0, you can specify the new `--stableTypeOrdering` flag.
-This makes 6.0's type ordering behavior match 7.0's, reducing the number of differences between the two codebases.
-Note that we don't necessarily encourage using this flag all the time as it can add a substantial slowdown to type-checking (up to 25% depending on codebase).
+为了应对这一情况，在 6.0 中你可以指定新的 `--stableTypeOrdering` 标志。
+该标志使 6.0 的类型排序行为与 7.0 保持一致，从而减少两个代码库之间的差异。
+请注意，我们并不建议一直使用此标志，因为它会显著降低类型检查速度（视代码库而定，降幅最高可达 25%）。
 
-If you encounter a type error using `--stableTypeOrdering`, this is typically due to inference differences.
-The previous inference without `--stableTypeOrdering` _happened_ to work based on the current ordering of types in your program.
-To help with this, you'll often benefit from providing an explicit type somewhere.
-Often, this will be a type argument
+如果你在使用 `--stableTypeOrdering` 时遇到了类型错误，这通常是由于推断差异导致的。
+先前在未启用 `--stableTypeOrdering` 时的推断只是“恰好”基于程序中现有的类型顺序正常工作。
+为了解决这一问题，在某些地方提供显式类型通常会很有帮助。
+这通常可以是一个类型实参：
 
 ```diff
 - someFunctionCall(/*...*/);
 + someFunctionCall<SomeExplicitType>(/*...*/);
 ```
 
-or a variable annotation for an argument you intend to pass into a call.
+或者是对准备传入调用的实参进行变量类型注解：
 
 ```diff
 - const someVariable = { /*... some complex object ...*/ };
@@ -260,20 +258,20 @@ or a variable annotation for an argument you intend to pass into a call.
 someFunctionCall(someVariable);
 ```
 
-**Note that this flag is only intended to help diagnose differences between 6.0 and 7.0 - it is not intended to be used as a long-term feature**
+**请注意，该标志仅用于协助诊断 6.0 与 7.0 之间的差异——它并非设计为长期使用的功能特性。**
 
-[See more at this pull-request](https://github.com/microsoft/TypeScript/pull/63084).
+[更多详情请参阅此 Pull Request](https://github.com/microsoft/TypeScript/pull/63084)。
 
-## `es2025` option for `target` and `lib`
+## `target` 和 `lib` 新增 `es2025` 选项
 
-TypeScript 6.0 adds support for the `es2025` option for both `target` and `lib`.
-While there are no new JavaScript language features in ES2025, this new target adds new types for built-in APIs (e.g. `RegExp.escape`), and moves a few declarations from `esnext` into `es2025` (e.g. `Promise.try`, `Iterator` methods, and `Set` methods).
-Work to enable [the new target](https://github.com/microsoft/TypeScript/pull/63046) was contributed thanks to [Kenta Moriuchi](https://github.com/petamoriken).
+TypeScript 6.0 为 `target` 和 `lib` 配置项新增了对 `es2025` 选项的支持。
+虽然 ES2025 中没有新的 JavaScript 语言语法特性，但该新 target 为内置 API 添加了新类型（例如 `RegExp.escape`），并将一些声明从 `esnext` 移动到了 `es2025` 中（例如 `Promise.try`、`Iterator` 方法以及 `Set` 方法）。
+开启[该新 target](https://github.com/microsoft/TypeScript/pull/63046) 的工作由 [Kenta Moriuchi](https://github.com/petamoriken) 贡献。
 
-## New Types for `Temporal`
+## `Temporal` 的全新类型定义
 
-The long-awaited [Temporal proposal](https://github.com/tc39/proposal-temporal) has reached stage 4 and will be part of a future ECMAScript standard.
-TypeScript 6.0 now includes built-in types for the Temporal API, so you can start using it in your TypeScript code today via `--target esnext` or `"lib": ["esnext"]` (or the more-granular `esnext.temporal`).
+万众期待的 [Temporal 提案](https://github.com/tc39/proposal-temporal) 已进入 Stage 4，并将成为未来 ECMAScript 标准的一部分。
+TypeScript 6.0 现已内置了 Temporal API 的类型定义，因此你今天就可以通过 `--target esnext` 或 `"lib": ["esnext"]`（或更细粒度的 `esnext.temporal`）在 TypeScript 代码中使用它：
 
 ```ts
 let yesterday = Temporal.Now.instant().subtract({
@@ -288,14 +286,14 @@ console.log(`Yesterday: ${yesterday}`)
 console.log(`Tomorrow: ${tomorrow}`)
 ```
 
-Temporal is already usable in several runtimes, and with stage 4 status it is now officially part of the JavaScript language.
-[Documentation on the Temporal APIs is available on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal).
+Temporal 已经在多个运行时中可用，并且随着进入 Stage 4，它已正式成为 JavaScript 语言的一部分。
+[关于 Temporal API 的文档可在 MDN 上查阅](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal)。
 
-[This work](https://github.com/microsoft/TypeScript/pull/62628) was contributed thanks to GitHub user [Renegade334](https://github.com/Renegade334).
+[该项工作](https://github.com/microsoft/TypeScript/pull/62628) 由 GitHub 用户 [Renegade334](https://github.com/Renegade334) 贡献完成。
 
-## New Types for "upsert" Methods (a.k.a. `getOrInsert`)
+## “upsert” 方法（即 `getOrInsert`）的全新类型定义
 
-A common pattern with `Map`s is to check if a key exists, and if not, set and fetch a default value.
+在操作 `Map` 时，一种常见的模式是检查键是否存在，如果不存在，则设置并获取一个默认值：
 
 ```ts
 function processOptions(compilerOptions: Map<string, unknown>) {
@@ -310,15 +308,15 @@ function processOptions(compilerOptions: Map<string, unknown>) {
 }
 ```
 
-This pattern can be tedious.
-[ECMAScript's "upsert" proposal](https://github.com/tc39/proposal-upsert) recently reached stage 4, and introduces 2 new methods on `Map` and `WeakMap`:
+这种模式写起来往往较为繁琐。
+[ECMAScript 的“upsert”提案](https://github.com/tc39/proposal-upsert)最近已进入 Stage 4，并在 `Map` 和 `WeakMap` 上引入了两个新方法：
 
 - `getOrInsert`
 - `getOrInsertComputed`
 
-These methods have been added to the `esnext` lib so that you can start using them immediately in TypeScript 6.0.
+这些方法已被添加到 `esnext` lib 中，以便你可以在 TypeScript 6.0 中立即使用它们。
 
-With `getOrInsert`, we can replace our code above with the following:
+借助 `getOrInsert`，我们可以将上述代码替换为：
 
 ```ts
 function processOptions(compilerOptions: Map<string, unknown>) {
@@ -327,8 +325,8 @@ function processOptions(compilerOptions: Map<string, unknown>) {
 }
 ```
 
-`getOrInsertComputed` works similarly, but is for cases where the default value may be expensive to compute (e.g. requires lots of computations, allocations, or does long-running synchronous I/O).
-Instead, it takes a callback that will only be called if the key is not already present.
+`getOrInsertComputed` 的工作原理类似，但适用于计算默认值开销较大（例如需要大量计算、内存分配或执行耗时的同步 I/O）的情况。
+相反，它接受一个回调函数，该回调仅在键尚不存在时才会被调用：
 
 ```ts
 someMap.getOrInsertComputed('someKey', () => {
@@ -336,7 +334,7 @@ someMap.getOrInsertComputed('someKey', () => {
 })
 ```
 
-This callback is also given the key as an argument, which can be useful for cases where the default value is based on the key.
+该回调还会接收键作为参数，这在默认值基于键生成时非常有用：
 
 ```ts
 someMap.getOrInsertComputed(someKey, computeSomeExpensiveDefaultValue)
@@ -346,12 +344,12 @@ function computeSomeExpensiveValue(key: string) {
 }
 ```
 
-[This update](https://github.com/microsoft/TypeScript/pull/62612) was contributed thanks to GitHub user [Renegade334](https://github.com/Renegade334).
+[该项更新](https://github.com/microsoft/TypeScript/pull/62612) 由 GitHub 用户 [Renegade334](https://github.com/Renegade334) 贡献。
 
 ## `RegExp.escape`
 
-When constructing some literal string to match within a regular expression, it is important to escape special regular expression characters like `*`, `+`, `?`, `(`, `)`, etc.
-The [RegExp Escaping ECMAScript proposal](https://github.com/tc39/proposal-regex-escaping) has reached stage 4, and introduces a new `RegExp.escape` function that takes care of this for you.
+当构造要在正则表达式中匹配的字面量字符串时，转义正则表达式的特殊字符（如 `*`、`+`、`?`、`(`、`)` 等）至关重要。
+[ECMAScript 的 RegExp Escaping 提案](https://github.com/tc39/proposal-regex-escaping) 已达到 Stage 4，并引入了一个全新的 `RegExp.escape` 函数来替你处理此转义工作：
 
 ```ts
 function matchWholeWord(word: string, text: string) {
@@ -361,19 +359,19 @@ function matchWholeWord(word: string, text: string) {
 }
 ```
 
-`RegExp.escape` is available in the `es2025` lib, so you can start using it in TypeScript 6.0 today.
+`RegExp.escape` 在 `es2025` lib 中提供，因此你现在就可以在 TypeScript 6.0 中使用它。
 
-[This work](https://github.com/microsoft/TypeScript/pull/63046) was contributed thanks [Kenta Moriuchi](https://github.com/petamoriken).
+[该项工作](https://github.com/microsoft/TypeScript/pull/63046) 由 [Kenta Moriuchi](https://github.com/petamoriken) 贡献。
 
-## The `dom` lib Now Contains `dom.iterable` and `dom.asynciterable`
+## `dom` 库现已包含 `dom.iterable` 与 `dom.asynciterable`
 
-TypeScript's `lib` option allows you to specify which global declarations your target runtime has.
-One option is `dom` to represent web environments (i.e. browsers, who implement [the DOM APIs](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model)).
-Previously, the DOM APIs were partially split out into `dom.iterable` and `dom.asynciterable` for environments that didn't support `Iterable`s and `AsyncIterable`s.
-This meant that you had to explicitly add `dom.iterable` to use iteration methods on DOM collections like `NodeList` or `HTMLCollection`.
+TypeScript 的 `lib` 选项允许你指定目标运行时所具备的全局声明。
+其中一个选项是 `dom`，用于表示 Web 环境（即实现了 [DOM API](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model) 的浏览器）。
+此前，为了照顾不支持 `Iterable` 和 `AsyncIterable` 的环境，DOM API 的部分内容被单独拆分到了 `dom.iterable` 和 `dom.asynciterable` 中。
+这意味着你必须显式添加 `dom.iterable`，才能在 `NodeList` 或 `HTMLCollection` 等 DOM 集合上使用迭代方法。
 
-In TypeScript 6.0, the contents of `lib.dom.iterable.d.ts` and `lib.dom.asynciterable.d.ts` are fully included in `lib.dom.d.ts`.
-You can still reference `dom.iterable` and `dom.asynciterable` in your configuration file's `"lib"` array, but they are now just empty files.
+在 TypeScript 6.0 中，`lib.dom.iterable.d.ts` 和 `lib.dom.asynciterable.d.ts` 的内容已全部合并到 `lib.dom.d.ts` 中。
+你仍然可以在配置文件的 `"lib"` 数组中引用 `dom.iterable` 和 `dom.asynciterable`，但它们现在只是空文件。
 
 ```ts
 // Before TypeScript 6.0, this required "lib": ["dom", "dom.iterable"]
@@ -383,83 +381,83 @@ for (const element of document.querySelectorAll('div')) {
 }
 ```
 
-This is a quality-of-life improvement that eliminates a common point of confusion, since no major modern browser lacks these capabilities.
-If you were already including both `dom` and `dom.iterable`, you can now simplify to just `dom`.
+这是一项体验上的改进，消除了一个常见的困惑点，因为目前所有主流现代浏览器都支持这些能力。
+如果你之前同时配置了 `dom` 和 `dom.iterable`，现在可以简化为仅保留 `dom`。
 
-See more [at this issue](https://github.com/microsoft/TypeScript/issues/60959) and its [corresponding pull request](https://github.com/microsoft/TypeScript/pull/62111).
+更多内容请参阅[此议题](https://github.com/microsoft/TypeScript/issues/60959)及其[对应的 Pull Request](https://github.com/microsoft/TypeScript/pull/62111)。
 
-## Breaking Changes and Deprecations in TypeScript 6.0
+## TypeScript 6.0 中的破坏性变更与弃用
 
-TypeScript 6.0 arrives as a significant transition release, designed to prepare developers for TypeScript 7.0, the upcoming native port of the TypeScript compiler.
-While TypeScript 6.0 maintains full compatibility with your existing TypeScript knowledge and continues to be API compatible with TypeScript 5.9, this release introduces a number of breaking changes and deprecations that reflect the evolving JavaScript ecosystem and set the stage for TypeScript 7.0.
+TypeScript 6.0 是一个重要的过渡版本，旨在帮助开发者为即将推出的 TypeScript 编译器原生重写版本——TypeScript 7.0 做好准备。
+尽管 TypeScript 6.0 保持了与现有 TypeScript 知识的完全一致，并继续与 TypeScript 5.9 保持 API 兼容，但该版本引入了多项破坏性变更和弃用，以反映 JavaScript 生态系统的演进，并为 TypeScript 7.0 铺平道路。
 
-In the two years since TypeScript 5.0, we've seen ongoing shifts in how developers write and ship JavaScript:
+在 TypeScript 5.0 发布的两年间，我们见证了开发者编写和分发 JavaScript 方式的持续转变：
 
-- Virtually every runtime environment is now "evergreen". True legacy environments (ES5) are vanishingly rare.
-- Bundlers and ESM have become the most common module targets for new projects, though CommonJS remains a major target. AMD and other in-browser userland module systems are much rarer than they were in 2012.
-- Almost all packages can be consumed through some module system. UMD packages still exist, but virtually no new code is available _only_ as a global variable.
-- `tsconfig.json` is nearly universal as a configuration mechanism.
-- Appetite for "stricter" typing continues to grow.
-- TypeScript build performance is top of mind. Despite the gains of TypeScript 7, performance must always remain a key goal, and options which can't be supported in a performant way need to be more strongly justified.
+- 几乎所有的运行时环境现已成为“常青”环境。真正的传统老旧环境（ES5）已极其罕见。
+- 打包工具和 ESM 已成为新项目中最主流的模块目标，尽管 CommonJS 仍是一个重要的目标。相比 2012 年，AMD 和其他浏览器端用户态模块系统已鲜为人用。
+- 几乎所有的 npm 包都可以通过某种模块系统来加载。UMD 包依然存在，但几乎没有新代码会*仅*作为全局变量提供。
+- `tsconfig.json` 作为配置机制已近乎普及。
+- 对“更严格”类型检查的需求持续增长。
+- TypeScript 构建性能备受关注。尽管 TypeScript 7 带来了巨大的性能提升，但性能始终是一个核心目标，无法以高性能方式支持的选项需要有更充分的存在理由。
 
-So TypeScript 6.0 and 7.0 are designed with these realities in mind.
-For TypeScript 6.0, these deprecations can be ignored by setting `"ignoreDeprecations": "6.0"` in your tsconfig; however, note that TypeScript 7.0 _will not_ support any of these deprecated options.
+因此，TypeScript 6.0 和 7.0 的设计充分考虑了这些现实情况。
+对于 TypeScript 6.0，可以在 tsconfig 中设置 `"ignoreDeprecations": "6.0"` 来忽略这些弃用提示；然而请注意，TypeScript 7.0 _将不再支持_任何这些已弃用的选项。
 
-Some necessary adjustments can be automatically performed with a codemod or tool.
-For example, the [experimental `ts5to6` tool](https://github.com/andrewbranch/ts5to6) can automatically adjust `baseUrl` and `rootDir` across your codebase.
+某些必要的代码调整可以通过 codemod 或工具自动完成。
+例如，[实验性工具 `ts5to6`](https://github.com/andrewbranch/ts5to6) 可以自动在你的代码库中调整 `baseUrl` 和 `rootDir`。
 
-### Up-Front Adjustments
+### 前期调整要点
 
-We'll cover specific adjustments below, but we have to note that some deprecations and behavior changes do not necessarily have an error message that directly points to the underlying issue.
-So we'll note up-front that **many projects will need to do at least one of the following**:
+我们将在下文中介绍各项具体的调整，但必须指出的是，某些弃用和行为变更并不一定会产生直接指向根本原因的错误信息。
+因此，我们在此预先强调，**许多项目将需要至少执行以下操作之一**：
 
-- Set the `"types"` array in tsconfig, typically to `"types": ["node"]`.
+- 在 tsconfig 中显式设置 `"types"` 数组，通常为 `"types": ["node"]`。
 
-  `"types": ["*"]` will restore the 5.9 behavior, but we recommend using an explicit array to improve build performance and predictability.
+  `"types": ["*"]` 可以恢复 5.9 的行为，但我们建议使用显式数组以提高构建性能和可预测性。
 
-  You'll typically know this is the issue if you see a _lot_ of type errors related to missing identifiers or unresolved built-in modules.
+  如果你看到大量与缺失标识符或未解析内置模块相关的类型错误，通常表明这就是问题所在。
 
-- Set `"rootDir": "./src"` if you were previously relying on this being inferred
+- 如果你先前依赖自动推断，请显式设置 `"rootDir": "./src"`。
 
-  You'll often know this is the issue if you see files being written to `./dist/src/index.js` instead of `./dist/index.js`.
+  如果你发现输出文件被写入到 `./dist/src/index.js` 而非 `./dist/index.js`，通常就是这个原因所致。
 
-### Simple Default Changes
+### 简单的默认值变更
 
-Several compiler options now have updated default values that better reflect modern development practices.
+若干编译器选项的默认值现已更新，以更好地契合现代开发实践：
 
-- **`strict` is now `true` by default**:
-  The appetite for stricter typing continues to grow, and we've found that most new projects want `strict` mode enabled.
-  If you were already using `"strict": true`, nothing changes for you.
-  If you were relying on the previous default of `false`, you'll need to explicitly set `"strict": false` in your `tsconfig.json`.
+- **`strict` 现在默认设为 `true`**：
+  对更严格类型检查的需求持续增长，我们发现大多数新项目都希望启用 `strict` 模式。
+  如果你已经在使用 `"strict": true`，则不受任何影响。
+  如果你之前依赖默认的 `false`，则需要在 `tsconfig.json` 中显式设置 `"strict": false`。
 
-- **`module` defaults to `esnext`**:
-  Similarly, the new default `module` is `esnext`, acknowledging that ESM is now the dominant module format.
+- **`module` 默认值变更为 `esnext`**：
+  同样，新的默认 `module` 为 `esnext`，这是对 ESM 已成为主导模块格式的认可。
 
-- **`target` defaults to current-year ES version**:
-  The new default `target` is the most recent supported ECMAScript spec version (effectively a floating target).
-  Right now, that target is `es2025`.
-  This reflects the reality that most developers are shipping to evergreen runtimes and don't need to compile down to older ECMAScript versions.
+- **`target` 默认值变更为当年 ES 版本**：
+  新的默认 `target` 是当前支持的最新 ECMAScript 规范版本（实际上是一个浮动目标）。
+  目前，该目标为 `es2025`。
+  这反映了绝大多数开发者都在面向常青运行时开发，无需编译降级到旧版 ECMAScript 的现实。
 
-- **`noUncheckedSideEffectImports` is now `true` by default**:
-  This helps catch issues with typos in side-effect-only imports.
+- **`noUncheckedSideEffectImports` 现在默认设为 `true`**：
+  这有助于捕获仅产生副作用的导入中的拼写错误。
 
-- **`libReplacement` is now `false` by default**:
-  This flag previously incurred a large number of failed module resolutions for every run, which in turn increased the number of locations we needed to watch under `--watch` and editor scenarios.
-  In a new project, `libReplacement` never does anything until other explicit configuration takes place, so it makes sense to turn this off by default for the sake of better performance by default.
+- **`libReplacement` 现在默认设为 `false`**：
+  该标志此前在每次运行时都会导致大量的模块解析失败尝试，进而增加了在 `--watch` 和编辑器场景下需要监听的路径数量。
+  在一个新项目中，除非进行了其他显式配置，否则 `libReplacement` 不会起任何作用，因此为了默认获得更佳的性能，将其默认关闭是合情合理的。
 
-If these new defaults break your project, you can specify the previous values explicitly in your `tsconfig.json`.
+如果这些新的默认值破坏了你的项目，你可以在 `tsconfig.json` 中显式指定之前的旧值。
 
-### `rootDir` now defaults to `.`
+### `rootDir` 现在默认设为 `.`
 
-`rootDir` controls the directory structure of your output files relative to the output directory.
-Previously, if you did not specify a `rootDir`, it was inferred based on the common directory of all non-declaration input files.
-But this often meant that it was impossible to know if a file belonged to a project without trying to load and parse that project.
-It also meant that TypeScript had to spend more time inferring that common source directory by analyzing every file path in the program.
+`rootDir` 用于控制输出文件相对于输出目录的目录结构。
+此前，如果未指定 `rootDir`，它会根据所有非声明输入文件的共同公共目录自动推断。
+但这往往意味着：如果不尝试加载并解析整个项目，就无法得知某个文件是否属于该项目。
+这也意味着 TypeScript 必须分析程序中的每个文件路径，花费更多时间来推断该公共源码目录。
 
-In TypeScript 6.0, the default `rootDir` will always be the directory containing the `tsconfig.json` file.
-`rootDir` will only be inferred when using `tsc` from the command line without a `tsconfig.json` file.
+在 TypeScript 6.0 中，默认的 `rootDir` 将始终是包含 `tsconfig.json` 文件的目录。
+只有在没有 `tsconfig.json` 文件的情况下直接从命令行运行 `tsc` 时，才会对 `rootDir` 进行推断。
 
-If you have source files any level deeper than your `tsconfig.json` directory and were relying on TypeScript to infer a common root directory for source files, you'll need to explicitly set `rootDir`:
+如果你的源码文件位于比 `tsconfig.json` 目录更深的层级，并且之前依赖 TypeScript 自动推断源码的公共根目录，则需要显式设置 `rootDir`：
 
 ```diff
   {
@@ -471,7 +469,7 @@ If you have source files any level deeper than your `tsconfig.json` directory an
   }
 ```
 
-Likewise, if your `tsconfig.json` referenced files outside of the containing `tsconfig.json`, you would need to adjust your `rootDir` to include those files.
+同样，如果你的 `tsconfig.json` 引用了该配置文件所在目录之外的文件，你也需要调整 `rootDir` 以包含这些文件：
 
 ```diff
   {
@@ -483,23 +481,23 @@ Likewise, if your `tsconfig.json` referenced files outside of the containing `ts
   }
 ```
 
-See more at [the discussion here](https://github.com/microsoft/TypeScript/issues/62194) and [the implementation here](https://github.com/microsoft/TypeScript/pull/62418).
+更多详情请参阅[此处的讨论](https://github.com/microsoft/TypeScript/issues/62194)以及[此处的具体实现](https://github.com/microsoft/TypeScript/pull/62418)。
 
-### `types` now defaults to `[]`
+### `types` 现在默认设为 `[]`
 
-In a `tsconfig.json`, the `types` field of `compilerOptions` specifies a list of package names to be included in the global scope during compilation.
-Typically, packages in `node_modules` are automatically included via imports in your source code;
-but for convenience, TypeScript would also include all packages in `node_modules/@types` by default, so that you can get global declarations like `process` or the `"fs"` module from `@types/node`, or `describe` and `it` from `@types/jest`, without needing to import them directly.
+在 `tsconfig.json` 中，`compilerOptions` 的 `types` 字段用于指定在编译期间包含在全局作用域中的包名称列表。
+通常，`node_modules` 中的包会通过源代码中的 `import` 语句自动引入；
+但为了方便起见，TypeScript 以前默认还会自动包含 `node_modules/@types` 下的所有包，以便你无需显式导入即可使用来自 `@types/node` 的 `process` 全局变量或 `"fs"` 模块，或者来自 `@types/jest` 的 `describe` 和 `it`。
 
-In a sense, the `types` value previously defaulted to "enumerate everything in `node_modules/@types`".
-This can be _very_ expensive, as a normal repository setup these days might transitively pull in hundreds of `@types` packages, especially in multi-project workspaces with flattened `node_modules`.
-Modern projects almost always need only `@types/node`, `@types/jest`, or a handful of other common global-affecting packages.
+从某种意义上说，以往 `types` 的默认行为就是“遍历并包含 `node_modules/@types` 下的一切内容”。
+这可能带来*极其高昂*的性能开销，因为如今一般的代码仓库可能会间接引入数百个 `@types` 包，尤其是在具有拍平 `node_modules` 的多项目工作区中。
+现代项目几乎通常只需要 `@types/node`、`@types/jest` 或少数其他影响全局的常见包。
 
-In TypeScript 6.0, the default `types` value will be `[]` (an empty array).
-This change prevents projects from unintentionally pulling in hundreds or even thousands of unneeded declaration files at build time.
-Many projects we've looked at have improved their build time anywhere from 20-50% just by setting `types` appropriately.
+在 TypeScript 6.0 中，`types` 的默认值将为 `[]`（空数组）。
+这一改变避免了项目在构建时不经意间引入数百甚至数千个不必要的声明文件。
+我们调研过的许多项目仅通过合理配置 `types`，构建时间就缩短了 20% 到 50% 不等。
 
-**This will affect many projects.** You will likely need to add `"types": ["node"]` or a few others:
+**这将对许多项目产生影响。** 你很可能需要添加 `"types": ["node"]` 或其他少数包：
 
 ```diff
   {
@@ -510,7 +508,7 @@ Many projects we've looked at have improved their build time anywhere from 20-50
   }
 ```
 
-You can also specify a `*` entry to re-enable the old enumeration behavior:
+你也可以指定一个 `*` 条目来重新启用以往的自动遍历行为：
 
 ```diff
   {
@@ -521,7 +519,7 @@ You can also specify a `*` entry to re-enable the old enumeration behavior:
   }
 ```
 
-If you end up with new error messages like the following:
+如果你遇到了如下所示的全新错误信息：
 
 ```
 Cannot find module '...' or its corresponding type declarations.
@@ -532,63 +530,63 @@ Cannot find name 'Bun'. Do you need to install type definitions for Bun? Try `np
 Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
 ```
 
-it's likely that you need to add some entries to your `types` field.
+很可能是因为你需要在 `types` 字段中添加相应的条目。
 
-See more at [the proposal here](https://github.com/microsoft/TypeScript/issues/62195) along with [the implementing pull request here](https://github.com/microsoft/TypeScript/pull/63054).
+更多详情请参阅[此提案](https://github.com/microsoft/TypeScript/issues/62195)以及[实现的 Pull Request](https://github.com/microsoft/TypeScript/pull/63054)。
 
-### Deprecated: `target: es5`
+### 已弃用：`target: es5`
 
-The ECMAScript 5 target was important for a long time to support legacy browsers; but its successor, ECMAScript 2015 (ES6), was released over a decade ago, and all modern browsers have supported it for many years.
-With Internet Explorer's retirement, and the universality of evergreen browsers, there are very few use cases for ES5 output today.
+ECMAScript 5 编译目标长期以来在支持老旧浏览器方面扮演着重要角色；但其后继者 ECMAScript 2015 (ES6) 发布已超过十年，所有现代浏览器也已全面支持多年。
+随着 Internet Explorer 的退役以及常青浏览器的全面普及，如今输出 ES5 的使用场景已微乎其微。
 
-TypeScript's lowest target will now be ES2015, and the `target: es5` option is deprecated. If you were using `target: es5`, you'll need to migrate to a newer target or use an external compiler.
-If you still need ES5 output, we recommend using an external compiler to either directly compile your TypeScript source, or to post-process TypeScript's outputs.
+TypeScript 支持的最低 target 现在将提升为 ES2015，且 `target: es5` 选项已被弃用。如果你之前使用的是 `target: es5`，你需要迁移到更高版本的 target 或使用外部编译器。
+如果你仍然需要 ES5 输出，我们建议使用外部编译器直接编译 TypeScript 源码，或者对 TypeScript 的输出进行后处理转换。
 
-[See more about this deprecation here](https://github.com/microsoft/TypeScript/issues/62196) along with [its implementing pull request](https://github.com/microsoft/TypeScript/pull/63067).
+[参见此处了解有关此项弃用的更多信息](https://github.com/microsoft/TypeScript/issues/62196)以及[其实现的 Pull Request](https://github.com/microsoft/TypeScript/pull/63067)。
 
-### Deprecated: `--downlevelIteration`
+### 已弃用：`--downlevelIteration`
 
-`--downlevelIteration` only has effects on ES5 emit, and since `--target es5` has been deprecated, `--downlevelIteration` no longer serves a purpose.
+`--downlevelIteration` 仅对 ES5 代码输出生效，而由于 `--target es5` 已被弃用，`--downlevelIteration` 不再具有任何实际作用。
 
-Subtly, using `--downlevelIteration false` with `--target es2015` did not error in TypeScript 5.9 and earlier, even though it had no effect.
-In TypeScript 6.0, setting `--downlevelIteration` at all will lead to a deprecation error.
+微妙的是，在 TypeScript 5.9 及更早版本中，即使 `--downlevelIteration false` 与 `--target es2015` 一起使用没有任何效果，也不会报错。
+而在 TypeScript 6.0 中，只要配置了 `--downlevelIteration` 就会引发弃用错误。
 
-See [the implementation here](https://github.com/microsoft/TypeScript/pull/63071).
+请参见[此处的具体实现](https://github.com/microsoft/TypeScript/pull/63071)。
 
-### Deprecated: `--moduleResolution node` (a.k.a. `--moduleResolution node10`)
+### 已弃用：`--moduleResolution node`（即 `--moduleResolution node10`）
 
-`--moduleResolution node` encoded a specific version of Node.js's module resolution algorithm that most-accurately reflected the behavior of Node.js 10.
-Unfortunately, this target (and its name) ignores many updates to Node.js's resolution algorithm that have occurred since then, and it is no longer a good representation of the behavior of modern Node.js versions.
+`--moduleResolution node` 固化了 Node.js 模块解析算法的一个特定版本，该算法最准确地反映的是 Node.js 10 的行为。
+遗憾的是，该选项（及其名称）忽略了自那时起 Node.js 解析算法的大量更新，无法再很好地代表现代 Node.js 版本的行为。
 
-In TypeScript 6.0, `--moduleResolution node` (specifically, `--moduleResolution node10`) is deprecated.
-Users who were using `--moduleResolution node` should usually migrate to `--moduleResolution nodenext` if they plan on targeting Node.js directly, or `--moduleResolution bundler` if they plan on using a bundler or Bun.
+在 TypeScript 6.0 中，`--moduleResolution node`（具体即 `--moduleResolution node10`）已被弃用。
+之前使用 `--moduleResolution node` 的用户，如果打算直接面向 Node.js，通常应当迁移到 `--moduleResolution nodenext`；如果打算使用打包工具或 Bun，则应当迁移到 `--moduleResolution bundler`。
 
-See more [at this issue](https://github.com/microsoft/TypeScript/issues/62200) and [its corresponding pull request](https://github.com/microsoft/TypeScript/pull/62338).
+更多内容请参阅[此议题](https://github.com/microsoft/TypeScript/issues/62200)及其[对应的 Pull Request](https://github.com/microsoft/TypeScript/pull/62338)。
 
-### Deprecated: `amd`, `umd`, and `systemjs` values of `module`
+### 已弃用：`module` 的 `amd`、`umd` 和 `systemjs` 选项值
 
-The following flag values are no longer supported
+以下标志值已不再受支持：
 
 - `--module amd`
 - `--module umd`
 - `--module systemjs`
 - `--module none`
 
-AMD, UMD, and SystemJS were important during the early days of JavaScript modules when browsers lacked native module support.
-The semantics of "none" were never well-defined and often led to confusion.
-Today, ESM is universally supported in browsers and Node.js, and both import maps and bundlers have become favored ways for filling in the gaps.
-If you're still targeting these module systems, consider migrating to an appropriate ECMAScript module-emitting target, adopt a bundler or different compiler, or stay on TypeScript 5.x until you can migrate.
+在浏览器缺乏原生模块支持的早期阶段，AMD、UMD 和 SystemJS 曾发挥了重要作用。
+而 "none" 的语义从未明确界定，常常引起困惑。
+如今，ESM 已在浏览器和 Node.js 中获得普遍支持，而 import maps 和打包工具也已成为填补空白的首选方式。
+如果你仍以这些模块系统为目标，请考虑迁移到合适的 ECMAScript 模块输出目标、采用打包工具或其他编译器，或者在能够完成迁移前暂时停留在 TypeScript 5.x。
 
-This also implies dropped support for the `amd-module` directive, which will no longer have any effect.
+这也意味着废弃对 `amd-module` 指令的支持，该指令将不再产生任何效果。
 
-See more at [the proposal issue](https://github.com/microsoft/TypeScript/issues/62199) along with [the implementing pull request](https://github.com/microsoft/TypeScript/pull/62669).
+更多内容请参阅[提案议题](https://github.com/microsoft/TypeScript/issues/62199)以及[实现的 Pull Request](https://github.com/microsoft/TypeScript/pull/62669)。
 
-### Deprecated: `--baseUrl`
+### 已弃用：`--baseUrl`
 
-The `baseUrl` option is most-commonly used in conjunction with `paths`, and is typically used as a prefix for every value in `paths`.
-Unfortunately, `baseUrl` is also considered a look-up root for module resolution.
+`baseUrl` 选项最常与 `paths` 配合使用，通常作为 `paths` 中各个路径值的前缀。
+不幸的是，`baseUrl` 在模块解析时也会被当作查找根目录。
 
-For example, given the following `tsconfig.json`
+例如，在如下 `tsconfig.json` 中：
 
 ```json5
 {
@@ -603,21 +601,21 @@ For example, given the following `tsconfig.json`
 }
 ```
 
-and an import like
+以及如下的导入语句：
 
 ```ts
 import * as someModule from 'someModule.js'
 ```
 
-TypeScript will probably resolve this to `src/someModule.js`, even if the developer only intended to add mappings for modules starting with `@app/` and `@lib/`.
+TypeScript 可能会将其解析为 `src/someModule.js`，即使开发者的初衷只是为以 `@app/` 和 `@lib/` 开头的模块添加路径映射。
 
-In the best case, this also often leads to "worse-looking" paths that bundlers would ignore;
-but it often meant that that many import paths that would never have worked at runtime are considered "just fine" by TypeScript.
+在最好的情况下，这往往会导致生成打包工具无法识别的“劣质”路径；
+而在更糟糕的情况下，许多在运行时根本无法工作的导入路径却会被 TypeScript 误认为“完全有效”。
 
-`path` mappings have not required specifying `baseUrl` for a long time, and in practice, most projects that use `baseUrl` only use it as a prefix for their `paths` entries.
-In TypeScript 6.0, `baseUrl` is deprecated and will no longer be considered a look-up root for module resolution.
+很长一段时间以来，`paths` 映射已经不再强制要求指定 `baseUrl`，在实践中，绝大多数使用 `baseUrl` 的项目只是将其作为 `paths` 各项的前缀。
+在 TypeScript 6.0 中，`baseUrl` 已被弃用，并且将不再作为模块解析的查找根目录。
 
-Developers who used `baseUrl` as a prefix for path-mapping entries can simply remove `baseUrl` and add the prefix to their `paths` entries:
+将 `baseUrl` 用作路径映射条目前缀的开发者，只需直接移除 `baseUrl` 并将该前缀添加到各自的 `paths` 条目中即可：
 
 ```diff json5
   {
@@ -634,7 +632,7 @@ Developers who used `baseUrl` as a prefix for path-mapping entries can simply re
   }
 ```
 
-Developers who actually _did_ use `baseUrl` as a look-up root can also add an explicit path mapping to preserve the old behavior:
+而如果确实有开发者*曾经*将 `baseUrl` 作为查找根目录使用，也可以添加显式的路径映射来保留旧有行为：
 
 ```json5
 {
@@ -652,33 +650,33 @@ Developers who actually _did_ use `baseUrl` as a look-up root can also add an ex
 }
 ```
 
-However, this is extremely rare.
-We recommend most developers simply remove `baseUrl` and add the appropriate prefixes to their `paths` entries.
+然而这种情况极为罕见。
+我们建议绝大多数开发者直接移除 `baseUrl`，并在 `paths` 条目中加上相应的前缀。
 
-See more [at this issue](https://github.com/microsoft/TypeScript/issues/62207) and [the corresponding pull request](https://github.com/microsoft/TypeScript/pull/62509).
+更多内容请参阅[此议题](https://github.com/microsoft/TypeScript/issues/62207)以及[对应的 Pull Request](https://github.com/microsoft/TypeScript/pull/62509)。
 
-### Deprecated: `--moduleResolution classic`
+### 已弃用：`--moduleResolution classic`
 
-The `moduleResolution: classic` setting has been removed.
-The `classic` resolution strategy was TypeScript's original module resolution algorithm, and predates Node.js's resolution algorithm becoming a de facto standard.
-Today, all practical use cases are served by `nodenext` or `bundler`.
-If you were using `classic`, migrate to one of these modern resolution strategies.
+`moduleResolution: classic` 设置已被移除。
+`classic` 解析策略是 TypeScript 最初的模块解析算法，其诞生甚至早于 Node.js 解析算法成为事实标准之前。
+如今，所有的实际使用场景均由 `nodenext` 或 `bundler` 满足。
+如果你还在使用 `classic`，请迁移到这些现代解析策略之一。
 
-See more at [this issue](https://github.com/microsoft/TypeScript/issues/62206) and [the implementing pull request](https://github.com/microsoft/TypeScript/pull/62669).
+更多内容请参阅[此议题](https://github.com/microsoft/TypeScript/issues/62206)以及[实现的 Pull Request](https://github.com/microsoft/TypeScript/pull/62669)。
 
-### Deprecated: `--esModuleInterop false` and `--allowSyntheticDefaultImports false`
+### 已弃用：`--esModuleInterop false` 与 `--allowSyntheticDefaultImports false`
 
-The following settings can no longer be set to `false`:
+以下配置项不能再设置为 `false`：
 
 - `esModuleInterop`
 - `allowSyntheticDefaultImports`
 
-`esModuleInterop` and `allowSyntheticDefaultImports` were originally opt-in to avoid breaking existing projects.
-However, the behavior they enable has been the recommended default for years.
-Setting them to `false` often led to subtle runtime issues when consuming CommonJS modules from ESM.
-In TypeScript 6.0, the safer interop behavior is always enabled.
+`esModuleInterop` 和 `allowSyntheticDefaultImports` 最初设计为可选开启，以避免破坏现有项目。
+然而多年以来，它们所启用的行为一直是被推荐的默认做法。
+将它们设置为 `false` 往往会导致在 ESM 中加载 CommonJS 模块时出现隐蔽的运行时问题。
+在 TypeScript 6.0 中，更安全的互操作行为将始终处于启用状态。
 
-If you have imports that rely on the old behavior, you may need to adjust them:
+如果你的代码中存在依赖旧行为的导入，可能需要进行调整：
 
 ```ts
 // Before (with esModuleInterop: false)
@@ -688,24 +686,24 @@ import * as express from 'express'
 import express from 'express'
 ```
 
-See more at [this issue](https://github.com/microsoft/TypeScript/issues/62529) and [its implementing pull request](https://github.com/microsoft/TypeScript/pull/62567).
+更多内容请参阅[此议题](https://github.com/microsoft/TypeScript/issues/62529)及其[实现的 Pull Request](https://github.com/microsoft/TypeScript/pull/62567)。
 
-### Deprecated: `--alwaysStrict false`
+### 已弃用：`--alwaysStrict false`
 
-The `alwaysStrict` flag refers to inference and emit of the `"use strict";` directive.
-In TypeScript 6.0, all code will be assumed to be in [JavaScript strict mode](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode), which is a set of JS semantics that most-noticeably affects syntactic corner cases around reserved words.
-If you have "sloppy mode" code that uses reserved words like `await`, `static`, `private`, or `public` as regular identifiers, you'll need to rename them.
-If you relied on subtle semantics around the meaning of `this` in non-strict code, you may need to adjust your code as well.
+`alwaysStrict` 标志用于控制推断并输出 `"use strict";` 指令。
+在 TypeScript 6.0 中，所有代码都将被假定处于 [JavaScript 严格模式](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode) 下，这套 JS 语义最明显的影响在于涉及保留字的语法边界情况。
+如果你的代码处于“非严格模式”并将 `await`、`static`、`private` 或 `public` 等保留字用作常规标识符，你需要对其进行重命名。
+如果你依赖非严格模式下关于 `this` 含义的微妙语义，你可能也需要调整代码。
 
-See more [at this issue](https://github.com/microsoft/TypeScript/issues/62213) and [its corresponding pull request](https://github.com/microsoft/TypeScript/pull/63089).
+更多内容请参阅[此议题](https://github.com/microsoft/TypeScript/issues/62213)及其[对应的 Pull Request](https://github.com/microsoft/TypeScript/pull/63089)。
 
-### Deprecated: `outFile`
+### 已弃用：`outFile`
 
-The `--outFile` option has been removed from TypeScript 6.0. This option was originally designed to concatenate multiple input files into a single output file. However, external bundlers like Webpack, Rollup, esbuild, Vite, Parcel, and others now do this job faster, better, and with far more configurability. Removing this option simplifies the implementation and allows us to focus on what TypeScript does best: type-checking and declaration emit. If you're currently using `--outFile`, you'll need to migrate to an external bundler. Most modern bundlers have excellent TypeScript support out of the box.
+`--outFile` 选项已在 TypeScript 6.0 中被移除。该选项最初设计用于将多个输入文件合并为一个输出文件。然而，Webpack、Rollup、esbuild、Vite、Parcel 等外部打包工具现在能以更快、更好且配置更丰富的方式完成此任务。移除此选项简化了编译器内部实现，使我们能够专注于 TypeScript 最擅长的领域：类型检查和声明文件生成。如果你当前正在使用 `--outFile`，需要迁移到外部打包工具。大多数现代打包工具都提供了开箱即用的出色 TypeScript 支持。
 
-### Deprecated: legacy `module` Syntax for namespaces
+### 已弃用：用于命名空间的旧版 `module` 语法
 
-Early versions of TypeScript used the `module` keyword to declare namespaces:
+早期版本的 TypeScript 使用 `module` 关键字来声明命名空间：
 
 ```ts
 // ❌ Deprecated syntax - now an error
@@ -714,7 +712,7 @@ module Foo {
 }
 ```
 
-This syntax was later aliased to the modern preferred form using the `namespace` keyword:
+该语法后来被更名为现代推荐的形式——使用 `namespace` 关键字：
 
 ```ts
 // ✅ The correct syntax
@@ -723,13 +721,13 @@ namespace Foo {
 }
 ```
 
-When `namespace` was introduced, the `module` syntax was simply discouraged.
-A few years ago, the TypeScript language service started marking the keyword as deprecated, suggesting `namespace` in its place.
+当引入 `namespace` 时，`module` 语法仅被列为不推荐使用。
+几年前，TypeScript 语言服务开始将该关键字标记为已弃用，并建议改用 `namespace`。
 
-In TypeScript 6.0, using `module` where `namespace` is expected is now a hard deprecation.
-This change is necessary because `module` blocks are a potential ECMAScript proposal that would conflict with the legacy TypeScript syntax.
+在 TypeScript 6.0 中，在期望使用 `namespace` 的地方使用 `module` 现已成为硬性弃用。
+这项变更是必要的，因为 ECMAScript 存在一个潜在的 `module` 代码块提案，该提案会与旧版 TypeScript 语法产生冲突。
 
-The ambient module declaration form remains fully supported:
+外部环境模块声明形式仍然得到完全支持：
 
 ```ts
 // ✅ Still works perfectly
@@ -738,14 +736,14 @@ declare module 'some-module' {
 }
 ```
 
-See [this issue](https://github.com/microsoft/TypeScript/issues/62211) and its [corresponding pull request](https://github.com/microsoft/TypeScript/pull/62876) for more details.
+有关更多详细信息，请参见[此议题](https://github.com/microsoft/TypeScript/issues/62211)及其[对应的 Pull Request](https://github.com/microsoft/TypeScript/pull/62876)。
 
-### Deprecated: `asserts` Keyword on Imports
+### 已弃用：导入语句中的 `asserts` 关键字
 
-The `asserts` keyword was proposed to the JavaScript language via the import assertions proposal;
-however, the proposal eventually morphed into [the import attributes proposal](https://github.com/tc39/proposal-import-attributes), which uses the `with` keyword instead of `asserts`.
+`asserts` 关键字曾通过导入断言提案被提议加入 JavaScript 语言；
+然而，该提案最终演变为[导入属性提案](https://github.com/tc39/proposal-import-attributes)，改用 `with` 关键字代替了 `asserts`。
 
-Thus, the `asserts` syntax is now deprecated in TypeScript 6.0, and using it will lead to an error:
+因此，`asserts` 语法在 TypeScript 6.0 中现已被弃用，使用它将导致报错：
 
 ```ts
 // ❌ Deprecated syntax - now an error.
@@ -754,44 +752,44 @@ import blob from "./blahb.json" asserts { type: "json" }
 // error: Import assertions have been replaced by import attributes. Use 'with' instead of 'asserts'.
 ```
 
-Instead, use the `with` syntax for import attributes:
+相反，请改用导入属性的 `with` 语法：
 
 ```ts
 // ✅ Works with the new import attributes syntax.
 import blob from './blahb.json' with { type: 'json' }
 ```
 
-See more at [this issue](https://github.com/microsoft/TypeScript/issues/62210) and its [corresponding pull request](https://github.com/microsoft/TypeScript/pull/63077).
+更多内容请参阅[此议题](https://github.com/microsoft/TypeScript/issues/62210)及其[对应的 Pull Request](https://github.com/microsoft/TypeScript/pull/63077)。
 
-### Deprecated: `no-default-lib` Directives
+### 已弃用：`no-default-lib` 指令
 
-The `/// <reference no-default-lib="true"/>` directive has been largely misunderstood and misused.
-In TypeScript 6.0, this directive is no longer supported.
-If you were using it, consider using `--noLib` or `--libReplacement` instead.
+`/// <reference no-default-lib="true"/>` 指令在很大程度上被误解和误用。
+在 TypeScript 6.0 中，该指令已不再受支持。
+如果你之前正在使用它，请考虑改用 `--noLib` 或 `--libReplacement`。
 
-[See more here](https://github.com/microsoft/TypeScript/issues/62209) and at [the corresponding pull request](https://github.com/microsoft/TypeScript/pull/62435).
+[在此查看更多信息](https://github.com/microsoft/TypeScript/issues/62209)以及[对应的 Pull Request](https://github.com/microsoft/TypeScript/pull/62435)。
 
-### Specifying Command-Line Files When `tsconfig.json` Exists is Now an Error
+### 存在 `tsconfig.json` 时在命令行指定输入文件现在会报错
 
-Currently, if you run `tsc foo.ts` in a folder where a `tsconfig.json` exists, the config file is completely ignored.
-This was often very confusing if you expected checking and emit options to apply to the input file.
+目前，如果你在存在 `tsconfig.json` 的目录中运行 `tsc foo.ts`，该配置文件将被完全忽略。
+如果你期望类型检查和生成选项应用于该输入文件，这往往会让人感到非常困惑。
 
-In TypeScript 6.0, if you run `tsc` with file arguments in a directory containing a `tsconfig.json`, an error will be issued to make this behavior explicit:
+在 TypeScript 6.0 中，如果你在包含 `tsconfig.json` 的目录中附带文件参数运行 `tsc`，将会产生错误以明确提示该行为：
 
 ```
 error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.
 ```
 
-If it is the case that you wanted to ignore the `tsconfig.json` and just compile `foo.ts` with TypeScript's defaults, you can use the new `--ignoreConfig` flag.
+如果你确实希望忽略 `tsconfig.json` 并使用 TypeScript 的默认配置直接编译 `foo.ts`，可以使用全新的 `--ignoreConfig` 标志：
 
 ```sh
 tsc --ignoreConfig foo.ts
 ```
 
-See more [at this issue](https://github.com/microsoft/TypeScript/issues/62197) and its [corresponding pull request](https://github.com/microsoft/TypeScript/pull/62477).
+更多内容请参阅[此议题](https://github.com/microsoft/TypeScript/issues/62197)及其[对应的 Pull Request](https://github.com/microsoft/TypeScript/pull/62477)。
 
-## Preparing for TypeScript 7.0
+## 为 TypeScript 7.0 做好准备
 
-TypeScript 6.0 is designed as a transition release.
-While options deprecated in TypeScript 6.0 will continue to work without errors when `"ignoreDeprecations": "6.0"` is set, those options will be **removed entirely in TypeScript 7.0** (the native TypeScript port).
-If you're seeing deprecation warnings after upgrading to TypeScript 6.0, we strongly recommend addressing them before adopting TypeScript 7.0 (or trying [native previews](https://www.npmjs.com/package/@typescript/native-preview)) in your project.
+TypeScript 6.0 被定位为一个过渡版本。
+虽然在设置了 `"ignoreDeprecations": "6.0"` 的情况下，TypeScript 6.0 中弃用的选项仍可正常运行而不报错，但这些选项将在 **TypeScript 7.0（TypeScript 原生重写版本）中被彻底移除**。
+如果你在升级到 TypeScript 6.0 后看到了弃用警告，我们强烈建议在项目采用 TypeScript 7.0（或尝试 [native 预览版](https://www.npmjs.com/package/@typescript/native-preview)）之前着手解决它们。

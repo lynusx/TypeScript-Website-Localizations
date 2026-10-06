@@ -2,18 +2,16 @@
 title: TypeScript 5.2
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-5-2.html
-oneline: TypeScript 5.2 Release Notes
+oneline: TypeScript 5.2 发布说明
 ---
 
-## `using` Declarations and Explicit Resource Management
+## `using` 声明与显式资源管理
 
-TypeScript 5.2 adds support for the upcoming [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) feature in ECMAScript.
-Let's explore some of the motivations and understand what the feature brings us.
+TypeScript 5.2 增加了对 ECMAScript 即将推出的[显式资源管理](https://github.com/tc39/proposal-explicit-resource-management)（Explicit Resource Management）特性的支持。让我们一起了解这一特性的设计背景及其带来的能力。
 
-It's common to need to do some sort of "clean-up" after creating an object.
-For example, you might need to close network connections, delete temporary files, or just free up some memory.
+在创建对象之后，通常需要执行某种“清理”工作。例如，可能需要关闭网络连接、删除临时文件，或者释放内存。
 
-Let's imagine a function that creates a temporary file, reads and writes to it for various operations, and then closes and deletes it.
+设想这样一个函数：它创建一个临时文件，对其进行读写等各种操作，随后将其关闭并删除。
 
 ```ts
 import * as fs from 'fs'
@@ -30,7 +28,7 @@ export function doSomeWork() {
 }
 ```
 
-This is fine, but what happens if we need to perform an early exit?
+这段代码没有问题，但如果我们需要提前退出该怎么办？
 
 ```ts
 export function doSomeWork() {
@@ -53,9 +51,7 @@ export function doSomeWork() {
 }
 ```
 
-We're starting to see some duplication of clean-up which can be easy to forget.
-We're also not guaranteed to close and delete the file if an error gets thrown.
-This could be solved by wrapping this all in a `try`/`finally` block.
+我们开始看到重复的清理代码，而这些代码很容易被遗漏。此外，如果抛出错误，也无法保证文件一定会被关闭和删除。将代码包裹在 `try`/`finally` 块中可以解决这个问题：
 
 ```ts
 export function doSomeWork() {
@@ -77,13 +73,9 @@ export function doSomeWork() {
 }
 ```
 
-While this is more robust, it's added quite a bit of "noise" to our code.
-There are also other foot-guns we can run into if we start adding more clean-up logic to our `finally` block — for example, exceptions preventing other resources from being disposed.
-This is what the [explicit resource management](https://github.com/tc39/proposal-explicit-resource-management) proposal aims to solve.
-The key idea of the proposal is to support resource disposal — this clean-up work we're trying to deal with — as a first class idea in JavaScript.
+尽管这种方式更加健壮，但也给代码增加了不少“噪声”。如果在 `finally` 块中添加更多清理逻辑，还可能踩到其他潜在陷阱——例如，前面的异常可能导致后续其他资源无法被正常释放。这正是[显式资源管理](https://github.com/tc39/proposal-explicit-resource-management)提案旨在解决的问题。该提案的核心思想是将资源释放（即我们尝试处理的这类清理工作）作为 JavaScript 中的一等公民概念来支持。
 
-This starts by adding a new built-in `symbol` called `Symbol.dispose`, and we can create objects with methods named by `Symbol.dispose`.
-For convenience, TypeScript defines a new global type called `Disposable` which describes these.
+这一切始于引入一个新的内置 `symbol`：`Symbol.dispose`，我们可以创建包含以 `Symbol.dispose` 命名的方法的对象。为了方便起见，TypeScript 定义了一个新的全局类型 `Disposable` 来描述这些对象。
 
 ```ts
 class TempFile implements Disposable {
@@ -105,7 +97,7 @@ class TempFile implements Disposable {
 }
 ```
 
-Later on we can call those methods.
+随后我们便可以调用这些方法：
 
 ```ts
 export function doSomeWork() {
@@ -119,15 +111,11 @@ export function doSomeWork() {
 }
 ```
 
-Moving the clean-up logic to `TempFile` itself doesn't buy us much;
-we've basically just moved all the clean-up work from the `finally` block into a method, and that's always been possible.
-But having a well-known "name" for this method means that JavaScript can build other features on top of it.
+单纯将清理逻辑移到 `TempFile` 本身并不能带来太多好处；我们基本上只是把所有的清理工作从 `finally` 块搬进了一个方法中，而这从来都是可行的。但是，为该方法提供一个众所周知的“统一名称”，意味着 JavaScript 能够在此基础上构建其他语言特性。
 
-That brings us to the first star of the feature: `using` declarations!
-`using` is a new keyword that lets us declare new fixed bindings, kind of like `const`.
-The key difference is that variables declared with `using` get their `Symbol.dispose` method called at the end of the scope!
+这就引出了该特性的重头戏之一：`using` 声明！`using` 是一个新的关键字，用于声明新的固定绑定，类似于 `const`。关键区别在于：使用 `using` 声明的变量，其 `Symbol.dispose` 方法会在所在作用域结束时被自动调用！
 
-So we could simply have written our code like this:
+因此，我们的代码可以直接简化为：
 
 ```ts
 export function doSomeWork() {
@@ -142,15 +130,11 @@ export function doSomeWork() {
 }
 ```
 
-Check it out — no `try`/`finally` blocks!
-At least, none that we see.
-Functionally, that's exactly what `using` declarations will do for us, but we don't have to deal with that.
+瞧——完全没有 `try`/`finally` 块！至少表面上看不到。在功能层面上，`using` 声明为我们完成的正是这一逻辑，但我们不再需要亲自编写繁琐的样板代码。
 
-You might be familiar with [`using` declarations in C#](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-8.0/using), [`with` statements in Python](https://docs.python.org/3/reference/compound_stmts.html#the-with-statement), or [`try`-with-resource declarations in Java](https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html).
-These are all similar to JavaScript's new `using` keyword, and provide a similar explicit way to perform a "tear-down" of an object at the end of a scope.
+你可能熟悉 [C# 中的 `using` 声明](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-8.0/using)、[Python 中的 `with` 语句](https://docs.python.org/3/reference/compound_stmts.html#the-with-statement)或 [Java 中的 `try`-with-resources 声明](https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html)。它们都与 JavaScript 新增的 `using` 关键字类似，提供了在作用域结束时显式释放对象的类似方式。
 
-`using` declarations do this clean-up at the very end of their containing scope or right before an "early return" like a `return` or a `throw`n error.
-They also dispose in a first-in-last-out order like a stack.
+`using` 声明会在包含它们的作用域的最末尾、或在发生“提前返回”（例如 `return` 或抛出错误）之前执行清理。此外，它们的释放顺序遵循后进先出（FILO），类似于栈结构。
 
 ```ts
 function loggy(id: string): Disposable {
@@ -191,14 +175,9 @@ func()
 // Disposing a
 ```
 
-`using` declarations are supposed to be resilient to exceptions;
-if an error is thrown, it's rethrown after disposal.
-On the other hand, the body of your function might execute as expected, but the `Symbol.dispose` might throw.
-In that case, that exception is rethrown as well.
+`using` 声明具备容错机制；如果在作用域执行过程中抛出错误，该错误会在资源释放完成后重新抛出。另一方面，函数体本身可能按预期执行完毕，但 `Symbol.dispose` 却可能抛出异常。在这种情况下，该异常同样会被重新抛出。
 
-But what happens if both the logic before and during disposal throws an error?
-For those cases, `SuppressedError` has been introduced as a new subtype of `Error`.
-It features a `suppressed` property that holds the last-thrown error, and an `error` property for the most-recently thrown error.
+但如果释放前的逻辑和释放过程中的逻辑同时抛出错误，会发生什么呢？针对这种情况，ECMAScript 引入了 `SuppressedError` 作为 `Error` 的新子类型。它包含一个 `suppressed` 属性（保存先前被压制的错误）和一个 `error` 属性（保存最后抛出的错误）。
 
 ```ts
 class ErrorA extends Error {
@@ -235,13 +214,9 @@ try {
 }
 ```
 
-You might have noticed that we're using synchronous methods in these examples.
-However, lots of resource disposal involves _asynchronous_ operations, and we need to wait for those to complete before we continue running any other code.
+你可能已经注意到，以上示例中使用的都是同步方法。然而，很多资源释放都涉及*异步*操作，在继续执行其他代码之前，我们需要等待这些异步操作完成。
 
-That's why there is also a new `Symbol.asyncDispose`, and it brings us to the next star of the show — `await using` declarations.
-These are similar to `using` declarations, but the key is that they look up whose disposal must be `await`ed.
-They use a different method named by `Symbol.asyncDispose`, though they can operate on anything with a `Symbol.dispose` as well.
-For convenience, TypeScript also introduces a global type called `AsyncDisposable` that describes any object with an asynchronous dispose method.
+正因如此，规范还新增了 `Symbol.asyncDispose`，这也引出了另一项核心特性——`await using` 声明。它们与 `using` 声明类似，关键在于它们会查找需要被 `await` 的释放操作。它们调用由 `Symbol.asyncDispose` 命名的方法，不过也可以兼容具有 `Symbol.dispose` 的对象。为方便起见，TypeScript 还引入了一个名为 `AsyncDisposable` 的全局类型，用于描述任何具有异步释放方法的对象。
 
 ```ts
 async function doWork() {
@@ -287,14 +262,9 @@ func()
 // Disposing (async) a
 ```
 
-Defining types in terms of `Disposable` and `AsyncDisposable` can make your code much easier to work with if you expect others to do tear-down logic consistently.
-In fact, lots of existing types exist in the wild which have a `dispose()` or `close()` method.
-For example, the Visual Studio Code APIs even define [their own `Disposable` interface](https://code.visualstudio.com/api/references/vscode-api#Disposable).
-APIs in the browser and in runtimes like Node.js, Deno, and Bun might also choose to use `Symbol.dispose` and `Symbol.asyncDispose` for objects which already have clean-up methods, like file handles, connections, and more.
+如果你期望他人以一致的方式执行清理逻辑，依据 `Disposable` 和 `AsyncDisposable` 来定义类型可以使你的代码更加易用。实际上，生态中已有大量现存类型拥有 `dispose()` 或 `close()` 方法。例如，Visual Studio Code API 就定义了[自己的 `Disposable` 接口](https://code.visualstudio.com/api/references/vscode-api#Disposable)。浏览器以及 Node.js、Deno、Bun 等运行时中的 API，也可能会选择针对已经具有清理方法的对象（如文件句柄、连接等）支持 `Symbol.dispose` 和 `Symbol.asyncDispose`。
 
-Now maybe this all sounds great for libraries, but a little bit heavy-weight for your scenarios.
-If you're doing a lot of ad-hoc clean-up, creating a new type might introduce a lot of over-abstraction and questions about best-practices.
-For example, take our `TempFile` example again.
+对于库作者而言这或许很棒，但在某些应用场景下可能略显沉重。如果你需要做很多临时性的清理工作，为此专门创建一个新类型可能会带来过度抽象和最佳实践方面的疑虑。例如，再次回顾我们的 `TempFile` 示例：
 
 ```ts
 class TempFile implements Disposable {
@@ -327,15 +297,9 @@ export function doSomeWork() {
 }
 ```
 
-All we wanted was to remember to call two functions — but was this the best way to write it?
-Should we be calling `openSync` in the constructor, create an `open()` method, or pass in the handle ourselves?
-Should we expose a method for every possible operation we need to perform, or should we just make the properties public?
+我们原本只想确保调用两个函数——但这是最佳书写方式吗？我们应该在构造函数中调用 `openSync`、还是创建 `open()` 方法、抑或是自己传入句柄？我们是否需要为每一个可能的操作都暴露方法，还是直接将属性公开？
 
-That brings us to the final stars of the feature: `DisposableStack` and `AsyncDisposableStack`.
-These objects are useful for doing both one-off clean-up, along with arbitrary amounts of cleanup.
-A `DisposableStack` is an object that has several methods for keeping track of `Disposable` objects, and can be given functions for doing arbitrary clean-up work.
-We can also assign them to `using` variables because — get this &mdash; _they're also `Disposable`_!
-So here's how we could've written the original example.
+这就引出了该特性的最后一个亮点：`DisposableStack` 和 `AsyncDisposableStack`。这些对象既适用于一次性清理，也适用于任意数量的组合清理工作。`DisposableStack` 是一个包含多种跟踪 `Disposable` 对象方法的对象，并且可以传入自定义函数来执行任意清理工作。我们还可以将其赋值给 `using` 变量，因为——你猜怎么着——_它们本身也是 `Disposable`_！因此，最初的示例可以改写为：
 
 ```ts
 function doSomeWork() {
@@ -359,16 +323,11 @@ function doSomeWork() {
 }
 ```
 
-Here, the `defer()` method just takes a callback, and that callback will be run once `cleanup` is disposed of.
-Typically, `defer` (and other `DisposableStack` methods like `use` and `adopt`)
-should be called immediately after creating a resource.
-As the name suggests, `DisposableStack` disposes of everything it keeps track of like a stack, in a first-in-last-out order, so `defer`ing immediately after creating a value helps avoid odd dependency issues.
-`AsyncDisposableStack` works similarly, but can keep track of `async` functions and `AsyncDisposable`s, and is itself an `AsyncDisposable.`
+在此，`defer()` 方法接收一个回调函数，当 `cleanup` 被释放时，该回调就会被执行。通常情况下，`defer`（以及 `DisposableStack` 的其他方法，如 `use` 和 `adopt`）应该在创建资源后立即调用。正如其名称所示，`DisposableStack` 会像栈一样按照后进先出的顺序释放其跟踪的所有内容，因此在创建值后立即调用 `defer` 有助于避免奇怪的依赖问题。`AsyncDisposableStack` 的工作方式与之类似，但它可以跟踪 `async` 函数与 `AsyncDisposable`，并且其自身也是一个 `AsyncDisposable`。
 
-The `defer` method is similar in many ways to the `defer` keyword in [Go](https://go.dev/tour/flowcontrol/12), [Swift](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/statements/#Defer-Statement), [Zig](https://ziglang.org/documentation/master/#defer), [Odin](https://odin-lang.org/docs/overview/#defer-statement), and others, where the conventions should be similar.
+`defer` 方法在很多方面类似于 [Go](https://go.dev/tour/flowcontrol/12)、[Swift](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/statements/#Defer-Statement)、[Zig](https://ziglang.org/documentation/master/#defer)、[Odin](https://odin-lang.org/docs/overview/#defer-statement) 等语言中的 `defer` 关键字，其约定也是相通的。
 
-Because this feature is so recent, most runtimes will not support it natively.
-To use it, you will need runtime polyfills for the following:
+由于该特性非常新，大多数运行时目前还不提供原生支持。要使用它，你需要为以下项提供运行时 polyfill：
 
 - `Symbol.dispose`
 - `Symbol.asyncDispose`
@@ -376,15 +335,14 @@ To use it, you will need runtime polyfills for the following:
 - `AsyncDisposableStack`
 - `SuppressedError`
 
-However, if all you're interested in is `using` and `await using`, you should be able to get away with only polyfilling the built-in `symbol`s.
-Something as simple as the following should work for most cases:
+不过，如果你只对 `using` 和 `await using` 感兴趣，通常只需对内置的 `symbol` 提供 polyfill 即可。在多数情况下，如下简单代码便已足够：
 
 ```ts
 Symbol.dispose ??= Symbol('Symbol.dispose')
 Symbol.asyncDispose ??= Symbol('Symbol.asyncDispose')
 ```
 
-You will also need to set your compilation `target` to `es2022` or below, and configure your `lib` setting to either include `"esnext"` or `"esnext.disposable"`.
+此外，你还需要将编译目标 `target` 设置为 `es2022` 或更低版本，并将 `lib` 设置配置为包含 `"esnext"` 或 `"esnext.disposable"`。
 
 ```json
 {
@@ -395,19 +353,15 @@ You will also need to set your compilation `target` to `es2022` or below, and co
 }
 ```
 
-For more information on this feature, [take a look at the work on GitHub](https://github.com/microsoft/TypeScript/pull/54505)!
+关于该特性的更多信息，[请查看 GitHub 上的相关工作](https://github.com/microsoft/TypeScript/pull/54505)！
 
-## Decorator Metadata
+## 装饰器元数据
 
-TypeScript 5.2 implements [an upcoming ECMAScript feature called decorator metadata](https://github.com/tc39/proposal-decorator-metadata).
+TypeScript 5.2 实现了 [ECMAScript 即将推出的装饰器元数据（Decorator Metadata）特性](https://github.com/tc39/proposal-decorator-metadata)。
 
-The key idea of this feature is to make it easy for decorators to create and consume metadata on any class they're used on or within.
+该特性的核心思想，是让装饰器能够轻松在其所修饰的类或类内部成员上创建与消费元数据。
 
-Whenever decorator functions are used, they now have access to a new `metadata` property on their context object.
-The `metadata` property just holds a simple object.
-Since JavaScript lets us add properties arbitrarily, it can be used as a dictionary that is updated by each decorator.
-Alternatively, since every `metadata` object will be identical for each decorated portion of a class, it can be used as a key into a `Map`.
-After all decorators on or in a class get run, that object can be accessed on the class via `Symbol.metadata`.
+当使用装饰器函数时，它们现在可以通过上下文（context）对象访问新增的 `metadata` 属性。`metadata` 属性只保存一个普通对象。由于 JavaScript 允许随意添加属性，它可以被用作由各个装饰器共同更新的字典对象。或者，由于同一个类中各个被装饰部分所拿到的 `metadata` 对象都是完全相同的，它还可以用作 `Map` 的键。在类内部或类上的所有装饰器运行完毕后，可以通过类上的 `Symbol.metadata` 访问该对象。
 
 ```ts
 interface Context {
@@ -436,11 +390,9 @@ console.log(JSON.stringify(ourMetadata))
 // { "bar": true, "baz": true, "foo": true }
 ```
 
-This can be useful in a number of different scenarios.
-Metadata could possibly be attached for lots of uses like debugging, serialization, or performing dependency injection with decorators.
-Since metadata objects are created per decorated class, frameworks can either privately use them as keys into a `Map` or `WeakMap`, or tack properties on as necessary.
+这在许多不同的场景中都非常有用。元数据可以附加用于调试、序列化或通过装饰器实现依赖注入等多种用途。由于每个被装饰的类都会创建独立的元数据对象，框架既可以将其私下用作 `Map` 或 `WeakMap` 的键，也可以根据需要直接在其上附加属性。
 
-For example, let's say we wanted to use decorators to keep track of which properties and accessors are serializable when using `JSON.stringify` like so:
+例如，假设我们希望使用装饰器来跟踪在使用 `JSON.stringify` 时哪些属性和访问器是可序列化的，如下所示：
 
 ```ts
 import { serialize, jsonify } from './serializer'
@@ -467,10 +419,9 @@ class Person {
 }
 ```
 
-Here, the intent is that only `age` and `fullName` should be serialized because they are marked with the `@serialize` decorator.
-We define a `toJSON` method for this purpose, but it just calls out to `jsonify` which uses the metadata that `@serialize` created.
+在这里，我们的目的是只有标记了 `@serialize` 装饰器的 `age` 和 `fullName` 才会被序列化。为此我们定义了一个 `toJSON` 方法，它会直接调用 `jsonify`，而 `jsonify` 则使用了由 `@serialize` 创建的元数据。
 
-Here's an example of how the module `./serialize.ts` might be defined:
+以下是 `./serialize.ts` 模块可能的定义示例：
 
 ```ts
 const serializables = Symbol()
@@ -510,13 +461,9 @@ export function jsonify(instance: object): string {
 }
 ```
 
-This module has a local `symbol` called `serializables` to store and retrieve the names of properties marked `@serializable`.
-It stores a list of these property names on the metadata on each invocation of `@serializable`.
-When `jsonify` is called, the list of properties is fetched off of the metadata and used to retrieve the actual values from the instance, eventually serializing those names and values.
+该模块使用了一个名为 `serializables` 的局部 `symbol` 来存储和检索标记为 `@serializable` 的属性名称。在每次调用 `@serializable` 时，它都会在元数据上存储这些属性名称的列表。当调用 `jsonify` 时，会从元数据中获取属性列表，并用于从实例中检索实际值，最终将这些名称和值序列化。
 
-Using a `symbol` technically makes this data accessible to others.
-An alternative might be to use a `WeakMap` using the metadata object as a key.
-This keeps data private and happens to use fewer type assertions in this case, but is otherwise similar.
+从技术上讲，使用 `symbol` 会使这些数据可被外部访问。另一种替代方案是使用 `WeakMap`，将元数据对象作为键。这可以保持数据的私有性，并且在这种情况下碰巧使用了更少的类型断言，但在其他方面非常相似。
 
 ```ts
 const serializables = new WeakMap<object, string[]>()
@@ -557,18 +504,15 @@ export function jsonify(instance: object): string {
 }
 ```
 
-As a note, these implementations don't handle subclassing and inheritance.
-That's left as an exercise to you (and you might find that it is easier in one version of the file than the other!).
+需要说明的是，这些实现并未处理子类化与继承。这留给读者作为练习（你可能会发现其中一种写法在处理继承时比另一种更轻松！）。
 
-Because this feature is still fresh, most runtimes will not support it natively.
-To use it, you will need a polyfill for `Symbol.metadata`.
-Something as simple as the following should work for most cases:
+由于该特性依然很新，大多数运行时目前还不提供原生支持。要使用它，你需要为 `Symbol.metadata` 提供 polyfill。在多数情况下，如下简单代码便已足够：
 
 ```ts
 Symbol.metadata ??= Symbol('Symbol.metadata')
 ```
 
-You will also need to set your compilation `target` to `es2022` or below, and configure your `lib` setting to either include `"esnext"` or `"esnext.decorators"`.
+此外，你还需要将编译目标 `target` 设置为 `es2022` 或更低版本，并将 `lib` 设置配置为包含 `"esnext"` 或 `"esnext.decorators"`。
 
 ```json
 {
@@ -579,22 +523,21 @@ You will also need to set your compilation `target` to `es2022` or below, and co
 }
 ```
 
-We'd like to thank [Oleksandr Tarasiuk](https://github.com/a-tarasyuk) for contributing [the implementation of decorator metadata](https://github.com/microsoft/TypeScript/pull/54657) for TypeScript 5.2!
+感谢 [Oleksandr Tarasiuk](https://github.com/a-tarasyuk) 为 TypeScript 5.2 贡献了[装饰器元数据的实现](https://github.com/microsoft/TypeScript/pull/54657)！
 
 <!-- TODO: Why is there a conditional type around the existence of `Symbol.metadata`? -->
 
-## Named and Anonymous Tuple Elements
+## 具名与匿名元组元素混用
 
-Tuple types have supported optional labels or names for each element.
+元组类型此前就已支持为每个元素提供可选的标签或名称。
 
 ```ts
 type Pair<T> = [first: T, second: T]
 ```
 
-These labels don't change what you're allowed to do with them — they're solely to help with readability and tooling.
+这些标签不会改变你对它们的操作权限——它们纯粹用于提高可读性以及为工具链提供更好的支持。
 
-However, TypeScript previously had a rule that tuples could not mix and match between labeled and unlabeled elements.
-In other words, either no element could have a label in a tuple, or all elements needed one.
+然而，TypeScript 此前有一条规则：元组不能混用带标签和不带标签的元素。换言之，元组中的元素要么全都没有标签，要么全都必须有标签。
 
 ```ts
 // ✅ fine - no labels
@@ -610,7 +553,7 @@ type Pair3<T> = [first: T, T]
 // or all not have names.
 ```
 
-This could be annoying for rest elements where we'd be forced to just add a label like `rest` or `tail`.
+对于剩余元素而言，这可能很繁琐，因为我们被迫不得不加上类似 `rest` 或 `tail` 这样的标签。
 
 ```ts
 // ❌ previously an error
@@ -623,7 +566,7 @@ type TwoOrMore_A<T> = [first: T, second: T, ...T[]]
 type TwoOrMore_B<T> = [first: T, second: T, rest: ...T[]]
 ```
 
-It also meant that this restriction had to be enforced internally in the type system, meaning TypeScript would lose labels.
+这也意味着该限制必须在类型系统内部强制执行，从而导致 TypeScript 在某些情况下会丢失标签信息。
 
 ```ts
 type HasLabels = [a: string, b: string]
@@ -634,14 +577,13 @@ type Merged = [...HasNoLabels, ...HasLabels]
 //     'a' and 'b' were lost in 'Merged'
 ```
 
-In TypeScript 5.2, the all-or-nothing restriction on tuple labels has been lifted.
-The language can now also preserve labels when spreading into an unlabeled tuple.
+在 TypeScript 5.2 中，元组标签“非全即无”的限制已被解除。现在，在将具名元组展开到未具名元组中时，语言也能够保留标签。
 
-We'd like to extend our thanks to [Josh Goldberg](https://github.com/JoshuaKGoldberg) and [Mateusz Burzyński](https://github.com/Andarist) who [collaborated to lift this restriction](https://github.com/microsoft/TypeScript/pull/53356).
+衷心感谢 [Josh Goldberg](https://github.com/JoshuaKGoldberg) 与 [Mateusz Burzyński](https://github.com/Andarist)[共同合作解除了这一限制](https://github.com/microsoft/TypeScript/pull/53356)。
 
-## Easier Method Usage for Unions of Arrays
+## 数组联合类型的方法调用更加简便
 
-In previous versions of TypeScript, calling a method on a union of arrays could end in pain.
+在先前版本的 TypeScript 中，在数组的联合类型上调用方法可能会非常痛苦。
 
 ```ts
 declare let array: string[] | number[]
@@ -654,25 +596,21 @@ array.filter((x) => !!x)
 //   with each other.
 ```
 
-In this example, TypeScript would try to see if each version of `filter` is compatible across `string[]` and `number[]`.
-Without a coherent strategy, TypeScript threw its hands in the air and said "I can't make it work".
+在此示例中，TypeScript 会尝试查看 `filter` 的各个版本在 `string[]` 和 `number[]` 之间是否相互兼容。由于缺乏合理的策略，TypeScript 只能两手一摊表示“这行不通”。
 
-In TypeScript 5.2, before giving up in these cases, unions of arrays are treated as a special case.
-A new array type is constructed out of each member's element type, and then the method is invoked on that.
+在 TypeScript 5.2 中，在放弃之前，数组的联合类型会被作为一种特殊情况来处理。系统会根据每个成员的元素类型构建一个新的数组类型，然后在该新类型上调用该方法。
 
-Taking the above example, `string[] | number[]` is transformed into `(string | number)[]` (or `Array<string | number>`), and `filter` is invoked on that type.
-There is a slight caveat which is that `filter` will produce an `Array<string | number>` instead of a `string[] | number[]`;
-but for a freshly produced value there is less risk of something "going wrong".
+以上述示例为例，`string[] | number[]` 会被转换为 `(string | number)[]`（或 `Array<string | number>`），并在该类型上调用 `filter`。需要说明的一个微小差异是：`filter` 将产生 `Array<string | number>` 而不是 `string[] | number[]`；但对于新生成的值，发生意外的风险相对较低。
 
-This means lots of methods like `filter`, `find`, `some`, `every`, and `reduce` should all be invokable on unions of arrays in cases where they were not previously.
+这意味着像 `filter`、`find`、`some`、`every` 和 `reduce` 等大量方法，现在都可以在数组联合类型上正常调用，而此前则无法做到。
 
-You can [read up more details on the implementing pull request](https://github.com/microsoft/TypeScript/pull/53489).
+欲了解更多细节，请[查阅对应的 Pull Request](https://github.com/microsoft/TypeScript/pull/53489)。
 
-## Type-Only Import Paths with TypeScript Implementation File Extensions
+## 仅类型导入路径支持 TypeScript 实现文件扩展名
 
-TypeScript now allows both declaration _and_ implementation file extensions to be included in type-only import paths, regardless of whether `allowImportingTsExtensions` is enabled.
+TypeScript 现在允许在仅类型导入（type-only import）路径中包含声明文件*和*实现文件的扩展名，无论是否启用了 `allowImportingTsExtensions`。
 
-This means that you can now write `import type` statements that use `.ts`, `.mts`, `.cts`, and `.tsx` file extensions.
+这意味着你现在可以编写使用 `.ts`、`.mts`、`.cts` 和 `.tsx` 文件扩展名的 `import type` 语句。
 
 ```ts
 import type { JustAType } from './justTypes.ts'
@@ -682,7 +620,7 @@ export function f(param: JustAType) {
 }
 ```
 
-It also means that `import()` types, which can be used in both TypeScript and JavaScript with JSDoc, can use those file extensions.
+这也意味着在 TypeScript 以及配合 JSDoc 的 JavaScript 中均可使用的 `import()` 类型，同样可以使用这些文件扩展名。
 
 ```js
 /**
@@ -693,38 +631,33 @@ export function f(param) {
 }
 ```
 
-For more information, [see the change here](https://github.com/microsoft/TypeScript/pull/54746).
+更多信息[请参阅此处的变更](https://github.com/microsoft/TypeScript/pull/54746)。
 
-## Comma Completions for Object Members
+## 对象成员的逗号自动补全
 
-It can be easy to forget to add a comma when adding a new property to an object.
-Previously, if you forgot a comma and requested auto-completion, TypeScript would confusingly give poor unrelated completion results.
+向对象添加新属性时，很容易忘记添加逗号。此前，如果你漏掉了逗号并请求自动补全，TypeScript 会给出令人困惑且无关的较差补全结果。
 
-TypeScript 5.2 now gracefully provides object member completions when you're missing a comma.
-But to just skip past hitting you with a syntax error, it will _also_ auto-insert the missing comma.
+TypeScript 5.2 现在能够在缺少逗号时优雅地提供对象成员补全。而且为了避免直接抛出语法错误，它还*会自动*补全缺失的逗号。
 
 ![Properties in an object literal are completed despite missing a comma after a prior property. When the property name is completed, the missing comma is automatically inserted.](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2023/06/comma-completions-5-2-beta.gif)
 
-For more information, [see the implementation here](https://github.com/microsoft/TypeScript/pull/52899).
+更多信息[请参阅此处的实现](https://github.com/microsoft/TypeScript/pull/52899)。
 
-## Inline Variable Refactoring
+## 内联变量重构
 
-TypeScript 5.2 now has a refactoring to inline the contents of a variable to all usage sites.
+TypeScript 5.2 现在新增了一项重构功能，可将变量的内容内联到所有使用该变量的位置。
 
 ![A variable called 'path' initialized to a string, having both of its usages replaced](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2023/06/inline-variable-5-2-beta.gif).
 
-Using the "inline variable" refactoring will eliminate the variable and replace all the variable's usages with its initializer.
-Note that this may cause that initializer's side-effects to run at a different time, and as many times as the variable has been used.
+使用“内联变量”（inline variable）重构会消除该变量，并将所有对该变量的使用替换为其初始化表达式。请注意，这可能会导致该初始化表达式的副作用在不同的时间运行，且运行次数与该变量被使用的次数相同。
 
-For more details, [see the implementing pull request](https://github.com/microsoft/TypeScript/pull/54281).
+更多详情[请参阅对应的 Pull Request](https://github.com/microsoft/TypeScript/pull/54281)。
 
 <!-- Inlay Parameter Hints -->
 
-## Optimized Checks for Ongoing Type Compatibility
+## 优化进行中的类型兼容性检查
 
-Because TypeScript is a structural type system, types occasionally need to be compared in a member-wise fashion;
-however, recursive types add some issues here.
-For example:
+由于 TypeScript 是结构化类型系统，有时需要按成员逐一比较类型；然而，递归类型在此会引发一些问题。例如：
 
 ```ts
 interface A {
@@ -738,15 +671,11 @@ interface B {
 }
 ```
 
-When checking whether the type `A` is compatible with the type `B`, TypeScript will end up checking whether the types of `value` in `A` and `B` are respectively compatible.
-At this point, the type system needs to stop checking any further and proceed to check other members.
-To do this, the type system has to track when any two types are already being related.
+在检查类型 `A` 是否与类型 `B` 兼容时，TypeScript 最终会检查 `A` 和 `B` 中 `value` 的类型是否分别兼容。此时，类型系统需要停止进一步深入检查并转去检查其他成员。为此，类型系统必须跟踪何时任意两个类型已经处于关联比较中。
 
-Previously TypeScript already kept a stack of type pairs, and iterated through that to determine whether those types are being related.
-When this stack is shallow that's not a problem; but when the stack isn't shallow, that, uh, [is a problem](https://accidentallyquadratic.tumblr.com/).
+此前，TypeScript 已经维护了一个类型对栈，并通过遍历该栈来确定这些类型是否正在关联。当该栈较浅时这不是问题；但当栈较深时，呃，[问题就来了](https://accidentallyquadratic.tumblr.com/)。
 
-In TypeScript 5.3, a simple `Set` helps track this information.
-This reduced the time spent on a reported test case that used the [drizzle](https://github.com/drizzle-team/drizzle-orm) library by over 33%!
+在 TypeScript 5.3 中，一个简单的 `Set` 有助于跟踪此信息。这使得使用 [drizzle](https://github.com/drizzle-team/drizzle-orm) 库的一个上报测试用例的耗时减少了 33% 以上！
 
 ```
 Benchmark 1: old
@@ -762,22 +691,19 @@ Summary
     1.50 ± 0.05 times faster than 'old'
 ```
 
-[Read more on the change here](https://github.com/microsoft/TypeScript/pull/55224).
+[关于此变更的更多内容请参阅此处](https://github.com/microsoft/TypeScript/pull/55224)。
 
-## Breaking Changes and Correctness Fixes
+## 破坏性变更与正确性修复
 
-TypeScript strives not to unnecessarily introduce breaks;
-however, occasionally we must make corrections and improvements so that code can be better-analyzed.
+TypeScript 尽力避免引入不必要的破坏性变更；然而，我们偶尔必须进行一些修正和改进，以便更好地分析代码。
 
-### `lib.d.ts` Changes
+### `lib.d.ts` 变更
 
-Types generated for the DOM may have an impact on your codebase.
-For more information, [see the DOM updates for TypeScript 5.2](https://github.com/microsoft/TypeScript/pull/54725).
+为 DOM 生成的类型可能会对你的代码库产生影响。欲了解更多信息，请[参阅 TypeScript 5.2 的 DOM 更新](https://github.com/microsoft/TypeScript/pull/54725)。
 
-### `labeledElementDeclarations` May Hold `undefined` Elements
+### `labeledElementDeclarations` 可能包含 `undefined` 元素
 
-In order [to support a mixture of labeled and unlabeled elements](https://github.com/microsoft/TypeScript/pull/53356), TypeScript's API has changed slightly.
-The `labeledElementDeclarations` property of `TupleType` may hold `undefined` for at each position where an element is unlabeled.
+为了[支持具名与匿名元素的混用](https://github.com/microsoft/TypeScript/pull/53356)，TypeScript 的 API 发生了微调。在元素未具名的每个位置，`TupleType` 的 `labeledElementDeclarations` 属性现在可能保存 `undefined`。
 
 ```diff
   interface TupleType {
@@ -786,34 +712,29 @@ The `labeledElementDeclarations` property of `TupleType` may hold `undefined` fo
   }
 ```
 
-### `module` and `moduleResolution` Must Match Under Recent Node.js settings
+### 在较新的 Node.js 设置下 `module` 与 `moduleResolution` 必须匹配
 
-The `--module` and `--moduleResolution` options each support a `node16` and `nodenext` setting.
-These are effectively "modern Node.js" settings that should be used on any recent Node.js project.
-What we've found is that when these two options don't agree on whether they are using Node.js-related settings, projects are effectively misconfigured.
+`--module` 和 `--moduleResolution` 选项各自支持 `node16` 和 `nodenext` 设置。这些实际上是应该在任何较新 Node.js 项目中使用的“现代 Node.js”设置。我们发现，当这两个选项在是否使用 Node.js 相关设置上不一致时，项目实际上处于配置错误的状态。
 
-In TypeScript 5.2, when using `node16` or `nodenext` for either of the `--module` and `--moduleResolution` options, TypeScript now requires the other to have a similar Node.js-related setting.
-In cases where the settings diverge, you'll likely get an error message like either
+在 TypeScript 5.2 中，当在 `--module` 和 `--moduleResolution` 选项中的任意一个使用 `node16` 或 `nodenext` 时，TypeScript 现在要求另一个选项也必须使用类似的 Node.js 相关设置。在设置不一致的情况下，你可能会收到如下两种错误信息之一：
 
 ```
 Option 'moduleResolution' must be set to 'NodeNext' (or left unspecified) when option 'module' is set to 'NodeNext'.
 ```
 
-or
+或
 
 ```
 Option 'module' must be set to 'Node16' when option 'moduleResolution' is set to 'Node16'.
 ```
 
-So for example `--module esnext --moduleResolution node16` will be rejected — but you may be better off just using `--module nodenext` alone, or `--module esnext --moduleResolution bundler`.
+因此，像 `--module esnext --moduleResolution node16` 这样的配置将被拒绝——你可能更适合单独使用 `--module nodenext`，或者使用 `--module esnext --moduleResolution bundler`。
 
-For more information, [see the change here](https://github.com/microsoft/TypeScript/pull/54567).
+更多信息[请参阅此处的变更](https://github.com/microsoft/TypeScript/pull/54567)。
 
-### Consistent Export Checking for Merged Symbols
+### 合并符号的导出一致性检查
 
-When two declarations merge, they must agree on whether they are both exported.
-Due to a bug, TypeScript missed specific cases in ambient contexts, like in declaration files or `declare module` blocks.
-For example, it would not issue an error on a case like the following, where `replaceInFile` is declared once as an exported function, and one as an un-exported namespace.
+当两个声明合并时，它们在是否都被导出这一点上必须保持一致。由于先前存在的一个缺陷，TypeScript 遗漏了环境上下文（ambient context）中的特定情况，例如声明文件或 `declare module` 块。例如，在如下代码中，`replaceInFile` 被声明了一次作为导出的函数，又被声明了一次作为未导出的命名空间，此前 TypeScript 并不会报错：
 
 ```ts
 declare module 'replace-in-file' {
@@ -826,11 +747,10 @@ declare module 'replace-in-file' {
 }
 ```
 
-In an ambient module, adding an `export { ... }` or a similar construct like `export default ...` implicitly changes whether all declarations are automatically exported.
-TypeScript now recognizes these unfortunately confusing semantics more consistently, and issues an error on the fact that all declarations of `replaceInFile` need to agree in their modifiers, and will issue the following error:
+在环境模块中，添加 `export { ... }` 或类似 `export default ...` 的结构会隐式改变所有声明是否自动导出的行为。TypeScript 现在能够更加一致地识别这种容易令人困惑的语义，并对 `replaceInFile` 的所有声明在修饰符上需要保持一致这一要求进行检查，报错如下：
 
 ```
 Individual declarations in merged declaration 'replaceInFile' must be all exported or all local.
 ```
 
-For more information, [see the change here](https://github.com/microsoft/TypeScript/pull/54659).
+更多信息[请参阅此处的变更](https://github.com/microsoft/TypeScript/pull/54659)。

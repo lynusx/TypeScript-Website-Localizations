@@ -1,14 +1,14 @@
 ---
-title: Symbols
+title: Symbol
 layout: docs
 permalink: /zh/docs/handbook/symbols.html
-oneline: Using the JavaScript Symbol primitive in TypeScript
+oneline: 在 TypeScript 中使用 JavaScript 的 Symbol 原始数据类型
 translatable: true
 ---
 
-Starting with ECMAScript 2015, `symbol` is a primitive data type, just like `number` and `string`.
+自 ECMAScript 2015 起，`symbol` 成为了一种原始数据类型，与 `number` 和 `string` 一样。
 
-`symbol` values are created by calling the `Symbol` constructor.
+`symbol` 的值通过调用 `Symbol` 构造函数创建。
 
 ```ts
 let sym1 = Symbol()
@@ -16,7 +16,7 @@ let sym1 = Symbol()
 let sym2 = Symbol('key') // optional string key
 ```
 
-Symbols are immutable, and unique.
+Symbol 是不可变且唯一的。
 
 ```ts
 let sym2 = Symbol('key')
@@ -25,7 +25,7 @@ let sym3 = Symbol('key')
 sym2 === sym3 // false, symbols are unique
 ```
 
-Just like strings, symbols can be used as keys for object properties.
+与字符串一样，Symbol 也可以用作对象属性的键。
 
 ```ts
 const sym = Symbol()
@@ -37,7 +37,7 @@ let obj = {
 console.log(obj[sym]) // "value"
 ```
 
-Symbols can also be combined with computed property declarations to declare object properties and class members.
+Symbol 还可以与计算属性声明结合使用，以声明对象属性和类成员。
 
 ```ts
 const getClassNameSymbol = Symbol()
@@ -54,7 +54,7 @@ let className = c[getClassNameSymbol]() // "C"
 
 ## `unique symbol`
 
-To enable treating symbols as unique literals a special type `unique symbol` is available. `unique symbol` is a subtype of `symbol`, and are produced only from calling `Symbol()` or `Symbol.for()`, or from explicit type annotations. This type is only allowed on `const` declarations and `readonly static` properties, and in order to reference a specific unique symbol, you’ll have to use the `typeof` operator. Each reference to a unique symbol implies a completely unique identity that’s tied to a given declaration.
+为了能够将 Symbol 视为唯一的字面量，TypeScript 提供了一种特殊的类型 `unique symbol`。`unique symbol` 是 `symbol` 的子类型，并且只能通过调用 `Symbol()` 或 `Symbol.for()`，或者通过显式类型注解产生。该类型只允许在 `const` 声明和 `readonly static` 属性上使用；若要引用特定的唯一 Symbol，必须使用 `typeof` 运算符。对某个唯一 Symbol 的每次引用，都代表着绑定到该特定声明的完全唯一的身份标识。
 
 ```ts twoslash
 // @errors: 1332
@@ -72,7 +72,7 @@ class C {
 }
 ```
 
-Because each `unique symbol` has a completely separate identity, no two `unique symbol` types are assignable or comparable to each other.
+因为每个 `unique symbol` 都具有完全独立的身份标识，所以任意两个 `unique symbol` 类型之间既不能互相赋值，也不能互相比较。
 
 ```ts twoslash
 // @errors: 2367
@@ -84,60 +84,60 @@ if (sym2 === sym3) {
 }
 ```
 
-## Well-known Symbols
+## 内置 Symbol（Well-known Symbols）
 
-In addition to user-defined symbols, there are well-known built-in symbols.
-Built-in symbols are used to represent internal language behaviors.
+除了用户自定义的 Symbol，JavaScript 还内置了一系列熟知的 Symbol。
+内置 Symbol 用于表示语言内部的行为。
 
-Here is a list of well-known symbols:
+以下是常用内置 Symbol 的列表：
 
 ### `Symbol.asyncIterator`
 
-A method that returns async iterator for an object, compatible to be used with for await..of loop.
+一个返回对象异步迭代器的方法，可与 for await..of 循环配合使用。
 
 ### `Symbol.hasInstance`
 
-A method that determines if a constructor object recognizes an object as one of the constructor’s instances. Called by the semantics of the instanceof operator.
+一个用于判断构造函数对象是否将某个对象识别为其自身实例的方法。由 instanceof 运算符的语义调用。
 
 ### `Symbol.isConcatSpreadable`
 
-A Boolean value indicating that an object should be flattened to its array elements by Array.prototype.concat.
+一个布尔值，表示对象在由 Array.prototype.concat 拼接时，是否应展开为其数组元素。
 
 ### `Symbol.iterator`
 
-A method that returns the default iterator for an object. Called by the semantics of the for-of statement.
+一个返回对象默认迭代器的方法。由 for-of 语句的语义调用。
 
 ### `Symbol.match`
 
-A regular expression method that matches the regular expression against a string. Called by the `String.prototype.match` method.
+一个正则表达式方法，用于将正则表达式与字符串进行匹配。由 `String.prototype.match` 方法调用。
 
 ### `Symbol.replace`
 
-A regular expression method that replaces matched substrings of a string. Called by the `String.prototype.replace` method.
+一个正则表达式方法，用于替换字符串中匹配的子串。由 `String.prototype.replace` 方法调用。
 
 ### `Symbol.search`
 
-A regular expression method that returns the index within a string that matches the regular expression. Called by the `String.prototype.search` method.
+一个正则表达式方法，用于返回字符串中与正则表达式匹配的索引位置。由 `String.prototype.search` 方法调用。
 
 ### `Symbol.species`
 
-A function valued property that is the constructor function that is used to create derived objects.
+一个函数值属性，该函数即用于创建派生对象的构造函数。
 
 ### `Symbol.split`
 
-A regular expression method that splits a string at the indices that match the regular expression.
-Called by the `String.prototype.split` method.
+一个正则表达式方法，用于在匹配正则表达式的索引处拆分字符串。
+由 `String.prototype.split` 方法调用。
 
 ### `Symbol.toPrimitive`
 
-A method that converts an object to a corresponding primitive value.
-Called by the `ToPrimitive` abstract operation.
+一个将对象转换为相应原始值的方法。
+由 `ToPrimitive` 抽象操作调用。
 
 ### `Symbol.toStringTag`
 
-A String value that is used in the creation of the default string description of an object.
-Called by the built-in method `Object.prototype.toString`.
+一个字符串值，用于创建对象的默认字符串描述。
+由内置方法 `Object.prototype.toString` 调用。
 
 ### `Symbol.unscopables`
 
-An Object whose own property names are property names that are excluded from the 'with' environment bindings of the associated objects.
+一个对象，其自身属性名将被关联对象的 'with' 环境绑定排除在外。

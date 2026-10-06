@@ -2,16 +2,14 @@
 title: TypeScript 4.8
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-4-8.html
-oneline: TypeScript 4.8 Release Notes
+oneline: TypeScript 4.8 发布说明
 ---
 
-## Improved Intersection Reduction, Union Compatibility, and Narrowing
+## 交叉类型折叠、联合类型兼容性与类型收窄的改进
 
-TypeScript 4.8 brings a series of correctness and consistency improvements under `--strictNullChecks`.
-These changes affect how intersection and union types work, and are leveraged in how TypeScript narrows types.
+TypeScript 4.8 在 `--strictNullChecks` 下带来了一系列正确性和一致性方面的改进。这些改动影响了交叉类型和联合类型的工作机制，并在 TypeScript 的类型收窄逻辑中发挥了重要作用。
 
-For example, `unknown` is close in spirit to the union type `{} | null | undefined` because it accepts `null`, `undefined`, and any other type.
-TypeScript now recognizes this, and allows assignments from `unknown` to `{} | null | undefined`.
+例如，`unknown` 在本质上与联合类型 `{} | null | undefined` 非常接近，因为它能接受 `null`、`undefined` 以及其他任何类型。TypeScript 现在能够识别出这一点，并允许将 `unknown` 赋值给 `{} | null | undefined`。
 
 ```ts
 function f(x: unknown, y: {} | null | undefined) {
@@ -20,16 +18,14 @@ function f(x: unknown, y: {} | null | undefined) {
 }
 ```
 
-Another change is that `{}` intersected with any other object type simplifies right down to that object type.
-That meant that we were able to rewrite `NonNullable` to just use an intersection with `{}`, because `{} & null` and `{} & undefined` just get tossed away.
+另一项改变是，`{}` 与任何其他对象类型的交叉类型会直接简化为该对象类型本身。这意味着我们能够将 `NonNullable` 重写为仅使用与 `{}` 的交叉类型，因为 `{} & null` 和 `{} & undefined` 会被直接剔除。
 
 ```diff
 - type NonNullable<T> = T extends null | undefined ? never : T;
 + type NonNullable<T> = T & {};
 ```
 
-This is an improvement because intersection types like this can be reduced and assigned to, while conditional types currently cannot.
-So `NonNullable<NonNullable<T>>` now simplifies at least to `NonNullable<T>`, whereas it didn't before.
+这是一项改进，因为像这样的交叉类型可以被折叠（reduce）和赋值，而条件类型目前无法做到这一点。因此，`NonNullable<NonNullable<T>>` 现在至少可以简化为 `NonNullable<T>`，而此前则无法做到。
 
 ```ts
 function foo<T>(x: NonNullable<T>, y: NonNullable<NonNullable<T>>) {
@@ -38,8 +34,7 @@ function foo<T>(x: NonNullable<T>, y: NonNullable<NonNullable<T>>) {
 }
 ```
 
-These changes also allowed us to bring in sensible improvements in control flow analysis and type narrowing.
-For example, `unknown` is now narrowed just like `{} | null | undefined` in truthy branches.
+这些改动还让我们得以在控制流分析和类型收窄方面引入合理的改进。例如，在真值（truthy）分支中，`unknown` 现在能像 `{} | null | undefined` 一样被收窄。
 
 ```ts
 function narrowUnknownishUnion(x: {} | null | undefined) {
@@ -59,9 +54,7 @@ function narrowUnknown(x: unknown) {
 }
 ```
 
-Generic values also get narrowed similarly.
-When checking that a value isn't `null` or `undefined`, TypeScript now just intersects it with `{}` - which again, is the same as saying it's `NonNullable`.
-Putting many of the changes here together, we can now define the following function without any type assertions.
+泛型值也以类似的方式被收窄。在检查某个值不是 `null` 或 `undefined` 时，TypeScript 现在直接将其与 `{}` 进行交叉——这同样等价于声明它是 `NonNullable`。综合上述诸多改进，我们现在可以在无需任何类型断言的情况下定义如下函数：
 
 ```ts
 function throwIfNullable<T>(value: T): NonNullable<T> {
@@ -75,15 +68,15 @@ function throwIfNullable<T>(value: T): NonNullable<T> {
 }
 ```
 
-`value` now gets narrowed to `T & {}`, and is now identical with `NonNullable<T>` - so the body of the function just works with no TypeScript-specific syntax.
+`value` 现在被收窄为 `T & {}`，这与 `NonNullable<T>` 是等价的——因此该函数体无需任何 TypeScript 特有语法即可直接通过检查。
 
-On their own, these changes may appear small - but they represent fixes for many many paper cuts that have been reported over several years.
+单看这些改动可能显得很小，但它们修复了多年来用户报告的大量细微体验痛点（paper cuts）。
 
-For more specifics on these improvements, you can [read more here](https://github.com/microsoft/TypeScript/pull/49119).
+欲了解这些改进的更多细节，可以[在此阅读更多内容](https://github.com/microsoft/TypeScript/pull/49119)。
 
-## Improved Inference for `infer` Types in Template String Types
+## 模板字符串类型中 `infer` 类型推断的改进
 
-TypeScript recently introduced a way to add `extends` constraints to `infer` type variables in conditional types.
+TypeScript 最近引入了一种在条件类型中为 `infer` 类型变量添加 `extends` 约束的方法：
 
 ```ts
 // Grabs the first element of a tuple if it's assignable to 'number',
@@ -93,7 +86,7 @@ type TryGetNumberIfFirst<T> = T extends [infer U extends number, ...unknown[]]
   : never
 ```
 
-If these `infer` types appear in a template string type and are constrained to a primitive type, TypeScript will now try to parse out a literal type.
+如果这些 `infer` 类型出现在模板字符串类型中，并且被约束为原始类型，TypeScript 现在会尝试解析出字面量类型：
 
 ```ts
 // SomeNum used to be 'number'; now it's '100'.
@@ -106,36 +99,28 @@ type SomeBigInt = '100' extends `${infer U extends bigint}` ? U : never
 type SomeBool = 'true' extends `${infer U extends boolean}` ? U : never
 ```
 
-This can now better convey what a library will do at runtime, and give more precise types.
+这现在能够更好地反映库在运行时的行为，并提供更精确的类型。
 
-One note on this is that when TypeScript parses these literal types out it will greedily try to parse out as much of what looks like of the appropriate primitive type;
-however it then checks to see if the print-back of that primitive matches up with the string contents.
-In other words, TypeScript checks whether the going from the string, to the primitive, and back matches.
-If it doesn't see that the string can be "round-tripped", then it will fall back to the base primitive type.
+关于这一点需要注意：当 TypeScript 解析出这些字面量类型时，它会贪婪地尝试解析出尽可能多看起来符合相应原始类型的内容；然后，它会检查该原始类型转换回字符串后是否与原字符串内容相匹配。换句话说，TypeScript 会检查从字符串到原始类型、再转换回来的往返过程（round-trip）是否一致。如果无法完全匹配，它将回退到基础原始类型。
 
 ```ts
 // JustNumber is `number` here because TypeScript parses out `"1.0"`, but `String(Number("1.0"))` is `"1"` and doesn't match.
 type JustNumber = '1.0' extends `${infer T extends number}` ? T : never
 ```
 
-You can [see more about this feature here](https://github.com/microsoft/TypeScript/pull/48094).
+你可以[在此查看有关此特性的更多信息](https://github.com/microsoft/TypeScript/pull/48094)。
 
-## `--build`, `--watch`, and `--incremental` Performance Improvements
+## `--build`、`--watch` 与 `--incremental` 性能改进
 
-TypeScript 4.8 introduces several optimizations that should speed up scenarios around `--watch` and `--incremental`, along with project references builds using `--build`.
-For example, TypeScript is now able to avoid spending time updating timestamps during no-op changes in `--watch` mode, which makes rebuilds faster and avoids messing with other build tools that might be watching for TypeScript's output.
-Many other optimizations where we're able to reuse information across `--build`, `--watch`, and `--incremental` have been introduced as well.
+TypeScript 4.8 引入了若干优化，旨在加速涉及 `--watch` 和 `--incremental` 的场景，以及使用 `--build` 构建项目引用的场景。例如，TypeScript 现在能够在 `--watch` 模式下发生无操作更改（no-op changes）时避免耗费时间更新时间戳，这加快了重新构建的速度，并避免了干扰其他可能正在监视 TypeScript 输出的构建工具。我们还引入了许多其他优化，能够在 `--build`、`--watch` 和 `--incremental` 之间复用信息。
 
-How big are these improvements?
-Well, on a fairly large internal codebase, we've seen time reductions on the order of 10%-25% on many simple common operations, with around 40% time reductions in no-change scenarios.
-We've seen similar results on the TypeScript codebase as well.
+这些改进有多显著？在某个相当大的内部代码库中，我们在许多简单的常见操作上观察到了 10% 到 25% 的时间缩减，在无变更场景下缩减了约 40%。我们在 TypeScript 自身的代码库上也看到了类似的结果。
 
-You can see [the changes, along with the performance results on GitHub](https://github.com/microsoft/TypeScript/pull/48784).
+你可以在 GitHub 上查看[这些更改以及具体的性能测试结果](https://github.com/microsoft/TypeScript/pull/48784)。
 
-## Errors When Comparing Object and Array Literals
+## 比较对象与数组字面量时的错误提示
 
-In many languages, operators like `==` perform what's called "value" equality on objects.
-For example, in Python it's valid to check whether a list is empty by checking whether a value is equal to the empty list using `==`.
+在许多语言中，诸如 `==` 之类的运算符会对对象执行所谓的“值”相等性检查。例如在 Python 中，通过 `==` 检查某个值是否等于空列表来判断列表是否为空是完全合法的：
 
 ```py
 if people_at_home == []:
@@ -143,9 +128,7 @@ if people_at_home == []:
     adopt_animals()
 ```
 
-This is not the case in JavaScript, where `==` and `===` between objects (and therefore, arrays) check whether both references point to the same value.
-We believe that similar code in JavaScript is at best an early foot-gun for JavaScript developers, and at worst a bug in production code.
-That's why TypeScript now disallows code like the following.
+但这在 JavaScript 中并非如此，在 JavaScript 中对象（以及数组）之间的 `==` 和 `===` 检查的是两个引用是否指向同一个值。我们认为，JavaScript 中的类似代码充其量是给开发者设下的早期隐患，最坏的情况则是生产代码中的 bug。因此，TypeScript 现在禁止了如下代码：
 
 ```ts
 if (peopleAtHome === []) {
@@ -156,12 +139,11 @@ if (peopleAtHome === []) {
 }
 ```
 
-We'd like to extend our gratitude to [Jack Works](https://github.com/Jack-Works) who contributed this check.
-You can [view the changes involved here](https://github.com/microsoft/TypeScript/pull/45978).
+我们要向贡献了此项检查的 [Jack Works](https://github.com/Jack-Works) 表示感谢。你可以[在此查看相关改动](https://github.com/microsoft/TypeScript/pull/45978)。
 
-## Improved Inference from Binding Patterns
+## 改进来自解构绑定模式的推断
 
-In some cases, TypeScript will pick up a type from a binding pattern to make better inferences.
+在某些情况下，TypeScript 会从解构绑定模式中提取类型以做出更好的推断。
 
 ```ts
 declare function chooseRandomly<T>(x: T, y: T): T
@@ -176,13 +158,9 @@ let [a, b, c] = chooseRandomly([42, true, 'hi!'], [0, false, 'bye!'])
 //   number
 ```
 
-When `chooseRandomly` needs to figure out a type for `T`, it will primarily look at `[42, true, "hi!"]` and `[0, false, "bye!"]`;
-but TypeScript needs to figure out whether those two types should be `Array<number | boolean | string>` or the tuple type `[number, boolean, string]`.
-To do that, it will look for existing candidates as a hint to see whether there are any tuple types.
-When TypeScript sees the binding pattern `[a, b, c]`, it creates the type `[any, any, any]`, and that type gets picked up as a low-priority candidate for `T` which also gets used as a hint for the types of `[42, true, "hi!"]` and `[0, false, "bye!"]`.
+当 `chooseRandomly` 需要确定 `T` 的类型时，它主要会查看 `[42, true, "hi!"]` 和 `[0, false, "bye!"]`；但 TypeScript 需要判断这两个类型应当是 `Array<number | boolean | string>` 还是元组类型 `[number, boolean, string]`。为此，它会查找现有的候选类型作为提示，以确定是否存在元组类型。当 TypeScript 看到绑定模式 `[a, b, c]` 时，它会创建类型 `[any, any, any]`，该类型被作为 `T` 的低优先级候选类型，同时也用作推断 `[42, true, "hi!"]` 和 `[0, false, "bye!"]` 类型的提示。
 
-You can see how this was good for `chooseRandomly`, but it fell short in other cases.
-For example, take the following code
+你可以看出这在 `chooseRandomly` 中表现良好，但在其他情况下却差强人意。例如以下代码：
 
 ```ts
 declare function f<T>(x?: T): T
@@ -190,46 +168,31 @@ declare function f<T>(x?: T): T
 let [x, y, z] = f()
 ```
 
-The binding pattern `[x, y, z]` hinted that `f` should produce an `[any, any, any]` tuple;
-but `f` really shouldn't change its type argument based on a binding pattern.
-It can't suddenly conjure up a new array-like value based on what it's being assigned to, so the binding pattern type has way too much influence on the produced type.
-On top of that, because the binding pattern type is full of `any`s, we're left with `x`, `y`, and `z` being typed as `any`.
+绑定模式 `[x, y, z]` 提示 `f` 应当产生一个 `[any, any, any]` 元组；但 `f` 实际上不应该根据绑定模式改变其类型参数。它无法根据赋值的目标凭空捏造出一个新的类数组值，因此绑定模式类型对生成的类型产生了过大的影响。最重要的是，由于绑定模式类型充满了 `any`，导致 `x`、`y` 和 `z` 的类型最终都变成了 `any`。
 
-In TypeScript 4.8, these binding patterns are never used as candidates for type arguments.
-Instead, they're just consulted in case a parameter needs a more specific type like in our `chooseRandomly` example.
-If you need to revert to the old behavior, you can always provide explicit type arguments.
+在 TypeScript 4.8 中，这些绑定模式绝不会再被用作类型参数的候选。相反，只有在参数需要更具体的类型时（如上述 `chooseRandomly` 示例中），才会参考它们。如果你需要恢复旧行为，随时可以提供显式的类型参数。
 
-You can [look at the change on GitHub](https://github.com/microsoft/TypeScript/pull/49086) if you're curious to learn more.
+如果你想了解更多，可以[在 GitHub 上查看此项变更](https://github.com/microsoft/TypeScript/pull/49086)。
 
-## File-Watching Fixes (Especially Across `git checkout`s)
+## 文件监视修复（特别是在跨 `git checkout` 时）
 
-We've had a long-standing bug where TypeScript has a very hard time with certain file changes in `--watch` mode and editor scenarios.
-Sometimes the symptoms are stale or inaccurate errors that might show up that require restarting `tsc` or VS Code.
-Frequently these occur on Unix systems, and you might have seen these after saving a file with vim or swapping branches in git.
+我们长期以来一直存在一个 bug：TypeScript 在 `--watch` 模式和编辑器场景下处理某些文件变更时非常吃力。有时其症状表现为出现陈旧或不准确的错误提示，需要重启 `tsc` 或 VS Code 才能解决。这些问题频繁发生在 Unix 系统上，你可能在用 vim 保存文件或在 git 中切换分支后遇到过。
 
-This was caused by assumptions of how Node.js handles rename events across file systems.
-File systems used by Linux and macOS utilize [inodes](https://en.wikipedia.org/wiki/Inode), and [Node.js will attach file watchers to inodes rather than file paths](https://nodejs.org/api/fs.html#inodes).
-So when Node.js returns [a watcher object](https://nodejs.org/api/fs.html#class-fsfswatcher), it might be watching a path or an inode depending on the platform and file system.
+这是由于对 Node.js 如何在不同文件系统间处理重命名事件所做的假设导致的。Linux 和 macOS 使用的文件系统采用 [inode](https://en.wikipedia.org/wiki/Inode)，而 [Node.js 会将文件监视器附加到 inode 而非文件路径](https://nodejs.org/api/fs.html#inodes)。因此，当 Node.js 返回[监视器对象（watcher object）](https://nodejs.org/api/fs.html#class-fsfswatcher)时，根据平台和文件系统的不同，它监视的可能是路径或 inode。
 
-To be a bit more efficient, TypeScript tries to reuse the same watcher objects if it detects a path still exists on disk.
-This is where things went wrong, because even if a file still exists at that path, a distinct file might have been created, and that file will have a different inode.
-So TypeScript would end up reusing the watcher object instead of installing a new watcher at the original location, and watch for changes at what might be a totally irrelevant file.
-So TypeScript 4.8 now handles these cases on inode systems and properly installs a new watcher and fixes this.
+为了提高效率，TypeScript 如果检测到磁盘上仍然存在该路径，就会尝试复用相同的监视器对象。问题就出在这里：即使该路径上仍然存在文件，但可能已经创建了一个独立的新文件，而该文件具有不同的 inode。结果是 TypeScript 复用了旧的监视器对象，而不是在原位置安装新的监视器，导致它监视的可能是一个完全无关的文件的变更。因此，TypeScript 4.8 现在在 inode 系统上妥善处理了这些情况，正确安装了新的监视器并修复了该问题。
 
-We'd like to extend our thanks to [Marc Celani](https://github.com/MarcCelani-at) and his team at Airtable who invested lots of time in investigating the issues they were experiencing and pointing out the root cause.
-You can view [the specific fixes around file-watching here](https://github.com/microsoft/TypeScript/pull/48997).
+我们要衷心感谢 Airtable 的 [Marc Celani](https://github.com/MarcCelani-at) 及其团队，他们投入了大量时间调查所遇到的问题并指出了根本原因。你可以[在此查看有关文件监视的具体修复](https://github.com/microsoft/TypeScript/pull/48997)。
 
-## Find-All-References Performance Improvements
+## “查找所有引用”性能改进
 
-When running find-all-references in your editor, TypeScript is now able to act a little smarter as it aggregates references.
-This reduced the amount of time TypeScript took to search a widely-used identifier in its own codebase by about 20%.
+在编辑器中运行“查找所有引用（Find-All-References）”时，TypeScript 现在在聚合引用时能够表现得更为智能。这使得 TypeScript 在自身代码库中搜索广泛使用的标识符所需的时间缩减了约 20%。
 
-[You can read up more on the improvement here](https://github.com/microsoft/TypeScript/pull/49581).
+[你可以在此阅读有关此项改进的更多信息](https://github.com/microsoft/TypeScript/pull/49581)。
 
-## Exclude Specific Files from Auto-Imports
+## 从自动导入中排除特定文件
 
-TypeScript 4.8 introduces an editor preference for excluding files from auto-imports.
-In Visual Studio Code, file names or globs can be added under "Auto Import File Exclude Patterns" in the Settings UI, or in a `.vscode/settings.json` file:
+TypeScript 4.8 引入了一项编辑器首选项，用于从自动导入中排除特定文件。在 Visual Studio Code 中，可以在“设置”界面的“Auto Import File Exclude Patterns”下，或在 `.vscode/settings.json` 文件中添加文件名或 glob 模式：
 
 ```jsonc
 {
@@ -240,27 +203,23 @@ In Visual Studio Code, file names or globs can be added under "Auto Import File 
 }
 ```
 
-This can be useful in cases where you can't avoid having certain modules or libraries in your compilation but you rarely want to import from them.
-These modules might have lots of exports that can pollute the auto-imports list and make it harder to navigate, and this option can help in those situations.
+当你无法避免在编译中包含某些模块或库，但极少希望从它们导入内容时，这会非常有用。这些模块可能包含大量导出项，从而污染自动导入列表并导致难以导航，而该选项可以在这些情况下提供帮助。
 
-You can [see more specifics about the implementation here](https://github.com/microsoft/TypeScript/pull/49578).
+你可以[在此查看有关该实现的更多细节](https://github.com/microsoft/TypeScript/pull/49578)。
 
-## Correctness Fixes and Breaking Changes
+## 正确性修复与破坏性变更
 
-Due to the nature of type system changes, there are very few changes that can be made that don't affect _some_ code;
-however, there are a few changes that are more likely to require adapting existing code.
+由于类型系统变更的本质，几乎很少有变更不会对*某些*代码产生影响；不过，有几项变更更有可能需要对现有代码进行适配。
 
-### `lib.d.ts` Updates
+### `lib.d.ts` 更新
 
-While TypeScript strives to avoid major breaks, even small changes in the built-in libraries can cause issues.
-We don't expect major breaks as a result of DOM and `lib.d.ts` updates, but one notable change is that the `cause` property on `Error`s now has the type `unknown` instead of `Error`.
+虽然 TypeScript 竭力避免重大破坏性变更，但内置库中哪怕很小的改动也可能引发问题。我们预计 DOM 和 `lib.d.ts` 的更新不会带来重大破坏，但一个显著的变化是 `Error` 上的 `cause` 属性现在的类型是 `unknown`，而不是 `Error`。
 
-### Unconstrained Generics No Longer Assignable to `{}`
+### 无约束泛型不再可赋值给 `{}`
 
-In TypeScript 4.8, for projects with `strictNullChecks` enabled, TypeScript will now correctly issue an error when an unconstrained type parameter is used in a position where `null` or `undefined` are not legal values.
-That will include any type that expects `{}`, `object`, or an object type with all-optional properties.
+在 TypeScript 4.8 中，对于启用了 `strictNullChecks` 的项目，当无约束的类型参数被用于不允许 `null` 或 `undefined` 作为有效值的位置时，TypeScript 现在会正确报错。这将包括期望 `{}`、`object` 或所有属性均为可选的对象类型的任何位置。
 
-A simple example can be seen in the following.
+一个简单的示例如下：
 
 ```ts
 // Accepts any non-null non-undefined value
@@ -278,9 +237,9 @@ function foo<T>(x: T) {
 foo(undefined)
 ```
 
-As demonstrated above, code like this has a potential bug - the values `null` and `undefined` can be indirectly passed through these unconstrained type parameters to code that is not supposed to observe those values.
+如上所示，此类代码存在潜在的 bug——值 `null` 和 `undefined` 可以通过这些无约束的类型参数间接传递给不应该接收这些值的代码。
 
-This behavior will also be visible in type positions. One example would be:
+此行为在类型位置中也会体现。例如：
 
 ```ts
 interface Foo<T> {
@@ -290,14 +249,14 @@ interface Foo<T> {
 interface Bar<T extends {}> {}
 ```
 
-Existing code that didn't want to handle `null` and `undefined` can be fixed by propagating the appropriate constraints through.
+不想处理 `null` 和 `undefined` 的现有代码可以通过传递适当的约束来修复：
 
 ```diff
 - function foo<T>(x: T) {
 + function foo<T extends {}>(x: T) {
 ```
 
-Another work-around would be to check for `null` and `undefined` at runtime.
+另一种变通方案是在运行时检查 `null` 和 `undefined`：
 
 ```diff
   function foo<T>(x: T) {
@@ -307,7 +266,7 @@ Another work-around would be to check for `null` and `undefined` at runtime.
   }
 ```
 
-And if you know that for some reason, your generic value can't be `null` or `undefined`, you can just use a non-null assertion.
+如果你确信出于某种原因你的泛型值不可能是 `null` 或 `undefined`，也可以直接使用非空断言：
 
 ```diff
   function foo<T>(x: T) {
@@ -316,15 +275,13 @@ And if you know that for some reason, your generic value can't be `null` or `und
   }
 ```
 
-When it comes to types, you'll often either need to propagate constraints, or intersect your types with `{}`.
+在类型层面，通常要么需要传递约束，要么需要将类型与 `{}` 进行交叉。
 
-For more information, you can [see the change that introduced this](https://github.com/microsoft/TypeScript/pull/49119) along with [the specific discussion issue regarding how unconstrained generics now work](https://github.com/microsoft/TypeScript/issues/49489).
+欲了解更多信息，可以查看[引入该变更的 PR](https://github.com/microsoft/TypeScript/pull/49119) 以及[关于无约束泛型如何运作的具体讨论 issue](https://github.com/microsoft/TypeScript/issues/49489)。
 
-### Decorators are placed on `modifiers` on TypeScript's Syntax Trees
+### 装饰器在 TypeScript 语法树中放置于 `modifiers` 上
 
-The current direction of decorators in TC39 means that TypeScript will have to handle a break in terms of placement of decorators.
-Previously, TypeScript assumed decorators would always be placed prior to all keywords/modifiers.
-For example
+TC39 中装饰器的当前发展方向意味着 TypeScript 必须处理装饰器位置上的破坏性变更。此前，TypeScript 假定装饰器始终放置在所有关键字/修饰符之前。例如：
 
 ```ts
 @decorator
@@ -333,8 +290,7 @@ export class Foo {
 }
 ```
 
-Decorators as currently proposed do not support this syntax.
-Instead, the `export` keyword must precede the decorator.
+按照目前的提案，装饰器不支持这种语法。相反，`export` 关键字必须位于装饰器之前：
 
 ```ts
 export
@@ -344,16 +300,15 @@ class Foo {
 }
 ```
 
-Unfortunately, TypeScript's trees are _concrete_ rather than _abstract_, and our architecture expects syntax tree node fields to be entirely ordered before or after each other.
-To support both legacy decorators and decorators as proposed, TypeScript will have to gracefully parse, and intersperse, modifiers and decorators.
+遗憾的是，TypeScript 的语法树是*具体的（concrete）*而非*抽象的（abstract）*，并且我们的架构期望语法树节点字段在顺序上彼此完全明确。为了同时支持旧版装饰器和提案中的装饰器，TypeScript 必须能够顺畅地解析并穿插修饰符和装饰器。
 
-To do this, it exposes a new type alias called `ModifierLike` which is a `Modifier` or a `Decorator`.
+为此，它公开了一个名为 `ModifierLike` 的新类型别名，表示 `Modifier` 或 `Decorator`：
 
 ```ts
 export type ModifierLike = Modifier | Decorator
 ```
 
-Decorators are now placed in the same field as `modifiers` which is now a `NodeArray<ModifierLike>` when set, and the entire field is deprecated.
+装饰器现在与 `modifiers` 放置在同一个字段中，设置时该字段类型为 `NodeArray<ModifierLike>`，并且整个字段已被标记为废弃。
 
 ```diff
 - readonly modifiers?: NodeArray<Modifier> | undefined;
@@ -366,8 +321,7 @@ Decorators are now placed in the same field as `modifiers` which is now a `NodeA
 + readonly modifiers?: NodeArray<ModifierLike> | undefined;
 ```
 
-All existing `decorators` properties have been marked as deprecated and will always be `undefined` if read.
-The type has also been changed to `undefined` so that existing tools know to handle them correctly.
+所有现有的 `decorators` 属性均已被标记为废弃，并且读取时将始终返回 `undefined`。其类型也已更改为 `undefined`，以便现有工具能够正确处理它们。
 
 ```diff
 - readonly decorators?: NodeArray<Decorator> | undefined;
@@ -380,8 +334,7 @@ The type has also been changed to `undefined` so that existing tools know to han
 + readonly decorators?: undefined;
 ```
 
-To avoid new deprecation warnings and other issues, TypeScript now exposes four new functions to use in place of the `decorators` and `modifiers` properties.
-There are individual predicates for testing whether a node has support modifiers and decorators, along with respective accessor functions for grabbing them.
+为了避免新的废弃警告和其他问题，TypeScript 现在公开了四个新函数来代替 `decorators` 和 `modifiers` 属性。它们分别提供了用于测试节点是否支持修饰符和装饰器的断言函数，以及用于提取它们的相应访问器函数：
 
 ```ts
 function canHaveModifiers(node: Node): node is HasModifiers
@@ -391,25 +344,23 @@ function canHaveDecorators(node: Node): node is HasDecorators
 function getDecorators(node: HasDecorators): readonly Decorator[] | undefined
 ```
 
-As an example of how to access modifiers off of a node, you can write
+作为从节点访问修饰符的示例，你可以编写：
 
 ```ts
 const modifiers = canHaveModifiers(myNode) ? getModifiers(myNode) : undefined
 ```
 
-With the note that each call to `getModifiers` and `getDecorators` may allocate a new array.
+请注意，每次调用 `getModifiers` 和 `getDecorators` 都可能会分配一个新数组。
 
-For more information, see changes around
+欲了解更多信息，请参阅以下相关改动：
 
-- [the restructuring of our tree nodes](https://github.com/microsoft/TypeScript/pull/49089)
-- [the deprecations](https://github.com/microsoft/TypeScript/pull/50343)
-- [exposing the predicate functions](https://github.com/microsoft/TypeScript/pull/50399)
+- [语法树节点的重构](https://github.com/microsoft/TypeScript/pull/49089)
+- [废弃处理](https://github.com/microsoft/TypeScript/pull/50343)
+- [公开断言函数](https://github.com/microsoft/TypeScript/pull/50399)
 
-### Types Cannot Be Imported/Exported in JavaScript Files
+### JavaScript 文件中无法导入/导出类型
 
-TypeScript previously allowed JavaScript files to import and export entities declared with a type, but no value, in `import` and `export` statements.
-This behavior was incorrect, because named imports and exports for values that don't exist will cause a runtime error under ECMAScript modules.
-When a JavaScript file is type-checked under `--checkJs` or through a `// @ts-check` comment, TypeScript will now issue an error.
+此前，TypeScript 允许 JavaScript 文件在 `import` 和 `export` 语句中导入和导出以类型声明但没有值的实体。这种行为是不正确的，因为在 ECMAScript 模块下，对不存在的值进行具名导入和导出将导致运行时错误。当 JavaScript 文件在 `--checkJs` 下或通过 `// @ts-check` 注释进行类型检查时，TypeScript 现在会报错。
 
 ```ts
 // @ts-check
@@ -430,7 +381,7 @@ export const myValue = someValue
 export { MyType as MyExportedType }
 ```
 
-To reference a type from another module, you can instead directly qualify the import.
+要引用来自另一个模块的类型，可以直接限定导入路径（qualified import）：
 
 ```diff
 - import { someValue, SomeType } from "some-module";
@@ -443,8 +394,7 @@ To reference a type from another module, you can instead directly qualify the im
   export const myValue = someValue;
 ```
 
-To export a type, you can just use a `/** @typedef */` comment in JSDoc.
-`@typedef` comments already automatically export types from their containing modules.
+要导出类型，只需在 JSDoc 中使用 `/** @typedef */` 注释即可。`@typedef` 注释已经会自动从其所在模块中导出类型：
 
 ```diff
   /**
@@ -457,30 +407,25 @@ To export a type, you can just use a `/** @typedef */` comment in JSDoc.
 - export { MyType as MyExportedType };
 ```
 
-You can [read more about the change here](https://github.com/microsoft/TypeScript/pull/49580).
+你可以[在此处阅读关于此项变更的更多信息](https://github.com/microsoft/TypeScript/pull/49580)。
 
-### Binding Patterns Do Not Directly Contribute to Inference Candidates
+### 解构绑定模式不再直接作为推断候选
 
-As mentioned above, binding patterns no longer change the type of inference results in function calls.
-You can [read more about the original change here](https://github.com/microsoft/TypeScript/pull/49086).
+如上所述，绑定模式在函数调用中不再改变推断结果的类型。你可以[在此处阅读关于原始变更的更多信息](https://github.com/microsoft/TypeScript/pull/49086)。
 
-### Unused Renames in Binding Patterns are Now Errors in Type Signatures
+### 类型签名中解构绑定模式未使用的重命名现在会报错
 
-TypeScript's type annotation syntax often looks like it can be used when destructuring values.
-For example, take the following function.
+TypeScript 的类型标注语法在解构值时往往容易被误用。例如以下函数：
 
 ```ts
 declare function makePerson({ name: string, age: number }): Person
 ```
 
-You might read this signature and think that `makePerson` obviously takes an object with a `name` property with the type `string` and an `age` property with the type `number`;
-however, JavaScript's destructuring syntax is actually taking precedence here.
-`makePerson` does say that it's going to take an object with a `name` and an `age` property, but instead of specifying a type for them, it's just saying that it renames `name` and `age` to `string` and `number` respectively.
+你可能会读到这个签名并认为 `makePerson` 显然接受一个带有 `string` 类型的 `name` 属性和 `number` 类型的 `age` 属性的对象；然而，JavaScript 的解构语法实际上在这里占了上风。`makePerson` 确实说明它将接受一个具有 `name` 和 `age` 属性的对象，但它并没有为它们指定类型，而只是说明将 `name` 和 `age` 分别重命名为 `string` 和 `number`。
 
-In a pure type construct, writing code like this is useless, and typically a mistake since developers usually assume they're writing a type annotation.
+在纯类型结构中，编写此类代码是无用的，而且通常是一个错误，因为开发者通常以为自己在编写类型标注。
 
-TypeScript 4.8 makes these an error unless they're referenced later in the signature.
-The correct way to write the above signature would be as follows:
+TypeScript 4.8 将这些情况标记为错误，除非它们在签名中稍后被引用。编写上述签名的正确方式如下：
 
 ```ts
 declare function makePerson(options: { name: string; age: number }): Person
@@ -496,6 +441,4 @@ declare function makePerson({
 }): Person
 ```
 
-This change can catch bugs in declarations, and has been helpful for improving existing code.
-We'd like to extend our thanks to [GitHub user uhyo](https://github.com/uhyo) for providing this check.
-[You can read up on the change here](https://github.com/microsoft/TypeScript/pull/41044).
+此更改可以捕获声明中的 bug，并且有助于改进现有代码。我们要向 [GitHub 用户 uhyo](https://github.com/uhyo) 致谢，是他提供了这项检查。[你可以在此阅读关于此项变更的内容](https://github.com/microsoft/TypeScript/pull/41044)。

@@ -2,20 +2,20 @@
 title: TypeScript 1.5
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-1-5.html
-oneline: TypeScript 1.5 Release Notes
+oneline: TypeScript 1.5 发布说明
 ---
 
-## ES6 Modules
+## ES6 模块
 
-TypeScript 1.5 supports ECMAScript 6 (ES6) modules.
-ES6 modules are effectively TypeScript external modules with a new syntax: ES6 modules are separately loaded source files that possibly import other modules and provide a number of externally accessible exports.
-ES6 modules feature several new export and import declarations.
-It is recommended that TypeScript libraries and applications be updated to use the new syntax, but this is not a requirement.
-The new ES6 module syntax coexists with TypeScript's original internal and external module constructs and the constructs can be mixed and matched at will.
+TypeScript 1.5 支持 ECMAScript 6（ES6）模块。
+ES6 模块本质上是采用了新语法的 TypeScript 外部模块：ES6 模块是独立加载的源文件，可以导入其他模块，并提供若干可供外部访问的导出项。
+ES6 模块引入了数种新的导出与导入声明。
+建议将 TypeScript 库和应用程序更新为使用这种新语法，但这并非硬性要求。
+新的 ES6 模块语法与 TypeScript 原有的内部模块及外部模块结构共存，这些结构可以根据需要混合使用。
 
-#### Export Declarations
+#### 导出声明
 
-In addition to the existing TypeScript support for decorating declarations with `export`, module members can also be exported using separate export declarations, optionally specifying different names for exports using `as` clauses.
+除了 TypeScript 原本就支持的在声明前添加 `export` 修饰之外，还可以使用独立的导出声明来导出模块成员，并可通过 `as` 子句为导出项指定不同的外部名称。
 
 ```ts
 interface Stream { ... }
@@ -23,7 +23,7 @@ function writeToStream(stream: Stream, data: string) { ... }
 export { Stream, writeToStream as write };  // writeToStream exported as write
 ```
 
-Import declarations, as well, can optionally use `as` clauses to specify different local names for the imports. For example:
+导入声明同样可以使用 `as` 子句为导入项指定不同的本地名称。例如：
 
 ```ts
 import { read, write, standardOutput as stdout } from './inout'
@@ -31,7 +31,7 @@ var s = read(stdout)
 write(stdout, s)
 ```
 
-As an alternative to individual imports, a namespace import can be used to import an entire module:
+作为单个导入的替代方案，可以使用命名空间导入（namespace import）来导入整个模块：
 
 ```ts
 import * as io from './inout'
@@ -39,15 +39,15 @@ var s = io.read(io.standardOutput)
 io.write(io.standardOutput, s)
 ```
 
-#### Re-exporting
+#### 重新导出
 
-Using `from` clause a module can copy the exports of a given module to the current module without introducing local names.
+通过 `from` 子句，一个模块可以将指定模块的导出项复制到当前模块，而无需引入本地名称。
 
 ```ts
 export { read, write, standardOutput as stdout } from './inout'
 ```
 
-`export *` can be used to re-export all exports of another module. This is useful for creating modules that aggregate the exports of several other modules.
+`export *` 可用于重新导出另一模块的所有导出项。这在创建聚合多个其他模块导出项的模块时非常有用。
 
 ```ts
 export function transform(s: string): string { ... }
@@ -55,9 +55,9 @@ export * from "./mod1";
 export * from "./mod2";
 ```
 
-#### Default Export
+#### 默认导出
 
-An export default declaration specifies an expression that becomes the default export of a module:
+默认导出声明（export default）指定一个表达式，该表达式将作为模块的默认导出项：
 
 ```ts
 export default class Greeter {
@@ -67,7 +67,7 @@ export default class Greeter {
 }
 ```
 
-Which in turn can be imported using default imports:
+随后可以使用默认导入将其引入：
 
 ```ts
 import Greeter from './greeter'
@@ -75,37 +75,37 @@ var g = new Greeter()
 g.sayHello()
 ```
 
-#### Bare Import
+#### 裸导入
 
-A "bare import" can be used to import a module only for its side-effects.
+“裸导入”（Bare Import）可用于仅为执行副作用而导入模块。
 
 ```ts
 import './polyfills'
 ```
 
-For more information about module, please see the [ES6 module support spec](https://github.com/Microsoft/TypeScript/issues/2242).
+有关模块的更多信息，请参阅 [ES6 模块支持规范](https://github.com/Microsoft/TypeScript/issues/2242)。
 
-## Destructuring in declarations and assignments
+## 声明与赋值中的解构
 
-TypeScript 1.5 adds support to ES6 destructuring declarations and assignments.
+TypeScript 1.5 增加了对 ES6 解构声明与解构赋值的支持。
 
-#### Declarations
+#### 解构声明
 
-A destructuring declaration introduces one or more named variables and initializes them with values extracted from properties of an object or elements of an array.
+解构声明会引入一个或多个命名变量，并使用从对象属性或数组元素中提取的值来初始化它们。
 
-For example, the following sample declares variables `x`, `y`, and `z`, and initializes them to `getSomeObject().x`, `getSomeObject().y` and `getSomeObject().z` respectively:
+例如，以下示例声明了变量 `x`、`y` 和 `z`，并将它们分别初始化为 `getSomeObject().x`、`getSomeObject().y` 以及 `getSomeObject().z`：
 
 ```ts
 var { x, y, z } = getSomeObject()
 ```
 
-Destructuring declarations also works for extracting values from arrays:
+解构声明同样适用于从数组中提取值：
 
 ```ts
 var [x, y, z = 10] = getSomeArray()
 ```
 
-Similarly, destructuring can be used in function parameter declarations:
+类似地，解构也可以用于函数形参声明中：
 
 ```ts
 function drawText({ text = '', location: [x, y] = [0, 0], bold = false }) {
@@ -117,10 +117,10 @@ var item = { text: 'someText', location: [1, 2, 3], style: 'italics' }
 drawText(item)
 ```
 
-#### Assignments
+#### 解构赋值
 
-Destructuring patterns can also be used in regular assignment expressions.
-For instance, swapping two variables can be written as a single destructuring assignment:
+解构模式也可以用于普通的赋值表达式中。
+例如，交换两个变量的值可以写成一个单独的解构赋值表达式：
 
 ```ts
 var x = 1
@@ -128,15 +128,15 @@ var y = 2
 ;[x, y] = [y, x]
 ```
 
-## `namespace` keyword
+## `namespace` 关键字
 
-TypeScript used the `module` keyword to define both "internal modules" and "external modules";
-this has been a bit of confusion for developers new to TypeScript.
-"Internal modules" are closer to what most people would call a namespace; likewise, "external modules" in JS speak really just are modules now.
+此前 TypeScript 使用 `module` 关键字同时定义“内部模块（internal modules）”和“外部模块（external modules）”；
+这往往会让刚接触 TypeScript 的开发者感到困惑。
+“内部模块”更接近大多数人所说的命名空间（namespace）；同样，在现代 JS 语境中，“外部模块”现在就单纯是指模块。
 
-> Note: Previous syntax defining internal modules are still supported.
+> 注意：以前定义内部模块的语法依然受支持。
 
-**Before**:
+**修改前**：
 
 ```ts
 module Math {
@@ -144,7 +144,7 @@ module Math {
 }
 ```
 
-**After**:
+**修改后**：
 
 ```ts
 namespace Math {
@@ -152,11 +152,11 @@ namespace Math {
 }
 ```
 
-## `let` and `const` support
+## `let` 与 `const` 支持
 
-ES6 `let` and `const` declarations are now supported when targeting ES3 and ES5.
+在面向 ES3 和 ES5 时，现已支持 ES6 的 `let` 与 `const` 声明。
 
-#### Const
+#### 常量
 
 ```ts
 const MAX = 100
@@ -165,7 +165,7 @@ const MAX = 100
 //        operator cannot be a constant.
 ```
 
-#### Block scoped
+#### 块级作用域
 
 ```ts
 if (true) {
@@ -179,20 +179,20 @@ if (true) {
 alert(a) // Error: a is not defined in this scope.
 ```
 
-## for..of support
+## `for..of` 循环支持
 
-TypeScript 1.5 adds support to ES6 for..of loops on arrays for ES3/ES5 as well as full support for Iterator interfaces when targeting ES6.
+TypeScript 1.5 增加了在面向 ES3/ES5 时对数组的 ES6 `for..of` 循环支持，并在面向 ES6 时提供对 Iterator 接口的完整支持。
 
-##### Example
+##### 示例
 
-The TypeScript compiler will transpile for..of arrays to idiomatic ES3/ES5 JavaScript when targeting those versions:
+当面向 ES3/ES5 编译时，TypeScript 编译器会将数组的 `for..of` 转译为符合惯用写法的 ES3/ES5 JavaScript：
 
 ```ts
 for (var v of expr) {
 }
 ```
 
-will be emitted as:
+将输出为：
 
 ```js
 for (var _i = 0, _a = expr; _i < _a.length; _i++) {
@@ -200,23 +200,23 @@ for (var _i = 0, _a = expr; _i < _a.length; _i++) {
 }
 ```
 
-## Decorators
+## 装饰器
 
-> TypeScript decorators are based on the [ES7 decorator proposal](https://github.com/wycats/javascript-decorators).
+> TypeScript 装饰器基于 [ES7 装饰器提案](https://github.com/wycats/javascript-decorators)。
 
-A decorator is:
+装饰器是一个：
 
-- an expression
-- that evaluates to a function
-- that takes the target, name, and property descriptor as arguments
-- and optionally returns a property descriptor to install on the target object
+- 表达式
+- 其求值结果为一个函数
+- 该函数接收 target、name 以及 property descriptor 作为参数
+- 并可以选择返回一个属性描述符以安装在目标对象上
 
-> For more information, please see the [Decorators](https://github.com/Microsoft/TypeScript/issues/2249) proposal.
+> 有关更多信息，请参阅[装饰器](https://github.com/Microsoft/TypeScript/issues/2249)提案。
 
-##### Example
+##### 示例
 
-Decorators `readonly` and `enumerable(false)` will be applied to the property `method` before it is installed on class `C`.
-This allows the decorator to change the implementation, and in this case, augment the descriptor to be writable: false and enumerable: false.
+装饰器 `readonly` 和 `enumerable(false)` 将在属性 `method` 安装到类 `C` 之前应用于该属性。
+这使得装饰器能够修改其实现，而在本例中，将描述符扩充为 writable: false 和 enumerable: false。
 
 ```ts
 class C {
@@ -236,9 +236,9 @@ function enumerable(value) {
 }
 ```
 
-## Computed properties
+## 计算属性
 
-Initializing an object with dynamic properties can be a bit of a burden. Take the following example:
+使用动态属性初始化对象以往略显繁琐。以下面的代码为例：
 
 ```ts
 type NeighborMap = { [name: string]: Node }
@@ -251,8 +251,8 @@ function makeNode(name: string, initialNeighbor: Node): Node {
 }
 ```
 
-Here we need to create a variable to hold on to the neighbor-map so that we can initialize it.
-With TypeScript 1.5, we can let the compiler do the heavy lifting:
+这里我们需要创建一个变量来暂存邻居映射表，以便对其进行初始化。
+而在 TypeScript 1.5 中，我们可以让编译器来完成繁琐的工作：
 
 ```ts
 function makeNode(name: string, initialNeighbor: Node): Node {
@@ -265,36 +265,36 @@ function makeNode(name: string, initialNeighbor: Node): Node {
 }
 ```
 
-## Support for `UMD` and `System` module output
+## 支持 `UMD` 与 `System` 模块输出
 
-In addition to `AMD` and `CommonJS` module loaders, TypeScript now supports emitting modules `UMD` ([Universal Module Definition](https://github.com/umdjs/umd)) and [`System`](https://github.com/systemjs/systemjs) module formats.
+除了 `AMD` 和 `CommonJS` 模块加载器之外，TypeScript 现已支持将模块输出为 `UMD`（[Universal Module Definition](https://github.com/umdjs/umd)）和 [`System`](https://github.com/systemjs/systemjs) 模块格式。
 
-**Usage**:
+**用法**：
 
 > tsc --module umd
 
-and
+以及
 
 > tsc --module system
 
-## Unicode codepoint escapes in strings
+## 字符串中的 Unicode 码点转义
 
-ES6 introduces escapes that allow users to represent a Unicode codepoint using just a single escape.
+ES6 引入了新的转义形式，允许用户仅使用单个转义序列来表示 Unicode 码点。
 
-As an example, consider the need to escape a string that contains the character '𠮷'.
-In UTF-16/UCS2, '𠮷' is represented as a surrogate pair, meaning that it's encoded using a pair of 16-bit code units of values, specifically `0xD842` and `0xDFB7`.
-Previously this meant that you'd have to escape the codepoint as `"\uD842\uDFB7"`.
-This has the major downside that it’s difficult to discern two independent characters from a surrogate pair.
+例如，假设需要对包含字符 '𠮷' 的字符串进行转义。
+在 UTF-16/UCS2 中，'𠮷' 被表示为一个代理对（surrogate pair），即由一对 16 位代码单元的值进行编码，具体为 `0xD842` 和 `0xDFB7`。
+此前这意味着你必须将该码点转义为 `"\uD842\uDFB7"`。
+这种方式的主要缺点是很难分辨这究竟是两个独立的字符还是一个代理对。
 
-With ES6’s codepoint escapes, you can cleanly represent that exact character in strings and template strings with a single escape: `"\u{20bb7}"`.
-TypeScript will emit the string in ES3/ES5 as `"\uD842\uDFB7"`.
+借助 ES6 的码点转义，你可以在普通字符串和模板字符串中使用单个转义序列简洁清晰地表示该字符：`"\u{20bb7}"`。
+在面向 ES3/ES5 编译时，TypeScript 会将其输出为 `"\uD842\uDFB7"`。
 
-## Tagged template strings in ES3/ES5
+## ES3/ES5 中的带标签模板字符串
 
-In TypeScript 1.4, we added support for template strings for all targets, and tagged templates for just ES6.
-Thanks to some considerable work done by [@ivogabe](https://github.com/ivogabe), we bridged the gap for tagged templates in ES3 and ES5.
+在 TypeScript 1.4 中，我们为所有目标版本添加了模板字符串支持，但带标签的模板字符串仅支持 ES6。
+感谢 [@ivogabe](https://github.com/ivogabe) 付出的巨大努力，我们在 ES3 和 ES5 中也填补了带标签模板字符串的空白。
 
-When targeting ES3/ES5, the following code
+当面向 ES3/ES5 时，以下代码：
 
 ```ts
 function oddRawStrings(strs: TemplateStringsArray, n1, n2) {
@@ -304,7 +304,7 @@ function oddRawStrings(strs: TemplateStringsArray, n1, n2) {
 oddRawStrings`Hello \n${123} \t ${456}\n world`
 ```
 
-will be emitted as
+将输出为：
 
 ```js
 function oddRawStrings(strs, n1, n2) {
@@ -318,12 +318,12 @@ function oddRawStrings(strs, n1, n2) {
 var _a
 ```
 
-## AMD-dependency optional names
+## AMD 依赖的可选名称
 
-`/// <amd-dependency path="x" />` informs the compiler about a non-TS module dependency that needs to be injected in the resulting module's required call;
-however, there was no way to consume this module in the TS code.
+`/// <amd-dependency path="x" />` 用于通知编译器：生成的目标模块在 require 调用中需要注入一个非 TS 模块依赖；
+然而，此前在 TS 代码中无法直接使用该模块。
 
-The new `amd-dependency name` property allows passing an optional name for an amd-dependency:
+新增的 `amd-dependency name` 属性允许为 AMD 依赖传递一个可选名称：
 
 ```ts
 /// <amd-dependency path="legacy/moduleA" name="moduleA"/>
@@ -331,7 +331,7 @@ declare var moduleA: MyType
 moduleA.callStuff()
 ```
 
-Generated JS code:
+生成的 JS 代码：
 
 ```js
 define(['require', 'exports', 'legacy/moduleA'], function (
@@ -343,15 +343,15 @@ define(['require', 'exports', 'legacy/moduleA'], function (
 })
 ```
 
-## Project support through `tsconfig.json`
+## 通过 `tsconfig.json` 支持项目配置
 
-Adding a `tsconfig.json` file in a directory indicates that the directory is the root of a TypeScript project.
-The tsconfig.json file specifies the root files and the compiler options required to compile the project. A project is compiled in one of the following ways:
+在某个目录下添加 `tsconfig.json` 文件表明该目录是 TypeScript 项目的根目录。
+`tsconfig.json` 文件指定了编译该项目所需的根文件和编译器选项。项目可以通过以下方式之一进行编译：
 
-- By invoking tsc with no input files, in which case the compiler searches for the tsconfig.json file starting in the current directory and continuing up the parent directory chain.
-- By invoking tsc with no input files and a -project (or just -p) command line option that specifies the path of a directory containing a tsconfig.json file.
+- 在不传入输入文件的情况下直接调用 tsc，此时编译器将从当前目录开始并沿着父目录链向上搜索 tsconfig.json 文件。
+- 在不传入输入文件的情况下调用 tsc 并指定 -project（或简写 -p）命令行选项，该选项指定包含 tsconfig.json 文件的目录路径。
 
-##### Example
+##### 示例
 
 ```json tsconfig
 {
@@ -363,31 +363,31 @@ The tsconfig.json file specifies the root files and the compiler options require
 }
 ```
 
-See the [tsconfig.json wiki page](https://github.com/Microsoft/TypeScript/wiki/tsconfig.json) for more details.
+更多详情请参阅 [tsconfig.json wiki 页面](https://github.com/Microsoft/TypeScript/wiki/tsconfig.json)。
 
-## `--rootDir` command line option
+## `--rootDir` 命令行选项
 
-Option [`outDir`](/tsconfig#outDir) duplicates the input hierarchy in the output.
-The compiler computes the root of the input files as the longest common path of all input files;
-and then uses that to replicate all its substructure in the output.
+选项 [`outDir`](/tsconfig#outDir) 会在输出目录中保留输入的目录层级结构。
+编译器通过计算所有输入文件的最长公共路径来确定输入文件的根目录；
+然后根据该根目录在输出中复现其所有子结构。
 
-Sometimes this is not desirable, for instance inputs `FolderA\FolderB\1.ts` and `FolderA\FolderB\2.ts` would result in output structure mirroring `FolderA\FolderB\`.
-Now if a new file `FolderA\3.ts` is added to the input, the output structure will pop out to mirror `FolderA\`.
+有时这种行为并不符合预期，例如对于输入文件 `FolderA\FolderB\1.ts` 和 `FolderA\FolderB\2.ts`，输出结构会镜像反映 `FolderA\FolderB\`。
+此时若在输入中添加一个新文件 `FolderA\3.ts`，输出结构就会跳出一层变成镜像反映 `FolderA\`。
 
-[`rootDir`](/tsconfig#rootDir) specifies the input directory to be mirrored in output instead of computing it.
+[`rootDir`](/tsconfig#rootDir) 用于显式指定需要在输出中镜像保留的输入目录，而不是自动计算它。
 
-## `--noEmitHelpers` command line option
+## `--noEmitHelpers` 命令行选项
 
-The TypeScript compiler emits a few helpers like `__extends` when needed.
-The helpers are emitted in every file they are referenced in.
-If you want to consolidate all helpers in one place, or override the default behavior, use [`noEmitHelpers`](/tsconfig#noEmitHelpers) to instruct the compiler not to emit them.
+TypeScript 编译器会在需要时生成一些辅助函数，例如 `__extends`。
+这些辅助函数会被生成到引用了它们的每个文件中。
+如果你希望将所有辅助函数整合到一个地方，或者覆盖默认行为，可以使用 [`noEmitHelpers`](/tsconfig#noEmitHelpers) 来指示编译器不要生成这些辅助函数。
 
-## `--newLine` command line option
+## `--newLine` 命令行选项
 
-By default the output new line character is `\r\n` on Windows based systems and `\n` on \*nix based systems.
-[`newLine`](/tsconfig#newLine) command line flag allows overriding this behavior and specifying the new line character to be used in generated output files.
+默认情况下，在基于 Windows 的系统上生成的换行符是 `\r\n`，而在基于 \*nix 的系统上是 `\n`。
+[`newLine`](/tsconfig#newLine) 命令行标志允许覆盖此行为，并指定在生成的输出文件中使用的换行符。
 
-## `--inlineSourceMap` and `inlineSources` command line options
+## `--inlineSourceMap` 与 `inlineSources` 命令行选项
 
-[`inlineSourceMap`](/tsconfig#inlineSourceMap) causes source map files to be written inline in the generated `.js` files instead of in an independent `.js.map` file.
-[`inlineSources`](/tsconfig#inlineSources) allows for additionally inlining the source `.ts` file into the `.js` file.
+[`inlineSourceMap`](/tsconfig#inlineSourceMap) 会让 source map 文件直接内联写入生成的 `.js` 文件中，而不是写入独立的 `.js.map` 文件。
+[`inlineSources`](/tsconfig#inlineSources) 则允许进一步将 `.ts` 源文件内容直接内嵌到 `.js` 文件中。

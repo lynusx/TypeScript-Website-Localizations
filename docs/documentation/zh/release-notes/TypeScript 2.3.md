@@ -2,16 +2,16 @@
 title: TypeScript 2.3
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-2-3.html
-oneline: TypeScript 2.3 Release Notes
+oneline: TypeScript 2.3 发布说明
 ---
 
-## Generators and Iteration for ES5/ES3
+## ES5/ES3 的生成器与迭代器
 
-_First some ES2016 terminology:_
+_首先了解一些 ES2016 术语：_
 
-##### Iterators
+##### 迭代器
 
-[ES2015 introduced `Iterator`](http://www.ecma-international.org/ecma-262/6.0/#sec-iteration), which is an object that exposes three methods, `next`, `return`, and `throw`, as per the following interface:
+[ES2015 引入了 `Iterator`](http://www.ecma-international.org/ecma-262/6.0/#sec-iteration)，它是一个暴露了 `next`、`return` 和 `throw` 三个方法的对象，其接口定义如下：
 
 ```ts
 interface Iterator<T> {
@@ -21,15 +21,13 @@ interface Iterator<T> {
 }
 ```
 
-This kind of iterator is useful for iterating over synchronously available values, such as the elements of an Array or the keys of a Map.
-An object that supports iteration is said to be "iterable" if it has a `Symbol.iterator` method that returns an `Iterator` object.
+这种迭代器适用于遍历同步可用的值，例如数组元素或 Map 的键。若一个对象拥有返回 `Iterator` 对象的 `Symbol.iterator` 方法，则称该对象为"可迭代的"（iterable）。
 
-The Iterator protocol also defines the target of some of the ES2015 features like `for..of` and spread operator and the array rest in destructuring assignments.
+迭代器协议还定义了部分 ES2015 特性的目标对象，例如 `for..of`、展开运算符，以及解构赋值中的数组剩余元素。
 
-##### Generators
+##### 生成器
 
-[ES2015 also introduced "Generators"](http://www.ecma-international.org/ecma-262/6.0/#sec-generatorfunction-objects), which are functions that can be used to yield partial computation results via the `Iterator` interface and the `yield` keyword.
-Generators can also internally delegate calls to another iterable through `yield *`. For example:
+[ES2015 还引入了"生成器"](http://www.ecma-international.org/ecma-262/6.0/#sec-generatorfunction-objects)，它是一类可以通过 `Iterator` 接口和 `yield` 关键字产出中间计算结果的函数。生成器还可以通过 `yield *` 在内部将调用委托给另一个可迭代对象。例如：
 
 ```ts
 function* f() {
@@ -38,29 +36,25 @@ function* f() {
 }
 ```
 
-##### New `--downlevelIteration`
+##### 新增 `--downlevelIteration`
 
-Previously generators were only supported if the target is ES6/ES2015 or later.
-Moreover, constructs that operate on the Iterator protocol, e.g. `for..of` were only supported if they operate on arrays for targets below ES6/ES2015.
+此前，仅当编译目标为 ES6/ES2015 或更高版本时才支持生成器。此外，对于低于 ES6/ES2015 的编译目标，操作迭代器协议的构造（如 `for..of`）也只支持数组类型。
 
-TypeScript 2.3 adds full support for generators and the Iterator protocol for ES3 and ES5 targets with [`downlevelIteration`](/tsconfig#downlevelIteration) flag.
+TypeScript 2.3 通过 [`downlevelIteration`](/tsconfig#downlevelIteration) 标志，为 ES3 和 ES5 编译目标新增了对生成器及迭代器协议的完整支持。
 
-With [`downlevelIteration`](/tsconfig#downlevelIteration), the compiler uses new type check and emit behavior that attempts to call a `[Symbol.iterator]()` method on the iterated object if it is found, and creates a synthetic array iterator over the object if it is not.
+启用 [`downlevelIteration`](/tsconfig#downlevelIteration) 后，编译器会使用新的类型检查和代码生成逻辑：若被迭代对象上存在 `[Symbol.iterator]()` 方法则调用它，否则在该对象上创建一个合成的数组迭代器。
 
-> Please note that this requires a native `Symbol.iterator` or `Symbol.iterator` shim at runtime for any non-array values.
+> 请注意，对于非数组值，这要求运行时环境原生支持 `Symbol.iterator` 或提供相应的 polyfill。
 
-`for..of` statements, Array Destructuring, and Spread elements in Array, Call, and New expressions support `Symbol.iterator` in ES5/E3 if available when using [`downlevelIteration`](/tsconfig#downlevelIteration), but can be used on an Array even if it does not define `Symbol.iterator` at run time or design time.
+在使用 [`downlevelIteration`](/tsconfig#downlevelIteration) 时，`for..of` 语句、数组解构以及数组、函数调用和 new 表达式中的展开元素均可在 ES5/ES3 中使用 `Symbol.iterator`（若可用）；即便数组在运行时或设计时未定义 `Symbol.iterator`，也可以对数组使用上述特性。
 
-## Async Iteration
+## 异步迭代
 
-TypeScript 2.3 adds support for the async iterators and generators as described by the current [TC39 proposal](https://github.com/tc39/proposal-async-iteration).
+TypeScript 2.3 新增了对 [当前 TC39 提案](https://github.com/tc39/proposal-async-iteration) 所描述的异步迭代器和异步生成器的支持。
 
-##### Async iterators
+##### 异步迭代器
 
-The Async Iteration introduces an `AsyncIterator`, which is similar to `Iterator`.
-The difference lies in the fact that the `next`, `return`, and `throw` methods of an `AsyncIterator` return a `Promise` for the iteration result, rather than the result itself.
-This allows the caller to enlist in an asynchronous notification for the time at which the `AsyncIterator` has advanced to the point of yielding a value.
-An `AsyncIterator` has the following shape:
+异步迭代引入了 `AsyncIterator`，其与 `Iterator` 类似，区别在于 `AsyncIterator` 的 `next`、`return` 和 `throw` 方法返回的是包含迭代结果的 `Promise`，而非迭代结果本身。这使得调用方可以订阅 `AsyncIterator` 推进到产出新值这一异步通知。`AsyncIterator` 的结构如下：
 
 ```ts
 interface AsyncIterator<T> {
@@ -70,12 +64,11 @@ interface AsyncIterator<T> {
 }
 ```
 
-An object that supports async iteration is said to be "iterable" if it has a `Symbol.asyncIterator` method that returns an `AsyncIterator` object.
+若一个对象拥有返回 `AsyncIterator` 对象的 `Symbol.asyncIterator` 方法，则称该对象支持异步迭代。
 
-##### Async Generators
+##### 异步生成器
 
-The [Async Iteration proposal](https://github.com/tc39/proposal-async-iteration) introduces "Async Generators", which are async functions that also can be used to yield partial computation results.
-Async Generators can also delegate calls via `yield*` to either an iterable or async iterable:
+[异步迭代提案](https://github.com/tc39/proposal-async-iteration) 还引入了"异步生成器"，即同样可以产出中间计算结果的 async 函数。异步生成器也可以通过 `yield*` 将调用委托给可迭代对象或异步可迭代对象：
 
 ```ts
 async function* g() {
@@ -89,13 +82,11 @@ async function* g() {
 }
 ```
 
-As with Generators, Async Generators can only be function declarations, function expressions, or methods of classes or object literals.
-Arrow functions cannot be Async Generators. Async Generators require a valid, global `Promise` implementation (either native or an ES2015-compatible polyfill), in addition to a valid `Symbol.asyncIterator` reference (either a native symbol or a shim).
+与普通生成器一样，异步生成器只能是函数声明、函数表达式，或类/对象字面量的方法，不能是箭头函数。异步生成器除了需要有效的全局 `Promise` 实现（原生或 ES2015 兼容的 polyfill）外，还需要有效的 `Symbol.asyncIterator` 引用（原生 symbol 或 shim）。
 
-##### The `for-await-of` Statement
+##### `for-await-of` 语句
 
-Finally, ES2015 introduced the `for..of` statement as a means of iterating over an iterable.
-Similarly, the Async Iteration proposal introduces the `for..await..of` statement to iterate over an async iterable:
+ES2015 引入了 `for..of` 语句用于遍历可迭代对象。类似地，异步迭代提案引入了 `for..await..of` 语句用于遍历异步可迭代对象：
 
 ```ts
 async function f() {
@@ -105,21 +96,21 @@ async function f() {
 }
 ```
 
-The `for..await..of` statement is only legal within an Async Function or Async Generator.
+`for..await..of` 语句只能在异步函数或异步生成器中使用。
 
-##### Caveats
+##### 注意事项
 
-- Keep in mind that our support for async iterators relies on support for `Symbol.asyncIterator` to exist at runtime. You may need to polyfill `Symbol.asyncIterator`, which for simple purposes can be as simple as: `(Symbol as any).asyncIterator = Symbol.asyncIterator || Symbol.for("Symbol.asyncIterator");`
-- You also need to include `esnext` in your [`lib`](/tsconfig#lib) option, to get the `AsyncIterator` declaration if you do not already have it.
-- Finally, if your target is ES5 or ES3, you'll also need to set the `--downlevelIterators` flag.
+- 请注意，我们对异步迭代器的支持依赖于运行时存在 `Symbol.asyncIterator`。你可能需要为其提供 polyfill，简单的做法如：`(Symbol as any).asyncIterator = Symbol.asyncIterator || Symbol.for("Symbol.asyncIterator");`
+- 你还需要在 [`lib`](/tsconfig#lib) 选项中包含 `esnext`，以获取 `AsyncIterator` 的声明（若尚未包含）。
+- 最后，如果你的编译目标是 ES5 或 ES3，还需要设置 `--downlevelIterators` 标志。
 
-## Generic parameter defaults
+## 泛型参数默认值
 
-TypeScript 2.3 adds support for declaring defaults for generic type parameters.
+TypeScript 2.3 新增了对泛型类型参数声明默认值的支持。
 
-##### Example
+##### 示例
 
-Consider a function that creates a new `HTMLElement`, calling it with no arguments generates a `Div`; you can optionally pass a list of children as well. Previously you would have to define it as:
+假设有一个创建新 `HTMLElement` 的函数，不传参数时默认创建 `Div`；也可以选择传入子元素列表。此前你需要将其定义为：
 
 ```ts
 declare function create(): Container<HTMLDivElement, HTMLDivElement[]>
@@ -130,7 +121,7 @@ declare function create<T extends HTMLElement, U extends HTMLElement>(
 ): Container<T, U[]>
 ```
 
-With generic parameter defaults we can reduce it to:
+有了泛型参数默认值，可以简化为：
 
 ```ts
 declare function create<T extends HTMLElement = HTMLDivElement, U = T[]>(
@@ -139,57 +130,47 @@ declare function create<T extends HTMLElement = HTMLDivElement, U = T[]>(
 ): Container<T, U>
 ```
 
-A generic parameter default follows the following rules:
+泛型参数默认值遵循以下规则：
 
-- A type parameter is deemed optional if it has a default.
-- Required type parameters must not follow optional type parameters.
-- Default types for a type parameter must satisfy the constraint for the type parameter, if it exists.
-- When specifying type arguments, you are only required to specify type arguments for the required type parameters. Unspecified type parameters will resolve to their default types.
-- If a default type is specified and inference cannot choose a candidate, the default type is inferred.
-- A class or interface declaration that merges with an existing class or interface declaration may introduce a default for an existing type parameter.
-- A class or interface declaration that merges with an existing class or interface declaration may introduce a new type parameter as long as it specifies a default.
+- 具有默认值的类型参数视为可选参数。
+- 必选类型参数不得位于可选类型参数之后。
+- 类型参数的默认类型必须满足该类型参数的约束（若有）。
+- 在指定类型实参时，只需为必选类型参数指定实参，未指定的类型参数将解析为其默认类型。
+- 若指定了默认类型，且类型推断无法确定候选类型，则使用默认类型。
+- 与现有类或接口声明合并的类或接口声明，可以为现有类型参数引入默认值。
+- 与现有类或接口声明合并的类或接口声明，可以引入新的类型参数，前提是该参数指定了默认值。
 
-## New `--strict` master option
+## 新增 `--strict` 主选项
 
-New checks added to TypeScript are often off by default to avoid breaking existing projects.
-While avoiding breakage is a good thing, this strategy has the drawback of making it increasingly complex to choose the highest level of type safety, and doing so requires explicit opt-in action on every TypeScript release.
-With the [`strict`](/tsconfig#strict) option it becomes possible to choose maximum type safety with the understanding that additional errors might be reported by newer versions of the compiler as improved type checking features are added.
+TypeScript 新增的检查项通常默认关闭，以避免破坏现有项目。尽管避免破坏性变更是好事，但这一策略带来的问题是：要达到最高级别的类型安全变得越来越复杂，且每次 TypeScript 发布都需要显式地逐一启用。通过 [`strict`](/tsconfig#strict) 选项，可以一键选择最高类型安全级别，同时也接受随着新版编译器改进类型检查而可能报告更多错误。
 
-The new [`strict`](/tsconfig#strict) compiler option represents the recommended setting of a number of type checking options. Specifically, specifying [`strict`](/tsconfig#strict) corresponds to specifying all of the following options (and may in the future include more options):
+新增的 [`strict`](/tsconfig#strict) 编译器选项代表了一组类型检查选项的推荐配置。具体来说，指定 [`strict`](/tsconfig#strict) 等同于同时指定以下所有选项（未来可能包含更多）：
 
 - [`strictNullChecks`](/tsconfig#strictNullChecks)
 - [`noImplicitAny`](/tsconfig#noImplicitAny)
 - [`noImplicitThis`](/tsconfig#noImplicitThis)
 - [`alwaysStrict`](/tsconfig#alwaysStrict)
 
-In exact terms, the [`strict`](/tsconfig#strict) option sets the _default_ value for the compiler options listed above.
-This means it is still possible to individually control the options.
-For example,
+从严格意义上说，[`strict`](/tsconfig#strict) 选项会设置以上编译器选项的_默认值_，各选项仍可单独控制。例如，
 
 ```sh
 --strict --noImplicitThis false
 ```
 
-has the effect of turning on all strict options _except_ the [`noImplicitThis`](/tsconfig#noImplicitThis) option. Using this scheme it is possible to express configurations consisting of _all_ strict options except some explicitly listed options.
-In other words, it is now possible to default to the highest level of type safety but opt out of certain checks.
+会启用所有严格选项，但_不包括_ [`noImplicitThis`](/tsconfig#noImplicitThis) 选项。通过这种方式，可以表达"启用所有严格选项，但明确排除某些选项"的配置——换句话说，现在可以默认使用最高类型安全级别，同时有选择地退出特定检查。
 
-Starting with TypeScript 2.3, the default `tsconfig.json` generated by `tsc --init` includes a `"strict": true` setting in the `"compilerOptions"` section.
-Thus, new projects started with `tsc --init` will by default have the highest level of type safety enabled.
+从 TypeScript 2.3 起，`tsc --init` 生成的默认 `tsconfig.json` 在 `"compilerOptions"` 部分包含了 `"strict": true` 配置。因此，通过 `tsc --init` 创建的新项目默认会启用最高级别的类型安全。
 
-## Enhanced `--init` output
+## 增强的 `--init` 输出
 
-Along with setting [`strict`](/tsconfig#strict) on by default, `tsc --init` has an enhanced output. Default `tsconfig.json` files generated by `tsc --init` now include a set of the common compiler options along with their descriptions commented out.
-Just un-comment the configuration you like to set to get the desired behavior; we hope the new output simplifies the setting up new projects and keeps configuration files readable as projects grow.
+除了默认启用 [`strict`](/tsconfig#strict) 外，`tsc --init` 的输出也得到了增强。`tsc --init` 生成的默认 `tsconfig.json` 文件现在包含一组常用编译器选项及其注释掉的描述说明。只需取消注释所需配置即可启用对应功能；新的输出旨在简化新项目的搭建流程，并在项目成长过程中保持配置文件的可读性。
 
-## Errors in .js files with `--checkJs`
+## 使用 `--checkJs` 检查 .js 文件中的错误
 
-By default the TypeScript compiler does not report any errors in .js files including using [`allowJs`](/tsconfig#allowJs).
-With TypeScript 2.3 type-checking errors can also be reported in `.js` files with [`checkJs`](/tsconfig#checkJs).
+默认情况下，TypeScript 编译器不会报告 .js 文件中的任何错误，即便使用了 [`allowJs`](/tsconfig#allowJs)。TypeScript 2.3 引入了 [`checkJs`](/tsconfig#checkJs) 选项，可以对 `.js` 文件进行类型检查并报告错误。
 
-You can skip checking some files by adding `// @ts-nocheck` comment to them; conversely you can choose to check only a few `.js` files by adding `// @ts-check` comment to them without setting [`checkJs`](/tsconfig#checkJs).
-You can also ignore errors on specific lines by adding `// @ts-ignore` on the preceding line.
+可以通过在文件中添加 `// @ts-nocheck` 注释来跳过特定文件的检查；反之，也可以不设置 [`checkJs`](/tsconfig#checkJs)，而仅在需要检查的 `.js` 文件中添加 `// @ts-check` 注释来启用检查。还可以在某行前加上 `// @ts-ignore` 来忽略该行的错误。
 
-`.js` files are still checked to ensure that they only include standard ECMAScript features; type annotations are only allowed in `.ts` files and are flagged as errors in `.js` files.
-JSDoc comments can be used to add some type information to your JavaScript code, see [JSDoc Support documentation](https://github.com/Microsoft/TypeScript/wiki/JSDoc-support-in-JavaScript) for more details about the supported JSDoc constructs.
+`.js` 文件的检查仍仅限于标准 ECMAScript 特性，类型注解只能用于 `.ts` 文件，在 `.js` 文件中会被标记为错误。可以使用 JSDoc 注释为 JavaScript 代码添加类型信息，详情请参阅 [JSDoc 支持文档](https://github.com/Microsoft/TypeScript/wiki/JSDoc-support-in-JavaScript)。
 
-See [Type checking JavaScript Files documentation](https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files) for more details.
+更多详情请参阅 [JavaScript 文件类型检查文档](https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files)。

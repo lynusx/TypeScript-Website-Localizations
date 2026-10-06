@@ -2,16 +2,16 @@
 title: TypeScript 1.8
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-1-8.html
-oneline: TypeScript 1.8 Release Notes
+oneline: TypeScript 1.8 发布说明
 ---
 
-## Type parameters as constraints
+## 类型参数作为约束
 
-With TypeScript 1.8 it becomes possible for a type parameter constraint to reference type parameters from the same type parameter list.
-Previously this was an error.
-This capability is usually referred to as [F-Bounded Polymorphism](https://wikipedia.org/wiki/Bounded_quantification#F-bounded_quantification).
+在 TypeScript 1.8 中，类型参数约束可以引用同一个类型参数列表中的类型参数。
+此前这会被报告为错误。
+该能力通常被称为 [F-Bounded 多态（F-Bounded Polymorphism）](https://wikipedia.org/wiki/Bounded_quantification#F-bounded_quantification)。
 
-##### Example
+##### 示例
 
 ```ts
 function assign<T extends U, U>(target: T, source: U): T {
@@ -26,22 +26,22 @@ assign(x, { b: 10, d: 20 })
 assign(x, { e: 0 }) // Error
 ```
 
-## Control flow analysis errors
+## 控制流分析错误
 
-TypeScript 1.8 introduces control flow analysis to help catch common errors that users tend to run into.
-Read on to get more details, and check out these errors in action:
+TypeScript 1.8 引入了控制流分析，帮助捕获开发者常犯的错误。
+请继续阅读以了解更多细节，并查看这些错误的实际演示：
 
 ![cfa](https://cloud.githubusercontent.com/assets/8052307/5210657/c5ae0f28-7585-11e4-97d8-86169ef2a160.gif)
 
-### Unreachable code
+### 无法执行的代码（Unreachable code）
 
-Statements guaranteed to not be executed at run time are now correctly flagged as unreachable code errors.
-For instance, statements following unconditional `return`, `throw`, `break` or `continue` statements are considered unreachable.
-Use [`allowUnreachableCode`](/tsconfig#allowUnreachableCode) to disable unreachable code detection and reporting.
+在运行时确定永远不会执行的语句现在会被正确标记为不可达代码（unreachable code）错误。
+例如，跟在无条件的 `return`、`throw`、`break` 或 `continue` 语句之后的语句均被视为不可达。
+可以使用 [`allowUnreachableCode`](/tsconfig#allowUnreachableCode) 来禁用不可达代码的检测与报错。
 
-##### Example
+##### 示例
 
-Here's a simple example of an unreachable code error:
+下面是一个不可达代码错误的简单示例：
 
 ```ts
 function f(x) {
@@ -55,7 +55,7 @@ function f(x) {
 }
 ```
 
-A more common error that this feature catches is adding a newline after a `return` statement:
+该特性捕获的更常见错误是在 `return` 语句之后添加换行：
 
 ```ts
 function f() {
@@ -66,15 +66,15 @@ function f() {
 }
 ```
 
-Since JavaScript automatically terminates the `return` statement at the end of the line, the object literal becomes a block.
+由于 JavaScript 会在行尾自动插入分号（ASI）来终结 `return` 语句，因此后面的对象字面量变成了一个独立的代码块。
 
-### Unused labels
+### 未使用的标签（Unused labels）
 
-Unused labels are also flagged.
-Just like unreachable code checks, these are turned on by default;
-use [`allowUnusedLabels`](/tsconfig#allowUnusedLabels) to stop reporting these errors.
+未使用的标签也会被标记报错。
+与不可达代码检查一样，这些检查默认开启；
+可以使用 [`allowUnusedLabels`](/tsconfig#allowUnusedLabels) 来停止报告此类错误。
 
-##### Example
+##### 示例
 
 ```ts
 loop: while (x > 0) {
@@ -83,13 +83,13 @@ loop: while (x > 0) {
 }
 ```
 
-### Implicit returns
+### 隐式返回（Implicit returns）
 
-Functions with code paths that do not return a value in JS implicitly return `undefined`.
-These can now be flagged by the compiler as implicit returns.
-The check is turned _off_ by default; use [`noImplicitReturns`](/tsconfig#noImplicitReturns) to turn it on.
+在 JavaScript 中，若函数存在未返回值的代码路径，则会隐式返回 `undefined`。
+现在编译器可以将这些情况标记为隐式返回错误。
+该检查默认_关闭_；可以使用 [`noImplicitReturns`](/tsconfig#noImplicitReturns) 将其开启。
 
-##### Example
+##### 示例
 
 ```ts
 function f(x) {
@@ -102,14 +102,14 @@ function f(x) {
 }
 ```
 
-### Case clause fall-throughs
+### case 子句落空贯穿（Case clause fall-throughs）
 
-TypeScript can reports errors for fall-through cases in switch statement where the case clause is non-empty.
-This check is turned _off_ by default, and can be enabled using [`noFallthroughCasesInSwitch`](/tsconfig#noFallthroughCasesInSwitch).
+当 switch 语句中非空的 case 子句发生落空贯穿（fall-through）时，TypeScript 可以对其报告错误。
+该检查默认_关闭_，可以通过 [`noFallthroughCasesInSwitch`](/tsconfig#noFallthroughCasesInSwitch) 启用。
 
-##### Example
+##### 示例
 
-With [`noFallthroughCasesInSwitch`](/tsconfig#noFallthroughCasesInSwitch), this example will trigger an error:
+在开启 [`noFallthroughCasesInSwitch`](/tsconfig#noFallthroughCasesInSwitch) 时，以下示例将触发错误：
 
 ```ts
 switch (x % 2) {
@@ -122,7 +122,7 @@ switch (x % 2) {
 }
 ```
 
-However, in the following example, no error will be reported because the fall-through case is empty:
+但在以下示例中不会报告错误，因为贯穿的 case 子句为空：
 
 ```ts
 switch (x % 3) {
@@ -137,10 +137,10 @@ switch (x % 3) {
 }
 ```
 
-## Function Components in React
+## React 中的函数组件（Function Components）
 
-TypeScript now supports [Function components](https://reactjs.org/docs/components-and-props.html#functional-and-class-components).
-These are lightweight components that easily compose other components:
+TypeScript 现在支持[函数组件（Function components）](https://reactjs.org/docs/components-and-props.html#functional-and-class-components)。
+这是一种能够轻松组合其他组件的轻量级组件：
 
 ```ts
 // Use parameter destructuring and defaults for easy definition of 'props' type
@@ -150,34 +150,34 @@ const Greeter = ({ name = "world" }) => <div>Hello, {name}!</div>;
 let example = <Greeter name="TypeScript 1.8" />;
 ```
 
-For this feature and simplified props, be sure to use the [latest version of react.d.ts](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/react/index.d.ts).
+为了使用此功能以及简化的 props，请务必使用[最新版本的 react.d.ts](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/react/index.d.ts)。
 
-## Simplified `props` type management in React
+## 简化 React 中的 `props` 类型管理
 
-In TypeScript 1.8 with the latest version of react.d.ts (see above), we've also greatly simplified the declaration of `props` types.
+在 TypeScript 1.8 中，配合最新版本的 react.d.ts（参见上文），我们还大幅简化了 `props` 类型的声明。
 
-Specifically:
+具体而言：
 
-- You no longer need to either explicitly declare `ref` and `key` or `extend React.Props`
-- The `ref` and `key` properties will appear with correct types on all components
-- The `ref` property is correctly disallowed on instances of Stateless Function components
+- 不再需要显式声明 `ref` 和 `key`，也不需要 `extend React.Props`
+- `ref` 和 `key` 属性将在所有组件上以正确的类型出现
+- 无状态函数式组件（Stateless Function components）的实例上会正确禁用 `ref` 属性
 
-## Augmenting global/module scope from modules
+## 从模块中扩充全局/模块作用域
 
-Users can now declare any augmentations that they want to make, or that any other consumers already have made, to an existing module.
-Module augmentations look like plain old ambient module declarations (i.e. the `declare module "foo" { }` syntax), and are directly nested either your own modules, or in another top level ambient external module.
+现在，用户可以对现有模块声明自己需要的扩充增强，或者声明其他使用者已经做出的扩充。
+模块补充增强（Module augmentation）的形式与传统的外部环境模块声明相同（即 `declare module "foo" { }` 语法），可以直接嵌套在你的模块内部，或者嵌套在另一个顶层外部环境模块中。
 
-Furthermore, TypeScript also has the notion of _global_ augmentations of the form `declare global { }`.
-This allows modules to augment global types such as `Array` if necessary.
+此外，TypeScript 还引入了形如 `declare global { }` 的_全局_补充增强机制。
+这允许模块在必要时扩充像 `Array` 这样的全局类型。
 
-The name of a module augmentation is resolved using the same set of rules as module specifiers in `import` and `export` declarations.
-The declarations in a module augmentation are merged with any existing declarations the same way they would if they were declared in the same file.
+模块补充增强的名称解析遵循与 `import` 和 `export` 声明中的模块标识符完全相同的规则。
+模块补充增强中的声明会与现有的声明合并，就像它们在同一个文件中声明一样。
 
-Neither module augmentations nor global augmentations can add new items to the top level scope - they can only "patch" existing declarations.
+无论是模块补充增强还是全局补充增强，都不能向顶层作用域添加全新的实体——它们只能对现有的声明进行“打补丁”（patch）。
 
-##### Example
+##### 示例
 
-Here `map.ts` can declare that it will internally patch the `Observable` type from `observable.ts` and add the `map` method to it.
+在下面的代码中，`map.ts` 可以声明它在内部为来自 `observable.ts` 的 `Observable` 类型打补丁，并为其添加 `map` 方法：
 
 ```ts
 // observable.ts
@@ -212,9 +212,9 @@ let o: Observable<number>
 o.map((x) => x.toFixed())
 ```
 
-Similarly, the global scope can be augmented from modules using a `declare global` declarations:
+类似地，也可以在模块中使用 `declare global` 声明来扩充全局作用域：
 
-##### Example
+##### 示例
 
 ```ts
 // Ensure this is treated as a module.
@@ -231,10 +231,10 @@ Array.prototype.mapToNumbers = function () {
 }
 ```
 
-## String literal types
+## 字符串字面量类型（String literal types）
 
-It's not uncommon for an API to expect a specific set of strings for certain values.
-For instance, consider a UI library that can move elements across the screen while controlling the ["easing" of the animation.](https://wikipedia.org/wiki/Inbetweening)
+API 期望某些特定字符串集合作为参数值的情况非常普遍。
+例如，考虑一个 UI 库，它可以在屏幕上移动元素，同时控制动画的[“缓动”（easing）](https://wikipedia.org/wiki/Inbetweening)：
 
 ```ts
 declare class UIElement {
@@ -248,18 +248,18 @@ interface AnimationOptions {
 }
 ```
 
-However, this is error prone - there is nothing stopping a user from accidentally misspelling one of the valid easing values:
+然而这种做法很容易出错——无法阻止用户不小心拼错合法的缓动值：
 
 ```ts
 // No errors
 new UIElement().animate({ deltaX: 100, deltaY: 100, easing: 'ease-inout' })
 ```
 
-With TypeScript 1.8, we've introduced string literal types.
-These types are written the same way string literals are, but in type positions.
+在 TypeScript 1.8 中，我们引入了字符串字面量类型。
+这些类型的书写方式与字符串字面量相同，但出现在类型位置。
 
-Users can now ensure that the type system will catch such errors.
-Here's our new `AnimationOptions` using string literal types:
+开发者现在可以确保类型系统能够捕获此类错误。
+以下是使用字符串字面量类型重写的 `AnimationOptions`：
 
 ```ts
 interface AnimationOptions {
@@ -272,12 +272,12 @@ interface AnimationOptions {
 new UIElement().animate({ deltaX: 100, deltaY: 100, easing: 'ease-inout' })
 ```
 
-## Improved union/intersection type inference
+## 联合/交叉类型的类型推断增强
 
-TypeScript 1.8 improves type inference involving source and target sides that are both union or intersection types.
-For example, when inferring from `string | string[]` to `string | T`, we reduce the types to `string[]` and `T`, thus inferring `string[]` for `T`.
+TypeScript 1.8 改进了在源类型和目标类型均为联合类型或交叉类型时的类型推断。
+例如，当从 `string | string[]` 推断到 `string | T` 时，我们会将类型消减为 `string[]` 和 `T`，从而将 `T` 推断为 `string[]`。
 
-##### Example
+##### 示例
 
 ```ts
 type Maybe<T> = T | void
@@ -307,13 +307,13 @@ function test2(x: Maybe<number>) {
 }
 ```
 
-## Concatenate `AMD` and `System` modules with `--outFile`
+## 使用 `--outFile` 拼合打包 `AMD` 和 `System` 模块
 
-Specifying [`outFile`](/tsconfig#outFile) in conjunction with `--module amd` or `--module system` will concatenate all modules in the compilation into a single output file containing multiple module closures.
+将 [`outFile`](/tsconfig#outFile) 与 `--module amd` 或 `--module system` 结合指定时，会将编译中的所有模块拼合打包到一个包含多个模块闭包的单一输出文件中。
 
-A module name will be computed for each module based on its relative location to [`rootDir`](/tsconfig#rootDir).
+每个模块的模块名称将根据其相对于 [`rootDir`](/tsconfig#rootDir) 的相对路径进行计算。
 
-##### Example
+##### 示例
 
 ```ts
 // file src/a.ts
@@ -330,7 +330,7 @@ export function createB() {
 }
 ```
 
-Results in:
+编译输出如下：
 
 ```js
 define('lib/b', ['require', 'exports'], function (require, exports) {
@@ -349,20 +349,20 @@ define('a', ['require', 'exports', 'lib/b'], function (require, exports, B) {
 })
 ```
 
-## Support for `default` import interop with SystemJS
+## 支持与 SystemJS 的 `default` 导入互操作
 
-Module loaders like SystemJS wrap CommonJS modules and expose them as a `default` ES6 import. This makes it impossible to share the definition files between the SystemJS and CommonJS implementation of the module as the module shape looks different based on the loader.
+像 SystemJS 这样的模块加载器会包装 CommonJS 模块并将其作为 `default` ES6 导入公开。这导致无法在模块的 SystemJS 和 CommonJS 实现之间共享定义文件，因为根据加载器的不同，模块的形态看起来有所差异。
 
-Setting the new compiler flag [`allowSyntheticDefaultImports`](/tsconfig#allowSyntheticDefaultImports) indicates that the module loader performs some kind of synthetic default import member creation not indicated in the imported .ts or .d.ts. The compiler will infer the existence of a `default` export that has the shape of the entire module itself.
+设置新的编译器标志 [`allowSyntheticDefaultImports`](/tsconfig#allowSyntheticDefaultImports) 表明模块加载器会执行某种合成默认导入成员的创建操作，而该操作在导入的 .ts 或 .d.ts 中未作说明。编译器将推断存在一个具有整个模块本身形态的 `default` 导出。
 
-System modules have this flag on by default.
+System 模块默认开启此标志。
 
-## Allow captured `let`/`const` in loops
+## 允许在循环中捕获 `let`/`const`
 
-Previously an error, now supported in TypeScript 1.8.
-`let`/`const` declarations within loops and captured in functions are now emitted to correctly match `let`/`const` freshness semantics.
+此前这会被视为错误，而在 TypeScript 1.8 中已得到支持。
+在循环内部声明并被函数捕获的 `let`/`const` 声明，现在在编译输出时能够正确符合 `let`/`const` 的新鲜度语义（freshness semantics）。
 
-##### Example
+##### 示例
 
 ```ts
 let list = []
@@ -373,7 +373,7 @@ for (let i = 0; i < 5; i++) {
 list.forEach((f) => console.log(f()))
 ```
 
-is compiled to:
+编译输出为：
 
 ```js
 var list = []
@@ -390,7 +390,7 @@ list.forEach(function (f) {
 })
 ```
 
-And results in
+运行结果为：
 
 ```cmd
 0
@@ -400,16 +400,16 @@ And results in
 4
 ```
 
-## Improved checking for `for..in` statements
+## 改进对 `for..in` 语句的检查
 
-Previously the type of a `for..in` variable is inferred to `any`; that allowed the compiler to ignore invalid uses within the `for..in` body.
+此前，`for..in` 变量的类型会被推断为 `any`；这导致编译器会忽略 `for..in` 循环体内的无效使用。
 
-Starting with TypeScript 1.8:
+从 TypeScript 1.8 开始：
 
-- The type of a variable declared in a `for..in` statement is implicitly `string`.
-- When an object with a numeric index signature of type `T` (such as an array) is indexed by a `for..in` variable of a containing `for..in` statement for an object _with_ a numeric index signature and _without_ a string index signature (again such as an array), the value produced is of type `T`.
+- 在 `for..in` 语句中声明的变量类型隐式为 `string`。
+- 当一个带有 `T` 类型的数字索引签名的对象（例如数组），被所在 `for..in` 语句中带有数字索引签名且_不带_字符串索引签名的对象的 `for..in` 变量进行索引时（同样例如数组），所产生的值类型为 `T`。
 
-##### Example
+##### 示例
 
 ```ts
 var a: MyObject[]
@@ -419,27 +419,27 @@ for (var x in a) {
 }
 ```
 
-## Modules are now emitted with a `"use strict";` prologue
+## 生成的模块现在包含 `"use strict";` 序言
 
-Modules were always parsed in strict mode as per ES6, but for non-ES6 targets this was not respected in the generated code. Starting with TypeScript 1.8, emitted modules are always in strict mode. This shouldn't have any visible changes in most code as TS considers most strict mode errors as errors at compile time, but it means that some things which used to silently fail at runtime in your TS code, like assigning to `NaN`, will now loudly fail. You can reference the [MDN Article](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Strict_mode) on strict mode for a detailed list of the differences between strict mode and non-strict mode.
+根据 ES6 规范，模块始终在严格模式下进行解析，但对于非 ES6 目标，生成代码中并未遵循这一点。从 TypeScript 1.8 开始，生成的模块始终处于严格模式。对于大多数代码而言这应该不会产生任何可见的变化，因为 TypeScript 在编译期就已经将大多数严格模式错误视为编译错误；但这意味着在以前的 TS 代码中某些在运行时静默失败的操作（例如对 `NaN` 进行赋值），现在将会直接抛出异常。有关严格模式与非严格模式差异的详细列表，请参阅关于严格模式的 [MDN 文章](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Strict_mode)。
 
-## Including `.js` files with `--allowJs`
+## 允许通过 `--allowJs` 包含 JavaScript 文件
 
-Often there are external source files in your project that may not be authored in TypeScript.
-Alternatively, you might be in the middle of converting a JS code base into TS, but still want to bundle all your JS code into a single file with the output of your new TS code.
+项目中经常会包含非 TypeScript 编写的外部源文件。
+或者，你可能正处于将 JS 代码库转换为 TS 的过渡阶段，但仍希望将所有 JS 代码与新 TS 代码的输出打包合并为一个单一文件。
 
-`.js` files are now allowed as input to `tsc`.
-The TypeScript compiler checks the input `.js` files for syntax errors, and emits valid output based on the [`target`](/tsconfig#target) and [`module`](/tsconfig#module) flags.
-The output can be combined with other `.ts` files as well.
-Source maps are still generated for `.js` files just like with `.ts` files.
+现在允许将 `.js` 文件作为 `tsc` 的输入。
+TypeScript 编译器会检查输入的 `.js` 文件是否存在语法错误，并根据 [`target`](/tsconfig#target) 和 [`module`](/tsconfig#module) 标志生成合法的输出。
+输出结果也可以与其他 `.ts` 文件结合在一起。
+同 `.ts` 文件一样，编译器也会为 `.js` 文件生成 source map。
 
-## Custom JSX factories using `--reactNamespace`
+## 使用 `--reactNamespace` 自定义 JSX 工厂
 
-Passing `--reactNamespace <JSX factory Name>` along with `--jsx react` allows for using a different JSX factory from the default `React`.
+将 `--reactNamespace <JSX 工厂名称>` 与 `--jsx react` 一起传递，允许使用不同于默认 `React` 的 JSX 工厂。
 
-The new factory name will be used to call `createElement` and `__spread` functions.
+新的工厂名称将用于调用 `createElement` 和 `__spread` 函数。
 
-##### Example
+##### 示例
 
 ```ts
 import { jsxFactory } from "jsxFactory";
@@ -447,13 +447,13 @@ import { jsxFactory } from "jsxFactory";
 var div = <div>Hello JSX!</div>;
 ```
 
-Compiled with:
+使用以下命令编译：
 
 ```shell
 tsc --jsx react --reactNamespace jsxFactory --m commonJS
 ```
 
-Results in:
+编译输出如下：
 
 ```js
 'use strict'
@@ -461,14 +461,14 @@ var jsxFactory_1 = require('jsxFactory')
 var div = jsxFactory_1.jsxFactory.createElement('div', null, 'Hello JSX!')
 ```
 
-## `this`-based type guards
+## 基于 `this` 的类型守卫
 
-TypeScript 1.8 extends [user-defined type guard functions](./typescript-1.6.html#user-defined-type-guard-functions) to class and interface methods.
+TypeScript 1.8 将[用户自定义类型守卫函数](./typescript-1.6.html#user-defined-type-guard-functions)扩展到了类和接口的方法中。
 
-`this is T` is now valid return type annotation for methods in classes and interfaces.
-When used in a type narrowing position (e.g. `if` statement), the type of the call expression target object would be narrowed to `T`.
+`this is T` 现在是类和接口中方法的有效返回类型注解。
+当用于类型收窄位置（例如 `if` 语句）时，调用表达式目标对象的类型将被收窄为 `T`。
 
-##### Example
+##### 示例
 
 ```ts
 class FileSystemObject {
@@ -512,49 +512,49 @@ if (fso.isFile()) {
 }
 ```
 
-## Official TypeScript NuGet package
+## 官方 TypeScript NuGet 软件包
 
-Starting with TypeScript 1.8, official NuGet packages are available for the TypeScript Compiler (`tsc.exe`) as well as the MSBuild integration (`Microsoft.TypeScript.targets` and `Microsoft.TypeScript.Tasks.dll`).
+从 TypeScript 1.8 开始，TypeScript 编译器（`tsc.exe`）以及 MSBuild 集成组件（`Microsoft.TypeScript.targets` 和 `Microsoft.TypeScript.Tasks.dll`）均已提供官方 NuGet 软件包。
 
-Stable packages are available here:
+稳定版本软件包可在此处获取：
 
 - [Microsoft.TypeScript.Compiler](https://www.nuget.org/packages/Microsoft.TypeScript.Compiler/)
 - [Microsoft.TypeScript.MSBuild](https://www.nuget.org/packages/Microsoft.TypeScript.MSBuild/)
 
-Also, a nightly NuGet package to match the [nightly npm package](http://blogs.msdn.com/b/typescript/archive/2015/07/27/introducing-typescript-nightlies.aspx) is available on [myget](https://myget.org):
+此外，匹配 [npm 每夜构建版本（nightly npm package）](http://blogs.msdn.com/b/typescript/archive/2015/07/27/introducing-typescript-nightlies.aspx)的每夜构建 NuGet 软件包也可以在 [myget](https://myget.org) 上获取：
 
 - [TypeScript-Preview](https://www.myget.org/gallery/typescript-preview)
 
-## Prettier error messages from `tsc`
+## 更美观的 `tsc` 错误消息输出
 
-We understand that a ton of monochrome output can be a little difficult on the eyes.
-Colors can help discern where a message starts and ends, and these visual clues are important when error output gets overwhelming.
+我们深知大量单色文本输出会让眼睛感到疲劳。
+色彩有助于识别消息的起始与结束位置，当错误输出非常庞大时，这些视觉线索尤为重要。
 
-By just passing the [`pretty`](/tsconfig#pretty) command line option, TypeScript gives a more colorful output with context about where things are going wrong.
+只需传递 [`pretty`](/tsconfig#pretty) 命令行选项，TypeScript 就会提供更加丰富多彩的输出，并附带出错位置的相关上下文信息。
 
 ![Showing off pretty error messages in ConEmu](https://raw.githubusercontent.com/wiki/Microsoft/TypeScript/images/new-in-typescript/pretty01.png)
 
-## Colorization of JSX code in VS 2015
+## VS 2015 中 JSX 代码的高亮着色
 
-With TypeScript 1.8, JSX tags are now classified and colorized in Visual Studio 2015.
+在 TypeScript 1.8 中，Visual Studio 2015 现已支持对 JSX 标签进行分类与语法高亮着色。
 
 ![jsx](https://cloud.githubusercontent.com/assets/8052307/12271404/b875c502-b90f-11e5-93d8-c6740be354d1.png)
 
-The classification can be further customized by changing the font and color settings for the `VB XML` color and font settings through `Tools`->`Options`->`Environment`->`Fonts and Colors` page.
+通过 `工具（Tools）` -> `选项（Options）` -> `环境（Environment）` -> `字体和颜色（Fonts and Colors）` 页面，修改 `VB XML` 的颜色与字体设置，可以进一步自定义此类分类的样式。
 
-## The `--project` (`-p`) flag can now take any file path
+## `--project`（`-p`）参数现在可以接受任意文件路径
 
-The `--project` command line option originally could only take paths to a folder containing a `tsconfig.json`.
-Given the different scenarios for build configurations, it made sense to allow `--project` to point to any other compatible JSON file.
-For instance, a user might want to target ES2015 with CommonJS modules for Node 5, but ES5 with AMD modules for the browser.
-With this new work, users can easily manage two separate build targets using `tsc` alone without having to perform hacky workarounds like placing `tsconfig.json` files in separate directories.
+`--project` 命令行选项原本只能接受包含 `tsconfig.json` 的文件夹路径。
+鉴于构建配置的不同使用场景，允许 `--project` 指向任何其他兼容的 JSON 文件是十分合理的。
+例如，用户可能希望针对 Node 5 将编译目标设为 ES2015 并采用 CommonJS 模块，而针对浏览器将编译目标设为 ES5 并采用 AMD 模块。
+借助这项新改进，用户仅需使用 `tsc` 即可轻松管理两个独立的构建目标，而无需采用将 `tsconfig.json` 文件放在不同目录等变通方法。
 
-The old behavior still remains the same if given a directory - the compiler will try to find a file in the directory named `tsconfig.json`.
+如果传入的是目录，旧行为依然保持不变——编译器会尝试在该目录中查找名为 `tsconfig.json` 的文件。
 
-## Allow comments in tsconfig.json
+## 支持在 tsconfig.json 中编写注释
 
-It's always nice to be able to document your configuration!
-`tsconfig.json` now accepts single and multi-line comments.
+能够在配置文件中添加说明文档总是一件乐事！
+`tsconfig.json` 现在支持单行和多行注释。
 
 ```json tsconfig
 {
@@ -569,38 +569,38 @@ It's always nice to be able to document your configuration!
 }
 ```
 
-## Support output to IPC-driven files
+## 支持输出到 IPC 驱动的文件
 
-TypeScript 1.8 allows users to use the [`outFile`](/tsconfig#outFile) argument with special file system entities like named pipes, devices, etc.
+TypeScript 1.8 允许用户将 [`outFile`](/tsconfig#outFile) 参数与特殊文件系统实体（如命名管道、设备文件等）配合使用。
 
-As an example, on many Unix-like systems, the standard output stream is accessible by the file `/dev/stdout`.
+例如，在许多类 Unix 系统上，可以通过文件 `/dev/stdout` 访问标准输出流。
 
 ```shell
 tsc foo.ts --outFile /dev/stdout
 ```
 
-This can be used to pipe output between commands as well.
+这也可以用于在命令之间通过管道传递输出。
 
-As an example, we can pipe our emitted JavaScript into a pretty printer like [pretty-js](https://www.npmjs.com/package/pretty-js):
+例如，我们可以将生成的 JavaScript 管道传输到像 [pretty-js](https://www.npmjs.com/package/pretty-js) 这样的美化输出工具中：
 
 ```shell
 tsc foo.ts --outFile /dev/stdout | pretty-js
 ```
 
-## Improved support for `tsconfig.json` in Visual Studio 2015
+## 改进 Visual Studio 2015 对 `tsconfig.json` 的支持
 
-TypeScript 1.8 allows `tsconfig.json` files in all project types.
-This includes ASP.NET v4 projects, _Console Application_, and the _Html Application with TypeScript_ project types.
-Further, you are no longer limited to a single `tsconfig.json` file but can add multiple, and each will be built as part of the project.
-This allows you to separate the configuration for different parts of your application without having to use multiple different projects.
+TypeScript 1.8 允许在所有项目类型中使用 `tsconfig.json` 文件。
+这包括 ASP.NET v4 项目、_控制台应用程序（Console Application）_ 以及 _带有 TypeScript 的 Html 应用程序（Html Application with TypeScript）_ 项目类型。
+此外，你不再局限于单个 `tsconfig.json` 文件，而是可以添加多个，每个文件都会作为项目的一部分进行构建。
+这使你可以为应用程序的不同部分拆分配置，而无需创建多个不同的项目。
 
 ![Showing off tsconfig.json in Visual Studio](https://raw.githubusercontent.com/wiki/Microsoft/TypeScript/images/new-in-typescript/tsconfig-in-vs.png)
 
-We also disable the project properties page when you add a `tsconfig.json` file.
-This means that all configuration changes have to be made in the `tsconfig.json` file itself.
+当你添加 `tsconfig.json` 文件后，我们还会禁用项目属性页面。
+这意味着所有配置更改都必须直接在 `tsconfig.json` 文件本身中进行。
 
-### A couple of limitations
+### 一些限制说明
 
-- If you add a `tsconfig.json` file, TypeScript files that are not considered part of that context are not compiled.
-- Apache Cordova Apps still have the existing limitation of a single `tsconfig.json` file, which must be in either the root or the `scripts` folder.
-- There is no template for `tsconfig.json` in most project types.
+- 如果添加了 `tsconfig.json` 文件，则不属于该上下文的 TypeScript 文件将不会被编译。
+- Apache Cordova 应用仍然存在现有的一项限制：只能拥有单个 `tsconfig.json` 文件，且该文件必须位于根目录或 `scripts` 文件夹中。
+- 大多数项目类型中并未提供 `tsconfig.json` 的项目模板。

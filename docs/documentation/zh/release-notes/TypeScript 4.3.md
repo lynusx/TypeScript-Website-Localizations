@@ -2,14 +2,14 @@
 title: TypeScript 4.3
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-4-3.html
-oneline: TypeScript 4.3 Release Notes
+oneline: TypeScript 4.3 发布说明
 ---
 
-## Separate Write Types on Properties
+## 属性上独立的读写类型
 
-In JavaScript, it's pretty common for APIs to convert values that are passed in before storing them.
-This often happens with getters and setters too.
-For example, let's imagine we've got a class with a setter that always converts a value into a `number` before saving it in a private field.
+在 JavaScript 中，API 在存储传入的值之前对其进行转换是非常普遍的做法。
+这也经常发生在 getter 和 setter 中。
+例如，设想我们有一个类，它的 setter 总是会在将值保存到私有字段之前先将其转换为 `number`。
 
 ```js twoslash
 class Thing {
@@ -32,11 +32,11 @@ class Thing {
 }
 ```
 
-How would we type this JavaScript code in TypeScript?
-Well, technically we don't have to do anything special here - TypeScript can look at this with no explicit types and can figure out that `size` is a number.
+我们该如何在 TypeScript 中为这段 JavaScript 代码定义类型？
+从技术上讲，我们在这里无需做任何特殊处理——TypeScript 即使在没有显式类型的情况下也能推断出 `size` 是一个数字。
 
-The problem is that `size` allows you to assign more than just `number`s to it.
-We could get around this by saying that `size` has the type `unknown` or `any` like in this snippet:
+问题在于，`size` 允许被赋予除 `number` 之外的其他类型。
+我们可以通过将 `size` 声明为 `unknown` 或 `any` 来变通处理，如下所示：
 
 ```ts
 class Thing {
@@ -47,10 +47,10 @@ class Thing {
 }
 ```
 
-But that's no good - `unknown` forces people reading `size` to do a type assertion, and `any` won't catch any mistakes.
-If we really want to model APIs that convert values, previous versions of TypeScript forced us to pick between being precise (which makes reading values easier, and writing harder) and being permissive (which makes writing values easier, and reading harder).
+但这并不理想——`unknown` 会迫使读取 `size` 的人进行类型断言，而 `any` 则无法捕获任何错误。
+如果我们确实想为此类转换值的 API 建模，在先前版本的 TypeScript 中，我们不得不在“严格精确”（读取更方便，写入更困难）和“宽容宽泛”（写入更方便，读取更困难）之间做出二选一的妥协。
 
-That's why TypeScript 4.3 allows you to specify types for reading and writing to properties.
+为此，TypeScript 4.3 允许为属性的读取和写入分别指定类型。
 
 ```ts twoslash
 class Thing {
@@ -74,8 +74,8 @@ class Thing {
 }
 ```
 
-In the above example, our `set` accessor takes a broader set of types (`string`s, `boolean`s, and `number`s), but our `get` accessor always guarantees it will be a `number`.
-Now we can finally assign other types to these properties with no errors!
+在上面的示例中，我们的 `set` 访问器接受更宽泛的类型集合（`string`、`boolean` 和 `number`），而我们的 `get` 访问器始终保证返回 `number`。
+现在，我们终于可以毫无错误地向这些属性赋值其他类型了！
 
 ```ts twoslash
 class Thing {
@@ -109,11 +109,11 @@ thing.size = 42
 let mySize: number = thing.size
 ```
 
-When considering how two properties with the same name relate to each other, TypeScript will only use the "reading" type (e.g. the type on the `get` accessor above).
-"Writing" types are only considered when directly writing to a property.
+当判断同名属性之间的类型关系时，TypeScript 只会使用“读取”类型（例如上面 `get` 访问器上的类型）。
+“写入”类型仅在直接向属性赋值时才会被考量。
 
-Keep in mind, this isn't a pattern that's limited to classes.
-You can write getters and setters with different types in object literals.
+需要注意的是，这种模式并不局限于类。
+你也可以在对象字面量中编写具有不同类型的 getter 和 setter。
 
 ```ts
 function makeThing(): Thing {
@@ -137,7 +137,7 @@ function makeThing(): Thing {
 }
 ```
 
-In fact, we've added syntax to interfaces/object types to support different reading/writing types on properties.
+事实上，我们还向接口和对象类型添加了语法，以支持属性上不同的读取/写入类型。
 
 ```ts
 // Now valid!
@@ -147,18 +147,18 @@ interface Thing {
 }
 ```
 
-One limitation of using different types for reading and writing properties is that the type for reading a property has to be assignable to the type that you're writing.
-In other words, the getter type has to be assignable to the setter.
-This ensures some level of consistency, so that a property is always assignable to itself.
+为属性读取和写入使用不同类型的唯一限制是：用于读取属性的类型必须能够赋值给写入属性的类型。
+换言之，getter 的类型必须可以赋值给 setter 的类型。
+这确保了一定程度的一致性，使得属性始终可以赋值给自身。
 
-For more information on this feature, take a look at [the implementing pull request](https://github.com/microsoft/TypeScript/pull/42425).
+欲了解有关该特性的更多信息，请查看[实现该特性的 Pull Request](https://github.com/microsoft/TypeScript/pull/42425)。
 
-## `override` and the `--noImplicitOverride` Flag
+## `override` 关键字与 `--noImplicitOverride` 选项
 
-When extending classes in JavaScript, the language makes it super easy (pun intended) to override methods - but unfortunately, there are some mistakes that you can run into.
+在 JavaScript 中继承类时，重写方法是件轻而易举的事（这里带有 super 的双关）——但遗憾的是，你可能会遇到一些易犯的错误。
 
-One big one is missing renames.
-For example, take the following classes:
+其中最主要的一个就是重命名时遗漏了同步更新。
+例如以下类：
 
 ```ts
 class SomeComponent {
@@ -180,8 +180,8 @@ class SpecializedComponent extends SomeComponent {
 }
 ```
 
-`SpecializedComponent` subclasses `SomeComponent`, and overrides the `show` and `hide` methods.
-What happens if someone decides to rip out `show` and `hide` and replace them with a single method?
+`SpecializedComponent` 继承自 `SomeComponent`，并重写了 `show` 和 `hide` 方法。
+如果有人决定移除 `show` 和 `hide`，并将其替换为单一方法，会发生什么？
 
 ```diff
  class SomeComponent {
@@ -205,12 +205,12 @@ What happens if someone decides to rip out `show` and `hide` and replace them wi
  }
 ```
 
-_Oh no!_
-Our `SpecializedComponent` didn't get updated.
-Now it's just adding these two useless `show` and `hide` methods that probably won't get called.
+_糟糕！_
+我们的 `SpecializedComponent` 没有得到更新。
+现在它平白添加了这两个可能永远不会被调用的无用方法 `show` 和 `hide`。
 
-Part of the issue here is that a user can't make it clear whether they meant to add a new method, or to override an existing one.
-That's why TypeScript 4.3 adds the `override` keyword.
+造成该问题的部分原因在于，用户无法明确表明自己是打算添加一个新方法，还是要重写已有的方法。
+因此，TypeScript 4.3 增加了 `override` 关键字。
 
 ```ts
 class SpecializedComponent extends SomeComponent {
@@ -223,7 +223,7 @@ class SpecializedComponent extends SomeComponent {
 }
 ```
 
-When a method is marked with `override`, TypeScript will always make sure that a method with the same name exists in a the base class.
+当一个方法被标记为 `override` 时，TypeScript 会始终确保基类中存在同名的方法。
 
 ```ts twoslash
 // @noImplicitOverride
@@ -238,9 +238,9 @@ class SpecializedComponent extends SomeComponent {
 }
 ```
 
-This is a big improvement, but it doesn't help if you _forget_ to write `override` on a method - and that's a big mistake users can run into also.
+这是一项重大改进，但如果你*忘记*在方法上添加 `override`，它就无能为力了——而这也正是用户经常会踩到的一个大坑。
 
-For example, you might accidentally "trample over" a method that exists in a base class without realizing it.
+例如，你可能会在不知情的情况下意外“覆盖”了基类中已存在的方法：
 
 ```ts
 class Base {
@@ -258,18 +258,18 @@ class Derived extends Base {
 }
 ```
 
-That's why TypeScript 4.3 _also_ provides a new [`noImplicitOverride`](/tsconfig#noImplicitOverride) flag.
-When this option is turned on, it becomes an error to override any method from a superclass unless you explicitly use an `override` keyword.
-In that last example, TypeScript would error under [`noImplicitOverride`](/tsconfig#noImplicitOverride), and give us a clue that we probably need to rename our method inside of `Derived`.
+因此，TypeScript 4.3 *还*提供了一个新的 [`noImplicitOverride`](/tsconfig#noImplicitOverride) 编译选项。
+当启用此选项时，除非显式使用 `override` 关键字，否则重写父类的任何方法都会报错。
+在上面的最后一个示例中，TypeScript 在启用 [`noImplicitOverride`](/tsconfig#noImplicitOverride) 时会报错，提示我们可能需要重命名 `Derived` 内部的方法。
 
-We'd like to extend our thanks to our community for the implementation here.
-The work for these items was implemented in [a pull request](https://github.com/microsoft/TypeScript/pull/39669) by [Wenlu Wang](https://github.com/Kingwl), though an earlier pull request implementing only the `override` keyword by [Paul Cody Johnston](https://github.com/pcj) served as a basis for direction and discussion.
-We extend our gratitude for putting in the time for these features.
+我们衷心感谢社区在此处的实现工作。
+这些功能由 [Wenlu Wang](https://github.com/Kingwl) 在[一个 Pull Request](https://github.com/microsoft/TypeScript/pull/39669) 中实现，而早前由 [Paul Cody Johnston](https://github.com/pcj) 提交的仅实现 `override` 关键字的 Pull Request 则奠定了方向并引发了讨论。
+我们对他们为这些特性付出的时间与精力深表感谢。
 
-## Template String Type Improvements
+## 模板字符串类型改进
 
-In recent versions, TypeScript introduced a new type construct: template string types.
-These are types that either construct new string-like types by concatenating...
+在近期的版本中，TypeScript 引入了一种新的类型构造：模板字符串类型（Template String Types）。
+这些类型要么通过拼接来构造新的类似字符串的类型……
 
 ```ts
 type Color = 'red' | 'blue'
@@ -281,7 +281,7 @@ type SeussFish = `${Quantity | Color} fish`
 //                  | "red fish" | "blue fish";
 ```
 
-...or match patterns of other string-like types.
+……要么匹配其他类似字符串类型的模式。
 
 ```ts
 declare let s1: `${number}-${number}-${number}`
@@ -291,8 +291,8 @@ declare let s2: `1-2-3`
 s1 = s2
 ```
 
-The first change we made is just in when TypeScript will infer a template string type.
-When a template string is _contextually typed_ by a string-literal-like type (i.e. when TypeScript sees we're passing a template string to something that takes a literal type) it will try to give that expression a template type.
+我们所做的第一项改动是关于 TypeScript 何时推断模板字符串类型。
+当模板字符串被类似字符串字面量的类型*提供上下文类型*时（即当 TypeScript 发现我们将模板字符串传递给接收字面量类型的位置时），它将尝试赋予该表达式模板类型。
 
 ```ts
 function bar(s: string): `hello ${string}` {
@@ -301,7 +301,7 @@ function bar(s: string): `hello ${string}` {
 }
 ```
 
-This also kicks in when inferring types, and the type parameter `extends string`
+在推断类型且类型参数 `extends string` 时，此特性同样会生效：
 
 ```ts
 declare let s: string
@@ -312,9 +312,9 @@ declare function f<T extends string>(x: T): T
 let x2 = f(`hello ${s}`)
 ```
 
-The second major change here is that TypeScript can now better-relate, and _infer between_, different template string types.
+第二项重大改动是：TypeScript 现在可以更好地关联不同模板字符串类型，并在它们之间进行*相互推断*。
 
-To see this, take the following example code:
+来看下面这个示例代码：
 
 ```ts
 declare let s1: `${number}-${number}-${number}`
@@ -325,12 +325,12 @@ s1 = s2
 s1 = s3
 ```
 
-When checking against a string literal type like on `s2`, TypeScript could match against the string contents and figure out that `s2` was compatible with `s1` in the first assignment;
-however, as soon as it saw another template string, it just gave up.
-As a result, assignments like `s3` to `s1` just didn't work.
+当针对像 `s2` 这样的字符串字面量类型进行检查时，TypeScript 能够匹配字符串内容并判断出在第一次赋值中 `s2` 与 `s1` 兼容；
+然而一旦遇到另一个模板字符串，它就会直接放弃。
+因此，像将 `s3` 赋值给 `s1` 这样的操作过去根本行不通。
 
-TypeScript now actually does the work to prove whether or not each part of a template string can successfully match.
-You can now mix and match template strings with different substitutions and TypeScript will do a good job to figure out whether they're really compatible.
+现在，TypeScript 会切实验证模板字符串的各个部分是否能够成功匹配。
+你现在可以混用具有不同占位替换的模板字符串，TypeScript 会很好地判断它们之间是否真正兼容。
 
 ```ts
 declare let s1: `${number}-${number}-${number}`
@@ -348,8 +348,8 @@ s1 = s5
 s1 = s6
 ```
 
-In doing this work, we were also sure to add better inference capabilities.
-You can see an example of these in action:
+在完成这项工作的同时，我们还确保添加了更强大的推断能力。
+你可以看到这些特性的实际应用示例：
 
 ```ts
 declare function foo<V extends string>(arg: `*${V}*`): V
@@ -365,12 +365,12 @@ function test<T extends string>(s: string, n: number, b: boolean, t: T) {
 }
 ```
 
-For more information, see [the original pull request on leveraging contextual types](https://github.com/microsoft/TypeScript/pull/43376), along with [the pull request that improved inference and checking between template types](https://github.com/microsoft/TypeScript/pull/43361).
+欲了解更多信息，请参阅[利用上下文类型的原始 Pull Request](https://github.com/microsoft/TypeScript/pull/43376)，以及[改进模板类型之间的推断与检查的 Pull Request](https://github.com/microsoft/TypeScript/pull/43361)。
 
-## ECMAScript `#private` Class Elements
+## ECMAScript `#private` 类元素
 
-TypeScript 4.3 expands which elements in a class can be given `#private` `#names` to make them truly private at run-time.
-In addition to properties, methods and accessors can also be given private names.
+TypeScript 4.3 扩展了类中可以使用 `#private` `#names`（私有名称）的元素范围，使它们在运行时真正成为私有的。
+除属性外，方法和访问器现在也可以赋予私有名称。
 
 ```ts
 class Foo {
@@ -403,7 +403,7 @@ new Foo().#someValue
 // outside class 'Foo' because it has a private identifier.
 ```
 
-Even more broadly, static members can now also have private names.
+更广泛地，静态成员现在也可以拥有私有名称。
 
 ```ts
 class Foo {
@@ -419,12 +419,12 @@ Foo.#someMethod()
 // outside class 'Foo' because it has a private identifier.
 ```
 
-This feature was authored [in a pull request](https://github.com/microsoft/TypeScript/pull/42458) from our friends at Bloomberg - written by [Titian Cernicova-Dragomir](https://github.com/dragomirtitian)and [Kubilay Kahveci](https://github.com/mkubilayk), with support and expertise from [Joey Watts](https://github.com/joeywatts), [Rob Palmer](https://github.com/robpalme), and [Tim McClure](https://github.com/tim-mc).
-We'd like to extend our thanks to all of them!
+该特性由彭博社（Bloomberg）的朋友在[一个 Pull Request](https://github.com/microsoft/TypeScript/pull/42458) 中贡献——由 [Titian Cernicova-Dragomir](https://github.com/dragomirtitian) 和 [Kubilay Kahveci](https://github.com/mkubilayk) 编写，并得到了 [Joey Watts](https://github.com/joeywatts)、[Rob Palmer](https://github.com/robpalme) 与 [Tim McClure](https://github.com/tim-mc) 的专业支持与协助。
+我们向他们所有人表示由衷的感谢！
 
-## `ConstructorParameters` Works on Abstract Classes
+## `ConstructorParameters` 支持抽象类
 
-In TypeScript 4.3, the `ConstructorParameters` type helper now works on `abstract` classes.
+在 TypeScript 4.3 中，`ConstructorParameters` 工具类型现已支持 `abstract` 抽象类。
 
 ```ts
 abstract class C {
@@ -437,7 +437,7 @@ abstract class C {
 type CParams = ConstructorParameters<typeof C>
 ```
 
-This is thanks to work done in TypeScript 4.2, where construct signatures can be marked as abstract:
+这得益于 TypeScript 4.2 中完成的工作，其中构造签名可以被标记为抽象：
 
 ```ts
 type MyConstructorOf<T> = {
@@ -449,16 +449,16 @@ type MyConstructorOf<T> = {
 type MyConstructorOf<T> = abstract new (...args: any[]) => T;
 ```
 
-You can [see the change in more detail on GitHub](https://github.com/microsoft/TypeScript/pull/43380).
+你可以[在 GitHub 上查看该改动的更多详情](https://github.com/microsoft/TypeScript/pull/43380)。
 
-## Contextual Narrowing for Generics
+## 泛型的上下文类型收窄
 
-TypeScript 4.3 now includes some slightly smarter type-narrowing logic on generic values.
-This allows TypeScript to accept more patterns, and sometimes even catch mistakes.
+TypeScript 4.3 现已针对泛型值包含更智能的类型收窄逻辑。
+这使得 TypeScript 能够接受更多编程模式，有时甚至能捕获潜在错误。
 
-For some motivation, let's say we're trying to write a function called `makeUnique`.
-It'll take a `Set` or an `Array` of elements, and if it's given an `Array`, it'll sort that `Array` remove duplicates according to some comparison function.
-After all that, it will return the original collection.
+作为背景示例，假设我们正在编写一个名为 `makeUnique` 的函数。
+它接收一个包含元素的 `Set` 或 `Array`；如果传入的是 `Array`，它会根据某个比较函数对该 `Array` 进行排序并去除重复项。
+完成上述操作后，它将返回原始集合。
 
 ```ts
 function makeUnique<T>(
@@ -487,16 +487,16 @@ function makeUnique<T>(
 }
 ```
 
-Let's leave questions about this function's implementation aside, and assume it arose from the requirements of a broader application.
-Something that you might notice is that the signature doesn't capture the original type of `collection`.
-We can do that by adding a type parameter called `C` in place of where we've written `Set<T> | T[]`.
+我们先撇开该函数具体实现中的细节不谈，假设它是出于更大规模应用的需求而产生的。
+你可能会注意到，该函数的签名并没有捕获 `collection` 的原始类型。
+我们可以通过在原来写 `Set<T> | T[]` 的地方添加一个名为 `C` 的类型参数来实现这一点：
 
 ```diff
 - function makeUnique<T>(collection: Set<T> | T[], comparer: (x: T, y: T) => number): Set<T> | T[]
 + function makeUnique<T, C extends Set<T> | T[]>(collection: C, comparer: (x: T, y: T) => number): C
 ```
 
-In TypeScript 4.2 and earlier, you'd end up with a bunch of errors as soon as you tried this.
+在 TypeScript 4.2 及更早版本中，一旦尝试这样写，你就会遭遇一大堆编译报错：
 
 ```ts
 function makeUnique<T, C extends Set<T> | T[]>(
@@ -536,17 +536,17 @@ function makeUnique<T, C extends Set<T> | T[]>(
 }
 ```
 
-Ew, errors!
-Why is TypeScript being so mean to us?
+哎呀，全是错误！
+为什么 TypeScript 对我们如此苛刻？
 
-The issue is that when we perform our `collection instanceof Set` check, we're expecting that to act as a type guard that narrows the type from `Set<T> | T[]` to `Set<T>` and `T[]` depending on the branch we're in;
-however, we're not dealing with a `Set<T> | T[]`, we're trying to narrow the generic value `collection`, whose type is `C`.
+问题在于，当我们执行 `collection instanceof Set` 检查时，我们期望它作为一个类型守卫，根据所在分支将类型从 `Set<T> | T[]` 收窄为 `Set<T>` 或 `T[]`；
+然而，我们面对的并不是 `Set<T> | T[]`，而是试图收窄类型为 `C` 的泛型值 `collection`。
 
-It's a very subtle distinction, but it makes a difference.
-TypeScript can't just grab the constraint of `C` (which is `Set<T> | T[]`) and narrow that.
-If TypeScript _did_ try to narrow from `Set<T> | T[]`, it would forget that `collection` is also a `C` in each branch because there's no easy way to preserve that information.
-If hypothetically TypeScript tried that approach, it would break the above example in a different way.
-At the return positions, where the function expects values with the type `C`, we would instead get a `Set<T>` and a `T[]` in each branch, which TypeScript would reject.
+这是一个非常微妙的区别，但影响巨大。
+TypeScript 不能简单地提取 `C` 的约束（即 `Set<T> | T[]`）并对其进行收窄。
+如果 TypeScript *确实*尝试从 `Set<T> | T[]` 进行收窄，它会在每个分支中忘记 `collection` 同时也是 `C`，因为没有简便的方法来保留该信息。
+假使 TypeScript 采取了那种方式，上面的示例就会以另一种方式崩溃：
+在函数期望返回类型为 `C` 的返回位置，我们在各个分支中得到的将分别是 `Set<T>` 和 `T[]`，而 TypeScript 会拒绝这种返回。
 
 ```ts
 function makeUnique<T>(
@@ -573,21 +573,21 @@ function makeUnique<T>(
 }
 ```
 
-So how does TypeScript 4.3 change things?
-Well, basically in a few key places when writing code, all the type system really cares about is the constraint of a type.
-For example, when we write `collection.length`, TypeScript doesn't care about the fact that `collection` has the type `C`, it only cares about the properties available, which are determined by the constraint `T[] | Set<T>`.
+那么 TypeScript 4.3 是如何改变这一现状的呢？
+基本上，在编写代码的几个关键场景中，类型系统真正关心的只有类型的约束。
+例如，当我们编写 `collection.length` 时，TypeScript 并不在乎 `collection` 的类型是 `C`，它只在乎可用的属性，而这些属性是由约束 `T[] | Set<T>` 决定的。
 
-In cases like this, TypeScript will grab the narrowed type of the constraint because that will give you the data you care about;
-however, in any other case, we'll just try to narrow the original generic type (and often end up with the original generic type).
+在类似这种情况下，TypeScript 会提取该约束收窄后的类型，因为这能提供你所关心的属性信息；
+而在任何其他情况下，我们只需尝试收窄原始的泛型类型（通常最终仍保持原始的泛型类型）。
 
-In other words, based on how you use a generic value, TypeScript will narrow it a little differently.
-The end result is that the entire above example compiles with no type-checking errors.
+换句话说，根据你使用泛型值的方式，TypeScript 的收窄策略会有所不同。
+最终的结果是：上述整个示例在编译时没有任何类型检查错误。
 
-For more details, you can [look at the original pull request on GitHub](https://github.com/microsoft/TypeScript/pull/43183).
+欲了解更多详情，可以[查看 GitHub 上的原始 Pull Request](https://github.com/microsoft/TypeScript/pull/43183)。
 
-## Always-Truthy Promise Checks
+## 针对始终为真的 Promise 检查
 
-Under [`strictNullChecks`](/tsconfig#strictNullChecks), checking whether a `Promise` is "truthy" in a conditional will trigger an error.
+在启用了 [`strictNullChecks`](/tsconfig#strictNullChecks) 的情况下，在条件判断中检查 `Promise` 是否为“真值（truthy）”将触发错误。
 
 ```ts
 async function foo(): Promise<boolean> {
@@ -607,11 +607,11 @@ async function bar(): Promise<string> {
 }
 ```
 
-[This change](https://github.com/microsoft/TypeScript/pull/39175) was contributed by [Jack Works](https://github.com/Jack-Works), and we extend our thanks to them!
+[该变更](https://github.com/microsoft/TypeScript/pull/39175) 由 [Jack Works](https://github.com/Jack-Works) 贡献，我们向其表示衷心的感谢！
 
-## `static` Index Signatures
+## `static` 索引签名
 
-Index signatures allow us to set more properties on a value than a type explicitly declares.
+索引签名允许我们在值上设置超出类型显式声明范围的更多属性。
 
 ```ts
 class Foo {
@@ -631,8 +631,8 @@ instance['whatever'] = 42
 let x = instance['something']
 ```
 
-Up until now, an index signature could only be declared on the instance side of a class.
-Thanks to [a pull request](https://github.com/microsoft/TypeScript/pull/37797) from [Wenlu Wang](https://github.com/microsoft/TypeScript/pull/37797), index signatures can now be declared as `static`.
+在此之前，索引签名只能在类的实例端进行声明。
+感谢 [Wenlu Wang](https://github.com/microsoft/TypeScript/pull/37797) 提交的 [Pull Request](https://github.com/microsoft/TypeScript/pull/37797)，索引签名现在可以声明为 `static`。
 
 ```ts
 class Foo {
@@ -649,7 +649,7 @@ Foo['whatever'] = 42
 let x = Foo['something']
 ```
 
-The same sorts of rules apply for index signatures on the static side of a class as they do for the instance side - namely, that every other static property has to be compatible with the index signature.
+类静态端的索引签名与实例端遵循相同的规则——即所有其他静态属性都必须与索引签名兼容。
 
 ```ts
 class Foo {
@@ -663,71 +663,71 @@ class Foo {
 }
 ```
 
-## `.tsbuildinfo` Size Improvements
+## `.tsbuildinfo` 文件体积缩减
 
-In TypeScript 4.3, `.tsbuildinfo` files that are generated as part of [`incremental`](/tsconfig#incremental) builds should be significantly smaller.
-This is thanks to several optimizations in the internal format, creating tables with numeric identifiers to be used throughout the file instead of repeating full paths and similar information.
-This work was spear-headed by [Tobias Koppers](https://github.com/sokra) in [their pull request](https://github.com/microsoft/TypeScript/pull/43079), serving as inspiration for [the ensuing pull request](https://github.com/microsoft/TypeScript/pull/43155) and [further optimizations](https://github.com/microsoft/TypeScript/pull/43695).
+在 TypeScript 4.3 中，作为 [`incremental`](/tsconfig#incremental) 增量构建一部分生成的 `.tsbuildinfo` 文件体积将显著减小。
+这得益于对内部格式的多项优化：在整个文件中使用带有数字标识符的表格，而不是反复记录完整路径及类似信息。
+该项工作由 [Tobias Koppers](https://github.com/sokra) 在其 [Pull Request](https://github.com/microsoft/TypeScript/pull/43079) 中率先发起，并激发了[随后的 Pull Request](https://github.com/microsoft/TypeScript/pull/43155) 和[进一步的优化](https://github.com/microsoft/TypeScript/pull/43695)。
 
-We have seen significant reductions of `.tsbuildinfo` file sizes including
+我们看到了 `.tsbuildinfo` 文件大小的显著缩减，例如：
 
-- 1MB to 411 KB
-- 14.9MB to 1MB
-- 1345MB to 467MB
+- 从 1MB 降至 411 KB
+- 从 14.9MB 降至 1MB
+- 从 1345MB 降至 467MB
 
-Needless to say, these sorts of savings in size translate to slightly faster build times as well.
+毋庸置疑，文件体积的缩减同时也带来了更快的构建速度。
 
-## Lazier Calculations in `--incremental` and `--watch` Compilations
+## `--incremental` 和 `--watch` 编译中的更懒计算
 
-One of the issues with [`incremental`](/tsconfig#incremental) and `--watch` modes are that while they make later compilations go faster, the initial compilation can be a bit slower - in some cases, significantly slower.
-This is because these modes have to perform a bunch of book-keeping, computing information about the current project, and sometimes saving that data in a `.tsbuildinfo` file for later builds.
+[`incremental`](/tsconfig#incremental) 和 `--watch` 模式存在的一个问题是：虽然它们能加快后续编译的速度，但首次编译可能会略微变慢——在某些情况下甚至会明显变慢。
+这是因为这些模式必须进行大量的记账工作，计算当前项目的信息，有时还需要将这些数据保存到 `.tsbuildinfo` 文件中以供后续构建使用。
 
-That's why on top of `.tsbuildinfo` size improvements, TypeScript 4.3 also ships some changes to [`incremental`](/tsconfig#incremental) and `--watch` modes that make the first build of a project with these flags just as fast as an ordinary build!
-To do this, much of the information that would ordinarily be computed up-front is instead done on an on-demand basis for later builds.
-While this can add some overhead to a subsequent build, TypeScript's [`incremental`](/tsconfig#incremental) and `--watch` functionality will still typically operate on a much smaller set of files, and any needed information will be saved afterwards.
-In a sense, [`incremental`](/tsconfig#incremental) and `--watch` builds will "warm up" and get faster at compiling files once you've updated them a few times.
+因此，除了缩减 `.tsbuildinfo` 的文件体积外，TypeScript 4.3 还对 [`incremental`](/tsconfig#incremental) 和 `--watch` 模式做出了一些改进，使得开启这些标志时的项目首次构建速度与普通构建一样快！
+为此，许多原本需要预先计算的信息被改为在后续构建中按需计算。
+虽然这可能会给后续构建增加少量开销，但 TypeScript 的 [`incremental`](/tsconfig#incremental) 和 `--watch` 功能通常只会在极少量的文件集上运行，并且所需的信息会在之后保存。
+从某种意义上说，在多次更新文件后，[`incremental`](/tsconfig#incremental) 和 `--watch` 构建将会逐步“预热”并变得更加快速。
 
-In a repository with 3000 files, **this reduced initial build times to almost a third**!
+在一个包含 3000 个文件的代码仓库中，**这使初始构建时间缩短至接近原先的三分之一**！
 
-[This work was started](https://github.com/microsoft/TypeScript/pull/42960) by [Tobias Koppers](https://github.com/sokra), whose work ensued in [the resulting final change](https://github.com/microsoft/TypeScript/pull/43314) for this functionality.
-We'd like to extend a great thanks to Tobias for helping us find these opportunities for improvements!
+[该项工作最初由 Tobias Koppers 发起](https://github.com/microsoft/TypeScript/pull/42960)，并在此基础上促成了此功能的[最终变更](https://github.com/microsoft/TypeScript/pull/43314)。
+我们非常感谢 Tobias 帮助我们发现了这些改进机会！
 
-## Import Statement Completions
+## 导入语句补全
 
-One of the biggest pain-points users run into with import and export statements in JavaScript is the order - specifically that imports are written as
+用户在 JavaScript 中编写导入和导出语句时遇到的最大痛点之一就是书写顺序——具体而言，导入语句的写法是：
 
 ```ts
 import { func } from './module.js'
 ```
 
-instead of
+而不是：
 
 ```ts
 from "./module.js" import { func };
 ```
 
-This causes some pain when writing out a full import statement from scratch because auto-complete wasn't able to work correctly.
-For example, if you start writing something like `import {`, TypeScript has no idea what module you're planning on importing from, so it couldn't provide any scoped-down completions.
+这在从头编写完整的导入语句时会带来一些痛苦，因为自动补全无法正常工作。
+例如，如果你一开始键入 `import {`，TypeScript 完全不知道你打算从哪个模块导入，因此无法提供限定范围的补全候选项。
 
-To alleviate this, we've leveraged the power of auto-imports!
-Auto-imports already deal with the issue of not being able to narrow down completions from a specific module - their whole point is to provide every possible export and automatically insert an import statement at the top of your file.
+为了缓解这一问题，我们借助了自动导入（auto-import）的强大能力！
+自动导入本身就已经解决了无法从特定模块缩小补全范围的问题——它的核心目的就是提供所有可能的导出，并在文件顶部自动插入导入语句。
 
-So when you now start writing an `import` statement that doesn't have a path, we'll provide you with a list of possible imports.
-When you commit a completion, we'll complete the full import statement, including the path that you were going to write.
+因此，现在当你开始编写一个尚未填写路径的 `import` 语句时，我们将为你提供一个可能的导入列表。
+当你确认补全时，我们将补全整个导入语句，包括你正准备书写的路径。
 
-![Import statement completions](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/05/auto-import-statement-4-3.gif)
+![导入语句补全动图](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/05/auto-import-statement-4-3.gif)
 
-This work requires editors that specifically support the feature.
-You'll be able to try this out by using the latest [Insiders versions of Visual Studio Code](https://code.visualstudio.com/insiders/).
+该功能需要编辑器进行专门支持。
+你可以通过使用最新版的 [Visual Studio Code Insiders 版本](https://code.visualstudio.com/insiders/) 来体验该特性。
 
-For more information, take a look at [the implementing pull request](https://github.com/microsoft/TypeScript/pull/43149)!
+欲了解更多信息，请查看[实现该特性的 Pull Request](https://github.com/microsoft/TypeScript/pull/43149)！
 
-## Editor Support for `@link` Tags
+## 编辑器支持 `@link` 标签
 
-TypeScript can now understand `@link` tags, and will try to resolve declarations that they link to.
-What this means is that you'll be able to hover over names within `@link` tags and get quick information, or use commands like go-to-definition or find-all-references.
+TypeScript 现在能够理解 `@link` 标签，并将尝试解析它们所链接到的声明。
+这意味着你可以在 `@link` 标签内的名称上悬停以获取快速信息，或者使用跳转到定义、查找所有引用等命令。
 
-For example, you'll be able to go-to-definition on `plantCarrot` in `@link plantCarrot` in the example below and a TypeScript-supported editor will jump to `plantCarrot`'s function declaration.
+例如，在下面的示例中，你可以在 `@link plantCarrot` 中的 `plantCarrot` 上执行跳转到定义，支持 TypeScript 的编辑器将跳转到 `plantCarrot` 的函数声明处。
 
 ```ts
 /**
@@ -744,43 +744,43 @@ function plantCarrot(seed: Seed) {
 }
 ```
 
-![Jumping to definition and requesting quick info on a `@link` tag for ](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/05/link-tag-4-3.gif)
+![在 @link 标签上跳转到定义和请求快速信息](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/05/link-tag-4-3.gif)
 
-For more information, see [the pull request on GitHub](https://github.com/microsoft/TypeScript/pull/41877)!
+欲了解更多信息，请参阅 [GitHub 上的 Pull Request](https://github.com/microsoft/TypeScript/pull/41877)！
 
-## Go-to-Definition on Non-JavaScript File Paths
+## 跳转到非 JavaScript 文件路径的定义
 
-Many loaders allow users to include assets in their applications using JavaScript imports.
-They'll typically be written as something like `import "./styles.css"` or the like.
+许多打包加载器允许用户在应用程序中通过 JavaScript 导入来引入资源文件。
+它们通常写成类似 `import "./styles.css"` 的形式。
 
-Up until now, TypeScript's editor functionality wouldn't even attempt to read this file, so go-to-definition would typically fail.
-At best, go-to-definition would jump to a declaration like `declare module "*.css"` if it could find something along those lines.
+在此之前，TypeScript 的编辑器功能甚至不会尝试读取此类文件，因此跳转到定义通常会失败。
+充其量，如果能找到类似声明的话，跳转到定义也只会跳转到 `declare module "*.css"` 这样的声明处。
 
-TypeScript's language service now tries to jump to the correct file when you perform a go-to-definition on relative file paths, even if they're not JavaScript or TypeScript files!
-Try it out with imports to CSS, SVGs, PNGs, font files, Vue files, and more.
+现在，当你在相对文件路径上执行跳转到定义时，TypeScript 的语言服务会尝试跳转到正确的文件，即便它们不是 JavaScript 或 TypeScript 文件！
+不妨在导入 CSS、SVG、PNG、字体文件、Vue 文件等场景中尝试一下。
 
-For more information, you can check out [the implementing pull request](https://github.com/microsoft/TypeScript/pull/42539).
+欲了解更多信息，请查看[实现该特性的 Pull Request](https://github.com/microsoft/TypeScript/pull/42539)。
 
-## Breaking Changes
+## 破坏性改动
 
-### `lib.d.ts` Changes
+### `lib.d.ts` 变更
 
-As with every TypeScript version, declarations for `lib.d.ts` (especially the declarations generated for web contexts), have changed.
-In this release, we leveraged [Mozilla's browser-compat-data](https://github.com/mdn/browser-compat-data) to remove APIs that no browser implements.
-While it is unlike that you are using them, APIs such as `Account`, `AssertionOptions`, `RTCStatsEventInit`, `MSGestureEvent`, `DeviceLightEvent`, `MSPointerEvent`, `ServiceWorkerMessageEvent`, and `WebAuthentication` have all been removed from `lib.d.ts`.
-This is discussed [in some detail here](https://github.com/microsoft/TypeScript-DOM-lib-generator/issues/991).
+与每个 TypeScript 版本一样，`lib.d.ts` 的声明（特别是为 Web 上下文生成的声明）发生了一些改动。
+在本次发布中，我们借助了 [Mozilla 的 browser-compat-data](https://github.com/mdn/browser-compat-data) 移除了所有浏览器均未实现的 API。
+尽管你不太可能用到它们，但诸如 `Account`、`AssertionOptions`、`RTCStatsEventInit`、`MSGestureEvent`、`DeviceLightEvent`、`MSPointerEvent`、`ServiceWorkerMessageEvent` 和 `WebAuthentication` 等 API 均已从 `lib.d.ts` 中移除。
+[在此处对此有详细讨论](https://github.com/microsoft/TypeScript-DOM-lib-generator/issues/991)。
 
 https://github.com/microsoft/TypeScript-DOM-lib-generator/issues/991
 
-### `useDefineForClassFields` now defaults to true on `esnext` and eventually on `es2022`
+### `useDefineForClassFields` 在 `esnext` 及后续 `es2022` 中默认为 true
 
-In 2021 the class fields feature was added into the JavaScript specification with behavior which differed from how TypeScript had implemented it. In preparation for this, in TypeScript 3.7, a flag was added ([`useDefineForClassFields`](/tsconfig#useDefineForClassFields)) to migrate to emitted JavaScript to match the JavaScript standard behavior.
+2021 年，类字段特性被纳入 JavaScript 规范，其行为与 TypeScript 原先的实现有所不同。为此，TypeScript 3.7 添加了一个编译选项（[`useDefineForClassFields`](/tsconfig#useDefineForClassFields)），以使生成的 JavaScript 迁移并契合 JavaScript 标准行为。
 
-Now that the feature is in JavaScript we are changing the default to `true` for ES2022 and above, including ESNext.
+既然该特性已正式成为 JavaScript 的一部分，我们将 ES2022 及以上版本（包括 ESNext）的该选项默认值更改为 `true`。
 
-### Errors on Always-Truthy Promise Checks
+### 针对始终为真的 Promise 检查报错
 
-Under [`strictNullChecks`](/tsconfig#strictNullChecks), using a `Promise` that always appears to be defined within a condition check is now considered an error.
+在启用了 [`strictNullChecks`](/tsconfig#strictNullChecks) 的情况下，在条件检查中使用一个看似始终有定义的 `Promise` 现在会被视为错误。
 
 ```ts
 declare var p: Promise<number>
@@ -795,14 +795,14 @@ if (p) {
 }
 ```
 
-For more details, [see the original change](https://github.com/microsoft/TypeScript/pull/39175).
+欲了解更多详情，请[参阅原始变更](https://github.com/microsoft/TypeScript/pull/39175)。
 
-### Union Enums Cannot Be Compared to Arbitrary Numbers
+### 联合枚举不能与任意数字进行比较
 
-Certain `enum`s are considered _union `enum`s_ when their members are either automatically filled in, or trivially written.
-In those cases, an enum can recall each value that it potentially represents.
+当某些 `enum` 的成员是自动填充或简单书写的值时，它们会被视为*联合枚举（union enum）*。
+在这些情况下，枚举能够记忆它可能代表的每一个具体值。
 
-In TypeScript 4.3, if a value with a union `enum` type is compared with a numeric literal that it could never be equal to, then the type-checker will issue an error.
+在 TypeScript 4.3 中，如果将联合枚举类型的值与一个永远不可能相等的数字字面量进行比较，类型检查器将报告错误。
 
 ```ts
 enum E {
@@ -818,7 +818,7 @@ function doSomething(x: E) {
 }
 ```
 
-As a workaround, you can re-write an annotation to include the appropriate literal type.
+作为变通方案，你可以重写类型注解以包含相应的字面量类型：
 
 ```ts
 enum E {
@@ -834,7 +834,7 @@ function doSomething(x: E | -1) {
 }
 ```
 
-You can also use a type-assertion on the value.
+你也可以在值上使用类型断言：
 
 ```ts
 enum E {
@@ -850,7 +850,7 @@ function doSomething(x: E) {
 }
 ```
 
-Alternatively, you can re-declare your enum to have a non-trivial initializer so that any number is both assignable and comparable to that enum. This may be useful if the intent is for the enum to specify a few well-known values.
+或者，你可以重新声明你的枚举，为其指定非平凡的初始化表达式，以便任何数字都可以赋值给该枚举并与其进行比较。如果枚举的意图仅仅是指定几个已知常量值，这可能会很有用。
 
 ```ts
 enum E {
@@ -860,4 +860,4 @@ enum E {
 }
 ```
 
-For more details, [see the original change](https://github.com/microsoft/TypeScript/pull/42472)
+欲了解更多详情，请[参阅原始变更](https://github.com/microsoft/TypeScript/pull/42472)。

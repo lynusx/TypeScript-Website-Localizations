@@ -1,86 +1,86 @@
 ---
-title: TypeScript for Java/C# Programmers
-short: TS for Java/C# Programmers
+title: 针对 Java/C# 开发者的 TypeScript 指南
+short: 针对 Java/C# 开发者的 TS 指南
 layout: docs
 permalink: /zh/docs/handbook/typescript-in-5-minutes-oop.html
-oneline: Learn TypeScript if you have a background in object-oriented languages
+oneline: 针对具备面向对象语言背景的开发者学习 TypeScript
 ---
 
-TypeScript is a popular choice for programmers accustomed to other languages with static typing, such as C# and Java.
+对于习惯了 C# 和 Java 等其他静态类型语言的程序员来说，TypeScript 是一个广受欢迎的选择。
 
-TypeScript's type system offers many of the same benefits, such as better code completion, earlier detection of errors, and clearer communication between parts of your program.
-While TypeScript provides many familiar features for these developers, it's worth stepping back to see how JavaScript (and therefore TypeScript) differ from traditional OOP languages.
-Understanding these differences will help you write better JavaScript code, and avoid common pitfalls that programmers who go straight from C#/Java to TypeScript may fall into.
+TypeScript 的类型系统提供了许多相同的好处，例如更好的代码补全、更早的错误检测以及程序各组成部分之间更清晰的接口沟通。
+尽管 TypeScript 为这类开发者提供了许多熟悉的特性，但我们仍然有必要退一步，看看 JavaScript（乃至 TypeScript）与传统的 OOP 语言之间有何不同。
+理解这些差异有助于你编写出更出色的 JavaScript 代码，并避免从 C#/Java 直接转向 TypeScript 的程序员经常踩入的常见陷阱。
 
-## Co-learning JavaScript
+## 协同学习 JavaScript
 
-If you're familiar with JavaScript already but are primarily a Java or C# programmer, this introductory page can help explain some of the common misconceptions and pitfalls you might be susceptible to.
-Some of the ways that TypeScript models types are quite different from Java or C#, and it's important to keep these in mind when learning TypeScript.
+如果你已经熟悉 JavaScript，但主要背景是 Java 或 C# 程序员，本入门指南可以帮助解释你可能会陷入的一些常见误区与陷阱。
+TypeScript 对类型进行建模的某些方式与 Java 或 C# 截然不同，在学习 TypeScript 时牢记这些差异至关重要。
 
-If you're a Java or C# programmer that is new to JavaScript in general, we recommend learning a little bit of JavaScript _without_ types first to understand JavaScript's runtime behaviors.
-Because TypeScript doesn't change how your code _runs_, you'll still have to learn how JavaScript works in order to write code that actually does something!
+如果你是一名对 JavaScript 普遍缺乏了解的 Java 或 C# 程序员，我们建议先学习一些**不带**类型的 JavaScript，以了解 JavaScript 的运行时行为。
+因为 TypeScript 不会改变代码的**运行**方式，所以你仍然需要了解 JavaScript 的运作方式，才能编写出切实执行任务的代码！
 
-It's important to remember that TypeScript uses the same _runtime_ as JavaScript, so any resources about how to accomplish specific runtime behavior (converting a string to a number, displaying an alert, writing a file to disk, etc.) will always apply equally well to TypeScript programs.
-Don't limit yourself to TypeScript-specific resources!
+切记，TypeScript 与 JavaScript 使用相同的**运行时**，因此任何关于如何实现特定运行时行为的资源（如将字符串转换为数字、显示弹窗警告、将文件写入磁盘等），都同样适用于 TypeScript 程序。
+不要将自己局限在仅针对 TypeScript 的资源中！
 
-## Rethinking the Class
+## 重新审视“类”
 
-C# and Java are what we might call _mandatory OOP_ languages.
-In these languages, the _class_ is the basic unit of code organization, and also the basic container of all data _and_ behavior at runtime.
-Forcing all functionality and data to be held in classes can be a good domain model for some problems, but not every domain _needs_ to be represented this way.
+C# 和 Java 可以被称为**强制面向对象（mandatory OOP）**语言。
+在这些语言中，**类（class）**是组织代码的基本单元，同时也是运行时容纳所有数据**与**行为的基本容器。
+对于某些问题，强制将所有功能和数据封装在类中可能是一个不错的领域模型，但并非每个领域都**需要**以此方式来表达。
 
-### Free Functions and Data
+### 自由函数与数据
 
-In JavaScript, functions can live anywhere, and data can be passed around freely without being inside a pre-defined `class` or `struct`.
-This flexibility is extremely powerful.
-"Free" functions (those not associated with a class) working over data without an implied OOP hierarchy tend to be the preferred model for writing programs in JavaScript.
+在 JavaScript 中，函数可以存在于任何地方，数据也可以自由传递，而无需置于预先定义的 `class` 或 `struct` 内部。
+这种灵活性非常强大。
+处理数据时使用不与类关联的“自由（free）”函数，且不引入隐含的 OOP 层级结构，往往是编写 JavaScript 程序的首选模式。
 
-### Static Classes
+### 静态类
 
-Additionally, certain constructs from C# and Java such as singletons and static classes are unnecessary in TypeScript.
+此外，C# 和 Java 中的某些结构（例如单例和静态类）在 TypeScript 中是没有必要的。
 
-## OOP in TypeScript
+## TypeScript 中的 OOP
 
-That said, you can still use classes if you like!
-Some problems are well-suited to being solved by a traditional OOP hierarchy, and TypeScript's support for JavaScript classes will make these models even more powerful.
-TypeScript supports many common patterns such as implementing interfaces, inheritance, and static methods.
+话虽如此，如果你愿意，依然可以使用类！
+某些问题非常适合通过传统的 OOP 层级结构来解决，而 TypeScript 对 JavaScript 类的支持会让这些模型更加强大。
+TypeScript 支持许多常见的设计模式，例如实现接口、继承以及静态方法。
 
-We'll cover classes later in this guide.
+我们将在本指南的后续部分介绍类。
 
-## Rethinking Types
+## 重新审视“类型”
 
-TypeScript's understanding of a _type_ is actually quite different from C# or Java's.
-Let's explore some differences.
+TypeScript 对**类型（type）**的理解实际上与 C# 或 Java 大不相同。
+让我们一起来探讨其中的一些差异。
 
-### Nominal Reified Type Systems
+### 名义化具化类型系统
 
-In C# or Java, any given value or object has one exact type - either `null`, a primitive, or a known class type.
-We can call methods like `value.GetType()` or `value.getClass()` to query the exact type at runtime.
-The definition of this type will reside in a class somewhere with some name, and we can't use two classes with similar shapes in lieu of each other unless there's an explicit inheritance relationship or commonly-implemented interface.
+在 C# 或 Java 中，任何给定的值或对象都具有一个确切的类型——要么是 `null`、原始类型，要么是已知的类类型。
+我们可以在运行时调用诸如 `value.GetType()` 或 `value.getClass()` 之类的方法来查询确切的类型。
+该类型的定义会存在于某个具有特定名称的类中，并且除非存在显式的继承关系或共同实现的接口，否则我们不能将两个形状相似的类互相替代使用。
 
-These aspects describe a _reified, nominal_ type system.
-The types we wrote in the code are present at runtime, and the types are related via their declarations, not their structures.
+这些特征构成了一个**具化、名义（reified, nominal）**类型系统。
+我们在代码中编写的类型在运行时是真实存在的，并且类型之间的关系是通过其声明来确立的，而非通过其结构。
 
-### Types as Sets
+### 类型即集合
 
-In C# or Java, it's meaningful to think of a one-to-one correspondence between runtime types and their compile-time declarations.
+在 C# 或 Java 中，将运行时类型与其编译时声明视为一一对应的关系是有意义的。
 
-In TypeScript, it's better to think of a type as a _set of values_ that share something in common.
-Because types are just sets, a particular value can belong to _many_ sets at the same time.
+而在 TypeScript 中，最好将类型视为共享某些特性的**值的集合**。
+因为类型只是集合，所以一个特定的值可以同时属于**多个**集合。
 
-Once you start thinking of types as sets, certain operations become very natural.
-For example, in C#, it's awkward to pass around a value that is _either_ a `string` or `int`, because there isn't a single type that represents this sort of value.
+一旦你开始将类型视为集合，某些操作就会变得非常自然。
+例如在 C# 中，传递一个**既可能是** `string` **又可能是** `int` 的值会很棘手，因为没有单个类型能够表示这种值。
 
-In TypeScript, this becomes very natural once you realize that every type is just a set.
-How do you describe a value that either belongs in the `string` set or the `number` set?
-It simply belongs to the _union_ of those sets: `string | number`.
+在 TypeScript 中，一旦你意识到每个类型都只是一个集合，这一切就会变得非常自然。
+你该如何描述一个要么属于 `string` 集合、要么属于 `number` 集合的值呢？
+它仅仅属于这些集合的**并集（联合类型）**：`string | number`。
 
-TypeScript provides a number of mechanisms to work with types in a set-theoretic way, and you'll find them more intuitive if you think of types as sets.
+TypeScript 提供了许多基于集合论的方式来处理类型；如果你从集合的角度来思考类型，就会发现它们更加直观易懂。
 
-### Erased Structural Types
+### 擦除的结构化类型
 
-In TypeScript, objects are _not_ of a single exact type.
-For example, if we construct an object that satisfies an interface, we can use that object where that interface is expected even though there was no declarative relationship between the two.
+在 TypeScript 中，对象**并不**属于单一确切的类型。
+例如，如果我们构造了一个满足某个接口的对象，即便这两者之间没有声明式的继承或实现关系，我们也可以在需要该接口的地方直接使用该对象。
 
 ```ts twoslash
 interface Pointlike {
@@ -109,21 +109,21 @@ logPoint(obj)
 logName(obj)
 ```
 
-TypeScript's type system is _structural_, not nominal: We can use `obj` as a `Pointlike` because it has `x` and `y` properties that are both numbers.
-The relationships between types are determined by the properties they contain, not whether they were declared with some particular relationship.
+TypeScript 的类型系统是**结构化的（structural）**，而非名义上的（nominal）：我们可以将 `obj` 当作 `Pointlike` 来使用，因为它的 `x` 和 `y` 属性都是数字。
+类型之间的关系取决于它们所包含的属性，而不是它们在声明时是否建立了某种特定关系。
 
-TypeScript's type system is also _not reified_: There's nothing at runtime that will tell us that `obj` is `Pointlike`.
-In fact, the `Pointlike` type is not present _in any form_ at runtime.
+TypeScript 的类型系统也**不是具化的（not reified）**：在运行时没有任何东西能告诉我们 `obj` 是 `Pointlike`。
+事实上，`Pointlike` 类型在运行时**不以任何形式**存在。
 
-Going back to the idea of _types as sets_, we can think of `obj` as being a member of both the `Pointlike` set of values and the `Named` set of values.
+回到**类型即集合**的观点，我们可以认为 `obj` 既是 `Pointlike` 值集合的成员，也是 `Named` 值集合的成员。
 
-### Consequences of Structural Typing
+### 结构化类型的特性与影响
 
-OOP programmers are often surprised by two particular aspects of structural typing.
+面向对象程序员经常对结构化类型系统的两个特定方面感到惊讶。
 
-#### Empty Types
+#### 空类型
 
-The first is that the _empty type_ seems to defy expectation:
+第一个是**空类型（empty type）**的表现似乎出乎意料：
 
 ```ts twoslash
 class Empty {}
@@ -136,18 +136,18 @@ function fn(arg: Empty) {
 fn({ k: 10 })
 ```
 
-TypeScript determines if the call to `fn` here is valid by seeing if the provided argument is a valid `Empty`.
-It does so by examining the _structure_ of `{ k: 10 }` and `class Empty { }`.
-We can see that `{ k: 10 }` has _all_ of the properties that `Empty` does, because `Empty` has no properties.
-Therefore, this is a valid call!
+TypeScript 通过检查传入的实参是否是合法的 `Empty` 来判断这里对 `fn` 的调用是否有效。
+它是通过检查 `{ k: 10 }` 与 `class Empty { }` 的**结构**来进行判断的。
+我们可以看到 `{ k: 10 }` 具备 `Empty` 所拥有的**所有**属性，因为 `Empty` 本身没有任何属性。
+因此，这是一个合法的调用！
 
-This may seem surprising, but it's ultimately a very similar relationship to one enforced in nominal OOP languages.
-A subclass cannot _remove_ a property of its base class, because doing so would destroy the natural subtype relationship between the derived class and its base.
-Structural type systems simply identify this relationship implicitly by describing subtypes in terms of having properties of compatible types.
+这可能令人感到意外，但归根结底，它与名义化 OOP 语言所强制约束的关系非常相似。
+子类不能**移除**基类的属性，因为这样做会破坏派生类与其基类之间天然的子类型关系。
+结构化类型系统只是通过“具备兼容类型的属性”来隐式定义子类型，以此表达这种关系。
 
-#### Identical Types
+#### 相同类型
 
-Another frequent source of surprise comes with identical types:
+另一个经常令人感到意外的情况是结构相同的类型：
 
 ```ts
 class Car {
@@ -165,14 +165,14 @@ class Golfer {
 let w: Car = new Golfer()
 ```
 
-Again, this isn't an error because the _structures_ of these classes are the same.
-While this may seem like a potential source of confusion, in practice, identical classes that shouldn't be related are not common.
+同样，这里没有报错是因为这两个类的**结构**是完全相同的。
+虽然这看似可能会引起困惑，但在实际开发中，结构完全相同却不应产生关联的类并不常见。
 
-We'll learn more about how classes relate to each other in the Classes chapter.
+我们将在“类”章节中深入学习类与类之间的相互关系。
 
-### Reflection
+### 反射
 
-OOP programmers are accustomed to being able to query the type of any value, even a generic one:
+面向对象程序员习惯于能够查询任何值的类型，即使是泛型类型：
 
 ```csharp
 // C#
@@ -181,14 +181,14 @@ static void LogType<T>() {
 }
 ```
 
-Because TypeScript's type system is fully erased, information about e.g. the instantiation of a generic type parameter is not available at runtime.
+由于 TypeScript 的类型系统会被完全擦除，因此在运行时无法获取诸如泛型类型参数的实例化信息。
 
-JavaScript does have some limited primitives like `typeof` and `instanceof`, but remember that these operators are still working on the values as they exist in the type-erased output code.
-For example, `typeof (new Car())` will be `"object"`, not `Car` or `"Car"`.
+JavaScript 确实拥有诸如 `typeof` 和 `instanceof` 等有限的原始操作符，但请记住，这些操作符处理的仍然是存在于类型擦除后的输出代码中的值。
+例如，`typeof (new Car())` 的结果将是 `"object"`，而不是 `Car` 或 `"Car"`。
 
-## Next Steps
+## 下一步
 
-This was a brief overview of the syntax and tools used in everyday TypeScript. From here, you can:
+以上是对日常 TypeScript 中使用的语法和工具的简要概述。接下来，你可以：
 
-- Read the full Handbook [from start to finish](/docs/handbook/intro.html)
-- Explore the [Playground examples](/play#show-examples)
+- [从头到尾](/docs/handbook/intro.html)阅读完整手册
+- 探索 [Playground 示例](/play#show-examples)

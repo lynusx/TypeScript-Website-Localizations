@@ -2,18 +2,16 @@
 title: TypeScript 2.1
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-2-1.html
-oneline: TypeScript 2.1 Release Notes
+oneline: TypeScript 2.1 发布说明
 ---
 
-## `keyof` and Lookup Types
+## `keyof` 与查找类型
 
-In JavaScript it is fairly common to have APIs that expect property names as parameters, but so far it hasn't been possible to express the type relationships that occur in those APIs.
+在 JavaScript 中，将属性名作为参数传入 API 是很常见的模式，但以往在 TypeScript 中无法表达这类 API 所涉及的类型关系。
 
-Enter Index Type Query or `keyof`;
-An indexed type query `keyof T` yields the type of permitted property names for `T`.
-A `keyof T` type is considered a subtype of `string`.
+索引类型查询（即 `keyof`）解决了这个问题。`keyof T` 会产生 `T` 所有合法属性名构成的类型，并被视为 `string` 的子类型。
 
-##### Example
+##### 示例
 
 ```ts
 interface Person {
@@ -27,10 +25,9 @@ type K2 = keyof Person[] // "length" | "push" | "pop" | "concat" | ...
 type K3 = keyof { [x: string]: Person } // string
 ```
 
-The dual of this is _indexed access types_, also called _lookup types_.
-Syntactically, they look exactly like an element access, but are written as types:
+与之对应的是**索引访问类型**，也称为**查找类型**。其语法与元素访问相同，但写成类型形式：
 
-##### Example
+##### 示例
 
 ```ts
 type P1 = Person['name'] // string
@@ -40,7 +37,7 @@ type P4 = string[]['push'] // (...items: string[]) => number
 type P5 = string[][0] // string
 ```
 
-You can use this pattern with other parts of the type system to get type-safe lookups.
+结合类型系统的其他特性，这一模式可以实现类型安全的属性访问：
 
 ```ts
 function getProperty<T, K extends keyof T>(obj: T, key: K) {
@@ -61,10 +58,9 @@ let oops = getProperty(x, 'wargarbl') // Error! "wargarbl" is not "foo" | "bar"
 setProperty(x, 'foo', 'string') // Error!, string expected number
 ```
 
-## Mapped Types
+## 映射类型
 
-One common task is to take an existing type and make each of its properties entirely optional.
-Let's say we have a `Person`:
+将现有类型的所有属性变为可选是一项常见需求。以 `Person` 为例：
 
 ```ts
 interface Person {
@@ -74,7 +70,7 @@ interface Person {
 }
 ```
 
-A partial version of it would be:
+其对应的可选版本为：
 
 ```ts
 interface PartialPerson {
@@ -84,7 +80,7 @@ interface PartialPerson {
 }
 ```
 
-with Mapped types, `PartialPerson` can be written as a generalized transformation on the type `Person` as:
+借助映射类型，`PartialPerson` 可以写成对 `Person` 类型的通用变换：
 
 ```ts
 type Partial<T> = {
@@ -94,10 +90,9 @@ type Partial<T> = {
 type PartialPerson = Partial<Person>
 ```
 
-Mapped types are produced by taking a union of literal types, and computing a set of properties for a new object type.
-They're like [list comprehensions in Python](https://docs.python.org/2/tutorial/datastructures.html#nested-list-comprehensions), but instead of producing new elements in a list, they produce new properties in a type.
+映射类型通过遍历字面量类型的联合，为新对象类型生成一组属性。它类似于 [Python 中的列表推导式](https://docs.python.org/2/tutorial/datastructures.html#nested-list-comprehensions)，区别在于它生成的是类型的属性，而非列表中的元素。
 
-In addition to `Partial`, Mapped Types can express many useful transformations on types:
+除 `Partial` 外，映射类型还能表达许多有用的类型变换：
 
 ```ts
 // Keep types the same, but make each property to be read-only.
@@ -116,19 +111,18 @@ type Proxify<T> = {
 }
 ```
 
-## `Partial`, `Readonly`, `Record`, and `Pick`
+## `Partial`、`Readonly`、`Record` 与 `Pick`
 
-`Partial` and `Readonly`, as described earlier, are very useful constructs.
-You can use them to describe some common JS routines like:
+如上所述，`Partial` 和 `Readonly` 都是非常实用的工具类型，常用于描述典型的 JS 操作，例如：
 
 ```ts
 function assign<T>(obj: T, props: Partial<T>): void
 function freeze<T>(obj: T): Readonly<T>
 ```
 
-Because of that, they are now included by default in the standard library.
+因此，它们现已默认包含在标准库中。
 
-We're also including two other utility types as well: `Record` and `Pick`.
+此外，我们还新增了两个工具类型：`Record` 和 `Pick`。
 
 ```ts
 // From T pick a set of properties K
@@ -148,34 +142,32 @@ const names = { foo: 'hello', bar: 'world', baz: 'bye' }
 const lengths = mapObject(names, (s) => s.length) // { foo: number, bar: number, baz: number }
 ```
 
-## Object Spread and Rest
+## 对象展开与剩余
 
-TypeScript 2.1 brings support for [ESnext Spread and Rest](https://github.com/sebmarkbage/ecmascript-rest-spread).
+TypeScript 2.1 新增了对 [ESnext 展开与剩余](https://github.com/sebmarkbage/ecmascript-rest-spread)的支持。
 
-Similar to array spread, spreading an object can be handy to get a shallow copy:
+类似于数组展开，对象展开可以方便地获取对象的浅拷贝：
 
 ```ts
 let copy = { ...original }
 ```
 
-Similarly, you can merge several different objects.
-In the following example, `merged` will have properties from `foo`, `bar`, and `baz`.
+同样，也可以合并多个对象。下例中，`merged` 将拥有来自 `foo`、`bar` 和 `baz` 的所有属性：
 
 ```ts
 let merged = { ...foo, ...bar, ...baz }
 ```
 
-You can also override existing properties and add new ones:
+还可以覆盖已有属性或添加新属性：
 
 ```ts
 let obj = { x: 1, y: 'string' }
 var newObj = { ...obj, z: 3, y: 4 } // { x: number, y: number, z: number }
 ```
 
-The order of specifying spread operations determines what properties end up in the resulting object;
-properties in later spreads "win out" over previously created properties.
+展开操作的顺序决定了最终对象的属性值：后面的展开会覆盖前面的同名属性。
 
-Object rests are the dual of object spreads, in that they can extract any extra properties that don't get picked up when destructuring an element:
+对象剩余是对象展开的反向操作——在解构时，它可以收集所有未被显式提取的剩余属性：
 
 ```ts
 let obj = { x: 1, y: 1, z: 1 }
@@ -183,16 +175,15 @@ let { z, ...obj1 } = obj
 obj1 // {x: number, y:number};
 ```
 
-## Downlevel Async Functions
+## 向下编译的异步函数
 
-This feature was supported before TypeScript 2.1, but only when targeting ES6/ES2015.
-TypeScript 2.1 brings the capability to ES3 and ES5 run-times, meaning you'll be free to take advantage of it no matter what environment you're using.
+此特性在 TypeScript 2.1 之前已存在，但仅支持以 ES6/ES2015 为编译目标。TypeScript 2.1 将此能力扩展至 ES3 和 ES5 运行时，使你在任何环境下都可以自由使用异步函数。
 
-> Note: first, we need to make sure our run-time has an ECMAScript-compliant `Promise` available globally.
-> That might involve grabbing [a polyfill](https://github.com/stefanpenner/es6-promise) for `Promise`, or relying on one that you might have in the run-time that you're targeting.
-> We also need to make sure that TypeScript knows `Promise` exists by setting your [`lib`](/tsconfig#lib) option to something like `"dom", "es2015"` or `"dom", "es2015.promise", "es5"`
+> 注意：首先，我们需要确保运行时全局提供符合 ECMAScript 规范的 `Promise`。
+> 这可能涉及引入 `Promise` 的 [polyfill](https://github.com/stefanpenner/es6-promise)，或依赖目标运行时内置的实现。
+> 此外，我们还需要通过将 [`lib`](/tsconfig#lib) 选项配置为诸如 `"dom", "es2015"` 或 `"dom", "es2015.promise", "es5"`，以确保 TypeScript 能够感知 `Promise` 的存在。
 
-##### Example
+##### 示例
 
 ##### tsconfig.json
 
@@ -227,36 +218,34 @@ async function dramaticWelcome() {
 dramaticWelcome()
 ```
 
-Compiling and running the output should result in the correct behavior on an ES3/ES5 engine.
+编译并运行输出结果，在 ES3/ES5 引擎上应能得到正确的行为。
 
-## Support for external helpers library (`tslib`)
+## 支持外部辅助函数库（`tslib`）
 
-TypeScript injects a handful of helper functions such as `__extends` for inheritance, `__assign` for spread operator in object literals and JSX elements, and `__awaiter` for async functions.
+TypeScript 会注入少量辅助函数，例如用于继承的 `__extends`、用于对象字面量和 JSX 元素中展开运算符的 `__assign`，以及用于异步函数的 `__awaiter`。
 
-Previously there were two options:
+以往有两种处理方式：
 
-1.  inject helpers in _every_ file that needs them, or
-2.  no helpers at all with [`noEmitHelpers`](/tsconfig#noEmitHelpers).
+1.  在**每个**需要辅助函数的文件中注入这些函数；
+2.  通过 [`noEmitHelpers`](/tsconfig#noEmitHelpers) 完全不生成辅助函数。
 
-The two options left more to be desired;
-bundling the helpers in every file was a pain point for customers trying to keep their package size small.
-And not including helpers, meant customers had to maintain their own helpers library.
+这两种方案都不够理想：在每个文件中重复注入会让包体积变大；而不包含辅助函数则意味着用户必须自行维护辅助函数库。
 
-TypeScript 2.1 allows for including these files in your project once in a separate module, and the compiler will emit imports to them as needed.
+TypeScript 2.1 允许将这些辅助函数集中到项目的一个单独模块中，编译器会按需生成对它们的导入语句。
 
-First, install the [`tslib`](https://github.com/Microsoft/tslib) utility library:
+首先，安装 [`tslib`](https://github.com/Microsoft/tslib) 工具库：
 
 ```sh
 npm install tslib
 ```
 
-Second, compile your files using [`importHelpers`](/tsconfig#importHelpers):
+然后，使用 [`importHelpers`](/tsconfig#importHelpers) 进行编译：
 
 ```sh
 tsc --module commonjs --importHelpers a.ts
 ```
 
-So given the following input, the resulting `.js` file will include an import to `tslib` and use the `__assign` helper from it instead of inlining it.
+对于如下输入，生成的 `.js` 文件将包含对 `tslib` 的导入，并使用其中的 `__assign` 辅助函数，而非内联实现：
 
 ```ts
 export const o = { a: 1, name: 'o' }
@@ -270,40 +259,36 @@ exports.o = { a: 1, name: 'o' }
 exports.copy = tslib_1.__assign({}, exports.o)
 ```
 
-## Untyped imports
+## 无类型导入
 
-TypeScript has traditionally been overly strict about how you can import modules.
-This was to avoid typos and prevent users from using modules incorrectly.
+TypeScript 历来对模块导入方式要求严格，以便避免拼写错误和防止模块被错误使用。
 
-However, a lot of the time, you might just want to import an existing module that may not have its own `.d.ts` file.
-Previously this was an error.
-Starting with TypeScript 2.1 this is now much easier.
+然而很多时候，你只是想导入一个现有模块，而该模块可能没有对应的 `.d.ts` 文件。以前，这会直接报错；从 TypeScript 2.1 起，这变得简单多了。
 
-With TypeScript 2.1, you can import a JavaScript module without needing a type declaration.
-A type declaration (such as `declare module "foo" { ... }` or `node_modules/@types/foo`) still takes priority if it exists.
+TypeScript 2.1 允许在没有类型声明的情况下导入 JavaScript 模块。如果类型声明文件（如 `declare module "foo" { ... }` 或 `node_modules/@types/foo`）存在，它仍具有更高优先级。
 
-An import to a module with no declaration file will still be flagged as an error under [`noImplicitAny`](/tsconfig#noImplicitAny).
+在 [`noImplicitAny`](/tsconfig#noImplicitAny) 开启时，导入没有声明文件的模块仍会报错。
 
-##### Example
+##### 示例
 
 ```ts
 // Succeeds if `node_modules/asdf/index.js` exists
 import { x } from 'asdf'
 ```
 
-## Support for `--target ES2016`, `--target ES2017` and `--target ESNext`
+## 支持 `--target ES2016`、`--target ES2017` 与 `--target ESNext`
 
-TypeScript 2.1 supports three new target values `--target ES2016`, `--target ES2017` and `--target ESNext`.
+TypeScript 2.1 新增了三个编译目标值：`--target ES2016`、`--target ES2017` 和 `--target ESNext`。
 
-Using target `--target ES2016` will instruct the compiler not to transform ES2016-specific features, e.g. `**` operator.
+使用 `--target ES2016` 时，编译器不会转换 ES2016 专有特性，例如 `**` 运算符。
 
-Similarly, `--target ES2017` will instruct the compiler not to transform ES2017-specific features like `async`/`await`.
+类似地，`--target ES2017` 时，编译器不会转换 ES2017 专有特性，如 `async`/`await`。
 
-`--target ESNext` targets latest supported [ES proposed features](https://github.com/tc39/proposals).
+`--target ESNext` 对应最新支持的 [ES 提案特性](https://github.com/tc39/proposals)。
 
-## Improved `any` Inference
+## 改进的 `any` 类型推断
 
-Previously, if TypeScript couldn't figure out the type of a variable, it would choose the `any` type.
+以前，当 TypeScript 无法确定变量类型时，会直接选择 `any` 类型。
 
 ```ts
 let x // implicitly 'any'
@@ -312,11 +297,11 @@ let y = [] // implicitly 'any[]'
 let z: any // explicitly 'any'.
 ```
 
-With TypeScript 2.1, instead of just choosing `any`, TypeScript will infer types based on what you end up assigning later on.
+TypeScript 2.1 改变了这一行为：它不再直接选择 `any`，而是根据后续赋值来推断类型。
 
-This is only enabled if [`noImplicitAny`](/tsconfig#noImplicitAny) is set.
+此功能仅在 [`noImplicitAny`](/tsconfig#noImplicitAny) 开启时生效。
 
-##### Example
+##### 示例
 
 ```ts
 let x
@@ -339,10 +324,9 @@ x = 'Hello world!'
 x.toLowerCase()
 ```
 
-The same sort of tracking is now also done for empty arrays.
+同样的追踪机制也适用于空数组。
 
-A variable declared with no type annotation and an initial value of `[]` is considered an implicit `any[]` variable.
-However, each subsequent `x.push(value)`, `x.unshift(value)` or `x[n] = value` operation _evolves_ the type of the variable in accordance with what elements are added to it.
+声明时无类型注解且初始值为 `[]` 的变量被视为隐式 `any[]`。但每次执行 `x.push(value)`、`x.unshift(value)` 或 `x[n] = value` 操作后，变量的类型都会随着添加的元素而**演化**。
 
 ```ts
 function f1() {
@@ -365,12 +349,11 @@ function f2() {
 }
 ```
 
-## Implicit any errors
+## 隐式 any 错误
 
-One great benefit of this is that you'll see _way fewer_ implicit `any` errors when running with [`noImplicitAny`](/tsconfig#noImplicitAny).
-Implicit `any` errors are only reported when the compiler is unable to know the type of a variable without a type annotation.
+这一改进带来的一大好处是：在开启 [`noImplicitAny`](/tsconfig#noImplicitAny) 时，隐式 `any` 错误会大幅减少。只有当编译器在没有类型注解的情况下确实无法推断变量类型时，才会报告此错误。
 
-##### Example
+##### 示例
 
 ```ts
 function f3() {
@@ -382,16 +365,13 @@ function f3() {
 }
 ```
 
-## Better inference for literal types
+## 更精确的字面量类型推断
 
-String, numeric and boolean literal types (e.g. `"abc"`, `1`, and `true`) were previously inferred only in the presence of an explicit type annotation.
-Starting with TypeScript 2.1, literal types are _always_ inferred for `const` variables and `readonly` properties.
+字符串、数字和布尔字面量类型（如 `"abc"`、`1` 和 `true`）以前只有在显式类型注解存在时才会被推断出来。从 TypeScript 2.1 起，`const` 变量和 `readonly` 属性**始终**会被推断为字面量类型。
 
-The type inferred for a `const` variable or `readonly` property without a type annotation is the type of the literal initializer.
-The type inferred for a `let` variable, `var` variable, parameter, or non-`readonly` property with an initializer and no type annotation is the widened literal type of the initializer.
-Where the widened type for a string literal type is `string`, `number` for numeric literal types, `boolean` for `true` or `false` and the containing enum for enum literal types.
+对于没有类型注解的 `const` 变量或 `readonly` 属性，推断类型为其字面量初始值的类型。对于 `let` 变量、`var` 变量、参数或非 `readonly` 属性（有初始值但无类型注解），推断类型为其初始值字面量类型经过**拓宽**后的类型——字符串字面量类型拓宽为 `string`，数字字面量类型拓宽为 `number`，`true` 或 `false` 拓宽为 `boolean`，枚举字面量类型拓宽为其所在的枚举类型。
 
-##### Example
+##### 示例
 
 ```ts
 const c1 = 1 // Type 1
@@ -407,11 +387,9 @@ let v4 = c4 // Type boolean
 let v5 = c5 // Type number | string
 ```
 
-Literal type widening can be controlled through explicit type annotations.
-Specifically, when an expression of a literal type is inferred for a const location without a type annotation, that `const` variable gets a widening literal type inferred.
-But when a `const` location has an explicit literal type annotation, the `const` variable gets a non-widening literal type.
+字面量类型的拓宽行为可通过显式类型注解来控制。具体而言，当一个字面量类型的表达式在没有类型注解的 `const` 声明处被推断时，该 `const` 变量会得到一个可拓宽的字面量类型；而当 `const` 声明处存在显式字面量类型注解时，变量则会得到一个不可拓宽的字面量类型。
 
-##### Example
+##### 示例
 
 ```ts
 const c1 = 'hello' // Widening type "hello"
@@ -421,13 +399,11 @@ const c2: 'hello' = 'hello' // Type "hello"
 let v2 = c2 // Type "hello"
 ```
 
-## Use returned values from super calls as 'this'
+## 将 super 调用的返回值用作 `this`
 
-In ES2015, constructors which return an object implicitly substitute the value of `this` for any callers of `super()`.
-As a result, it is necessary to capture any potential return value of `super()` and replace it with `this`.
-This change enables working with [Custom Elements](https://www.w3.org/TR/custom-elements/), which takes advantage of this to initialize browser-allocated elements with user-written constructors.
+在 ES2015 中，若构造函数返回一个对象，该对象会隐式替换所有调用 `super()` 的子类中的 `this`。因此，必须捕获 `super()` 可能的返回值并用其替换 `this`。这一变更使得与[自定义元素（Custom Elements）](https://www.w3.org/TR/custom-elements/)的集成成为可能——自定义元素正是利用这一机制，通过用户编写的构造函数来初始化浏览器分配的元素。
 
-##### Example
+##### 示例
 
 ```ts
 class Base {
@@ -448,7 +424,7 @@ class Derived extends Base {
 }
 ```
 
-Generates:
+生成代码：
 
 ```js
 var Derived = (function (_super) {
@@ -462,25 +438,24 @@ var Derived = (function (_super) {
 })(Base)
 ```
 
-> This change entails a break in the behavior of extending built-in classes like `Error`, `Array`, `Map`, etc.. Please see the [extending built-ins breaking change documentation](https://github.com/Microsoft/TypeScript-wiki/blob/master/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work) for more details.
+> 注意：该变更会对以 ES5/ES3 为目标时继承 `Error`、`Array`、`Map` 等内置类的行为带来破坏性改动。详情请参阅[继承内置类破坏性变更说明文档](https://github.com/Microsoft/TypeScript-wiki/blob/master/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work)。
 
-## Configuration inheritance
+## 配置继承
 
-Often a project has multiple output targets, e.g. `ES5` and `ES2015`, debug and production or `CommonJS` and `System`;
-Just a few configuration options change between these two targets, and maintaining multiple `tsconfig.json` files can be a hassle.
+项目通常有多个输出目标，例如 `ES5` 与 `ES2015`、调试版与生产版，或 `CommonJS` 与 `System`。这些目标之间往往只有少数配置项不同，维护多个 `tsconfig.json` 文件会相当繁琐。
 
-TypeScript 2.1 supports inheriting configuration using `extends`, where:
+TypeScript 2.1 通过 `extends` 支持配置继承，规则如下：
 
-- `extends` is a new top-level property in `tsconfig.json` (alongside `compilerOptions`, [`files`](/tsconfig#files), [`include`](/tsconfig#include), and [`exclude`](/tsconfig#exclude)).
-- The value of `extends` must be a string containing a path to another configuration file to inherit from.
-- The configuration from the base file is loaded first, then overridden by those in the inheriting config file.
-- Circularity between configuration files is not allowed.
-- [`files`](/tsconfig#files), [`include`](/tsconfig#include), and [`exclude`](/tsconfig#exclude) from the inheriting config file _overwrite_ those from the base config file.
-- All relative paths found in the configuration file will be resolved relative to the configuration file they originated in.
+- `extends` 是 `tsconfig.json` 中新增的顶级属性（与 `compilerOptions`、[`files`](/tsconfig#files)、[`include`](/tsconfig#include) 和 [`exclude`](/tsconfig#exclude) 并列）。
+- `extends` 的值必须是一个字符串，包含指向被继承配置文件的路径。
+- 基础文件中的配置会先被加载，随后被继承文件中的配置覆盖。
+- 配置文件之间不允许存在循环引用。
+- 继承文件中的 [`files`](/tsconfig#files)、[`include`](/tsconfig#include) 和 [`exclude`](/tsconfig#exclude) 会**覆盖**基础文件中的对应配置。
+- 配置文件中所有相对路径均相对于其所在配置文件解析。
 
-##### Example
+##### 示例
 
-`configs/base.json`:
+`configs/base.json`：
 
 ```json tsconfig
 {
@@ -491,7 +466,7 @@ TypeScript 2.1 supports inheriting configuration using `extends`, where:
 }
 ```
 
-`tsconfig.json`:
+`tsconfig.json`：
 
 ```json tsconfig
 {
@@ -500,7 +475,7 @@ TypeScript 2.1 supports inheriting configuration using `extends`, where:
 }
 ```
 
-`tsconfig.nostrictnull.json`:
+`tsconfig.nostrictnull.json`：
 
 ```json tsconfig
 {
@@ -511,12 +486,11 @@ TypeScript 2.1 supports inheriting configuration using `extends`, where:
 }
 ```
 
-## New `--alwaysStrict`
+## 新增 `--alwaysStrict`
 
-Invoking the compiler with [`alwaysStrict`](/tsconfig#alwaysStrict) causes:
+使用 [`alwaysStrict`](/tsconfig#alwaysStrict) 选项调用编译器会产生以下效果：
 
-1. Parses all the code in strict mode.
-2. Writes `"use strict";` directive atop every generated file.
+1. 以严格模式解析所有代码。
+2. 在每个生成文件的顶部写入 `"use strict";` 指令。
 
-Modules are parsed automatically in strict mode.
-The new flag is recommended for non-module code.
+模块代码会自动以严格模式解析，此新选项主要推荐用于非模块代码。

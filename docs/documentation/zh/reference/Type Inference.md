@@ -1,38 +1,38 @@
 ---
-title: Type Inference
+title: 类型推断
 layout: docs
 permalink: /zh/docs/handbook/type-inference.html
-oneline: How code flow analysis works in TypeScript
+oneline: TypeScript 中代码流分析的工作原理
 translatable: true
 ---
 
-In TypeScript, there are several places where type inference is used to provide type information when there is no explicit type annotation. For example, in this code
+在 TypeScript 中，在没有显式类型注解的情况下，有若干处会使用类型推断来提供类型信息。例如，在这段代码中：
 
 ```ts twoslash
 let x = 3
 //  ^?
 ```
 
-The type of the `x` variable is inferred to be `number`.
-This kind of inference takes place when initializing variables and members, setting parameter default values, and determining function return types.
+变量 `x` 的类型被推断为 `number`。
+这种推断发生在初始化变量和成员、设置参数默认值以及确定函数返回类型时。
 
-In most cases, type inference is straightforward.
-In the following sections, we'll explore some of the nuances in how types are inferred.
+在大多数情况下，类型推断都是直截了当的。
+在接下来的几节中，我们将探讨类型推断的一些细微机制。
 
-## Best common type
+## 最佳通用类型（Best common type）
 
-When a type inference is made from several expressions, the types of those expressions are used to calculate a "best common type". For example,
+当需要从多个表达式推断类型时，这些表达式的类型会被用来计算出一个“最佳通用类型”。例如：
 
 ```ts twoslash
 let x = [0, 1, null]
 //  ^?
 ```
 
-To infer the type of `x` in the example above, we must consider the type of each array element.
-Here we are given two choices for the type of the array: `number` and `null`.
-The best common type algorithm considers each candidate type, and picks the type that is compatible with all the other candidates.
+要推断上例中 `x` 的类型，我们必须考虑每个数组元素的类型。
+这里数组的类型有两个候选值：`number` 和 `null`。
+最佳通用类型算法会考量各个候选类型，并选出与所有其他候选类型都兼容的类型。
 
-Because the best common type has to be chosen from the provided candidate types, there are some cases where types share a common structure, but no one type is the super type of all candidate types. For example:
+由于最佳通用类型必须从提供的候选类型中选出，因此在某些情况下，各类型虽然共享通用结构，但没有某一个类型是所有候选类型的超类型。例如：
 
 ```ts twoslash
 // @strict: false
@@ -51,8 +51,8 @@ let zoo = [new Rhino(), new Elephant(), new Snake()]
 //    ^?
 ```
 
-Ideally, we may want `zoo` to be inferred as an `Animal[]`, but because there is no object that is strictly of type `Animal` in the array, we make no inference about the array element type.
-To correct this, explicitly provide the type when no one type is a super type of all other candidates:
+理想情况下，我们可能希望 `zoo` 被推断为 `Animal[]`，但因为数组中没有严格属于 `Animal` 类型的对象，所以我们无法推断出该数组元素的具体类型。
+为了纠正这一点，当没有任何一个类型是所有其他候选类型的超类型时，请显式提供类型：
 
 ```ts twoslash
 // @strict: false
@@ -71,12 +71,12 @@ let zoo: Animal[] = [new Rhino(), new Elephant(), new Snake()]
 //    ^?
 ```
 
-When no best common type is found, the resulting inference is the union array type, `(Rhino | Elephant | Snake)[]`.
+如果未找到最佳通用类型，推断的结果将是联合数组类型 `(Rhino | Elephant | Snake)[]`。
 
-## Contextual Typing
+## 上下文类型（Contextual Typing）
 
-Type inference also works in "the other direction" in some cases in TypeScript.
-This is known as "contextual typing". Contextual typing occurs when the type of an expression is implied by its location. For example:
+在 TypeScript 中，类型推断在某些情况下也会“反向”进行。
+这被称为“上下文类型”（contextual typing）。当一个表达式的类型由其所在的位置隐式确定时，就会发生上下文类型推断。例如：
 
 ```ts twoslash
 // @errors: 2339
@@ -86,10 +86,10 @@ window.onmousedown = function (mouseEvent) {
 }
 ```
 
-Here, the TypeScript type checker used the type of the `Window.onmousedown` function to infer the type of the function expression on the right hand side of the assignment.
-When it did so, it was able to infer the [type](https://developer.mozilla.org/docs/Web/API/MouseEvent) of the `mouseEvent` parameter, which does contain a `button` property, but not a `kangaroo` property.
+在这里，TypeScript 类型检查器使用 `Window.onmousedown` 函数的类型来推断赋值操作右侧函数表达式的类型。
+在这样做时，它能够推断出 `mouseEvent` 参数的[类型](https://developer.mozilla.org/docs/Web/API/MouseEvent)，该类型确实包含 `button` 属性，但不包含 `kangaroo` 属性。
 
-This works because window already has `onmousedown` declared in its type:
+这之所以有效，是因为 `window` 的类型中已经声明了 `onmousedown`：
 
 ```ts
 // Declares there is a global variable called 'window'
@@ -107,7 +107,7 @@ interface GlobalEventHandlers {
 }
 ```
 
-TypeScript is smart enough to infer types in other contexts as well:
+TypeScript 足够智能，在其他上下文中也能推断类型：
 
 ```ts twoslash
 // @errors: 2339
@@ -116,9 +116,9 @@ window.onscroll = function (uiEvent) {
 }
 ```
 
-Based on the fact that the above function is being assigned to `Window.onscroll`, TypeScript knows that `uiEvent` is a [UIEvent](https://developer.mozilla.org/docs/Web/API/UIEvent), and not a [MouseEvent](https://developer.mozilla.org/docs/Web/API/MouseEvent) like the previous example. `UIEvent` objects contain no `button` property, and so TypeScript will throw an error.
+基于上述函数被赋值给 `Window.onscroll` 的事实，TypeScript 得知 `uiEvent` 是一个 [UIEvent](https://developer.mozilla.org/docs/Web/API/UIEvent)，而不是像前一个示例中的 [MouseEvent](https://developer.mozilla.org/docs/Web/API/MouseEvent)。`UIEvent` 对象不包含 `button` 属性，因此 TypeScript 会报错。
 
-If this function were not in a contextually typed position, the function's argument would implicitly have type `any`, and no error would be issued (unless you are using the [`noImplicitAny`](/tsconfig#noImplicitAny) option):
+如果该函数不在受上下文类型影响的位置，该函数的参数将隐式具有 `any` 类型，并且不会报错（除非你启用了 [`noImplicitAny`](/tsconfig#noImplicitAny) 选项）：
 
 ```ts twoslash
 // @noImplicitAny: false
@@ -127,7 +127,7 @@ const handler = function (uiEvent) {
 }
 ```
 
-We can also explicitly give type information to the function's argument to override any contextual type:
+我们也可以显式为函数的参数提供类型信息，以覆盖任何上下文类型：
 
 ```ts twoslash
 window.onscroll = function (uiEvent: any) {
@@ -135,11 +135,11 @@ window.onscroll = function (uiEvent: any) {
 }
 ```
 
-However, this code will log `undefined`, since `uiEvent` has no property called `button`.
+然而，这段代码将输出 `undefined`，因为 `uiEvent` 上并没有名为 `button` 的属性。
 
-Contextual typing applies in many cases.
-Common cases include arguments to function calls, right hand sides of assignments, type assertions, members of object and array literals, and return statements.
-The contextual type also acts as a candidate type in best common type. For example:
+上下文类型适用于多种情况。
+常见的场景包括：函数调用的参数、赋值操作的右侧、类型断言、对象和数组字面量的成员以及 return 语句。
+上下文类型还可以作为最佳通用类型中的候选类型。例如：
 
 ```ts twoslash
 // @strict: false
@@ -159,5 +159,5 @@ function createZoo(): Animal[] {
 }
 ```
 
-In this example, best common type has a set of four candidates: `Animal`, `Rhino`, `Elephant`, and `Snake`.
-Of these, `Animal` can be chosen by the best common type algorithm.
+在这个示例中，最佳通用类型拥有由四个候选类型组成的集合：`Animal`、`Rhino`、`Elephant` 和 `Snake`。
+在这些候选项中，最佳通用类型算法可以选择 `Animal`。

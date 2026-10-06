@@ -1,32 +1,32 @@
 ---
-title: What is a tsconfig.json
+title: 什么是 tsconfig.json
 layout: docs
 permalink: /zh/docs/handbook/tsconfig-json.html
-oneline: Learn about how a TSConfig works
+oneline: 了解 TSConfig 的工作原理
 translatable: true
 ---
 
-## Overview
+## 概述
 
-The presence of a `tsconfig.json` file in a directory indicates that the directory is the root of a TypeScript project.
-The `tsconfig.json` file specifies the root files and the compiler options required to compile the project.
+目录中如果存在 `tsconfig.json` 文件，则表明该目录是 TypeScript 项目的根目录。
+`tsconfig.json` 文件指定了编译该项目所需的根文件以及编译器选项。
 
-JavaScript projects can use a `jsconfig.json` file instead, which acts almost the same but has some JavaScript-related compiler flags enabled by default.
+JavaScript 项目可以使用 `jsconfig.json` 文件来代替，两者的作用几乎相同，但 `jsconfig.json` 默认启用了部分与 JavaScript 相关的编译器标志。
 
-A project is compiled in one of the following ways:
+项目可以通过以下方式之一进行编译：
 
-## Using `tsconfig.json` or `jsconfig.json`
+## 使用 `tsconfig.json` 或 `jsconfig.json`
 
-- By invoking tsc with no input files, in which case the compiler searches for the `tsconfig.json` file starting in the current directory and continuing up the parent directory chain.
-- By invoking tsc with no input files and a `--project` (or just `-p`) command line option that specifies the path of a directory containing a `tsconfig.json` file, or a path to a valid `.json` file containing the configurations.
+- 在不指定任何输入文件的情况下调用 tsc，此时编译器会从当前目录开始向上级父目录链搜索 `tsconfig.json` 文件。
+- 在不指定输入文件的情况下调用 tsc，并使用 `--project`（或简写 `-p`）命令行选项，指定包含 `tsconfig.json` 文件的目录路径，或者包含配置的有效 `.json` 文件路径。
 
-When input files are specified on the command line, `tsconfig.json` files are ignored.
+在命令行中指定了输入文件时，`tsconfig.json` 文件将被忽略。
 
-## Examples
+## 示例
 
-Example `tsconfig.json` files:
+`tsconfig.json` 示例文件：
 
-- Using the [`files`](/tsconfig#files) property
+- 使用 [`files`](/tsconfig#files) 属性
 
   ```json tsconfig
   {
@@ -55,7 +55,7 @@ Example `tsconfig.json` files:
   }
   ```
 
-- Using the [`include`](/tsconfig#include) and [`exclude`](/tsconfig#exclude) properties
+- 使用 [`include`](/tsconfig#include) 和 [`exclude`](/tsconfig#exclude) 属性
 
   ```json tsconfig
   {
@@ -72,12 +72,12 @@ Example `tsconfig.json` files:
   }
   ```
 
-## TSConfig Bases
+## TSConfig 基础配置（Bases）
 
-Depending on the JavaScript runtime environment which you intend to run your code in, there may be a base configuration which you can use at [github.com/tsconfig/bases](https://github.com/tsconfig/bases/).
-These are `tsconfig.json` files which your project extends from which simplifies your `tsconfig.json` by handling the runtime support.
+根据你打算运行代码的 JavaScript 运行时环境，你可以在 [github.com/tsconfig/bases](https://github.com/tsconfig/bases/) 找到可直接使用的基础配置。
+这些是你的项目可以继承（extends）的 `tsconfig.json` 文件，它们通过处理运行时支持来简化你自身的 `tsconfig.json`。
 
-For example, if you were writing a project which uses Node.js version 12 and above, then you could use the npm module [`@tsconfig/node12`](https://www.npmjs.com/package/@tsconfig/node12):
+例如，如果你正在编写一个使用 Node.js 12 及以上版本的项目，可以使用 npm 模块 [`@tsconfig/node12`](https://www.npmjs.com/package/@tsconfig/node12)：
 
 ```json tsconfig
 {
@@ -92,16 +92,16 @@ For example, if you were writing a project which uses Node.js version 12 and abo
 }
 ```
 
-This lets your `tsconfig.json` focus on the unique choices for your project, and not all of the runtime mechanics. There are a few tsconfig bases already, and we're hoping the community can add more for different environments.
+这样可以让你的 `tsconfig.json` 专注于项目的个性化配置，而不是繁琐的运行时机制。目前已经有若干 TSConfig 基础配置，我们也期待社区能针对不同的环境贡献更多配置。
 
-## Details
+## 详细信息
 
-The `"compilerOptions"` property can be omitted, in which case the compiler's defaults are used. See our full list of supported [Compiler Options](/tsconfig).
+`"compilerOptions"` 属性可以省略，此时将使用编译器的默认值。请参阅我们支持的完整[编译器选项（Compiler Options）](/tsconfig)列表。
 
-## TSConfig Reference
+## TSConfig 参考
 
-To learn more about the hundreds of configuration options in the [TSConfig Reference](/tsconfig).
+深入了解数百个配置选项，请参阅 [TSConfig 参考](/tsconfig)。
 
 ## Schema
 
-The `tsconfig.json` Schema can be found at [the JSON Schema Store](https://json.schemastore.org/tsconfig).
+`tsconfig.json` 的 Schema 可以在 [JSON Schema Store](https://json.schemastore.org/tsconfig) 中找到。

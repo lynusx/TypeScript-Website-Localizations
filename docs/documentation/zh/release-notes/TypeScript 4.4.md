@@ -2,16 +2,16 @@
 title: TypeScript 4.4
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-4-4.html
-oneline: TypeScript 4.4 Release Notes
+oneline: TypeScript 4.4 发布说明
 ---
 
-## Control Flow Analysis of Aliased Conditions and Discriminants
+## 别名条件与判别属性的控制流分析
 
-In JavaScript, we often have to probe a value in different ways, and do something different once we know more about its type.
-TypeScript understands these checks and calls them _type guards_.
-Instead of having to convince TypeScript of a variable's type whenever we use it, the type-checker leverages something called _control flow analysis_ to see if we've used a type guard before a given piece of code.
+在 JavaScript 中，我们经常需要以不同的方式检查某个值，并在了解其类型后执行不同的操作。
+TypeScript 能够理解这些检查，并称之为*类型守卫*（type guards）。
+类型检查器利用所谓的*控制流分析*（control flow analysis）来观察我们在某段代码之前是否使用了类型守卫，而不是每次使用变量时都需要向 TypeScript 证明其类型。
 
-For example, we can write something like
+例如，我们可以编写如下代码：
 
 ```ts twoslash
 function foo(arg: unknown) {
@@ -22,11 +22,11 @@ function foo(arg: unknown) {
 }
 ```
 
-In this example, we checked whether `arg` was a `string`.
-TypeScript recognized the `typeof arg === "string"` check, which it considered a type guard, and knew that `arg` was a `string` inside the body of the `if` block.
-That let us access `string` methods like `toUpperCase()` without getting an error.
+在这个示例中，我们检查了 `arg` 是否为 `string`。
+TypeScript 识别出 `typeof arg === "string"` 检查并将其视为类型守卫，从而得知在 `if` 代码块内部 `arg` 的类型是 `string`。
+这使我们能够直接访问 `toUpperCase()` 等 `string` 方法而不会报错。
 
-However, what would happen if we moved the condition out to a constant called `argIsString`?
+然而，如果我们把该条件提取到一个名为 `argIsString` 的常量中，会发生什么呢？
 
 ```ts
 // In TS 4.3 and below
@@ -41,17 +41,17 @@ function foo(arg: unknown) {
 }
 ```
 
-In previous versions of TypeScript, this would be an error - even though `argIsString` was assigned the value of a type guard, TypeScript simply lost that information.
-That's unfortunate since we might want to re-use the same check in several places.
-To get around that, users often have to repeat themselves or use type assertions (a.k.a. casts).
+在 TypeScript 的早期版本中，这会导致错误——即使 `argIsString` 被赋值为一个类型守卫的结果，TypeScript 也会直接丢失该信息。
+这很不方便，因为我们可能希望在多处复用同一个检查。
+为了绕过这一限制，开发者往往不得不重复编写检查条件，或者使用类型断言（即类型转换）。
 
-In TypeScript 4.4, that is no longer the case.
-The above example works with no errors!
-When TypeScript sees that we are testing a constant value, it will do a little bit of extra work to see if it contains a type guard.
-If that type guard operates on a `const`, a `readonly` property, or an un-modified parameter, then TypeScript is able to narrow that value appropriately.
+在 TypeScript 4.4 中，这种情况不复存在。
+上面的示例现在完全可以正常工作且不会报错！
+当 TypeScript 发现我们在测试一个常量值时，它会做一些额外的工作来检查该常量是否包含类型守卫。
+如果该类型守卫作用于 `const` 常量、`readonly` 只读属性或未被修改的参数，那么 TypeScript 就能对该值进行恰当的类型窄化。
 
-Different sorts of type guard conditions are preserved - not just `typeof` checks.
-For example, checks on discriminated unions work like a charm.
+不仅是 `typeof` 检查，各类不同的类型守卫条件均得以保留。
+例如，对可辨识联合的检查也能完美支持：
 
 ```ts twoslash
 type Shape =
@@ -69,7 +69,7 @@ function area(shape: Shape): number {
 }
 ```
 
-Analysis on discriminants in 4.4 also goes a little bit deeper - we can now extract out discriminants and TypeScript can narrow the original object.
+TypeScript 4.4 对判别属性的分析也更进了一步——我们现在可以解构提取出判别属性，TypeScript 依然能够窄化原始对象：
 
 ```ts twoslash
 type Shape =
@@ -89,7 +89,7 @@ function area(shape: Shape): number {
 }
 ```
 
-As another example, here's a function that checks whether two of its inputs have contents.
+再举一个例子，下面这个函数用于检查它的两个入参是否都存在内容：
 
 ```ts twoslash
 function doSomeChecks(
@@ -107,11 +107,11 @@ function doSomeChecks(
 }
 ```
 
-TypeScript can understand that both `inputA` and `inputB` are both present if `mustDoWork` is `true`.
-That means we don't have to write a non-null assertion like `inputA!` to convince TypeScript that `inputA` isn't `undefined`.
+TypeScript 能够推断出如果 `mustDoWork` 为 `true`，则 `inputA` 和 `inputB` 必定同时存在。
+这意味着我们不必编写类似 `inputA!` 的非空断言来向 TypeScript 证明 `inputA` 不是 `undefined`。
 
-One neat feature here is that this analysis works transitively.
-TypeScript will hop through constants to understand what sorts of checks you've already performed.
+这里一个很棒的特性是：这种分析是传递性的。
+TypeScript 会跨多个常量进行追踪，以了解你之前执行过哪些检查：
 
 <!-- prettier-ignore -->
 ```ts twoslash
@@ -129,18 +129,18 @@ function f(x: string | number | boolean) {
 }
 ```
 
-Note that there's a cutoff - TypeScript doesn't go arbitrarily deep when checking these conditions, but its analysis is deep enough for most checks.
+需要注意的是，这种分析存在深度限制——TypeScript 在检查这些条件时不会无限深入，但其分析深度足以应对大多数场景。
 
-This feature should make a lot of intuitive JavaScript code "just work" in TypeScript without it getting in your way.
-For more details, [check out the implementation on GitHub](https://github.com/microsoft/TypeScript/pull/44730)!
+该特性能够让许多符合直觉的 JavaScript 代码在 TypeScript 中“直接可用”，不再受类型系统的阻碍。
+更多详细信息，请查看 [GitHub 上的实现 PR](https://github.com/microsoft/TypeScript/pull/44730)！
 
-## Symbol and Template String Pattern Index Signatures
+## Symbol 与模板字符串模式索引签名
 
-TypeScript lets us describe objects where every property has to have a certain type using _index signatures_.
-This allows us to use these objects as dictionary-like types, where we can use string keys to index into them with square brackets.
+TypeScript 允许我们使用*索引签名*（index signatures）来描述所有属性都必须具有某种类型的对象。
+这使我们能够将这些对象当作类似字典的类型使用，通过中括号配合字符串键进行索引访问。
 
-For example, we can write a type with an index signature that takes `string` keys and maps to `boolean` values.
-If we try to assign anything other than a `boolean` value, we'll get an error.
+例如，我们可以编写一个带有索引签名的类型，它接收 `string` 类型的键并映射到 `boolean` 类型的值。
+如果我们尝试赋予除 `boolean` 以外的任何值，都会报错：
 
 ```ts twoslash
 // @errors: 2322 2375
@@ -158,9 +158,9 @@ myDict['bar'] = false
 myDict['baz'] = 'oops'
 ```
 
-While [a `Map` might be a better data structure here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) (specifically, a `Map<string, boolean>`), JavaScript objects are often more convenient to use or just happen to be what we're given to work with.
+尽管在此类场景中 [使用 `Map` 可能是更合适的数据结构](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)（具体而言是 `Map<string, boolean>`），但在很多情况下，JavaScript 对象使用起来往往更便捷，或者正是我们接收到的数据格式。
 
-Similarly, `Array<T>` already defines a `number` index signature that lets us insert/retrieve values of type `T`.
+类似地，`Array<T>` 也已经定义了一个 `number` 索引签名，允许我们存取 `T` 类型的值：
 
 ```ts
 // @errors: 2322 2375
@@ -180,14 +180,14 @@ arr[0] = 'hello!'
 arr[1] = 123
 ```
 
-Index signatures are very useful to express lots of code out in the wild;
-however, until now they've been limited to `string` and `number` keys (and `string` index signatures have an intentional quirk where they can accept `number` keys since they'll be coerced to strings anyway).
-That means that TypeScript didn't allow indexing objects with `symbol` keys.
-TypeScript also couldn't model an index signature of some _subset_ of `string` keys - for example, an index signature which describes just properties whose names start with the text `data-`.
+索引签名在表达实际代码中非常有用；
+然而，此前它们仅限于 `string` 和 `number` 类型的键（而且 `string` 索引签名还有一个特意的设计，即允许接收 `number` 键，因为它们无论如何都会被强制转换为字符串）。
+这意味着 TypeScript 不允许使用 `symbol` 键来索引对象。
+TypeScript 也无法表达某些 `string` 键的*子集*索引签名——例如，仅描述名称以 `data-` 开头的属性的索引签名。
 
-TypeScript 4.4 addresses these limitations, and allows index signatures for `symbol`s and template string patterns.
+TypeScript 4.4 解决了这些局限，支持了针对 `symbol` 和模板字符串模式的索引签名。
 
-For example, TypeScript now allows us to declare a type that can be keyed on arbitrary `symbol`s.
+例如，TypeScript 现在允许我们声明一个可以使用任意 `symbol` 作为键的类型：
 
 ```ts twoslash
 // @errors: 2322 2375
@@ -209,9 +209,9 @@ let redVal = colors[red]
 colors[blue] = 'da ba dee'
 ```
 
-Similarly, we can write an index signature with template string pattern type.
-One use of this might be to exempt properties starting with `data-` from TypeScript's excess property checking.
-When we pass an object literal to something with an expected type, TypeScript will look for excess properties that weren't declared in the expected type.
+同样地，我们也可以编写带有模板字符串模式类型的索引签名。
+它的一个用例是使以 `data-` 开头的属性免受 TypeScript 额外属性检查的影响。
+当我们把对象字面量传递给期望特定类型的参数时，TypeScript 会查找未在期望类型中声明的额外属性：
 
 ```ts
 // @errors: 2322 2375
@@ -243,14 +243,14 @@ let b: OptionsWithDataProps = {
 }
 ```
 
-A final note on index signatures is that they now permit union types, as long as they're a union of infinite-domain primitive types - specifically:
+关于索引签名的最后一点说明是，它们现在允许使用联合类型，只要这些联合类型是由具有无限值域的原始类型组成的即可——具体包括：
 
 - `string`
 - `number`
 - `symbol`
-- template string patterns (e.g. `` `hello-${string}` ``)
+- 模板字符串模式（例如 `` `hello-${string}` ``）
 
-An index signature whose argument is a union of these types will de-sugar into several different index signatures.
+参数为这些类型联合的索引签名将被脱糖（de-sugar）为几个不同的索引签名：
 
 ```ts
 interface Data {
@@ -265,12 +265,12 @@ interface Data {
 }
 ```
 
-For more details, [read up on the pull request](https://github.com/microsoft/TypeScript/pull/44512)
+更多详细信息，请参阅 [该 Pull Request](https://github.com/microsoft/TypeScript/pull/44512)。
 
-## Defaulting to the `unknown` Type in Catch Variables (`--useUnknownInCatchVariables`)
+## Catch 变量中默认使用 `unknown` 类型（`--useUnknownInCatchVariables`）
 
-In JavaScript, any type of value can be thrown with `throw` and caught in a `catch` clause.
-Because of this, TypeScript historically typed catch clause variables as `any`, and would not allow any other type annotation:
+在 JavaScript 中，任何类型的值都可以通过 `throw` 抛出并在 `catch` 子句中捕获。
+正因如此，TypeScript 在历史上一直将 catch 子句中的变量类型设为 `any`，且不允许任何其他类型注解：
 
 ```ts
 try {
@@ -283,12 +283,12 @@ try {
 }
 ```
 
-Once TypeScript added the `unknown` type, it became clear that `unknown` was a better choice than `any` in `catch` clause variables for users who want the highest degree of correctness and type-safety, since it narrows better and forces us to test against arbitrary values.
-Eventually TypeScript 4.0 allowed users to specify an explicit type annotation of `unknown` (or `any`) on each `catch` clause variable so that we could opt into stricter types on a case-by-case basis;
-however, for some, manually specifying `: unknown` on every `catch` clause was a chore.
+在 TypeScript 引入 `unknown` 类型后，对于追求最高代码正确性与类型安全的用户而言，在 `catch` 子句变量中使用 `unknown` 显然比 `any` 是更好的选择，因为它能够更好地进行类型窄化，并迫使我们针对任意值进行检查。
+最终，TypeScript 4.0 允许用户在每个 `catch` 子句变量上显式指定 `unknown`（或 `any`）类型注解，以便按需开启更严格的类型检查；
+然而对某些开发者来说，在每个 `catch` 子句上手动标注 `: unknown` 依然是一件繁琐的事。
 
-That's why TypeScript 4.4 introduces a new flag called [`useUnknownInCatchVariables`](/tsconfig#useUnknownInCatchVariables).
-This flag changes the default type of `catch` clause variables from `any` to `unknown`.
+因此，TypeScript 4.4 引入了一个名为 [`useUnknownInCatchVariables`](/tsconfig#useUnknownInCatchVariables) 的新标志。
+该标志将 `catch` 子句变量的默认类型从 `any` 更改为 `unknown`。
 
 ```ts twoslash
 // @errors: 2571 18046
@@ -309,9 +309,9 @@ try {
 }
 ```
 
-This flag is enabled under the [`strict`](/tsconfig#strict) family of options.
-That means that if you check your code using [`strict`](/tsconfig#strict), this option will automatically be turned on.
-You may end up with errors in TypeScript 4.4 such as
+该标志在 [`strict`](/tsconfig#strict) 严格模式选项族下默认启用。
+这意味着如果你使用 [`strict`](/tsconfig#strict) 检查代码，该选项将自动开启。
+在 TypeScript 4.4 中，你可能会遇到如下错误：
 
 ```
 Property 'message' does not exist on type 'unknown'.
@@ -319,7 +319,7 @@ Property 'name' does not exist on type 'unknown'.
 Property 'stack' does not exist on type 'unknown'.
 ```
 
-In cases where we don't want to deal with an `unknown` variable in a `catch` clause, we can always add an explicit `: any` annotation so that we can opt _out_ of stricter types.
+如果我们不想在 `catch` 子句中处理 `unknown` 变量，随时可以通过添加显式的 `: any` 注解来选择*停用*更严格的类型：
 
 <!-- prettier-ignore -->
 ```ts twoslash
@@ -332,14 +332,14 @@ try {
 }
 ```
 
-For more information, take a look at [the implementing pull request](https://github.com/microsoft/TypeScript/pull/41013).
+更多信息请参阅 [实现该特性的 Pull Request](https://github.com/microsoft/TypeScript/pull/41013)。
 
-## Exact Optional Property Types (`--exactOptionalPropertyTypes`)
+## 精确的可选属性类型（`--exactOptionalPropertyTypes`）
 
-In JavaScript, reading a _missing_ property on an object produces the value `undefined`.
-It's also possible to _have_ an actual property with the value `undefined`.
-A lot of code in JavaScript tends to treat these situations the same way, and so initially TypeScript just interpreted every optional property as if a user had written `undefined` in the type.
-For example,
+在 JavaScript 中，读取对象上*缺失*的属性会得到 `undefined` 值。
+同时，对象也有可能*真正包含*一个值为 `undefined` 的属性。
+JavaScript 中的很多代码往往对这两种情况不加区分，因此最初 TypeScript 只是将每个可选属性都解释为用户在类型中写了 `undefined`。
+例如：
 
 ```ts
 interface Person {
@@ -348,7 +348,7 @@ interface Person {
 }
 ```
 
-was considered equivalent to
+被视同为：
 
 ```ts
 interface Person {
@@ -357,7 +357,7 @@ interface Person {
 }
 ```
 
-What this meant is that a user could explicitly write `undefined` in place of `age`.
+这意味着用户可以显式地将 `undefined` 赋给 `age`：
 
 ```ts
 const p: Person = {
@@ -366,12 +366,12 @@ const p: Person = {
 }
 ```
 
-So by default, TypeScript doesn't distinguish between a present property with the value `undefined` and a missing property.
-While this works most of the time, not all code in JavaScript makes the same assumptions.
-Functions and operators like `Object.assign`, `Object.keys`, object spread (`{ ...obj }`), and `for`-`in` loops behave differently depending on whether or not a property actually exists on an object.
-In the case of our `Person` example, this could potentially lead to runtime errors if the `age` property was observed in a context where its presence was important.
+因此在默认情况下，TypeScript 并不区分“值为 `undefined` 的已存在属性”与“缺失的属性”。
+虽然这在大多数情况下行得通，但并非所有 JavaScript 代码都基于相同的假设。
+像 `Object.assign`、`Object.keys`、对象展开（`{ ...obj }`）以及 `for`-`in` 循环等函数和运算符的行为，都会根据属性是否实际存在于对象上而有所不同。
+在我们的 `Person` 示例中，如果观察 `age` 属性的上下文关注该属性是否存在，这可能会潜在地导致运行时错误。
 
-In TypeScript 4.4, the new flag [`exactOptionalPropertyTypes`](/tsconfig#exactOptionalPropertyTypes) specifies that optional property types should be interpreted exactly as written, meaning that `| undefined` is not added to the type:
+在 TypeScript 4.4 中，新的 [`exactOptionalPropertyTypes`](/tsconfig#exactOptionalPropertyTypes) 标志规定可选属性类型应严格按照书写方式解释，这意味着类型中不会自动添加 `| undefined`：
 
 ```ts twoslash
 // @exactOptionalPropertyTypes
@@ -388,15 +388,15 @@ const p: Person = {
 }
 ```
 
-This flag is **not** part of the [`strict`](/tsconfig#strict) family and needs to be turned on explicitly if you'd like this behavior.
-It also requires [`strictNullChecks`](/tsconfig#strictNullChecks) to be enabled as well.
-We've been making updates to DefinitelyTyped and other definitions to try to make the transition as straightforward as possible, but you may encounter some friction with this depending on how your code is structured.
+该标志**不属于** [`strict`](/tsconfig#strict) 严格模式选项族，如果你希望启用该行为，需要显式开启。
+它还要求同时启用 [`strictNullChecks`](/tsconfig#strictNullChecks)。
+我们已经对 DefinitelyTyped 和其他类型定义进行了更新，以尽量保证迁移的平滑过渡，但根据你的代码组织方式，可能会遇到一些需要适配的情况。
 
-For more information, you can [take a look at the implementing pull request here](https://github.com/microsoft/TypeScript/pull/43947).
+更多信息请参阅 [实现该特性的 Pull Request](https://github.com/microsoft/TypeScript/pull/43947)。
 
-## `static` Blocks in Classes
+## 类中的 `static` 块
 
-TypeScript 4.4 brings support for [`static` blocks in classes](https://github.com/tc39/proposal-class-static-block#ecmascript-class-static-initialization-blocks), an upcoming ECMAScript feature that can help you write more-complex initialization code for static members.
+TypeScript 4.4 带来了对 [类中 `static` 块](https://github.com/tc39/proposal-class-static-block#ecmascript-class-static-initialization-blocks) 的支持，这是一项 ECMAScript 特性，可帮助你为静态成员编写更复杂的初始化逻辑。
 
 ```ts twoslash
 declare function someCondition(): boolean
@@ -413,8 +413,8 @@ class Foo {
 }
 ```
 
-These static blocks allow you to write a sequence of statements with their own scope that can access private fields within the containing class.
-That means that we can write initialization code with all the capabilities of writing statements, no leakage of variables, and full access to our class's internals.
+这些静态块允许你编写具有独立作用域的一系列语句，并且可以访问所在类中的私有字段。
+这意味着我们可以充分利用语句的所有能力来编写初始化代码，既不会泄漏变量，又能完全访问类的内部细节：
 
 ```ts twoslash
 declare function loadLastInstances(): any[]
@@ -435,9 +435,9 @@ class Foo {
 }
 ```
 
-Without `static` blocks, writing the code above was possible, but often involved several different types of hacks that had to compromise in some way.
+在没有 `static` 块之前，编写上述代码虽然可行，但通常需要采用各种各样的变通方式（hack），并且往往需要作出某种妥协。
 
-Note that a class can have multiple `static` blocks, and they're run in the same order in which they're written.
+请注意，一个类可以拥有多个 `static` 块，它们会按照书写顺序依次执行：
 
 ```ts twoslash
 // Prints:
@@ -458,119 +458,119 @@ class Foo {
 }
 ```
 
-We'd like to extend our thanks to [Wenlu Wang](https://github.com/Kingwl) for TypeScript's implementation of this feature.
-For more details, you can [see that pull request here](https://github.com/microsoft/TypeScript/pull/43370).
+我们由衷感谢 [王文璐 (Wenlu Wang)](https://github.com/Kingwl) 为 TypeScript 实现该特性所作的贡献。
+更多详细信息，你可以查看 [该 Pull Request](https://github.com/microsoft/TypeScript/pull/43370)。
 
-## `tsc --help` Updates and Improvements
+## `tsc --help` 更新与改进
 
-TypeScript's `--help` option has gotten a refresh!
-Thanks to work in part by [Song Gao](https://github.com/ShuiRuTian), we've brought in changes to [update the descriptions of our compiler options](https://github.com/microsoft/TypeScript/pull/44409) and [restyle the `--help` menu](https://github.com/microsoft/TypeScript/pull/44157) with colors and other visual separation.
+TypeScript 的 `--help` 选项迎来了焕新！
+部分得益于 [Song Gao](https://github.com/ShuiRuTian) 的工作，我们引入了一系列改进以 [更新编译器选项的描述](https://github.com/microsoft/TypeScript/pull/44409)，并通过颜色和视觉分隔符 [重新设计了 `--help` 菜单的样式](https://github.com/microsoft/TypeScript/pull/44157)。
 
-![The new TypeScript `--help` menu where the output is bucketed into several different areas](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/08/tsc-help-ps-wt-4-4.png)
+![全新的 TypeScript `--help` 菜单，输出内容被划分到几个不同的区域](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/08/tsc-help-ps-wt-4-4.png)
 
-You can read more on [the original proposal thread](https://github.com/microsoft/TypeScript/issues/44074).
+你可以阅读 [原始提案讨论帖](https://github.com/microsoft/TypeScript/issues/44074) 了解更多内容。
 
-## Performance Improvements
+## 性能提升
 
-### Faster Declaration Emit
+### 更快的声明文件生成
 
-TypeScript now caches whether internal symbols are accessible in different contexts, along with how specific types should be printed.
-These changes can improve TypeScript's general performance in code with fairly complex types, and is especially observed when emitting `.d.ts` files under the [`declaration`](/tsconfig#declaration) flag.
+TypeScript 现在会缓存内部符号在不同上下文中是否可访问，以及特定类型应如何输出。
+这些改动可以提升 TypeScript 在处理包含较为复杂类型的代码时的整体性能，在启用 [`declaration`](/tsconfig#declaration) 标志生成 `.d.ts` 文件时尤为明显。
 
-[See more details here](https://github.com/microsoft/TypeScript/pull/43973).
+[查看更多详细信息](https://github.com/microsoft/TypeScript/pull/43973)。
 
-### Faster Path Normalization
+### 更快的路径规范化
 
-TypeScript often has to do several types of "normalization" on file paths to get them into a consistent format that the compiler can use everywhere.
-This involves things like replacing backslashes with slashes, or removing intermediate `/./` and `/../` segments of paths.
-When TypeScript has to operate over millions of these paths, these operations end up being a bit slow.
-In TypeScript 4.4, paths first undergo quick checks to see whether they need any normalization in the first place.
-These improvements together reduce project load time by 5-10% on bigger projects, and significantly more in massive projects that we've tested internally.
+TypeScript 经常需要对文件路径进行多种“规范化”（normalization）处理，使其转换为编译器各处通用的统一格式。
+这涉及将反斜杠替换为正斜杠，或者移除路径中多余的 `/./` 和 `/../` 片段。
+当 TypeScript 必须处理数百万个此类路径时，这些操作最终会带来一定的耗时。
+在 TypeScript 4.4 中，路径首先会经过快速检查，判断其本身是否根本不需要任何规范化处理。
+这些改进共同使大型项目的项目加载时间缩短了 5% 到 10%，而在我们内部测试的超大型项目中，提升更为显著。
 
-For more details, you can [view the PR for path segment normalization](https://github.com/microsoft/TypeScript/pull/44173) along with [the PR for slash normalization](https://github.com/microsoft/TypeScript/pull/44100).
+更多详细信息，你可以查看 [路径片段规范化的 PR](https://github.com/microsoft/TypeScript/pull/44173) 以及 [斜杠规范化的 PR](https://github.com/microsoft/TypeScript/pull/44100)。
 
-### Faster Path Mapping
+### 更快的路径映射
 
-TypeScript now caches the way it constructs path-mappings (using the [`paths`](/tsconfig#paths) option in `tsconfig.json`).
-For projects with several hundred mappings, the reduction is significant.
-You can see more [on the change itself](https://github.com/microsoft/TypeScript/pull/44078).
+TypeScript 现在会缓存构建路径映射的方式（通过 `tsconfig.json` 中的 [`paths`](/tsconfig#paths) 选项）。
+对于包含数百个映射的项目，耗时减少十分明显。
+你可以参阅 [该改动本身](https://github.com/microsoft/TypeScript/pull/44078) 了解更多信息。
 
-### Faster Incremental Builds with `--strict`
+### 启用 `--strict` 时更快的增量构建
 
-In what was effectively a bug, TypeScript would end up redoing type-checking work under [`incremental`](/tsconfig#incremental) compilations if [`strict`](/tsconfig#strict) was on.
-This led to many builds being just as slow as if [`incremental`](/tsconfig#incremental) was turned off.
-TypeScript 4.4 fixes this, though the change has also been back-ported to TypeScript 4.3.
+此前存在一个实际上的 bug：在开启 [`strict`](/tsconfig#strict) 时，TypeScript 会在 [`incremental`](/tsconfig#incremental) 增量编译下重复执行类型检查工作。
+这导致许多构建过程的耗时与关闭 [`incremental`](/tsconfig#incremental) 时一样缓慢。
+TypeScript 4.4 修复了此问题，并且该改动也已反向移植到 TypeScript 4.3 中。
 
-See more [here](https://github.com/microsoft/TypeScript/pull/44394).
+在此处查看 [更多信息](https://github.com/microsoft/TypeScript/pull/44394)。
 
-### Faster Source Map Generation for Big Outputs
+### 大型输出更快的 Source Map 生成
 
-TypeScript 4.4 adds an optimization for source map generation on extremely large output files.
-When building an older version of the TypeScript compiler, this results in around an 8% reduction in emit time.
+TypeScript 4.4 针对超大输出文件的 Source Map 生成进行了优化。
+在构建较旧版本的 TypeScript 编译器时，这使得生成（emit）耗时减少了约 8%。
 
-We'd like to extend our thanks to [David Michon](https://github.com/dmichon-msft) who provided a [simple and clean change](https://github.com/microsoft/TypeScript/pull/44031) to enable this performance win.
+我们由衷感谢 [David Michon](https://github.com/dmichon-msft)，他提供了一个 [简洁明了的改动](https://github.com/microsoft/TypeScript/pull/44031) 实现了这一性能收益。
 
-### Faster `--force` Builds
+### 更快的 `--force` 构建
 
-When using `--build` mode on project references, TypeScript has to perform up-to-date checks to determine which files need to be rebuilt.
-When performing a [`--force`](/tsconfig#force) build, however, that information is irrelevant since every project dependency will be rebuilt from scratch.
-In TypeScript 4.4, [`--force`](/tsconfig#force) builds avoid those unnecessary steps and start a full build.
-See more about the change [here](https://github.com/microsoft/TypeScript/pull/43666).
+在项目引用上使用 `--build` 模式时，TypeScript 必须执行时效性检查（up-to-date checks）以确定哪些文件需要重新构建。
+然而在执行 [`--force`](/tsconfig#force) 构建时，由于每个项目依赖都将从头重新构建，这些信息是无关紧要的。
+在 TypeScript 4.4 中，[`--force`](/tsconfig#force) 构建会跳过这些不必要的步骤并直接开始完整构建。
+在此处查看 [有关该改动的更多信息](https://github.com/microsoft/TypeScript/pull/43666)。
 
-## Spelling Suggestions for JavaScript
+## 针对 JavaScript 的拼写建议
 
-TypeScript powers the JavaScript editing experience in editors like Visual Studio and Visual Studio Code.
-Most of the time, TypeScript tries to stay out of the way in JavaScript files;
-however, TypeScript often has a lot of information to make confident suggestions, and ways of surfacing suggestions that aren't _too_ invasive.
+TypeScript 为 Visual Studio 和 Visual Studio Code 等编辑器中的 JavaScript 编辑体验提供支持。
+大多数情况下，TypeScript 尽量在 JavaScript 文件中保持克制；
+然而，TypeScript 往往拥有足够的信息来提供高可信度的建议，并能以不太突兀的方式展示这些建议。
 
-That's why TypeScript now issues spelling suggestions in plain JavaScript files - ones without `// @ts-check` or in a project with [`checkJs`](/tsconfig#checkJs) turned off.
-These are the same _"Did you mean...?"_ suggestions that TypeScript files already have, and now they're available in _all_ JavaScript files in some form.
+正因如此，TypeScript 现在会在普通 JavaScript 文件（未添加 `// @ts-check` 或项目中关闭了 [`checkJs`](/tsconfig#checkJs) 的文件）中提供拼写建议。
+这些建议与 TypeScript 文件中已有的 _“Did you mean...?”_（你是不是指……？）建议相同，现在它们以某种形式普及到了*所有* JavaScript 文件中。
 
-These spelling suggestions can provide a subtle clue that your code is wrong.
-We managed to find a few bugs in existing code while testing this feature!
+这些拼写建议可以为你的代码错误提供微妙的线索。
+我们在测试该特性时，甚至在现有代码中发现了几处 bug！
 
-For more details on this new feature, [take a look at the pull request](https://github.com/microsoft/TypeScript/pull/44271)!
+关于该新特性的更多详细信息，请参阅 [该 Pull Request](https://github.com/microsoft/TypeScript/pull/44271)！
 
-## Inlay Hints
+## 内联提示（Inlay Hints）
 
-TypeScript 4.4 provides support for _inlay hints_ which can help display useful information like parameter names and return types in your code.
-You can think of it as a sort of friendly "ghost text".
+TypeScript 4.4 支持了*内联提示*（inlay hints），可以在你的代码中显示参数名称和返回类型等有用信息。
+你可以将其视为一种友好的“幽灵文本”（ghost text）。
 
-![A preview of inlay hints in Visual Studio Code](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/08/inlayHints-4.4-rc-ghd.png)
+![Visual Studio Code 中的内联提示预览](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/08/inlayHints-4.4-rc-ghd.png)
 
-This feature was built by [Wenlu Wang](https://github.com/Kingwl) whose [pull request](https://github.com/microsoft/TypeScript/pull/42089) has more details.
+该特性由 [王文璐 (Wenlu Wang)](https://github.com/Kingwl) 开发，其 [Pull Request](https://github.com/microsoft/TypeScript/pull/42089) 提供了更多细节。
 
-Wenlu also contributed [the integration for inlay hints in Visual Studio Code](https://github.com/microsoft/vscode/pull/113412) which has shipped as [part of the July 2021 (1.59) release](https://code.visualstudio.com/updates/v1_59#_typescript-44).
-If you'd like to try inlay hints out, make sure you're using a recent [stable](https://code.visualstudio.com/updates/v1_59) or [insiders](https://code.visualstudio.com/insiders/) version of the editor.
-You can also modify when and where inlay hints get displayed in Visual Studio Code's settings.
+王文璐还贡献了 [Visual Studio Code 中的内联提示集成](https://github.com/microsoft/vscode/pull/113412)，该集成已随 [2021 年 7 月发布的 1.59 版本](https://code.visualstudio.com/updates/v1_59#_typescript-44) 一同提供。
+如果你想体验内联提示，请确保使用较新的 [稳定版](https://code.visualstudio.com/updates/v1_59) 或 [Insiders 预览版](https://code.visualstudio.com/insiders/) 编辑器。
+你还可以在 Visual Studio Code 的设置中调整内联提示的显示时机和位置。
 
-## Auto-Imports Show True Paths in Completion Lists
+## 补全列表中自动导入显示真实路径
 
-When editors like Visual Studio Code show a completion list, completions which include auto-imports are displayed with a path to the given module;
-however, this path usually isn't what TypeScript ends up placing in a module specifier.
-The path is usually something relative to the _workspace_, meaning that if you're importing from a package like `moment`, you'll often see a path like `node_modules/moment`.
+当 Visual Studio Code 等编辑器显示补全列表时，包含自动导入的补全项会显示对应模块的路径；
+然而，该路径通常并不是 TypeScript 最终写入模块说明符（module specifier）中的路径。
+该路径通常是相对于*工作区*的路径，这意味着如果你从 `moment` 这样的包导入，通常会看到类似 `node_modules/moment` 的路径。
 
-![A completion list containing unwieldy paths containing 'node_modules'. For example, the label for 'calendarFormat' is 'node_modules/moment/moment' instead of 'moment'.](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/08/completion-import-labels-pre-4-4.png)
+![包含冗长 'node_modules' 路径的补全列表。例如，'calendarFormat' 的标签是 'node_modules/moment/moment' 而不是 'moment'](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/08/completion-import-labels-pre-4-4.png)
 
-These paths end up being unwieldy and often misleading, especially given that the path that actually gets inserted into your file needs to consider Node's `node_modules` resolution, path mappings, symlinks, and re-exports.
+这些路径往往显得繁琐且容易引起误解，尤其是考虑到实际插入文件中的路径还需要结合 Node 的 `node_modules` 解析、路径映射、符号链接以及重新导出等机制。
 
-That's why with TypeScript 4.4, the completion item label now shows the _actual_ module path that will be used for the import!
+正因如此，在 TypeScript 4.4 中，补全项标签现在会显示将用于导入的*实际*模块路径！
 
-![A completion list containing clean paths with no intermediate 'node_modules'. For example, the label for 'calendarFormat' is 'moment' instead of 'node_modules/moment/moment'.](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/08/completion-import-labels-4-4.png)
+![包含清晰路径且没有中间 'node_modules' 的补全列表。例如，'calendarFormat' 的标签是 'moment' 而不是 'node_modules/moment/moment'](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/08/completion-import-labels-4-4.png)
 
-Since this calculation can be expensive, completion lists containing many auto-imports may fill in the final module specifiers in batches as you type more characters. It's possible that you'll still sometimes see the old workspace-relative path labels; however, as your editing experience "warms up", they should get replaced with the actual path after another keystroke or two.
+由于此计算可能开销较大，包含大量自动导入的补全列表可能会在你输入更多字符时分批填入最终的模块说明符。你可能仍会偶尔看到旧的工作区相对路径标签；但随着编辑体验的“预热”，在你继续输入一两个字符后，它们就会被替换为实际路径。
 
-## Breaking Changes
+## 破坏性变更
 
-### `lib.d.ts` Changes for TypeScript 4.4
+### TypeScript 4.4 的 `lib.d.ts` 变更
 
-As with every TypeScript version, declarations for `lib.d.ts` (especially the declarations generated for web contexts), have changed.
-You can consult [our list of known `lib.dom.d.ts` changes](https://github.com/microsoft/TypeScript-DOM-lib-generator/issues/1029#issuecomment-869224737) to understand what is impacted.
+与每个 TypeScript 版本一样，`lib.d.ts` 的声明（特别是为 Web 上下文生成的声明）发生了一些改动。
+你可以查阅 [已知 `lib.dom.d.ts` 变更列表](https://github.com/microsoft/TypeScript-DOM-lib-generator/issues/1029#issuecomment-869224737) 来了解受影响的内容。
 
-### More-Compliant Indirect Calls for Imported Functions
+### 更符合规范的导入函数间接调用
 
-In earlier versions of TypeScript, calling an import from CommonJS, AMD, and other non-ES module systems would set the `this` value of the called function.
-Specifically, in the following example, when calling `fooModule.foo()`, the `foo()` method will have `fooModule` set as the value of `this`.
+在早期版本的 TypeScript 中，从 CommonJS、AMD 以及其他非 ES 模块系统调用导入项时，会设置被调用函数的 `this` 值。
+具体来说，在以下示例中，当调用 `fooModule.foo()` 时，`foo()` 方法会将 `this` 的值设置为 `fooModule`。
 
 ```ts
 // Imagine this is our imported module, and it has an export named 'foo'.
@@ -583,8 +583,8 @@ let fooModule = {
 fooModule.foo()
 ```
 
-This is not the way exported functions in ECMAScript are supposed to work when we call them.
-That's why TypeScript 4.4 intentionally discards the `this` value when calling imported functions, by using the following emit.
+但这并不是 ECMAScript 导出函数在被调用时应当遵循的方式。
+因此，TypeScript 4.4 在调用导入函数时特意通过以下代码生成方式丢弃了 `this` 值：
 
 ```ts
 // Imagine this is our imported module, and it has an export named 'foo'.
@@ -598,12 +598,12 @@ let fooModule = {
 ;(0, fooModule.foo)()
 ```
 
-You can [read up more about the changes here](https://github.com/microsoft/TypeScript/pull/44624).
+你可以 [在此处阅读有关该改动的更多信息](https://github.com/microsoft/TypeScript/pull/44624)。
 
-### Using `unknown` in Catch Variables
+### 在 Catch 变量中使用 `unknown`
 
-Users running with the [`strict`](/tsconfig#strict) flag may see new errors around `catch` variables being `unknown`, especially if the existing code assumes only `Error` values have been caught.
-This often results in error messages such as:
+使用 [`strict`](/tsconfig#strict) 标志的用户可能会看到由于 `catch` 变量为 `unknown` 而产生的新错误，特别是当现有代码假定仅捕获到 `Error` 值时。
+这通常会导致如下错误信息：
 
 ```
 Property 'message' does not exist on type 'unknown'.
@@ -611,14 +611,14 @@ Property 'name' does not exist on type 'unknown'.
 Property 'stack' does not exist on type 'unknown'.
 ```
 
-To get around this, you can specifically add runtime checks to ensure that the thrown type matches your expected type.
-Otherwise, you can just use a type assertion, add an explicit `: any` to your catch variable, or turn off [`useUnknownInCatchVariables`](/tsconfig#useUnknownInCatchVariables).
+为了解决这个问题，你可以特意添加运行时检查，以确保抛出的类型与你的预期类型匹配。
+或者，你也可以直接使用类型断言、为 catch 变量显式添加 `: any`，或者关闭 [`useUnknownInCatchVariables`](/tsconfig#useUnknownInCatchVariables)。
 
-### Broader Always-Truthy Promise Checks
+### 更广泛的始终为真 Promise 检查
 
-In prior versions, TypeScript introduced "Always Truthy Promise checks" to catch code where an `await` may have been forgotten;
-however, the checks only applied to named declarations.
-That meant that while this code would correctly receive an error...
+在之前的版本中，TypeScript 引入了“始终为真的 Promise 检查”，以捕获可能遗漏 `await` 的代码；
+然而，该检查此前仅适用于具名声明。
+这意味着以下代码能够正确报错……
 
 ```ts
 async function foo(): Promise<boolean> {
@@ -635,7 +635,7 @@ async function bar(): Promise<string> {
 }
 ```
 
-...the following code would not.
+……但以下代码却不会报错：
 
 ```ts
 async function foo(): Promise<boolean> {
@@ -651,12 +651,12 @@ async function bar(): Promise<string> {
 }
 ```
 
-TypeScript 4.4 now flags both.
-For more information, [read up on the original change](https://github.com/microsoft/TypeScript/pull/44491).
+TypeScript 4.4 现在对这两种情况都会报告错误。
+更多信息请参阅 [原始改动](https://github.com/microsoft/TypeScript/pull/44491)。
 
-### Abstract Properties Do Not Allow Initializers
+### 抽象属性不允许初始值设定项
 
-The following code is now an error because abstract properties may not have initializers:
+以下代码现在会报错，因为抽象属性不能具有初始值设定项：
 
 ```ts
 abstract class C {
@@ -666,7 +666,7 @@ abstract class C {
 }
 ```
 
-Instead, you may only specify a type for the property:
+取而代之的是，你只能为该属性指定类型：
 
 ```ts
 abstract class C {

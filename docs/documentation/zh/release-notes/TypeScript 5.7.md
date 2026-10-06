@@ -2,12 +2,12 @@
 title: TypeScript 5.7
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-5-7.html
-oneline: TypeScript 5.7 Release Notes
+oneline: TypeScript 5.7 发布说明
 ---
 
-## Checks for Never-Initialized Variables
+## 未初始化变量的检查
 
-For a long time, TypeScript has been able to catch issues when a variable has not yet been initialized in all prior branches.
+长期以来，当变量在所有先前的分支中尚未被完全初始化时，TypeScript 都能够捕获此类问题：
 
 ```ts
 let result: number
@@ -22,8 +22,8 @@ if (someCondition()) {
 console.log(result) // error: Variable 'result' is used before being assigned.
 ```
 
-Unfortunately, there are some places where this analysis doesn't work.
-For example, if the variable is accessed in a separate function, the type system doesn't know when the function will be called, and instead takes an "optimistic" view that the variable will be initialized.
+遗憾的是，在某些情况下控制流分析无法奏效。
+例如，若变量在另一个独立的函数内部被访问，类型系统无法确切知晓该函数何时会被调用，因而采取了“乐观”假定，认为该变量已被初始化：
 
 ```ts
 function foo() {
@@ -44,7 +44,7 @@ function foo() {
 }
 ```
 
-While TypeScript 5.7 is still lenient on variables that have _possibly_ been initialized, the type system is able to report errors when variables have _never_ been initialized at all.
+尽管 TypeScript 5.7 对*可能*已被初始化的变量仍然保持宽松，但现在当变量*完全未被初始化*时，类型系统能够准确报告错误：
 
 ```ts
 function foo() {
@@ -58,18 +58,18 @@ function foo() {
 }
 ```
 
-[This change](https://github.com/microsoft/TypeScript/pull/55887) was contributed thanks to the work of GitHub user [Zzzen](https://github.com/Zzzen)!
+感谢 GitHub 用户 [Zzzen](https://github.com/Zzzen) 贡献了[此项改动](https://github.com/microsoft/TypeScript/pull/55887)！
 
-## Path Rewriting for Relative Paths
+## 相对路径的路径重写
 
-There are several tools and runtimes that allow you to run TypeScript code "in-place", meaning they do not require a build step which generates output JavaScript files.
-For example, ts-node, tsx, Deno, and Bun all support running `.ts` files directly.
-More recently, Node.js has been investigating such support with `--experimental-strip-types` (soon to be unflagged!) and `--experimental-transform-types`.
-This is extremely convenient because it allows us to iterate faster without worrying about re-running a build task.
+现有若干工具和运行时允许“就地”（in-place）直接运行 TypeScript 代码，这意味着它们不需要生成输出 JavaScript 文件的构建步骤。
+例如，ts-node、tsx、Deno 和 Bun 都支持直接运行 `.ts` 文件。
+最近，Node.js 也在通过 `--experimental-strip-types`（即将无需实验性标志默认启用！）以及 `--experimental-transform-types` 探索此类支持。
+这带来了极大的便利，因为它让我们能够更快地迭代，而无需操心重复执行构建任务。
 
-There is some complexity to be aware of when using these modes though.
-To be maximally compatible with all these tools, a TypeScript file that's imported "in-place" **must** be imported with the appropriate TypeScript extension at runtime.
-For example, to import a file called `foo.ts`, we have to write the following in Node's new experimental support:
+不过在使用这些模式时，需要注意一些复杂细节。
+为了与所有这些工具保持最大兼容性，就地导入的 TypeScript 文件在运行时**必须**携带对应的 TypeScript 后缀进行导入。
+例如，要导入一个名为 `foo.ts` 的文件，在 Node 的全新实验性支持中必须写成：
 
 ```ts
 // main.ts
@@ -77,13 +77,13 @@ For example, to import a file called `foo.ts`, we have to write the following in
 import * as foo from './foo.ts' // <- we need foo.ts here, not foo.js
 ```
 
-Typically, TypeScript would issue an error if we did this, because it expects us to import _the output file_.
-Because some tools do allow `.ts` imports, TypeScript has supported this import style with an option called `--allowImportingTsExtensions` for a while now.
-This works fine, but what happens if we need to actually generate `.js` files out of these `.ts` files?
-This is a requirement for library authors who will need to be able to distribute just `.js` files, but up until now TypeScript has avoided rewriting any paths.
+通常情况下，如果我们这样做，TypeScript 会报错，因为它期望我们导入*输出文件*。
+由于某些工具确实允许 `.ts` 后缀导入，TypeScript 此前通过 `--allowImportingTsExtensions` 选项对这种导入风格提供了支持。
+这本身运行良好，但如果我们最终确实需要从这些 `.ts` 文件中生成 `.js` 文件呢？
+对于需要仅分发 `.js` 文件的库作者来说，这是一个刚需，但在此之前 TypeScript 一直避免重写任何路径。
 
-To support this scenario, we've added a new compiler option called `--rewriteRelativeImportExtensions`.
-When an import path is _relative_ (starts with `./` or `../`), ends in a TypeScript extension (`.ts`, `.tsx`, `.mts`, `.cts`), and is a non-declaration file, the compiler will rewrite the path to the corresponding JavaScript extension (`.js`, `.jsx`, `.mjs`, `.cjs`).
+为了支持这种场景，我们新增了一个编译器选项 `--rewriteRelativeImportExtensions`。
+当导入路径为*相对路径*（以 `./` 或 `../` 开头）、以 TypeScript 后缀（`.ts`、`.tsx`、`.mts`、`.cts`）结尾，且是非声明文件时，编译器会将该路径重写为对应的 JavaScript 后缀（`.js`、`.jsx`、`.mjs`、`.cjs`）：
 
 ```ts
 // Under --rewriteRelativeImportExtensions...
@@ -100,12 +100,12 @@ import * as d from '#/file.ts'
 import * as e from './file.js'
 ```
 
-This allows us to write TypeScript code that can be run in-place and then compiled into JavaScript when we're ready.
+这使我们能够编写既可就地直接运行、又可在准备就绪后编译为 JavaScript 的 TypeScript 代码。
 
-Now, we noted that TypeScript generally avoided rewriting paths.
-There are several reasons for this, but the most obvious one is dynamic imports.
-If a developer writes the following, it's not trivial to handle the path that `import` receives.
-In fact, it's impossible to override the behavior of `import` within any dependencies.
+前面提到，TypeScript 过去通常避免重写路径。
+这背后有几个原因，其中最明显的一个是动态导入。
+如果开发者写出如下代码，要处理 `import` 接收的路径绝非易事。
+事实上，根本不可能在任何依赖项内部覆盖 `import` 的行为：
 
 ```ts
 function getPath() {
@@ -119,8 +119,8 @@ function getPath() {
 let myImport = await import(getPath())
 ```
 
-Another issue is that (as we saw above) only _relative_ paths are rewritten, and they are written "naively".
-This means that any path that relies on TypeScript's `baseUrl` and `paths` will not get rewritten:
+另一个问题是（正如我们在上面所见），只有*相对路径*会被重写，而且重写是“朴素”（naive）进行的。
+这意味着任何依赖于 TypeScript `baseUrl` 和 `paths` 的路径都不会被重写：
 
 ```json5
 // tsconfig.json
@@ -141,7 +141,7 @@ This means that any path that relies on TypeScript's `baseUrl` and `paths` will 
 import * as utilities from '@/utilities.ts'
 ```
 
-Nor will any path that might resolve through the [`exports`](https://nodejs.org/api/packages.html#exports) and [`imports`](https://nodejs.org/api/packages.html#imports) fields of a `package.json`.
+任何可能通过 `package.json` 的 [`exports`](https://nodejs.org/api/packages.html#exports) 和 [`imports`](https://nodejs.org/api/packages.html#imports) 字段解析的路径也同样不会被重写：
 
 ```json5
 // package.json
@@ -158,7 +158,7 @@ Nor will any path that might resolve through the [`exports`](https://nodejs.org/
 import * as utilities from '#root/utilities.ts'
 ```
 
-As a result, if you've been using a workspace-style layout with multiple packages referencing each other, you might need to use [conditional exports](https://nodejs.org/api/packages.html#conditional-exports) with [scoped custom conditions](https://nodejs.org/api/packages.html#resolving-user-conditions) to make this work:
+因此，如果你一直采用多包相互引用的 monorepo 工作区架构，可能需要结合[带作用域的自定义条件](https://nodejs.org/api/packages.html#resolving-user-conditions)使用[条件导出](https://nodejs.org/api/packages.html#conditional-exports)来实现这一目标：
 
 ```json5
 // my-package/package.json
@@ -178,23 +178,23 @@ As a result, if you've been using a workspace-style layout with multiple package
 }
 ```
 
-Any time you want to import the `.ts` files, you can run it with `node --conditions=@my-package/development`.
+任何时候想要导入 `.ts` 文件，都可以通过 `node --conditions=@my-package/development` 运行。
 
-Note the "namespace" or "scope" we used for the condition `@my-package/development`.
-This is a bit of a makeshift solution to avoid conflicts from dependencies that might also use the `development` condition.
-If everyone ships a `development` in their package, then resolution may try to resolve to a `.ts` file which will not necessarily work.
-This idea is similar to what's described in Colin McDonnell's essay _[Live types in a TypeScript monorepo](https://colinhacks.com/essays/live-types-typescript-monorepo#:~:text=custom%20conditions)_, along with [tshy's guidance for loading from source](https://github.com/isaacs/tshy#loading-from-source).
+请注意我们在条件中使用的“命名空间”或“作用域”`@my-package/development`。
+这是一种权宜之计，用于避免与其他可能同样使用 `development` 条件的依赖项发生冲突。
+如果所有包都在自身发布物中包含 `development` 条件，解析可能会尝试解析到一个未编译的 `.ts` 文件，而这未必能正常工作。
+这一思路类似于 Colin McDonnell 在文章《[TypeScript Monorepo 中的实时类型](https://colinhacks.com/essays/live-types-typescript-monorepo#:~:text=custom%20conditions)》（_Live types in a TypeScript monorepo_）中所描述的方法，以及 [tshy 关于从源码加载的指南](https://github.com/isaacs/tshy#loading-from-source)。
 
-For more specifics on how this feature works, [read up on the change here](https://github.com/microsoft/TypeScript/pull/59767).
+欲了解此特性工作原理的更多细节，请[在此阅读该改动的详细说明](https://github.com/microsoft/TypeScript/pull/59767)。
 
-## Support for `--target es2024` and `--lib es2024`
+## 支持 `--target es2024` 与 `--lib es2024`
 
-TypeScript 5.7 now supports `--target es2024`, which allows users to target ECMAScript 2024 runtimes.
-This target primarily enables specifying the new `--lib es2024` which contains many features for `SharedArrayBuffer` and `ArrayBuffer`, `Object.groupBy`, `Map.groupBy`, `Promise.withResolvers`, and more.
-It also moves `Atomics.waitAsync` from `--lib es2022` to `--lib es2024`.
+TypeScript 5.7 现在支持 `--target es2024`，允许用户面向 ECMAScript 2024 运行时环境。
+该目标最主要的作用是支持指定全新的 `--lib es2024`，其中包含了针对 `SharedArrayBuffer` 与 `ArrayBuffer` 的众多特性、`Object.groupBy`、`Map.groupBy`、`Promise.withResolvers` 等。
+它还将 `Atomics.waitAsync` 从 `--lib es2022` 移动到了 `--lib es2024`。
 
-Note that as part of the changes to `SharedArrayBuffer` and `ArrayBuffer`, the two now diverge a bit.
-To bridge the gap and preserve the underlying buffer type, all `TypedArrays` (like `Uint8Array` and others) [are now also generic](https://github.com/microsoft/TypeScript/pull/59417).
+请注意，作为针对 `SharedArrayBuffer` 和 `ArrayBuffer` 改动的一部分，二者现在产生了一些分歧。
+为了消除差异并保留底层的缓冲区类型，所有 `TypedArray`（如 `Uint8Array` 等）[现在也都是泛型类型](https://github.com/microsoft/TypeScript/pull/59417)：
 
 ```ts
 interface Uint8Array<TArrayBuffer extends ArrayBufferLike = ArrayBufferLike> {
@@ -202,19 +202,19 @@ interface Uint8Array<TArrayBuffer extends ArrayBufferLike = ArrayBufferLike> {
 }
 ```
 
-Each `TypedArray` now contains a type parameter named `TArrayBuffer`, though that type parameter has a default type argument so that we can continue to refer to `Int32Array` without explicitly writing out `Int32Array<ArrayBufferLike>`.
+每个 `TypedArray` 现在都包含一个名为 `TArrayBuffer` 的类型参数，不过该类型参数带有默认类型实参，因此我们可以继续直接使用 `Int32Array`，而无需显式写成 `Int32Array<ArrayBufferLike>`。
 
-If you encounter any issues as part of this update, you may need to update `@types/node`.
+如果你在此次更新中遇到任何问题，可能需要更新 `@types/node`。
 
-[This work](https://github.com/microsoft/TypeScript/pull/58573) was primarily provided thanks to [Kenta Moriuchi](https://github.com/petamoriken)!
+[此项工作](https://github.com/microsoft/TypeScript/pull/58573)主要由 [Kenta Moriuchi](https://github.com/petamoriken) 提供，特此致谢！
 
-## Searching Ancestor Configuration Files for Project Ownership
+## 向上搜索祖先配置文件以确定项目归属
 
-When a TypeScript file is loaded in an editor using TSServer (like Visual Studio or VS Code), the editor will try to find the relevant `tsconfig.json` file that "owns" the file.
-To do this, it walks up the directory tree from the file being edited, looking for any file named `tsconfig.json`.
+当 TypeScript 文件在使用 TSServer 的编辑器（如 Visual Studio 或 VS Code）中打开时，编辑器会尝试查找“拥有”该文件的相关 `tsconfig.json` 配置文件。
+为此，它会从正在编辑的文件所在的目录沿目录树向上遍历，寻找名为 `tsconfig.json` 的文件。
 
-Previously, this search would stop at the first `tsconfig.json` file found;
-however, imagine a project structure like the following:
+此前，该搜索在找到第一个 `tsconfig.json` 文件时就会停止；
+然而，设想如下的项目结构：
 
 ```
 project/
@@ -226,7 +226,7 @@ project/
 └── tsconfig.json
 ```
 
-Here, the idea is that `src/tsconfig.json` is the "main" configuration file for the project, and `src/tsconfig.test.json` is a configuration file for running tests.
+在此结构中，设计的设想是 `src/tsconfig.json` 为项目的“主”配置文件，而 `src/tsconfig.test.json` 则是用于运行测试的配置文件：
 
 ```json5
 // src/tsconfig.json
@@ -262,9 +262,9 @@ Here, the idea is that `src/tsconfig.json` is the "main" configuration file for 
 }
 ```
 
-The problem here is that when editing `foo-test.ts`, the editor would find `project/src/tsconfig.json` as the "owning" configuration file - but that's not the one we want!
-If the walk stops at this point, that might not be desirable.
-The only way to avoid this previously was to rename `src/tsconfig.json` to something like `src/tsconfig.src.json`, and then all files would hit the top-level `tsconfig.json` which references every possible project.
+这里的问题在于，当编辑 `foo-test.ts` 时，编辑器会把 `project/src/tsconfig.json` 判定为“归属”它的配置文件——但这并不是我们想要的！
+如果遍历在此处直接停止，就无法满足需求。
+此前规避此问题的唯一方法是将 `src/tsconfig.json` 重命名为类似 `src/tsconfig.src.json` 的名称，这样所有文件都会匹配到引用了所有子项目的顶层 `tsconfig.json`：
 
 ```
 project/
@@ -276,14 +276,14 @@ project/
 └── tsconfig.json
 ```
 
-Instead of forcing developers to do this, TypeScript 5.7 now continues walking up the directory tree to find other appropriate `tsconfig.json` files for editor scenarios.
-This can provide more flexibility in how projects are organized and how configuration files are structured.
+TypeScript 5.7 不再强制开发者采用这种迂回做法，而是在编辑器场景下继续向上遍历目录树，以寻找其他更匹配的 `tsconfig.json` 文件。
+这为项目的组织方式和配置文件的架构设计提供了更大的灵活性。
 
-You can get more specifics on the implementation on GitHub [here](https://github.com/microsoft/TypeScript/pull/57196) and [here](https://github.com/microsoft/TypeScript/pull/59688).
+关于该实现的更多细节，可以在 GitHub 上的[此处](https://github.com/microsoft/TypeScript/pull/57196)和[此处](https://github.com/microsoft/TypeScript/pull/59688)查看。
 
-## Faster Project Ownership Checks in Editors for Composite Projects
+## 编辑器中复合项目（Composite Projects）归属检查的速度提升
 
-Imagine a large codebase with the following structure:
+设想一个拥有如下结构的大型代码库：
 
 ```
 packages
@@ -310,7 +310,7 @@ packages
         └── ...
 ```
 
-Each directory in `packages` is a separate TypeScript project, and the `app` directory is the main project that depends on all the other projects.
+`packages` 下的每个目录都是一个独立的 TypeScript 项目，而 `app` 目录是依赖于其他所有项目的主项目：
 
 ```json5
 // app/tsconfig.json
@@ -328,27 +328,27 @@ Each directory in `packages` is a separate TypeScript project, and the `app` dir
 }
 ```
 
-Now notice we have the file `some-script.js` in the `app` directory.
-When we open `some-script.js` in the editor, the TypeScript language service (which also handles the editor experience for JavaScript files!) has to figure out which project the file belongs to so it can apply the right settings.
+现在请注意，我们在 `app` 目录中有一个文件 `some-script.js`。
+当我们在编辑器中打开 `some-script.js` 时，TypeScript 语言服务（它也负责 JavaScript 文件的编辑器体验！）必须弄清楚该文件属于哪个项目，以便应用正确的配置。
 
-In this case, the nearest `tsconfig.json` does _not_ include `some-script.js`, but TypeScript will proceed to ask "could one of the projects _referenced_ by `app/tsconfig.json` include `some-script.js`?".
-To do so, TypeScript would previously load up each project, one-by-one, and stop as soon as it found a project which contained `some-script.js`.
-Even if `some-script.js` isn't included in the root set of files, TypeScript would still parse all the files within a project because some of the root set of files can still _transitively_ reference `some-script.js`.
+在这种情况下，距离最近的 `tsconfig.json` 并*未*包含 `some-script.js`，但 TypeScript 会继续探寻：“被 `app/tsconfig.json` *所引用*的各个项目中，是否有一个包含 `some-script.js` 呢？”。
+为此，TypeScript 此前会逐个加载每个项目，并在找到包含 `some-script.js` 的项目时立即停止。
+即使 `some-script.js` 不在该项目的根文件集合中，TypeScript 仍会解析该项目内的所有文件，因为根文件集合中的某些文件可能会*传递性地*引用 `some-script.js`。
 
-What we found over time was that this behavior caused extreme and unpredictable behavior in larger codebases.
-Developers would open up stray script files and find themselves waiting for their entire codebase to be opened up.
+随着时间的推移，我们发现这种行为在大型代码库中会导致极其严重且不可预测的性能问题。
+开发者打开一个零散的脚本文件，却发现整个代码库都被迫加载并解析了一遍。
 
-Thankfully, every project that can be referenced by another (non-workspace) project must enable a flag called `composite`, which enforces a rule that all input source files must be known up-front.
-So when probing a `composite` project, TypeScript 5.7 will only check if a file belongs to the _root set of files_ of that project.
-This should avoid this common worst-case behavior.
+幸运的是，每个能被另一个（非工作区）项目所引用的项目都必须启用名为 `composite` 的标志，该标志强制要求所有输入源文件必须预先明确可知。
+因此，在探测 `composite` 项目时，TypeScript 5.7 将仅检查该文件是否属于该项目的*根文件集合*（root set of files）。
+这应能有效避免此类常见的最坏情况。
 
-For more information, [see the change here](https://github.com/microsoft/TypeScript/pull/59688).
+欲了解更多信息，请[查看此处的改动](https://github.com/microsoft/TypeScript/pull/59688)。
 
-### Validated JSON Imports in `--module nodenext`
+### `--module nodenext` 下校验 JSON 导入
 
-When importing from a `.json` file under `--module nodenext`, TypeScript will now enforce certain rules to prevent runtime errors.
+在 `--module nodenext` 下从 `.json` 文件导入时，TypeScript 现在会强制执行某些规则以防止运行时错误。
 
-For one, an import attribute containing `type: "json"` needs to be present for any JSON file import.
+首先，任何 JSON 文件导入都必须包含带有 `type: "json"` 的导入属性（import attribute）：
 
 ```ts
 import myConfig from './myConfig.json'
@@ -360,7 +360,7 @@ import myConfig from './myConfig.json' with { type: 'json' }
 // ✅ This is fine because we provided `type: "json"`
 ```
 
-On top of this validation, TypeScript will not generate "named" exports, and the contents of a JSON import will only be accessible via a default.
+在此验证的基础上，TypeScript 将不会生成“命名”导出，并且导入的 JSON 内容将只能通过默认导出访问：
 
 ```ts
 // ✅ This is okay:
@@ -378,15 +378,15 @@ let version = myConfig.version
 let version = myConfig.default.version
 ```
 
-[See here](https://github.com/microsoft/TypeScript/pull/60019) for more information on this change.
+关于该改动的更多信息，请[参见此处](https://github.com/microsoft/TypeScript/pull/60019)。
 
-## Support for V8 Compile Caching in Node.js
+## 支持 Node.js 中的 V8 编译缓存
 
-Node.js 22 supports [a new API called `module.enableCompileCache()`](https://github.com/nodejs/node/pull/54501).
-This API allows the runtime to reuse some of the parsing and compilation work done after the first run of a tool.
+Node.js 22 支持了[名为 `module.enableCompileCache()` 的新 API](https://github.com/nodejs/node/pull/54501)。
+该 API 允许运行时在工具初次运行之后，复用部分解析和编译成果。
 
-TypeScript 5.7 now leverages the API so that it can start doing useful work sooner.
-In some of our own testing, we've witnessed about a 2.5x speed-up in running `tsc --version`.
+TypeScript 5.7 现在利用了该 API，使其能够更快进入核心工作状态。
+在我们自己的部分测试中，执行 `tsc --version` 获得了约 2.5 倍的速度提升：
 
 ```
 Benchmark 1: node ./built/local/_tsc.js --version (*without* caching)
@@ -402,23 +402,22 @@ Summary
     2.52 ± 0.06 times faster than node ./built/local/_tsc.js --version
 ```
 
-For more information, [see the pull request here](https://github.com/microsoft/TypeScript/pull/59720).
+欲了解更多信息，请[查看此处的 Pull Request](https://github.com/microsoft/TypeScript/pull/59720)。
 
-## Notable Behavioral Changes
+## 显著的行为变更
 
-This section highlights a set of noteworthy changes that should be acknowledged and understood as part of any upgrade.
-Sometimes it will highlight deprecations, removals, and new restrictions.
-It can also contain bug fixes that are functionally improvements, but which can also affect an existing build by introducing new errors.
+本节重点介绍在任何版本升级过程中都应知晓并理解的重要变更。
+内容可能涵盖弃用项、移除项和新增的限制规则，也包括在功能上属于修复与改进、但可能因引入新错误而影响现有构建的改动。
 
 ### `lib.d.ts`
 
-Types generated for the DOM may have an impact on type-checking your codebase.
-For more information, [see linked issues related to DOM and `lib.d.ts` updates for this version of TypeScript](https://github.com/microsoft/TypeScript/pull/60061).
+针对 DOM 生成的类型可能会对代码库的类型检查产生影响。
+欲了解更多信息，请[查看与本版本 TypeScript 的 DOM 及 `lib.d.ts` 更新相关的议题](https://github.com/microsoft/TypeScript/pull/60061)。
 
-### `TypedArray`s Are Now Generic Over `ArrayBufferLike`
+### `TypedArray` 现已基于 `ArrayBufferLike` 泛型化
 
-In ECMAScript 2024, `SharedArrayBuffer` and `ArrayBuffer` have types that slightly diverge.
-To bridge the gap and preserve the underlying buffer type, all `TypedArrays` (like `Uint8Array` and others) [are now also generic](https://github.com/microsoft/TypeScript/pull/59417).
+在 ECMAScript 2024 中，`SharedArrayBuffer` 与 `ArrayBuffer` 的类型产生了一些分歧。
+为了消除差异并保留底层的缓冲区类型，所有 `TypedArray`（如 `Uint8Array` 等）[现在也都是泛型类型](https://github.com/microsoft/TypeScript/pull/59417)：
 
 ```ts
 interface Uint8Array<TArrayBuffer extends ArrayBufferLike = ArrayBufferLike> {
@@ -426,9 +425,9 @@ interface Uint8Array<TArrayBuffer extends ArrayBufferLike = ArrayBufferLike> {
 }
 ```
 
-Each `TypedArray` now contains a type parameter named `TArrayBuffer`, though that type parameter has a default type argument so that users can continue to refer to `Int32Array` without explicitly writing out `Int32Array<ArrayBufferLike>`.
+每个 `TypedArray` 现在都包含一个名为 `TArrayBuffer` 的类型参数，不过该类型参数带有默认类型实参，因此用户可以继续直接使用 `Int32Array`，而无需显式写成 `Int32Array<ArrayBufferLike>`。
 
-If you encounter any issues as part of this update, such as
+如果你在此次更新中遇到任何问题，例如：
 
 ```
 error TS2322: Type 'Buffer' is not assignable to type 'Uint8Array<ArrayBufferLike>'.
@@ -437,14 +436,14 @@ error TS2345: Argument of type 'ArrayBufferLike' is not assignable to parameter 
 error TS2345: Argument of type 'Buffer' is not assignable to parameter of type 'string | ArrayBufferView | Stream | Iterable<string | ArrayBufferView> | AsyncIterable<string | ArrayBufferView>'.
 ```
 
-then you may need to update `@types/node`.
+那么你可能需要更新 `@types/node`。
 
-You can read the [specifics about this change on GitHub](https://github.com/microsoft/TypeScript/pull/59417).
+你可以在 GitHub 上[阅读有关此改动的具体细节](https://github.com/microsoft/TypeScript/pull/59417)。
 
-### Creating Index Signatures from Non-Literal Method Names in Classes
+### 从类中的非字面量方法名创建索引签名
 
-TypeScript now has a more consistent behavior for methods in classes when they are declared with non-literal computed property names.
-For example, in the following:
+对于使用非字面量计算属性名声明的类方法，TypeScript 现在具备了更加一致的行为。
+例如在以下代码中：
 
 ```ts
 declare const symbolMethodName: symbol
@@ -456,16 +455,16 @@ export class A {
 }
 ```
 
-Previously TypeScript just viewed the class in a way like the following:
+此前，TypeScript 仅将该类视为形如：
 
 ```ts
 export class A {}
 ```
 
-In other words, from the type system's perspective, `[symbolMethodName]` contributed nothing to the type of `A`
+换言之，从类型系统的角度来看，`[symbolMethodName]` 对 `A` 的类型没有任何贡献。
 
-TypeScript 5.7 now views the method `[symbolMethodName]() {}` more meaningfully, and generates an index signature.
-As a result, the code above is interpreted as something like the following code:
+TypeScript 5.7 现在对 `[symbolMethodName]() {}` 方法的处理更加合理，并为其生成了索引签名。
+因此，上述代码会被解释为类似于如下代码：
 
 ```ts
 export class A {
@@ -473,13 +472,13 @@ export class A {
 }
 ```
 
-This provides behavior that is consistent with properties and methods in object literals.
+这提供了与对象字面量中的属性和方法保持一致的行为。
 
-[Read up more on this change here](https://github.com/microsoft/TypeScript/pull/59860).
+[在此阅读有关此改动的更多信息](https://github.com/microsoft/TypeScript/pull/59860)。
 
-### More Implicit `any` Errors on Functions Returning `null` and `undefined`
+### 在未开启 `strictNullChecks` 时返回 `null` 和 `undefined` 的函数会出现更多隐式 `any` 错误
 
-When a function expression is contextually typed by a signature returning a generic type, TypeScript now appropriately provides an implicit `any` error under `noImplicitAny`, but outside of `strictNullChecks`.
+当一个函数表达式被返回泛型类型的签名上下文类型化时，在开启 `noImplicitAny` 但未开启 `strictNullChecks` 的情况下，TypeScript 现在会适当地报告隐式 `any` 错误：
 
 ```ts
 declare var p: Promise<number>
@@ -488,4 +487,4 @@ const p2 = p.catch(() => null)
 // error TS7011: Function expression, which lacks return-type annotation, implicitly has an 'any' return type.
 ```
 
-[See this change for more details](https://github.com/microsoft/TypeScript/pull/59661).
+[更多细节参见此改动](https://github.com/microsoft/TypeScript/pull/59661)。

@@ -2,14 +2,14 @@
 title: TypeScript 3.8
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-3-8.html
-oneline: TypeScript 3.8 Release Notes
+oneline: TypeScript 3.8 发布说明
 ---
 
-## Type-Only Imports and Export
+## 仅类型导入与导出
 
-This feature is something most users may never have to think about; however, if you've hit issues under [`isolatedModules`](/tsconfig#isolatedModules), TypeScript's `transpileModule` API, or Babel, this feature might be relevant.
+这项功能大多数用户可能并不需要关心；但如果你在使用 [`isolatedModules`](/tsconfig#isolatedModules)、TypeScript 的 `transpileModule` API 或 Babel 时遇到过问题，这项功能就与你息息相关了。
 
-TypeScript 3.8 adds a new syntax for type-only imports and exports.
+TypeScript 3.8 为仅类型导入与导出引入了新的语法。
 
 ```ts
 import type { SomeThing } from './some-module.js'
@@ -17,12 +17,9 @@ import type { SomeThing } from './some-module.js'
 export type { SomeThing }
 ```
 
-`import type` only imports declarations to be used for type annotations and declarations.
-It _always_ gets fully erased, so there's no remnant of it at runtime.
-Similarly, `export type` only provides an export that can be used for type contexts, and is also erased from TypeScript's output.
+`import type` 仅导入用于类型注解和声明的声明项。它**总是**会被完全擦除，因此在运行时不会留下任何痕迹。类似地，`export type` 仅提供可用于类型上下文的导出，同样会被从 TypeScript 的编译输出中完全擦除。
 
-It's important to note that classes have a value at runtime and a type at design-time, and the use is context-sensitive.
-When using `import type` to import a class, you can't do things like extend from it.
+需要特别注意的是，类在运行时具有值，而在设计时具有类型，其使用方式取决于上下文。当使用 `import type` 导入一个类时，你无法对其进行继承等操作。
 
 ```ts
 import type { Component } from 'react'
@@ -38,8 +35,7 @@ class Button extends Component<ButtonProps> {
 }
 ```
 
-If you've used Flow before, the syntax is fairly similar.
-One difference is that we've added a few restrictions to avoid code that might appear ambiguous.
+如果你之前用过 Flow，会发现该语法十分相似。不同之处在于，我们添加了一些限制以避免可能产生歧义的代码。
 
 ```ts
 // Is only 'Foo' a type? Or every declaration in the import?
@@ -50,18 +46,18 @@ import type Foo, { Bar, Baz } from "some-module";
 // error! A type-only import can specify a default import or named bindings, but not both.
 ```
 
-In conjunction with `import type`, TypeScript 3.8 also adds a new compiler flag to control what happens with imports that won't be utilized at runtime: [`importsNotUsedAsValues`](/tsconfig#importsNotUsedAsValues).
-This flag takes 3 different values:
+与 `import type` 配套，TypeScript 3.8 还添加了一个新的编译器标志，用于控制未在运行时使用的导入的处理方式：[`importsNotUsedAsValues`](/tsconfig#importsNotUsedAsValues)。
+该标志接受 3 个不同的值：
 
-- `remove`: this is today's behavior of dropping these imports. It's going to continue to be the default, and is a non-breaking change.
-- `preserve`: this _preserves_ all imports whose values are never used. This can cause imports/side-effects to be preserved.
-- `error`: this preserves all imports (the same as the `preserve` option), but will error when a value import is only used as a type. This might be useful if you want to ensure no values are being accidentally imported, but still make side-effect imports explicit.
+- `remove`：即当前丢弃这些导入的行为。这仍然是默认行为，属于非破坏性变更。
+- `preserve`：**保留**所有值未被使用的导入。这会保留这些导入及其副作用。
+- `error`：保留所有导入（与 `preserve` 选项相同），但当某个值导入仅用作类型时会报错。如果你希望确保不会意外导入任何值，同时明确显式保留副作用导入，该选项会很有用。
 
-For more information about the feature, you can [take a look at the pull request](https://github.com/microsoft/TypeScript/pull/35200), and [relevant changes](https://github.com/microsoft/TypeScript/pull/36092/) around broadening where imports from an `import type` declaration can be used.
+有关该功能的更多信息，你可以[查看 Pull Request](https://github.com/microsoft/TypeScript/pull/35200)，以及有关放宽 `import type` 声明导入项使用场景的[相关变更](https://github.com/microsoft/TypeScript/pull/36092/)。
 
-## ECMAScript Private Fields
+## ECMAScript 私有字段
 
-TypeScript 3.8 brings support for ECMAScript's private fields, part of the [stage-3 class fields proposal](https://github.com/tc39/proposal-class-fields/).
+TypeScript 3.8 带来了对 ECMAScript 私有字段的支持，该特性属于 [Stage 3 类字段提案（stage-3 class fields proposal）](https://github.com/tc39/proposal-class-fields/) 的一部分。
 
 ```ts
 class Person {
@@ -84,16 +80,14 @@ jeremy.#name
 // because it has a private identifier.
 ```
 
-Unlike regular properties (even ones declared with the `private` modifier), private fields have a few rules to keep in mind.
-Some of them are:
+与常规属性（即使是使用 `private` 修饰符声明的属性）不同，私有字段有以下几条规则需要注意：
 
-- Private fields start with a `#` character. Sometimes we call these _private names_.
-- Every private field name is uniquely scoped to its containing class.
-- TypeScript accessibility modifiers like `public` or `private` can't be used on private fields.
-- Private fields can't be accessed or even detected outside of the containing class - even by JS users! Sometimes we call this _hard privacy_.
+- 私有字段以 `#` 字符开头。有时我们称其为**私有名称（private names）**。
+- 每个私有字段名称的作用域都严格唯一限定在声明它的类中。
+- TypeScript 的访问修饰符（如 `public` 或 `private`）不能用于私有字段。
+- 私有字段在包含它的类之外无法被访问甚至无法被探测到——对 JS 用户也是如此！有时我们称其为**硬私有（hard privacy）**。
 
-Apart from "hard" privacy, another benefit of private fields is that uniqueness we just mentioned.
-For example, regular property declarations are prone to being overwritten in subclasses.
+除了“硬私有”之外，私有字段的另一个优势就是刚才提到的唯一性。例如，常规属性声明很容易在子类中被意外覆盖。
 
 ```ts
 class C {
@@ -118,7 +112,7 @@ console.log(instance.cHelper()) // prints '20'
 console.log(instance.dHelper()) // prints '20'
 ```
 
-With private fields, you'll never have to worry about this, since each field name is unique to the containing class.
+使用私有字段时，你完全无需担心这一点，因为每个字段名称对于包含它的类来说都是唯一的。
 
 ```ts
 class C {
@@ -143,7 +137,7 @@ console.log(instance.cHelper()) // prints '10'
 console.log(instance.dHelper()) // prints '20'
 ```
 
-Another thing worth noting is that accessing a private field on any other type will result in a `TypeError`!
+另一处值得注意的是，在任何其他类型的对象上访问私有字段都将抛出 `TypeError`！
 
 ```ts
 class Square {
@@ -167,7 +161,7 @@ const b = { sideLength: 100 }
 console.log(a.equals(b))
 ```
 
-Finally, for any plain `.js` file users, private fields _always_ have to be declared before they're assigned to.
+最后，对于纯 `.js` 文件用户，私有字段在被赋值之前**必须**先进行声明。
 
 ```js
 class C {
@@ -182,8 +176,7 @@ class C {
 }
 ```
 
-JavaScript has always allowed users to access undeclared properties, whereas TypeScript has always required declarations for class properties.
-With private fields, declarations are always needed regardless of whether we're working in `.js` or `.ts` files.
+JavaScript 一向允许用户访问未声明的属性，而 TypeScript 则始终要求对类属性进行声明。对于私有字段，无论是在 `.js` 还是 `.ts` 文件中编写代码，都必须先进行声明。
 
 ```js
 class C {
@@ -197,14 +190,14 @@ class C {
 }
 ```
 
-For more information about the implementation, you can [check out the original pull request](https://github.com/Microsoft/TypeScript/pull/30829)
+有关该实现的更多信息，你可以[查看原始 Pull Request](https://github.com/Microsoft/TypeScript/pull/30829)。
 
-### Which should I use?
+### 我应该使用哪一种？
 
-We've already received many questions on which type of privates you should use as a TypeScript user: most commonly, "should I use the `private` keyword, or ECMAScript's hash/pound (`#`) private fields?"
-It depends!
+作为 TypeScript 用户，我们收到了很多关于应该使用哪种私有属性的疑问，最常见的问题是：“我应该使用 `private` 关键字，还是使用 ECMAScript 的 hash/井号（`#`）私有字段？”
+这取决于具体需求！
 
-When it comes to properties, TypeScript's `private` modifiers are fully erased - that means that at runtime, it acts entirely like a normal property and there's no way to tell that it was declared with a `private` modifier. When using the `private` keyword, privacy is only enforced at compile-time/design-time, and for JavaScript consumers it's entirely intent-based.
+对于属性而言，TypeScript 的 `private` 修饰符会被完全擦除——这意味着在运行时，它的表现与普通属性完全相同，没有任何方式能看出它是用 `private` 修饰符声明的。使用 `private` 关键字时，私有性仅在编译时/设计时强制执行，对于 JavaScript 调用者而言完全是基于意图约定的。
 
 ```ts
 class C {
@@ -223,9 +216,9 @@ console.log(new C().foo) // prints '10'
 console.log(new C()['foo']) // prints '10'
 ```
 
-The upside is that this sort of "soft privacy" can help your consumers temporarily work around not having access to some API, and also works in any runtime.
+这种“软私有（soft privacy）”的好处在于，它可以帮助使用者临时绕过无法访问某些 API 的限制，并且可以在任何运行时环境中工作。
 
-On the other hand, ECMAScript's `#` privates are completely inaccessible outside of the class.
+另一方面，ECMAScript 的 `#` 私有字段在类外部是完全无法访问的。
 
 ```ts
 class C {
@@ -243,45 +236,36 @@ console.log(new C()['#foo']) // prints undefined
 // and this prints 'undefined'.
 ```
 
-This hard privacy is really useful for strictly ensuring that nobody can take use of any of your internals.
-If you're a library author, removing or renaming a private field should never cause a breaking change.
+这种硬私有对于严格确保没有任何人能够使用你的内部实现非常有用。如果你是库的作者，移除或重命名私有字段永远不会导致破坏性变更。
 
-As we mentioned, another benefit is that subclassing can be easier with ECMAScript's `#` privates because they _really_ are private.
-When using ECMAScript `#` private fields, no subclass ever has to worry about collisions in field naming.
-When it comes to TypeScript's `private` property declarations, users still have to be careful not to trample over properties declared in superclasses.
+正如我们提到的，另一个好处是使用 ECMAScript 的 `#` 私有字段使子类化更加容易，因为它们是**真正**私有的。使用 ECMAScript `#` 私有字段时，子类永远不需要担心字段命名冲突。而在使用 TypeScript 的 `private` 属性声明时，用户仍需格外小心，避免覆盖父类中声明的同名属性。
 
-One more thing to think about is where you intend for your code to run.
-TypeScript currently can't support this feature unless targeting ECMAScript 2015 (ES6) targets or higher.
-This is because our downleveled implementation uses `WeakMap`s to enforce privacy, and `WeakMap`s can't be polyfilled in a way that doesn't cause memory leaks.
-In contrast, TypeScript's `private`-declared properties work with all targets - even ECMAScript 3!
+还需要考虑的另一点是代码的目标运行环境。除非编译目标为 ECMAScript 2015 (ES6) 或更高版本，否则 TypeScript 目前无法支持此特性。这是因为我们的降级编译实现使用 `WeakMap` 来强制实现私有性，而 `WeakMap` 无法在不引起内存泄漏的前提下进行 polyfill。相比之下，TypeScript 的 `private` 属性声明支持所有编译目标——甚至是 ECMAScript 3！
 
-A final consideration might be speed: `private` properties are no different from any other property, so accessing them is as fast as any other property access no matter which runtime you target.
-In contrast, because `#` private fields are downleveled using `WeakMap`s, they may be slower to use.
-While some runtimes might optimize their actual implementations of `#` private fields, and even have speedy `WeakMap` implementations, that might not be the case in all runtimes.
+最后的考量是运行速度：`private` 属性与任何普通属性没有任何区别，因此无论目标运行时为何，访问它们的速度都与常规属性访问一样快。相反，由于 `#` 私有字段降级编译使用了 `WeakMap`，使用它们可能会更慢。虽然某些运行时环境可能会针对 `#` 私有字段的实际实现进行优化，甚至拥有极速的 `WeakMap` 实现，但并非所有运行时环境都是如此。
 
-## `export * as ns` Syntax
+## `export * as ns` 语法
 
-It's often common to have a single entry-point that exposes all the members of another module as a single member.
+通常的做法是拥有一个统一的入口点，将另一个模块的所有成员作为一个命名空间成员导出。
 
 ```ts
 import * as utilities from './utilities.js'
 export { utilities }
 ```
 
-This is so common that ECMAScript 2020 recently added a new syntax to support this pattern!
+这种模式非常普遍，以至于 ECMAScript 2020 最近新增了一种语法来支持该模式！
 
 ```ts
 export * as utilities from './utilities.js'
 ```
 
-This is a nice quality-of-life improvement to JavaScript, and TypeScript 3.8 implements this syntax.
-When your module target is earlier than `es2020`, TypeScript will output something along the lines of the first code snippet.
+这是对 JavaScript 的一项很好的开发体验改进，TypeScript 3.8 实现了这一语法。当你的模块目标版本低于 `es2020` 时，TypeScript 会输出类似于第一个代码片段的内容。
 
-## Top-Level `await`
+## 顶层 `await`（Top-Level await）
 
-TypeScript 3.8 provides support for a handy upcoming ECMAScript feature called "top-level `await`".
+TypeScript 3.8 支持了即将到来的便捷 ECMAScript 新特性——“顶层 `await`”。
 
-JavaScript users often introduce an `async` function in order to use `await`, and then immediately called the function after defining it.
+JavaScript 用户过去通常需要引入一个 `async` 函数才能使用 `await`，并在定义该函数后立即调用它。
 
 ```js
 async function main() {
@@ -293,8 +277,7 @@ async function main() {
 main().catch((e) => console.error(e))
 ```
 
-This is because previously in JavaScript (along with most other languages with a similar feature), `await` was only allowed within the body of an `async` function.
-However, with top-level `await`, we can use `await` at the top level of a module.
+这是因为以往在 JavaScript 中（以及大多数具有类似特性的其他语言中），`await` 仅允许在 `async` 函数体内使用。然而，通过顶层 `await`，我们可以在模块的顶层直接使用 `await`。
 
 ```ts
 const response = await fetch('...')
@@ -305,30 +288,23 @@ console.log(greeting)
 export {}
 ```
 
-Note there's a subtlety: top-level `await` only works at the top level of a _module_, and files are only considered modules when TypeScript finds an `import` or an `export`.
-In some basic cases, you might need to write out `export {}` as some boilerplate to make sure of this.
+请注意其中的细节：顶层 `await` 仅在**模块**的顶层有效，并且只有当 TypeScript 检测到 `import` 或 `export` 时，文件才会被视为模块。在某些简单场景下，你可能需要编写 `export {}` 这样的样板代码以确保其被识别为模块。
 
-Top level `await` may not work in all environments where you might expect at this point.
-Currently, you can only use top level `await` when the [`target`](/tsconfig#target) compiler option is `es2017` or above, and `module` is `esnext` or `system`.
-Support within several environments and bundlers may be limited or may require enabling experimental support.
+目前，顶层 `await` 可能还无法在你预期的所有环境中运行。目前只有当编译器选项 [`target`](/tsconfig#target) 为 `es2017` 或更高版本，且 `module` 为 `esnext` 或 `system` 时，才能使用顶层 `await`。在部分环境和打包工具中的支持可能有限，或者需要开启实验性支持。
 
-For more information on our implementation, you can [check out the original pull request](https://github.com/microsoft/TypeScript/pull/35813).
+有关我们实现的更多信息，你可以[查看原始 Pull Request](https://github.com/microsoft/TypeScript/pull/35813)。
 
-## `es2020` for `target` and `module`
+## 用于 `target` 和 `module` 的 `es2020`
 
-TypeScript 3.8 supports `es2020` as an option for `module` and [`target`](/tsconfig#target).
-This will preserve newer ECMAScript 2020 features like optional chaining, nullish coalescing, `export * as ns`, and dynamic `import(...)` syntax.
-It also means `bigint` literals now have a stable [`target`](/tsconfig#target) below `esnext`.
+TypeScript 3.8 支持将 `es2020` 作为 `module` 和 [`target`](/tsconfig#target) 的选项值。这将保留较新的 ECMAScript 2020 特性，如可选链、空值合并、`export * as ns` 以及动态 `import(...)` 语法。这也意味着 `bigint` 字面量现在在 `esnext` 之下拥有了一个稳定的 [`target`](/tsconfig#target) 目标。
 
-## JSDoc Property Modifiers
+## JSDoc 属性修饰符
 
-TypeScript 3.8 supports JavaScript files by turning on the [`allowJs`](/tsconfig#allowJs) flag, and also supports _type-checking_ those JavaScript files via the [`checkJs`](/tsconfig#checkJs) option or by adding a `// @ts-check` comment to the top of your `.js` files.
+TypeScript 3.8 通过开启 [`allowJs`](/tsconfig#allowJs) 标志来支持 JavaScript 文件，并且通过 [`checkJs`](/tsconfig#checkJs) 选项或在 `.js` 文件顶部添加 `// @ts-check` 注释来支持对这些 JavaScript 文件的**类型检查**。
 
-Because JavaScript files don't have dedicated syntax for type-checking, TypeScript leverages JSDoc.
-TypeScript 3.8 understands a few new JSDoc tags for properties.
+由于 JavaScript 文件没有专门用于类型检查的语法，TypeScript 利用了 JSDoc。TypeScript 3.8 能够识别几个新的用于属性的 JSDoc 标签。
 
-First are the accessibility modifiers: `@public`, `@private`, and `@protected`.
-These tags work exactly like `public`, `private`, and `protected` respectively work in TypeScript.
+首先是访问修饰符：`@public`、`@private` 和 `@protected`。这些标签的作用与 TypeScript 中的 `public`、`private` 和 `protected` 完全一致。
 
 ```js
 // @ts-check
@@ -349,11 +325,11 @@ new Foo().stuff
 // error! Property 'stuff' is private and only accessible within class 'Foo'.
 ```
 
-- `@public` is always implied and can be left off, but means that a property can be reached from anywhere.
-- `@private` means that a property can only be used within the containing class.
-- `@protected` means that a property can only be used within the containing class, and all derived subclasses, but not on dissimilar instances of the containing class.
+- `@public` 始终是默认隐含的，可以省略，表示属性可以从任何地方访问。
+- `@private` 表示属性只能在包含它的类内部使用。
+- `@protected` 表示属性只能在包含它的类及其所有派生子类中使用，但不能在包含类的不同实例上使用。
 
-Next, we've also added the `@readonly` modifier to ensure that a property is only ever written to during initialization.
+接下来，我们还添加了 `@readonly` 修饰符，以确保属性仅在初始化期间被写入。
 
 ```js
 // @ts-check
@@ -376,17 +352,15 @@ new Foo().stuff++
 // Cannot assign to 'stuff' because it is a read-only property.
 ```
 
-## Better Directory Watching on Linux and `watchOptions`
+## Linux 上更好的目录监视与 `watchOptions`
 
-TypeScript 3.8 ships a new strategy for watching directories, which is crucial for efficiently picking up changes to `node_modules`.
+TypeScript 3.8 引入了一种监视目录的新策略，这对于高效捕获 `node_modules` 的变更至关重要。
 
-For some context, on operating systems like Linux, TypeScript installs directory watchers (as opposed to file watchers) on `node_modules` and many of its subdirectories to detect changes in dependencies.
-This is because the number of available file watchers is often eclipsed by the number of files in `node_modules`, whereas there are way fewer directories to track.
+作为背景说明：在 Linux 等操作系统上，TypeScript 会在 `node_modules` 及其众多子目录上安装目录监视器（相对于文件监视器而言），以检测依赖项的变更。这是因为可用文件监视器的数量通常远少于 `node_modules` 中的文件总数，而需要跟踪的目录数量则少得多。
 
-Older versions of TypeScript would _immediately_ install directory watchers on folders, and at startup that would be fine; however, during an npm install, a lot of activity will take place within `node_modules` and that can overwhelm TypeScript, often slowing editor sessions to a crawl.
-To prevent this, TypeScript 3.8 waits slightly before installing directory watchers to give these highly volatile directories some time to stabilize.
+较早版本的 TypeScript 会**立即**在文件夹上安装目录监视器，这在启动时没有问题；但在执行 `npm install` 期间，`node_modules` 内会发生大量变动，从而使 TypeScript 不堪重负，经常导致编辑器会话变得极度卡顿。为了防止这种情况，TypeScript 3.8 会在安装目录监视器之前稍作等待，让这些高频变动的目录有时间稳定下来。
 
-Because every project might work better under different strategies, and this new approach might not work well for your workflows, TypeScript 3.8 introduces a new `watchOptions` field in `tsconfig.json` and `jsconfig.json` which allows users to tell the compiler/language service which watching strategies should be used to keep track of files and directories.
+由于不同项目可能适用于不同的策略，并且这种新方法可能并不完全契合你的工作流，TypeScript 3.8 在 `tsconfig.json` 和 `jsconfig.json` 中引入了一个新的 `watchOptions` 字段，允许用户告诉编译器/语言服务应使用哪些监视策略来跟踪文件和目录。
 
 ```jsonc tsconfig
 {
@@ -410,45 +384,42 @@ Because every project might work better under different strategies, and this new
 }
 ```
 
-`watchOptions` contains 4 new options that can be configured:
+`watchOptions` 包含 4 个可配置的新选项：
 
-- [`watchFile`](/tsconfig#watchFile): the strategy for how individual files are watched. This can be set to
+- [`watchFile`](/tsconfig#watchFile)：监视单个文件的策略。可以设置为：
 
-  - `fixedPollingInterval`: Check every file for changes several times a second at a fixed interval.
-  - `priorityPollingInterval`: Check every file for changes several times a second, but use heuristics to check certain types of files less frequently than others.
-  - `dynamicPriorityPolling`: Use a dynamic queue where less-frequently modified files will be checked less often.
-  - `useFsEvents` (the default): Attempt to use the operating system/file system's native events for file changes.
-  - `useFsEventsOnParentDirectory`: Attempt to use the operating system/file system's native events to listen for changes on a file's containing directories. This can use fewer file watchers, but might be less accurate.
+  - `fixedPollingInterval`：以固定时间间隔每秒检查每个文件的变更数次。
+  - `priorityPollingInterval`：以固定时间间隔每秒检查每个文件的变更数次，但使用启发式规则降低检查某些类型文件的频率。
+  - `dynamicPriorityPolling`：使用动态队列，对较少修改的文件降低检查频率。
+  - `useFsEvents`（默认值）：尝试使用操作系统/文件系统的原生事件来监听文件变更。
+  - `useFsEventsOnParentDirectory`：尝试使用操作系统/文件系统的原生事件来监听文件所在目录的变更。这可以使用更少的文件监视器，但准确性可能会有所降低。
 
-- [`watchDirectory`](/tsconfig#watchDirectory): the strategy for how entire directory trees are watched under systems that lack recursive file-watching functionality. This can be set to:
+- [`watchDirectory`](/tsconfig#watchDirectory)：在缺乏递归文件监视功能的系统下监视整个目录树的策略。可以设置为：
 
-  - `fixedPollingInterval`: Check every directory for changes several times a second at a fixed interval.
-  - `dynamicPriorityPolling`: Use a dynamic queue where less-frequently modified directories will be checked less often.
-  - `useFsEvents` (the default): Attempt to use the operating system/file system's native events for directory changes.
+  - `fixedPollingInterval`：以固定时间间隔每秒检查每个目录的变更数次。
+  - `dynamicPriorityPolling`：使用动态队列，对较少修改的目录降低检查频率。
+  - `useFsEvents`（默认值）：尝试使用操作系统/文件系统的原生事件来监听目录变更。
 
-- [`fallbackPolling`](/tsconfig#fallbackPolling): when using file system events, this option specifies the polling strategy that gets used when the system runs out of native file watchers and/or doesn't support native file watchers. This can be set to
-  - `fixedPollingInterval`: _(See above.)_
-  - `priorityPollingInterval`: _(See above.)_
-  - `dynamicPriorityPolling`: _(See above.)_
-  - `synchronousWatchDirectory`: Disable deferred watching on directories. Deferred watching is useful when lots of file changes might occur at once (e.g. a change in `node_modules` from running `npm install`), but you might want to disable it with this flag for some less-common setups.
+- [`fallbackPolling`](/tsconfig#fallbackPolling)：使用文件系统事件时，该选项指定当系统用尽原生文件监视器和/或不支持原生文件监视器时所使用的轮询策略。可以设置为：
+  - `fixedPollingInterval`：_（参见上文。）_
+  - `priorityPollingInterval`：_（参见上文。）_
+  - `dynamicPriorityPolling`：_（参见上文。）_
+  - `synchronousWatchDirectory`：禁用目录的延迟监视。延迟监视在可能同时发生大量文件变更时（例如运行 `npm install` 导致的 `node_modules` 变更）非常有用，但在某些特殊配置下，你可能希望使用此标志将其禁用。
 
-For more information on these changes, [head over to GitHub to see the pull request](https://github.com/microsoft/TypeScript/pull/35615) to read more.
+有关这些变更的更多信息，请[前往 GitHub 查看 Pull Request](https://github.com/microsoft/TypeScript/pull/35615) 以了解更多内容。
 
-## "Fast and Loose" Incremental Checking
+## “快速且松散”的增量检查策略（Fast and Loose Incremental Checking）
 
-TypeScript 3.8 introduces a new compiler option called [`assumeChangesOnlyAffectDirectDependencies`](/tsconfig#assumeChangesOnlyAffectDirectDependencies).
-When this option is enabled, TypeScript will avoid rechecking/rebuilding all truly possibly-affected files, and only recheck/rebuild files that have changed as well as files that directly import them.
+TypeScript 3.8 引入了一个名为 [`assumeChangesOnlyAffectDirectDependencies`](/tsconfig#assumeChangesOnlyAffectDirectDependencies) 的新编译器选项。当启用此选项时，TypeScript 将避免重新检查/重新构建所有真正可能受影响的文件，而只重新检查/重新构建发生变更的文件以及直接导入它们的文件。
 
-For example, consider a file `fileD.ts` that imports `fileC.ts` that imports `fileB.ts` that imports `fileA.ts` as follows:
+例如，假设文件 `fileD.ts` 导入了 `fileC.ts`，后者导入了 `fileB.ts`，而 `fileB.ts` 又导入了 `fileA.ts`，如下所示：
 
 ```
 fileA.ts <- fileB.ts <- fileC.ts <- fileD.ts
 ```
 
-In `--watch` mode, a change in `fileA.ts` would typically mean that TypeScript would need to at least re-check `fileB.ts`, `fileC.ts`, and `fileD.ts`.
-Under [`assumeChangesOnlyAffectDirectDependencies`](/tsconfig#assumeChangesOnlyAffectDirectDependencies), a change in `fileA.ts` means that only `fileA.ts` and `fileB.ts` need to be re-checked.
+在 `--watch` 模式下，`fileA.ts` 的变更通常意味着 TypeScript 至少需要重新检查 `fileB.ts`、`fileC.ts` 和 `fileD.ts`。而在 [`assumeChangesOnlyAffectDirectDependencies`](/tsconfig#assumeChangesOnlyAffectDirectDependencies) 下，`fileA.ts` 的变更意味着只有 `fileA.ts` 和 `fileB.ts` 需要重新检查。
 
-In a codebase like Visual Studio Code, this reduced rebuild times for changes in certain files from about 14 seconds to about 1 second.
-While we don't necessarily recommend this option for all codebases, you might be interested if you have an extremely large codebase and are willing to defer full project errors until later (e.g. a dedicated build via a `tsconfig.fullbuild.json` or in CI).
+在类似 Visual Studio Code 这样的代码库中，这使得某些文件变更后的重新构建时间从约 14 秒减少到约 1 秒。虽然我们并不一定向所有代码库推荐此选项，但如果你的代码库极其庞大，并且愿意将完整项目的错误检查推迟到稍后进行（例如通过 `tsconfig.fullbuild.json` 或在 CI 中进行专门构建），你可能会对它感兴趣。
 
-For more details, you can [see the original pull request](https://github.com/microsoft/TypeScript/pull/35711).
+更多详情，请[查看原始 Pull Request](https://github.com/microsoft/TypeScript/pull/35711)。

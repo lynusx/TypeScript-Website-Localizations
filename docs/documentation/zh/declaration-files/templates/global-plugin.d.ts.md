@@ -1,30 +1,30 @@
 ---
-title: 'Global: Plugin'
+title: '全局插件 .d.ts'
 layout: docs
 permalink: /zh/docs/handbook/declaration-files/templates/global-plugin-d-ts.html
 ---
 
 ## _UMD_
 
-A _UMD_ module is one that can _either_ be used as module (through an import), or as a global (when run in an environment without a module loader).
-Many popular libraries, such as [Moment.js](http://momentjs.com/), are written this way.
-For example, in Node.js or using RequireJS, you would write:
+_UMD_ 模块既可以作为模块使用（通过导入），也可以作为全局对象使用（在没有模块加载器的环境中运行时）。
+许多流行的库，例如 [Moment.js](http://momentjs.com/)，都是以此种方式编写的。
+例如，在 Node.js 中或使用 RequireJS 时，你可以这样写：
 
 ```ts
 import moment = require('moment')
 console.log(moment.format())
 ```
 
-whereas in a vanilla browser environment you would write:
+而在原生浏览器环境中，你可以这样写：
 
 ```js
 console.log(moment.format())
 ```
 
-### Identifying a UMD library
+### 识别 UMD 库
 
-[UMD modules](https://github.com/umdjs/umd) check for the existence of a module loader environment.
-This is an easy-to-spot pattern that looks something like this:
+[UMD 模块](https://github.com/umdjs/umd)会检查是否存在模块加载器环境。
+这是一种很容易识别的模式，通常类似于：
 
 ```js
 (function (root, factory) {
@@ -38,22 +38,22 @@ This is an easy-to-spot pattern that looks something like this:
 }(this, function (b) {
 ```
 
-If you see tests for `typeof define`, `typeof window`, or `typeof module` in the code of a library, especially at the top of the file, it's almost always a UMD library.
+如果你在某个库的代码中看到针对 `typeof define`、`typeof window` 或 `typeof module` 的检测（特别是在文件顶部），那么它几乎肯定是一个 UMD 库。
 
-Documentation for UMD libraries will also often demonstrate a "Using in Node.js" example showing `require`,
-and a "Using in the browser" example showing using a `<script>` tag to load the script.
+UMD 库的文档通常还会提供一个展示 `require` 的“在 Node.js 中使用”示例，
+以及一个展示如何通过 `<script>` 标签加载脚本的“在浏览器中使用”示例。
 
-### Examples of UMD libraries
+### UMD 库示例
 
-Most popular libraries are now available as UMD packages.
-Examples include [jQuery](https://jquery.com/), [Moment.js](http://momentjs.com/), [lodash](https://lodash.com/), and many more.
+大多数流行的库现在都以 UMD 包的形式提供。
+例如 [jQuery](https://jquery.com/)、[Moment.js](http://momentjs.com/)、[lodash](https://lodash.com/) 等等。
 
-### Template
+### 模板
 
-There are three templates available for modules,
-[`module.d.ts`](/docs/handbook/declaration-files/templates/module-d-ts.html), [`module-class.d.ts`](/docs/handbook/declaration-files/templates/module-class-d-ts.html) and [`module-function.d.ts`](/docs/handbook/declaration-files/templates/module-function-d-ts.html).
+模块有三个可用模板：
+[`module.d.ts`](/docs/handbook/declaration-files/templates/module-d-ts.html)、[`module-class.d.ts`](/docs/handbook/declaration-files/templates/module-class-d-ts.html) 和 [`module-function.d.ts`](/docs/handbook/declaration-files/templates/module-function-d-ts.html)。
 
-Use [`module-function.d.ts`](/docs/handbook/declaration-files/templates/module-function-d-ts.html) if your module can be _called_ like a function:
+如果你的模块可以像函数一样被_调用_，请使用 [`module-function.d.ts`](/docs/handbook/declaration-files/templates/module-function-d-ts.html)：
 
 ```js
 var x = require('foo')
@@ -61,9 +61,9 @@ var x = require('foo')
 var y = x(42)
 ```
 
-Be sure to read the [footnote "The Impact of ES6 on Module Call Signatures"](#the-impact-of-es6-on-module-plugins)
+请务必阅读[尾注“ES6 对模块调用签名的影响”](#the-impact-of-es6-on-module-plugins)。
 
-Use [`module-class.d.ts`](/docs/handbook/declaration-files/templates/module-class-d-ts.html) if your module can be _constructed_ using `new`:
+如果你的模块可以使用 `new` 进行_构造_，请使用 [`module-class.d.ts`](/docs/handbook/declaration-files/templates/module-class-d-ts.html)：
 
 ```js
 var x = require('bar')
@@ -71,33 +71,33 @@ var x = require('bar')
 var y = new x('hello')
 ```
 
-The same [footnote](#the-impact-of-es6-on-module-plugins) applies to these modules.
+相同的[尾注](#the-impact-of-es6-on-module-plugins)也适用于此类模块。
 
-If your module is not callable or constructable, use the [`module.d.ts`](/docs/handbook/declaration-files/templates/module-d-ts.html) file.
+如果你的模块既不可调用也不可构造，请使用 [`module.d.ts`](/docs/handbook/declaration-files/templates/module-d-ts.html) 文件。
 
-## _Module Plugin_ or _UMD Plugin_
+## _模块插件_ 或 _UMD 插件_
 
-A _module plugin_ changes the shape of another module (either UMD or module).
-For example, in Moment.js, `moment-range` adds a new `range` method to the `moment` object.
+_模块插件_会修改另一个模块（无论是 UMD 还是普通模块）的形态。
+例如在 Moment.js 中，`moment-range` 为 `moment` 对象添加了一个新的 `range` 方法。
 
-For the purposes of writing a declaration file, you'll write the same code whether the module being changed is a plain module or UMD module.
+就编写声明文件而言，无论被修改的模块是普通模块还是 UMD 模块，你所编写的代码都是相同的。
 
-### Template
+### 模板
 
-Use the [`module-plugin.d.ts`](/docs/handbook/declaration-files/templates/module-plugin-d-ts.html) template.
+使用 [`module-plugin.d.ts`](/docs/handbook/declaration-files/templates/module-plugin-d-ts.html) 模板。
 
-## _Global Plugin_
+## _全局插件_
 
-A _global plugin_ is global code that changes the shape of some global.
-As with _global-modifying modules_, these raise the possibility of runtime conflict.
+_全局插件_是一种修改某些全局对象形态的全局代码。
+与_全局修改模块_一样，它们带来了运行时冲突的可能性。
 
-For example, some libraries add new functions to `Array.prototype` or `String.prototype`.
+例如，某些库会向 `Array.prototype` 或 `String.prototype` 添加新函数。
 
-### Identifying global plugins
+### 识别全局插件
 
-Global plugins are generally easy to identify from their documentation.
+全局插件通常很容易从其文档中识别出来。
 
-You'll see examples that look like this:
+你会看到类似于这样的示例：
 
 ```js
 var x = 'hello, world'
@@ -109,23 +109,23 @@ var y = [1, 2, 3]
 console.log(y.reverseAndSort())
 ```
 
-### Template
+### 模板
 
-Use the [`global-plugin.d.ts`](/docs/handbook/declaration-files/templates/global-plugin-d-ts.html) template.
+使用 [`global-plugin.d.ts`](/docs/handbook/declaration-files/templates/global-plugin-d-ts.html) 模板。
 
-## _Global-modifying Modules_
+## _全局修改模块_
 
-A _global-modifying module_ alters existing values in the global scope when they are imported.
-For example, there might exist a library which adds new members to `String.prototype` when imported.
-This pattern is somewhat dangerous due to the possibility of runtime conflicts,
-but we can still write a declaration file for it.
+_全局修改模块_在被导入时会修改全局作用域中的现有值。
+例如，可能存在一个库在导入时向 `String.prototype` 添加新成员。
+由于可能引发运行时冲突，这种模式存在一定风险，
+但我们仍然可以为其编写声明文件。
 
-### Identifying global-modifying modules
+### 识别全局修改模块
 
-Global-modifying modules are generally easy to identify from their documentation.
-In general, they're similar to global plugins, but need a `require` call to activate their effects.
+全局修改模块通常很容易从其文档中识别出来。
+通常来说，它们类似于全局插件，但需要通过 `require` 调用来使其生效。
 
-You might see documentation like this:
+你可能会看到类似这样的文档：
 
 ```js
 // 'require' call that doesn't use its return value
@@ -142,18 +142,18 @@ var y = [1, 2, 3]
 console.log(y.reverseAndSort())
 ```
 
-### Template
+### 模板
 
-Use the [`global-modifying-module.d.ts`](/docs/handbook/declaration-files/templates/global-modifying-module-d-ts.html) template.
+使用 [`global-modifying-module.d.ts`](/docs/handbook/declaration-files/templates/global-modifying-module-d-ts.html) 模板。
 
-## Consuming Dependencies
+## 使用依赖项
 
-There are several kinds of dependencies your library might have.
-This section shows how to import them into the declaration file.
+你的库可能会有几种不同类型的依赖项。
+本节将展示如何在声明文件中引入它们。
 
-### Dependencies on Global Libraries
+### 对全局库的依赖
 
-If your library depends on a global library, use a `/// <reference types="..." />` directive:
+如果你的库依赖于某个全局库，请使用 `/// <reference types="..." />` 指令：
 
 ```ts
 /// <reference types="someLib" />
@@ -161,9 +161,9 @@ If your library depends on a global library, use a `/// <reference types="..." /
 function getThing(): someLib.thing
 ```
 
-### Dependencies on Modules
+### 对模块的依赖
 
-If your library depends on a module, use an `import` statement:
+如果你的库依赖于某个模块，请使用 `import` 语句：
 
 ```ts
 import * as moment from 'moment'
@@ -171,11 +171,11 @@ import * as moment from 'moment'
 function getThing(): moment
 ```
 
-### Dependencies on UMD libraries
+### 对 UMD 库的依赖
 
-#### From a Global Library
+#### 在全局库中
 
-If your global library depends on a UMD module, use a `/// <reference types` directive:
+如果你的全局库依赖于某个 UMD 模块，请使用 `/// <reference types` 指令：
 
 ```ts
 /// <reference types="moment" />
@@ -183,25 +183,25 @@ If your global library depends on a UMD module, use a `/// <reference types` dir
 function getThing(): moment
 ```
 
-#### From a Module or UMD Library
+#### 在模块或 UMD 库中
 
-If your module or UMD library depends on a UMD library, use an `import` statement:
+如果你的模块或 UMD 库依赖于某个 UMD 库，请使用 `import` 语句：
 
 ```ts
 import * as someLib from 'someLib'
 ```
 
-Do _not_ use a `/// <reference` directive to declare a dependency to a UMD library!
+请_不要_使用 `/// <reference` 指令来声明对 UMD 库的依赖！
 
-## Footnotes
+## 尾注
 
-### Preventing Name Conflicts
+### 防止名称冲突
 
-Note that it's possible to define many types in the global scope when writing a global declaration file.
-We strongly discourage this as it leads to possible unresolvable name conflicts when many declaration files are in a project.
+请注意，在编写全局声明文件时，完全可以在全局作用域中定义许多类型。
+我们强烈不建议这样做，因为当项目中存在多个声明文件时，这可能会导致无法解决的命名冲突。
 
-A simple rule to follow is to only declare types _namespaced_ by whatever global variable the library defines.
-For example, if the library defines the global value 'cats', you should write
+一个简单的遵循原则是：仅通过该库所定义的全局变量在命名空间（_namespaced_）内部声明类型。
+例如，如果该库定义了全局值 'cats'，你应该这样写：
 
 ```ts
 declare namespace cats {
@@ -209,41 +209,41 @@ declare namespace cats {
 }
 ```
 
-But _not_
+而_不要_这样写：
 
 ```ts
 // at top-level
 interface CatsKittySettings {}
 ```
 
-This guidance also ensures that the library can be transitioned to UMD without breaking declaration file users.
+这条指导原则还能确保该库在未来迁移到 UMD 时，不会破坏该声明文件使用者的代码。
 
-### The Impact of ES6 on Module Plugins
+### ES6 对模块插件的影响
 
-Some plugins add or modify top-level exports on existing modules.
-While this is legal in CommonJS and other loaders, ES6 modules are considered immutable and this pattern will not be possible.
-Because TypeScript is loader-agnostic, there is no compile-time enforcement of this policy, but developers intending to transition to an ES6 module loader should be aware of this.
+某些插件会向现有模块添加或修改顶层导出项。
+虽然这在 CommonJS 和其他加载器中是合法的，但 ES6 模块被视为不可变的，因此这种模式将无法使用。
+由于 TypeScript 与模块加载器无关，所以在编译期并不会强制执行这一策略，但打算迁移到 ES6 模块加载器的开发者应当注意这一点。
 
-### The Impact of ES6 on Module Call Signatures
+### ES6 对模块调用签名的影响
 
-Many popular libraries, such as Express, expose themselves as a callable function when imported.
-For example, the typical Express usage looks like this:
+许多流行的库（例如 Express）在被导入时会将自身暴露为一个可调用函数。
+例如，典型的 Express 用法如下所示：
 
 ```ts
 import exp = require('express')
 var app = exp()
 ```
 
-In ES6 module loaders, the top-level object (here imported as `exp`) can only have properties;
-the top-level module object is _never_ callable.
-The most common solution here is to define a `default` export for a callable/constructable object;
-some module loader shims will automatically detect this situation and replace the top-level object with the `default` export.
+在 ES6 模块加载器中，顶层对象（此处导入为 `exp`）只能拥有属性；
+顶层模块对象_绝不能_直接作为函数调用。
+最常见的解决方案是为可调用/可构造的对象定义一个 `default` 导出；
+某些模块加载器的 shim 会自动检测到这种情况，并将顶层对象替换为 `default` 导出。
 
-### Library file layout
+### 库的文件结构
 
-The layout of your declaration files should mirror the layout of the library.
+声明文件的结构应当反映出库的文件结构。
 
-A library can consist of multiple modules, such as
+一个库可能由多个模块组成，例如：
 
 ```
 myLib
@@ -254,7 +254,7 @@ myLib
          +---- baz.js
 ```
 
-These could be imported as
+它们可能会被这样导入：
 
 ```js
 var a = require('myLib')
@@ -263,7 +263,7 @@ var c = require('myLib/bar')
 var d = require('myLib/bar/baz')
 ```
 
-Your declaration files should thus be
+因此，你的声明文件结构应当为：
 
 ```
 @types/myLib

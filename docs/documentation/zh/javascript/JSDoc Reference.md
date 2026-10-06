@@ -1,25 +1,24 @@
 ---
-title: JSDoc Reference
+title: JSDoc 参考
 layout: docs
 permalink: /zh/docs/handbook/jsdoc-supported-types.html
-oneline: What JSDoc does TypeScript-powered JavaScript support?
+oneline: 基于 TypeScript 的 JavaScript 支持哪些 JSDoc 特性？
 translatable: true
 ---
 
-The list below outlines which constructs are currently supported
-when using JSDoc annotations to provide type information in JavaScript files.
+下文列出了在 JavaScript 文件中使用 JSDoc 注解提供类型信息时，当前支持的所有语法结构。
 
-Note:
+注意：
 
-- Any tags which are not explicitly listed below (such as `@async`) are not yet supported.
-- Only documentation tags are supported in TypeScript files. The rest of the tags are only supported in JavaScript files.
+- 下方未明确列出的任何标签（例如 `@async`）目前均暂不支持。
+- TypeScript 文件中仅支持文档标签（Documentation tags）。其余标签仅在 JavaScript 文件中受支持。
 
 #### Types
 
 - [`@type`](#type)
 - [`@import`](#import)
-- [`@param`](#param-and-returns) (or [`@arg`](#param-and-returns) or [`@argument`](#param-and-returns))
-- [`@returns`](#param-and-returns) (or [`@return`](#param-and-returns))
+- [`@param`](#param-and-returns)（或 [`@arg`](#param-and-returns) 或 [`@argument`](#param-and-returns)）
+- [`@returns`](#param-and-returns)（或 [`@return`](#param-and-returns)）
 - [`@typedef`](#typedef-callback-and-param)
 - [`@callback`](#typedef-callback-and-param)
 - [`@template`](#template)
@@ -29,14 +28,14 @@ Note:
 
 - [Property Modifiers](#property-modifiers) `@public`, `@private`, `@protected`, `@readonly`
 - [`@override`](#override)
-- [`@extends`](#extends) (or [`@augments`](#extends))
+- [`@extends`](#extends)（或 [`@augments`](#extends)）
 - [`@implements`](#implements)
-- [`@class`](#constructor) (or [`@constructor`](#constructor))
+- [`@class`](#constructor)（或 [`@constructor`](#constructor)）
 - [`@this`](#this)
 
 #### Documentation
 
-Documentation tags work in both TypeScript and JavaScript.
+文档标签在 TypeScript 和 JavaScript 中均可使用。
 
 - [`@deprecated`](#deprecated)
 - [`@see`](#see)
@@ -50,22 +49,22 @@ Documentation tags work in both TypeScript and JavaScript.
 - [Unsupported patterns](#unsupported-patterns)
 - [Unsupported tags](#unsupported-tags)
 
-The meaning is usually the same, or a superset, of the meaning of the tag given at [jsdoc.app](https://jsdoc.app).
-The code below describes the differences and gives some example usage of each tag.
+这些标签的含义通常与 [jsdoc.app](https://jsdoc.app) 中给出的含义相同，或是其超集。
+下文的代码说明了具体差异，并给出了各标签的使用示例。
 
-**Note:** You can use [the playground to explore JSDoc support](/play?useJavaScript=truee=4#example/jsdoc-support).
+**注意：** 你可以使用 [Playground 体验 JSDoc 支持](/play?useJavaScript=truee=4#example/jsdoc-support)。
 
 ## Types
 
 ### `@type`
 
-You can reference types with the "@type" tag. The type can be:
+你可以使用 "@type" 标签来引用类型。该类型可以是：
 
-1. Primitive, like `string` or `number`.
-2. Declared in a TypeScript declaration, either global or imported.
-3. Declared in a JSDoc [`@typedef`](#typedef-callback-and-param) tag.
+1. 原始类型，例如 `string` 或 `number`。
+2. 在 TypeScript 声明中声明的类型（无论是全局的还是导入的）。
+3. 在 JSDoc [`@typedef`](#typedef-callback-and-param) 标签中声明的类型。
 
-You can use most JSDoc type syntax and any TypeScript syntax, from [the most basic like `string`](/docs/handbook/2/basic-types.html) to [the most advanced, like conditional types](/docs/handbook/2/conditional-types.html).
+你可以使用大多数 JSDoc 类型语法以及任意 TypeScript 语法，从[最基础的 `string`](/docs/handbook/2/basic-types.html) 到[最高级的条件类型（Conditional Types）](/docs/handbook/2/conditional-types.html)。
 
 ```js twoslash
 /**
@@ -85,7 +84,7 @@ var myElement = document.querySelector(selector)
 element.dataset.myData = ''
 ```
 
-`@type` can specify a union type &mdash; for example, something can be either a string or a boolean.
+`@type` 可以指定联合类型 &mdash; 例如，某个变量既可以是字符串也可以是布尔值。
 
 ```js twoslash
 /**
@@ -94,7 +93,7 @@ element.dataset.myData = ''
 var sb
 ```
 
-You can specify array types using a variety of syntaxes:
+你可以使用多种语法来指定数组类型：
 
 ```js twoslash
 /** @type {number[]} */
@@ -105,15 +104,15 @@ var jsdoc
 var nas
 ```
 
-You can also specify object literal types.
-For example, an object with properties 'a' (string) and 'b' (number) uses the following syntax:
+你还可以指定对象字面量类型。
+例如，具有属性 'a'（string）和 'b'（number）的对象可以使用以下语法：
 
 ```js twoslash
 /** @type {{ a: string, b: number }} */
 var var9
 ```
 
-You can specify map-like and array-like objects using string and number index signatures, using either standard JSDoc syntax or TypeScript syntax.
+你可以使用字符串和数字索引签名来指定类似 Map 的对象和类数组对象，这既可以使用标准 JSDoc 语法，也可以使用 TypeScript 语法。
 
 ```js twoslash
 /**
@@ -127,9 +126,9 @@ var stringToNumber
 var arrayLike
 ```
 
-The preceding two types are equivalent to the TypeScript types `{ [x: string]: number }` and `{ [x: number]: any }`. The compiler understands both syntaxes.
+上述两个类型分别等价于 TypeScript 类型 `{ [x: string]: number }` 和 `{ [x: number]: any }`。编译器可以理解这两种语法。
 
-You can specify function types using either TypeScript or Google Closure syntax:
+你可以使用 TypeScript 语法或 Google Closure 语法来指定函数类型：
 
 ```js twoslash
 /** @type {function(string, boolean): number} Closure syntax */
@@ -138,7 +137,7 @@ var sbn
 var sbn2
 ```
 
-Or you can just use the unspecified `Function` type:
+或者你也可以直接使用未指定参数和返回值的 `Function` 类型：
 
 ```js twoslash
 /** @type {Function} */
@@ -147,7 +146,7 @@ var fn7
 var fn6
 ```
 
-Other types from Closure also work:
+来自 Closure 的其他类型同样有效：
 
 ```js twoslash
 /**
@@ -162,8 +161,8 @@ var question
 
 #### Casts
 
-TypeScript borrows cast syntax from Google Closure.
-This lets you cast types to other types by adding a `@type` tag before any parenthesized expression.
+TypeScript 借鉴了 Google Closure 的类型转换语法。
+通过在任意带括号的表达式前面添加 `@type` 标签，你可以将类型转换为其他类型。
 
 ```js twoslash
 /**
@@ -173,7 +172,7 @@ var numberOrString = Math.random() < 0.5 ? 'hello' : 100
 var typeAssertedNumber = /** @type {number} */ (numberOrString)
 ```
 
-You can even cast to `const` just like TypeScript:
+你甚至可以像在 TypeScript 中一样转换为 `const`：
 
 ```js twoslash
 let one = /** @type {const} */ (1)
@@ -181,8 +180,8 @@ let one = /** @type {const} */ (1)
 
 #### Import types
 
-You can import declarations from other files using import types.
-This syntax is TypeScript-specific and differs from the JSDoc standard:
+你可以使用导入类型（Import types）从其他文件中导入声明。
+该语法是 TypeScript 特有的，与 JSDoc 标准有所不同：
 
 ```js twoslash
 // @filename: types.d.ts
@@ -199,7 +198,7 @@ function walk(p) {
 }
 ```
 
-import types can be used to get the type of a value from a module if you don't know the type, or if it has a large type that is annoying to type:
+如果你不知道某个值的类型，或者该值的类型过于庞大繁琐而不便手写，你可以使用导入类型从模块中获取该值的类型：
 
 ```js twoslash
 // @types: node
@@ -224,7 +223,7 @@ var x = require('./accounts').userAccount
 
 ### `@import`
 
-The `@import` tag can let us reference exports from other files.
+`@import` 标签允许我们引用其他文件的导出项。
 
 ```js twoslash
 // @filename: types.d.ts
@@ -244,7 +243,7 @@ var myPet;
 myPet.name;
 ```
 
-These tags don't actually import files at runtime, and the symbols they bring into scope can only be used within JSDoc comments for type-checking.
+这些标签在运行时并不会真正导入文件，它们引入作用域的符号只能在 JSDoc 注释中用于类型检查。
 
 ```js twoslash
 // @filename: dog.js
@@ -262,8 +261,8 @@ const d = new Dog() // error!
 
 ### `@param` and `@returns`
 
-`@param` uses the same type syntax as `@type`, but adds a parameter name.
-The parameter may also be declared optional by surrounding the name with square brackets:
+`@param` 使用与 `@type` 相同的类型语法，但额外增加了一个参数名称。
+还可以通过用方括号将参数名括起来，将参数声明为可选参数：
 
 ```js twoslash
 // Parameters may be declared in a variety of syntactic forms
@@ -279,7 +278,7 @@ function stringsStringStrings(p1, p2, p3, p4) {
 }
 ```
 
-Likewise, for the return type of a function:
+同样地，对于函数的返回值类型：
 
 ```js twoslash
 /**
@@ -295,8 +294,8 @@ function ab() {}
 
 ### `@typedef`, `@callback`, and `@param`
 
-You can define complex types with `@typedef`.
-Similar syntax works with `@param`.
+你可以使用 `@typedef` 定义复杂类型。
+类似的语法也适用于 `@param`。
 
 ```js twoslash
 /**
@@ -313,7 +312,7 @@ var specialTypeObject
 specialTypeObject.prop3
 ```
 
-You can use either `object` or `Object` on the first line.
+在第一行中，你可以使用 `object` 或 `Object`。
 
 ```js twoslash
 /**
@@ -327,8 +326,8 @@ You can use either `object` or `Object` on the first line.
 var specialTypeObject1
 ```
 
-`@param` allows a similar syntax for one-off type specifications.
-Note that the nested property names must be prefixed with the name of the parameter:
+`@param` 支持类似的语法用于一次性类型声明。
+请注意，嵌套属性名称必须带有参数名称作为前缀：
 
 ```js twoslash
 /**
@@ -344,7 +343,7 @@ function special(options) {
 }
 ```
 
-`@callback` is similar to `@typedef`, but it specifies a function type instead of an object type:
+`@callback` 与 `@typedef` 类似，但它指定的是函数类型而非对象类型：
 
 ```js twoslash
 /**
@@ -358,7 +357,7 @@ function special(options) {
 const ok = (s) => !(s.length % 2)
 ```
 
-Of course, any of these types can be declared using TypeScript syntax in a single-line `@typedef`:
+当然，所有这些类型都可以在单行 `@typedef` 中使用 TypeScript 语法进行声明：
 
 ```js
 /** @typedef {{ prop1: string, prop2: string, prop3?: number }} SpecialType */
@@ -367,8 +366,8 @@ Of course, any of these types can be declared using TypeScript syntax in a singl
 
 ### `@template`
 
-You can declare type parameters with the `@template` tag.
-This lets you make functions, classes, or types that are generic:
+你可以使用 `@template` 标签声明类型参数。
+这让你可以创建泛型函数、泛型类或泛型类型：
 
 ```js twoslash
 /**
@@ -385,7 +384,7 @@ const b = id(123)
 const c = id({})
 ```
 
-Use comma or multiple tags to declare multiple type parameters:
+使用逗号或多个标签来声明多个类型参数：
 
 ```js
 /**
@@ -394,8 +393,8 @@ Use comma or multiple tags to declare multiple type parameters:
  */
 ```
 
-You can also specify a type constraint before the type parameter name.
-Only the first type parameter in a list is constrained:
+你还可以在类型参数名称之前指定类型约束。
+列表中只有第一个类型参数会被约束：
 
 ```js twoslash
 /**
@@ -409,7 +408,7 @@ function seriousalize(key, object) {
 }
 ```
 
-Finally, you can specify a default for a type parameter:
+最后，你可以为类型参数指定默认值：
 
 ```js twoslash
 /** @template [T=object] */
@@ -422,7 +421,7 @@ let c = new Cache()
 
 ### `@satisfies`
 
-`@satisfies` provides access to the postfix [operator `satisfies`](/docs/handbook/release-notes/typescript-4-9.html) in TypeScript. Satisfies is used to declare that a value implements a type but does not affect the type of the value.
+`@satisfies` 允许访问 TypeScript 中的后缀[运算符 `satisfies`](/docs/handbook/release-notes/typescript-4-9.html)。Satisfies 用于声明某个值满足某种类型，但不会改变该值本身的推导类型。
 
 ```js twoslash
 // @errors: 1360
@@ -445,7 +444,7 @@ const messageUsingType = 'hello world'
 
 ## Classes
 
-Classes can be declared as ES6 classes.
+类可以声明为 ES6 类。
 
 ```js twoslash
 class C {
@@ -482,13 +481,13 @@ var c = new C(0)
 var result = C(1)
 ```
 
-They can also be declared as constructor functions; use [`@constructor`](#constructor) along with [`@this`](#this) for this.
+它们也可以声明为构造函数；此时请结合使用 [`@constructor`](#constructor) 与 [`@this`](#this)。
 
 ### Property Modifiers
 
 <div id="jsdoc-property-modifiers"></div>
 
-`@public`, `@private`, and `@protected` work exactly like `public`, `private`, and `protected` in TypeScript:
+`@public`、`@private` 和 `@protected` 的工作方式与 TypeScript 中的 `public`、`private` 和 `protected` 完全一致：
 
 ```js twoslash
 // @errors: 2341
@@ -509,15 +508,15 @@ const c = new Car()
 console.log(c.identifier)
 ```
 
-- `@public` is always implied and can be left off, but means that a property can be reached from anywhere.
-- `@private` means that a property can only be used within the containing class.
-- `@protected` means that a property can only be used within the containing class, and all derived subclasses, but not on dissimilar instances of the containing class.
+- `@public` 始终是默认隐含的，可以省略，它表示属性可以从任何地方访问。
+- `@private` 表示属性只能在包含它的类内部使用。
+- `@protected` 表示属性只能在包含它的类及其所有派生子类内部使用，但不能在包含类的不同实例上访问。
 
-`@public`, `@private`, and `@protected` do not work in constructor functions.
+`@public`、`@private` 和 `@protected` 在构造函数中不起作用。
 
 ### `@readonly`
 
-The `@readonly` modifier ensures that a property is only ever written to during initialization.
+`@readonly` 修饰符可确保属性仅在初始化期间被写入。
 
 ```js twoslash
 // @errors: 2540
@@ -540,7 +539,7 @@ console.log(c.identifier)
 
 ### `@override`
 
-`@override` works the same way as in TypeScript; use it on methods that override a method from a base class:
+`@override` 的工作方式与 TypeScript 中相同；将其用于重写基类方法的方法上：
 
 ```js twoslash
 export class C {
@@ -552,11 +551,11 @@ class D extends C {
 }
 ```
 
-Set `noImplicitOverride: true` in tsconfig to check overrides.
+在 tsconfig 中设置 `noImplicitOverride: true` 可以检查方法重写。
 
 ### `@extends`
 
-When JavaScript classes extend a generic base class, there is no JavaScript syntax for passing a type argument. The `@extends` tag allows this:
+当 JavaScript 类继承泛型基类时，JavaScript 并没有传递类型实参的语法。`@extends` 标签支持了这一需求：
 
 ```js twoslash
 /**
@@ -568,11 +567,11 @@ class SortableSet extends Set {
 }
 ```
 
-Note that `@extends` only works with classes. Currently, there is no way for a constructor function to extend a class.
+注意，`@extends` 仅适用于类。目前，构造函数无法继承类。
 
 ### `@implements`
 
-In the same way, there is no JavaScript syntax for implementing a TypeScript interface. The `@implements` tag works just like in TypeScript:
+同理，JavaScript 也没有实现 TypeScript 接口的语法。`@implements` 标签的作用与 TypeScript 中的实现机制完全一致：
 
 ```js twoslash
 /** @implements {Print} */
@@ -585,7 +584,7 @@ class TextBook {
 
 ### `@constructor`
 
-The compiler infers constructor functions based on this-property assignments, but you can make checking stricter and suggestions better if you add a `@constructor` tag:
+编译器会根据 this 属性赋值来推断构造函数，但如果添加 `@constructor` 标签，可以使检查更严格、代码提示更完善：
 
 ```js twoslash
 // @checkJs
@@ -621,15 +620,15 @@ c.size
 var result = C(1)
 ```
 
-> Note: Error messages only show up in JS codebases with [a JSConfig](/docs/handbook/tsconfig-json.html) and [`checkJs`](/tsconfig#checkJs) enabled.
+> 注意：错误信息仅在配置了 [JSConfig](/docs/handbook/tsconfig-json.html) 并启用了 [`checkJs`](/tsconfig#checkJs) 的 JS 代码库中才会显示。
 
-With `@constructor`, `this` is checked inside the constructor function `C`, so you will get suggestions for the `initialize` method and an error if you pass it a number. Your editor may also show warnings if you call `C` instead of constructing it.
+使用 `@constructor` 后，构造函数 `C` 内部会对 `this` 进行检查，因此你将获得 `initialize` 方法的代码提示，并在传入数字时收到错误。如果你直接调用 `C` 而非构造调用它，编辑器可能还会显示警告。
 
-Unfortunately, this means that constructor functions that are also callable cannot use `@constructor`.
+遗憾的是，这意味着同时支持直接调用的构造函数无法使用 `@constructor`。
 
 ### `@this`
 
-The compiler can usually figure out the type of `this` when it has some context to work with. When it doesn't, you can explicitly specify the type of `this` with `@this`:
+当存在可用上下文时，编译器通常可以推断出 `this` 的类型。而在无法推断时，你可以使用 `@this` 明确指定 `this` 的类型：
 
 ```js twoslash
 /**
@@ -647,7 +646,7 @@ function callbackForLater(e) {
 
 <div id="deprecated-comments"></div>
 
-When a function, method, or property is deprecated you can let users know by marking it with a `/** @deprecated */` JSDoc comment. That information is surfaced in completion lists and as a suggestion diagnostic that editors can handle specially. In an editor like VS Code, deprecated values are typically displayed in a strike-through style ~~like this~~.
+当某个函数、方法或属性被废弃时，你可以通过使用 `/** @deprecated */` JSDoc 注释标记来告知用户。该信息会显示在补全列表中，并作为编辑器的诊断建议进行特殊展示。在诸如 VS Code 等编辑器中，废弃的值通常会以带有删除线的样式显示，~~就像这样~~。
 
 ```js twoslash
 // @noErrors
@@ -661,7 +660,7 @@ apiV
 
 ### `@see`
 
-`@see` lets you link to other names in your program:
+`@see` 允许你链接到程序中的其他标识符名称：
 
 ```ts twoslash
 type Box<T> = { t: T }
@@ -669,11 +668,11 @@ type Box<T> = { t: T }
 type Boxify<T> = { [K in keyof T]: Box<T> }
 ```
 
-Some editors will turn `Box` into a link to make it easy to jump there and back.
+部分编辑器会将 `Box` 显示为可点击的链接，以便快速跳转和返回。
 
 ### `@link`
 
-`@link` is like `@see`, except that it can be used inside other tags:
+`@link` 与 `@see` 类似，不同之处在于它可以内嵌在其他标签内部使用：
 
 ```ts twoslash
 type Box<T> = { t: T }
@@ -683,7 +682,7 @@ function box<U>(u: U): Box<U> {
 }
 ```
 
-You can also link a property:
+你也可以链接到一个属性：
 
 ```ts twoslash
 type Pet = {
@@ -699,7 +698,7 @@ function hello(p: Pet) {
 }
 ```
 
-Or with an optional name:
+或者指定可选的显示名称：
 
 ```ts twoslash
 type Pet = {
@@ -719,8 +718,8 @@ function hello(p: Pet) {
 
 ### `@enum`
 
-The `@enum` tag allows you to create an object literal whose members are all of a specified type. Unlike most object literals in JavaScript, it does not allow other members.
-`@enum` is intended for compatibility with Google Closure's `@enum` tag.
+`@enum` 标签允许你创建一个对象字面量，其所有成员均为指定的类型。与 JavaScript 中的大多数对象字面量不同，它不允许包含其他成员。
+`@enum` 的设计初衷是为了兼容 Google Closure 的 `@enum` 标签。
 
 ```js twoslash
 /** @enum {number} */
@@ -733,7 +732,7 @@ const JSDocState = {
 JSDocState.SawAsterisk
 ```
 
-Note that `@enum` is quite different from, and much simpler than, TypeScript's `enum`. However, unlike TypeScript's enums, `@enum` can have any type:
+注意，`@enum` 与 TypeScript 的 `enum` 截然不同，且要简单得多。不过与 TypeScript 枚举不同的是，`@enum` 可以是任意类型：
 
 ```js twoslash
 /** @enum {function(number): number} */
@@ -748,7 +747,7 @@ MathFuncs.add1
 
 ### `@author`
 
-You can specify the author of an item with `@author`:
+你可以使用 `@author` 指定项目的作者：
 
 ```ts twoslash
 /**
@@ -757,8 +756,8 @@ You can specify the author of an item with `@author`:
  */
 ```
 
-Remember to surround the email address with angle brackets.
-Otherwise, `@example` will be parsed as a new tag.
+请记得用尖括号括起电子邮箱地址。
+否则，`@example` 会被解析为一个新的标签。
 
 ### Other supported patterns
 
@@ -819,7 +818,7 @@ function fn9(p1) {
 
 ### Unsupported patterns
 
-Postfix equals on a property type in an object literal type doesn't specify an optional property:
+在对象字面量类型中，属性类型后置等号并不能将其指定为可选属性：
 
 ```js twoslash
 /**
@@ -833,7 +832,7 @@ var wrong
 var right
 ```
 
-Nullable types only have meaning if [`strictNullChecks`](/tsconfig#strictNullChecks) is on:
+可空类型（Nullable types）仅在开启 [`strictNullChecks`](/tsconfig#strictNullChecks) 时才有意义：
 
 ```js twoslash
 /**
@@ -844,7 +843,7 @@ Nullable types only have meaning if [`strictNullChecks`](/tsconfig#strictNullChe
 var nullable
 ```
 
-The TypeScript-native syntax is a union type:
+TypeScript 原生语法使用联合类型：
 
 ```js twoslash
 /**
@@ -855,7 +854,7 @@ The TypeScript-native syntax is a union type:
 var unionNullable
 ```
 
-Non-nullable types have no meaning and are treated just as their original type:
+不可空类型（Non-nullable types）没有特殊含义，仅会被当作其原始类型处理：
 
 ```js twoslash
 /**
@@ -865,28 +864,27 @@ Non-nullable types have no meaning and are treated just as their original type:
 var normal
 ```
 
-Unlike JSDoc's type system, TypeScript only allows you to mark types as containing null or not.
-There is no explicit non-nullability -- if strictNullChecks is on, then `number` is not nullable.
-If it is off, then `number` is nullable.
+与 JSDoc 的类型系统不同，TypeScript 仅允许你将类型标记为包含 null 或不包含 null。
+并不存在显式的不可空性（non-nullability）&mdash;&mdash; 如果开启了 strictNullChecks，那么 `number` 本身就不可为空；如果关闭了该选项，那么 `number` 就是可空的。
 
 ### Unsupported tags
 
-TypeScript ignores any unsupported JSDoc tags.
+TypeScript 会忽略所有不受支持的 JSDoc 标签。
 
-The following tags have open issues to support them:
+以下标签已有未关闭的 Issue 提议支持：
 
-- `@memberof` ([issue #7237](https://github.com/Microsoft/TypeScript/issues/7237))
-- `@yields` ([issue #23857](https://github.com/Microsoft/TypeScript/issues/23857))
-- `@member` ([issue #56674](https://github.com/microsoft/TypeScript/issues/56674))
+- `@memberof`（[Issue #7237](https://github.com/Microsoft/TypeScript/issues/7237)）
+- `@yields`（[Issue #23857](https://github.com/Microsoft/TypeScript/issues/23857)）
+- `@member`（[Issue #56674](https://github.com/microsoft/TypeScript/issues/56674)）
 
 ### Legacy type synonyms
 
-A number of common types are given aliases for compatibility with old JavaScript code.
-Some of the aliases are the same as existing types, although most of those are rarely used.
-For example, `String` is treated as an alias for `string`.
-Even though `String` is a type in TypeScript, old JSDoc often uses it to mean `string`.
-Besides, in TypeScript, the capitalized versions of primitive types are wrapper types -- almost always a mistake to use.
-So the compiler treats these types as synonyms based on usage in old JSDoc:
+为了兼容旧版 JavaScript 代码，为许多常见类型提供了别名。
+部分别名与现存类型同名，尽管其中大多数很少使用。
+例如，`String` 被视作 `string` 的别名。
+尽管 `String` 在 TypeScript 中也是一种类型，但旧版 JSDoc 经常用它来表示 `string`。
+此外，在 TypeScript 中，原始类型的大写形式是包装对象类型（Wrapper types）&mdash;&mdash; 使用它们几乎总是错误的。
+因此编译器根据旧版 JSDoc 的用法将这些类型视为同义词：
 
 - `String -> string`
 - `Number -> number`
@@ -900,7 +898,7 @@ So the compiler treats these types as synonyms based on usage in old JSDoc:
 - `Object -> any`
 - `object -> any`
 
-The last four aliases are turned off when `noImplicitAny: true`:
+当启用 `noImplicitAny: true` 时，最后四个别名将被禁用：
 
-- `object` and `Object` are built-in types, although `Object` is rarely used.
-- `array` and `promise` are not built-in, but might be declared somewhere in your program.
+- `object` 和 `Object` 是内置类型，尽管 `Object` 很少被使用。
+- `array` 和 `promise` 不是内置类型，但可能会在你程序中的某个地方被声明。

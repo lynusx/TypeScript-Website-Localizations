@@ -2,21 +2,21 @@
 title: TypeScript 1.6
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-1-6.html
-oneline: TypeScript 1.6 Release Notes
+oneline: TypeScript 1.6 发布说明
 ---
 
-## JSX support
+## JSX 支持
 
-JSX is an embeddable XML-like syntax.
-It is meant to be transformed into valid JavaScript, but the semantics of that transformation are implementation-specific.
-JSX came to popularity with the React library but has since seen other applications.
-TypeScript 1.6 supports embedding, type checking, and optionally compiling JSX directly into JavaScript.
+JSX 是一种可嵌入的类 XML 语法。
+它旨在被转换为合法的 JavaScript，但该转换的具体语义取决于具体实现。
+JSX 随着 React 库而流行起来，但此后也出现了其他应用场景。
+TypeScript 1.6 支持嵌入、类型检查，并可选择直接将 JSX 编译为 JavaScript。
 
-#### New `.tsx` file extension and `as` operator
+#### 新的 `.tsx` 文件扩展名与 `as` 操作符
 
-TypeScript 1.6 introduces a new `.tsx` file extension.
-This extension does two things: it enables JSX inside of TypeScript files, and it makes the new `as` operator the default way to cast (removing any ambiguity between JSX expressions and the TypeScript prefix cast operator).
-For example:
+TypeScript 1.6 引入了全新的 `.tsx` 文件扩展名。
+该扩展名有两个作用：一是在 TypeScript 文件中启用 JSX；二是将新的 `as` 操作符作为类型断言的默认方式（消除了 JSX 表达式与 TypeScript 前缀类型断言操作符之间的二义性）。
+例如：
 
 ```ts
 var x = <any>foo
@@ -24,9 +24,9 @@ var x = <any>foo
 var x = foo as any
 ```
 
-#### Using React
+#### 使用 React
 
-To use JSX-support with React you should use the [React typings](https://github.com/borisyankov/DefinitelyTyped/tree/master/react). These typings define the `JSX` namespace so that TypeScript can correctly check JSX expressions for React. For example:
+若要配合 React 使用 JSX 支持，你应该使用 [React 类型定义](https://github.com/borisyankov/DefinitelyTyped/tree/master/react)。这些类型定义声明了 `JSX` 命名空间，从而使 TypeScript 能够正确检查适用于 React 的 JSX 表达式。例如：
 
 ```ts
 /// <reference path="react.d.ts" />
@@ -45,26 +45,26 @@ class MyComponent extends React.Component<Props, {}> {
 <MyComponent name={0} />; // error, `name` is not a number
 ```
 
-#### Using other JSX frameworks
+#### 使用其他 JSX 框架
 
-JSX element names and properties are validated against the `JSX` namespace.
-Please see the [[JSX]] wiki page for defining the `JSX` namespace for your framework.
+JSX 元素名称和属性会根据 `JSX` 命名空间进行验证。
+关于如何为你的框架定义 `JSX` 命名空间，请参阅 [[JSX]] wiki 页面。
 
-#### Output generation
+#### 输出生成
 
-TypeScript ships with two JSX modes: `preserve` and `react`.
+TypeScript 内置了两种 JSX 模式：`preserve` 和 `react`。
 
-- The `preserve` mode will keep JSX expressions as part of the output to be further consumed by another transform step. _Additionally the output will have a `.jsx` file extension._
-- The `react` mode will emit `React.createElement`, does not need to go through a JSX transformation before use, and the output will have a `.js` file extension.
+- `preserve` 模式会将 JSX 表达式保留在输出中，以便供后续的另一转换步骤处理。_此外，输出文件的扩展名为 `.jsx`。_
+- `react` 模式会生成 `React.createElement` 调用，在使用前无需再经过 JSX 转换，且输出文件的扩展名为 `.js`。
 
-See the [[JSX]] wiki page for more information on using JSX in TypeScript.
+关于在 TypeScript 中使用 JSX 的更多信息，请参阅 [[JSX]] wiki 页面。
 
-## Intersection types
+## 交叉类型
 
-TypeScript 1.6 introduces intersection types, the logical complement of union types.
-A union type `A | B` represents an entity that is either of type `A` or type `B`, whereas an intersection type `A & B` represents an entity that is both of type `A` _and_ type `B`.
+TypeScript 1.6 引入了交叉类型（intersection types），它是联合类型的逻辑互补。
+联合类型 `A | B` 表示一个实体可以是类型 `A` 或类型 `B`，而交叉类型 `A & B` 则表示一个实体同时具备类型 `A` _和_ 类型 `B`。
 
-##### Example
+##### 示例
 
 ```ts
 function extend<T, U>(first: T, second: U): T & U {
@@ -116,11 +116,11 @@ abc.b = 'hello'
 abc.c = 'hello'
 ```
 
-See [issue #1256](https://github.com/Microsoft/TypeScript/issues/1256) for more information.
+更多信息请参阅 [issue #1256](https://github.com/Microsoft/TypeScript/issues/1256)。
 
-## Local type declarations
+## 局部类型声明
 
-Local class, interface, enum, and type alias declarations can now appear inside function declarations. Local types are block scoped, similar to variables declared with `let` and `const`. For example:
+局部类、接口、枚举以及类型别名声明现在可以出现在函数声明内部。局部类型具有块级作用域，类似于使用 `let` 和 `const` 声明的变量。例如：
 
 ```ts
 function f() {
@@ -140,7 +140,7 @@ function f() {
 }
 ```
 
-The inferred return type of a function may be a type declared locally within the function. It is not possible for callers of the function to reference such a local type, but it can of course be matched structurally. For example:
+推断出的函数返回类型可以是函数内部局部声明的类型。函数的调用方无法直接引用此类局部类型，但当然可以通过结构化方式进行匹配。例如：
 
 ```ts
 interface Point {
@@ -163,7 +163,7 @@ var p2 = new PointZero()
 var p3 = new PointOne()
 ```
 
-Local types may reference enclosing type parameters and local class and interfaces may themselves be generic. For example:
+局部类型可以引用外层的类型参数，且局部类和接口自身也可以是泛型的。例如：
 
 ```ts
 function f3() {
@@ -181,9 +181,9 @@ function f3() {
 }
 ```
 
-## Class expressions
+## 类表达式
 
-TypeScript 1.6 adds support for ES6 class expressions. In a class expression, the class name is optional and, if specified, is only in scope in the class expression itself. This is similar to the optional name of a function expression. It is not possible to refer to the class instance type of a class expression outside the class expression, but the type can of course be matched structurally. For example:
+TypeScript 1.6 增加了对 ES6 类表达式的支持。在类表达式中，类名是可选的；如果指定了类名，则该名称仅在类表达式自身的作用域内有效。这与函数表达式的可选名称类似。在类表达式外部无法直接引用该类表达式的类实例类型，但该类型可以通过结构化方式进行匹配。例如：
 
 ```ts
 let Point = class {
@@ -199,13 +199,13 @@ var p = new Point(3, 4) // p has anonymous class type
 console.log(p.length())
 ```
 
-## Extending expressions
+## 继承表达式
 
-TypeScript 1.6 adds support for classes extending arbitrary expression that computes a constructor function. This means that built-in types can now be extended in class declarations.
+TypeScript 1.6 增加了对类继承求值结果为构造函数的任意表达式的支持。这意味着内置类型现在也可以在类声明中被继承。
 
-The `extends` clause of a class previously required a type reference to be specified. It now accepts an expression optionally followed by a type argument list. The type of the expression must be a constructor function type with at least one construct signature that has the same number of type parameters as the number of type arguments specified in the `extends` clause. The return type of the matching construct signature(s) is the base type from which the class instance type inherits. Effectively, this allows both real classes and "class-like" expressions to be specified in the `extends` clause.
+此前类的 `extends` 子句要求指定一个类型引用。现在它允许接收一个表达式，并可后跟类型参数列表。该表达式的类型必须是构造函数类型，且至少具有一个构造签名，该签名的类型参数数量需与 `extends` 子句中指定的类型参数数量一致。匹配的构造签名的返回类型即为类实例类型所继承的基类型。实际上，这使得真正的类与“类式（class-like）”表达式都可以出现在 `extends` 子句中。
 
-Some examples:
+示例：
 
 ```ts
 // Extend built-in types
@@ -246,11 +246,11 @@ class Test extends getGreeterBase() {
 }
 ```
 
-## `abstract` classes and methods
+## `abstract` 抽象类与抽象方法
 
-TypeScript 1.6 adds support for `abstract` keyword for classes and their methods. An abstract class is allowed to have methods with no implementation, and cannot be constructed.
+TypeScript 1.6 增加了对类及其方法的 `abstract` 关键字支持。抽象类允许包含没有实现的方法，且无法被实例化。
 
-##### Examples
+##### 示例
 
 ```ts
 abstract class Base {
@@ -280,9 +280,9 @@ y.getThing() // OK
 y.getOtherThing() // OK
 ```
 
-## Generic type aliases
+## 泛型类型别名
 
-With TypeScript 1.6, type aliases can be generic. For example:
+在 TypeScript 1.6 中，类型别名可以是泛型的。例如：
 
 ```ts
 type Lazy<T> = T | (() => T)
@@ -299,11 +299,11 @@ interface Tuple<A, B> {
 type Pair<T> = Tuple<T, T>
 ```
 
-## Stricter object literal assignment checks
+## 更严格的对象字面量赋值检查
 
-TypeScript 1.6 enforces stricter object literal assignment checks for the purpose of catching excess or misspelled properties. Specifically, when a fresh object literal is assigned to a variable or passed as an argument for a non-empty target type, it is an error for the object literal to specify properties that don't exist in the target type.
+TypeScript 1.6 实施了更严格的对象字面量赋值检查，旨在捕获多余或拼写错误的属性。具体而言，当全新的对象字面量被赋值给变量，或作为实参传递给非空目标类型时，如果对象字面量指定了目标类型中不存在的属性，则会报错。
 
-##### Examples
+##### 示例
 
 ```ts
 var x: { foo: number }
@@ -313,18 +313,18 @@ var y: { foo: number; bar?: number }
 y = { foo: 1, baz: 2 } // Error, excess or misspelled property `baz`
 ```
 
-A type can include an index signature to explicitly indicate that excess properties are permitted:
+类型可以通过包含索引签名来显式允许存在多余属性：
 
 ```ts
 var x: { foo: number; [x: string]: any }
 x = { foo: 1, baz: 2 } // Ok, `baz` matched by index signature
 ```
 
-## ES6 generators
+## ES6 生成器
 
-TypeScript 1.6 adds support for generators when targeting ES6.
+TypeScript 1.6 增加了在面向 ES6 时的生成器支持。
 
-A generator function can have a return type annotation, just like a function. The annotation represents the type of the generator returned by the function. Here is an example:
+生成器函数与普通函数一样可以带有返回类型注解。该注解表示该函数返回的生成器的类型。示例如下：
 
 ```ts
 function* g(): Iterable<string> {
@@ -335,8 +335,8 @@ function* g(): Iterable<string> {
 }
 ```
 
-A generator function with no type annotation can have the type annotation inferred.
-So in the following case, the type will be inferred from the yield statements:
+没有类型注解的生成器函数可以自动推断其类型注解。
+因此在以下情况下，类型将从 yield 语句中推断得出：
 
 ```ts
 function* g() {
@@ -347,16 +347,16 @@ function* g() {
 }
 ```
 
-## Experimental support for `async` functions
+## 对 `async` 函数的实验性支持
 
-TypeScript 1.6 introduces experimental support of `async` functions when targeting ES6.
-Async functions are expected to invoke an asynchronous operation and await its result without blocking normal execution of the program.
-This accomplished through the use of an ES6-compatible `Promise` implementation, and transposition of the function body into a compatible form to resume execution when the awaited asynchronous operation completes.
+TypeScript 1.6 引入了在面向 ES6 时对 `async` 函数的实验性支持。
+异步函数能够调用异步操作并等待其结果，而不会阻塞程序的正常执行。
+这是通过使用兼容 ES6 的 `Promise` 实现，并将函数体转换为兼容形式以便在所等待的异步操作完成时恢复执行来实现的。
 
-An _async function_ is a function or method that has been prefixed with the `async` modifier. This modifier informs the compiler that function body transposition is required, and that the keyword `await` should be treated as a unary expression instead of an identifier.
-An _Async Function_ must provide a return type annotation that points to a compatible `Promise` type. Return type inference can only be used if there is a globally defined, compatible `Promise` type.
+_async 函数_ 是带有 `async` 修饰符前缀的函数或方法。该修饰符通知编译器需要对函数体进行转换，并将关键字 `await` 视为一元表达式而不是标识符。
+_async 函数_ 必须提供指向兼容 `Promise` 类型的返回类型注解。只有在存在全局定义的兼容 `Promise` 类型时，才能使用返回类型推断。
 
-##### Example
+##### 示例
 
 ```ts
 var p: Promise<number> = /* ... */;
@@ -385,28 +385,28 @@ class C {
 }
 ```
 
-## Nightly builds
+## 每夜构建版本
 
-While not strictly a language change, nightly builds are now available by installing with the following command:
+虽然严格来说这不属于语言特性的变更，但现在可以通过以下命令安装每夜构建版本（Nightly builds）：
 
 ```Shell
 npm install -g typescript@next
 ```
 
-## Adjustments in module resolution logic
+## 模块解析逻辑的调整
 
-Starting from release 1.6 TypeScript compiler will use different set of rules to resolve module names when targeting 'commonjs'.
-These [rules](https://github.com/Microsoft/TypeScript/issues/2338) attempted to model module lookup procedure used by Node.
-This effectively mean that node modules can include information about its typings and TypeScript compiler will be able to find it.
-User however can override module resolution rules picked by the compiler by using [`moduleResolution`](/tsconfig#moduleResolution) command line option. Possible values are:
+从 1.6 版本开始，当目标设置为 'commonjs' 时，TypeScript 编译器将采用一套不同的规则来解析模块名称。
+这些[规则](https://github.com/Microsoft/TypeScript/issues/2338)旨在模拟 Node 所使用的模块查找流程。
+这实际上意味着 Node 模块可以包含其类型定义信息，且 TypeScript 编译器能够找到它。
+不过，用户可以使用 [`moduleResolution`](/tsconfig#moduleResolution) 命令行选项覆盖编译器所选的模块解析规则。可选值为：
 
-- 'classic' - module resolution rules used by pre 1.6 TypeScript compiler
-- 'node' - node-like module resolution
+- 'classic' - 1.6 之前的 TypeScript 编译器所使用的模块解析规则
+- 'node' - 类似 Node 的模块解析
 
-## Merging ambient class and interface declaration
+## 合并环境类与接口声明
 
-The instance side of an ambient class declaration can be extended using an interface declaration The class constructor object is unmodified.
-For example:
+环境类（ambient class）声明的实例侧可以通过接口声明进行扩展。类构造函数对象保持不变。
+例如：
 
 ```ts
 declare class Foo {
@@ -423,13 +423,13 @@ function bar(foo: Foo) {
 }
 ```
 
-## User-defined type guard functions
+## 用户自定义类型保护函数
 
-TypeScript 1.6 adds a new way to narrow a variable type inside an `if` block, in addition to `typeof` and `instanceof`.
-A user-defined type guard functions is one with a return type annotation of the form `x is T`, where `x` is a declared parameter in the signature, and `T` is any type.
-When a user-defined type guard function is invoked on a variable in an `if` block, the type of the variable will be narrowed to `T`.
+除 `typeof` 和 `instanceof` 之外，TypeScript 1.6 增加了一种在 `if` 代码块内部收窄变量类型的新方法。
+用户自定义类型保护函数是返回类型注解形如 `x is T` 的函数，其中 `x` 是签名中声明的形参，`T` 是任意类型。
+在 `if` 块中对变量调用用户自定义类型保护函数时，该变量的类型将被收窄为 `T`。
 
-##### Examples
+##### 示例
 
 ```ts
 function isCat(a: any): a is Cat {
@@ -442,11 +442,11 @@ if (isCat(x)) {
 }
 ```
 
-## `exclude` property support in tsconfig.json
+## tsconfig.json 支持 `exclude` 属性
 
-A tsconfig.json file that doesn't specify a files property (and therefore implicitly references all \*.ts files in all subdirectories) can now contain an exclude property that specifies a list of files and/or directories to exclude from the compilation.
-The exclude property must be an array of strings that each specify a file or folder name relative to the location of the tsconfig.json file.
-For example:
+未指定 files 属性（因而隐式引用所有子目录中的所有 \*.ts 文件）的 tsconfig.json 文件，现在可以包含一个 exclude 属性，用于指定要从编译中排除的文件和/或目录列表。
+exclude 属性必须是字符串数组，其中每个字符串指定相对于 tsconfig.json 文件位置的文件或文件夹名称。
+例如：
 
 ```json tsconfig
 {
@@ -457,9 +457,9 @@ For example:
 }
 ```
 
-The [`exclude`](/tsconfig#exclude) list does not support wildcards. It must simply be a list of files and/or directories.
+[`exclude`](/tsconfig#exclude) 列表不支持通配符。它必须仅仅是文件和/或目录的列表。
 
-## `--init` command line option
+## `--init` 命令行选项
 
-Run `tsc --init` in a directory to create an initial `tsconfig.json` in this directory with preset defaults.
-Optionally pass command line arguments along with `--init` to be stored in your initial tsconfig.json on creation.
+在某个目录下运行 `tsc --init`，即可在该目录中使用预设的默认值创建初始的 `tsconfig.json`。
+还可以配合 `--init` 传入命令行参数，以便在创建时直接保存到你的初始 tsconfig.json 中。

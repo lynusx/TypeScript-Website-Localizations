@@ -1,5 +1,5 @@
 ---
-title: 'Module: Class'
+title: 模块类 .d.ts
 layout: docs
 permalink: /zh/docs/handbook/declaration-files/templates/module-class-d-ts.html
 ---
@@ -11,7 +11,7 @@ TODO:
 2. Give both commonjs and ES module examples.
 -->
 
-For example, when you want to work with JavaScript code which looks like:
+例如，当你需要配合如下形式的 JavaScript 代码使用时：
 
 ```ts
 const Greeter = require('super-greeter')
@@ -20,7 +20,7 @@ const greeter = new Greeter()
 greeter.greet()
 ```
 
-To handle both importing via UMD and modules:
+为了同时支持通过 UMD 和模块导入：
 
 ```ts
 // Type definitions for [~THE LIBRARY NAME~] [~OPTIONAL VERSION NUMBER~]

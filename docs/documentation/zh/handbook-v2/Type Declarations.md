@@ -1,18 +1,18 @@
 ---
-title: Type Declarations
+title: 类型声明
 layout: docs
 permalink: /zh/docs/handbook/2/type-declarations.html
-oneline: 'How TypeScript provides types for un-typed JavaScript.'
+oneline: 'TypeScript 如何为没有类型的 JavaScript 代码提供类型。'
 ---
 
-Throughout the sections you've read so far, we've been demonstrating basic TypeScript concepts using the built-in functions present in all JavaScript runtimes.
-However, almost all JavaScript today includes many libraries to accomplish common tasks.
-Having types for the parts of your application that _aren't_ your code will greatly improve your TypeScript experience.
-Where do these types come from?
+在前面的章节中，我们一直使用所有 JavaScript 运行时内置的函数来演示 TypeScript 的基本概念。
+然而，如今几乎所有的 JavaScript 项目都会引入许多第三方库来完成常见任务。
+为你应用程序中*非自己编写的代码*部分提供类型，将极大提升你的 TypeScript 开发体验。
+那么，这些类型是从何而来的呢？
 
-## What Do Type Declarations Look Like?
+## 类型声明长什么样？
 
-Let's say you write some code like this:
+假设你写了这样一段代码：
 
 ```ts twoslash
 // @errors: 2339
@@ -20,80 +20,80 @@ const k = Math.max(5, 6)
 const j = Math.mix(7, 8)
 ```
 
-How did TypeScript know that `max` was present but not `mix`, even though `Math`'s implementation wasn't part of your code?
+尽管 `Math` 的具体实现并不属于你编写的代码，TypeScript 又是如何知道 `max` 存在而 `mix` 不存在的呢？
 
-The answer is that there are _declaration files_ describing these built-in objects.
-A declaration file provides a way to _declare_ the existence of some types or values without actually providing implementations for those values.
+答案在于：存在用来描述这些内置对象的*声明文件*（declaration files）。
+声明文件提供了一种方法，可以在不提供实际实现的情况下，*声明*某些类型或值的存在。
 
-## `.d.ts` files
+## `.d.ts` 文件
 
-TypeScript has two main kinds of files.
-`.ts` files are _implementation_ files that contain types and executable code.
-These are the files that produce `.js` outputs, and are where you'd normally write your code.
+TypeScript 主要有两种类型的文件。
+`.ts` 文件是*实现*文件，包含类型和可执行代码。
+这些文件会编译输出 `.js` 文件，也是你平时编写代码的地方。
 
-`.d.ts` files are _declaration_ files that contain _only_ type information.
-These files don't produce `.js` outputs; they are only used for typechecking.
-We'll learn more about how to write our own declaration files later.
+`.d.ts` 文件是*声明*文件，*仅*包含类型信息。
+这些文件不会生成 `.js` 输出，它们仅用于类型检查。
+后续我们还会深入学习如何编写自定义声明文件。
 
-## Built-in Type Definitions
+## 内置类型定义
 
-TypeScript includes declaration files for all of the standardized built-in APIs available in JavaScript runtimes.
-This includes things like methods and properties of built-in types like `string` or `function`, top-level names like `Math` and `Object`, and their associated types.
-By default, TypeScript also includes types for things available when running inside the browser, such as `window` and `document`; these are collectively referred to as the DOM APIs.
+TypeScript 为 JavaScript 运行时中所有标准内置 API 都提供了声明文件。
+这包括像 `string` 或 `function` 等内置类型的方法和属性、`Math` 和 `Object` 等顶层全局对象，以及它们关联的类型。
+默认情况下，TypeScript 还包含了在浏览器环境下运行时的可用类型，例如 `window` 和 `document`，这些统称为 DOM API。
 
-TypeScript names these declaration files with the pattern `lib.[something].d.ts`.
-If you navigate into a file with that name, you can know that you're dealing with some built-in part of the platform, not user code.
+TypeScript 以 `lib.[something].d.ts` 的命名规则来命名这些声明文件。
+如果你在编辑器中跳转到了带有此类名称的文件，就会知道自己正在查看平台的内置部分，而不是用户代码。
 
-### `target` setting
+### `target` 配置项
 
-The methods, properties, and functions available to you actually vary based on the _version_ of JavaScript your code is running on.
-For example, the `startsWith` method of strings is available only starting with the version of JavaScript referred as _ECMAScript 6_.
+代码中可用的方法、属性和函数，实际上取决于代码所运行的 JavaScript _版本_。
+例如，字符串的 `startsWith` 方法仅从被称为 _ECMAScript 6_ 的 JavaScript 版本开始提供。
 
-Being aware of what version of JavaScript your code ultimately runs on is important because you don't want to use APIs that are from a newer version than the platform you deploy to.
-This is one function of the [`target`](/tsconfig#target) compiler setting.
+清楚代码最终运行在哪个 JavaScript 版本上非常重要，因为你不希望使用比部署目标平台版本更高的 API。
+这也正是 [`target`](/tsconfig#target) 编译器配置项的作用之一。
 
-TypeScript helps with this problem by varying which `lib` files are included by default based on your [`target`](/tsconfig#target) setting.
-For example, if [`target`](/tsconfig#target) is `ES5`, you will see an error if trying to use the `startsWith` method, because that method is only available in `ES6` or later.
+TypeScript 通过根据你的 [`target`](/tsconfig#target) 配置项默认包含不同的 `lib` 文件来解决这个问题。
+例如，如果 [`target`](/tsconfig#target) 设置为 `ES5`，当你尝试使用 `startsWith` 方法时就会报错，因为该方法仅在 `ES6` 或更高版本中可用。
 
-### `lib` setting
+### `lib` 配置项
 
-The [`lib`](/tsconfig#lib) setting allows more fine-grained control of which built-in declaration files are considered available in your program.
-See the documentation page on [`lib`](/tsconfig#lib) for more information.
+[`lib`](/tsconfig#lib) 配置项允许你对程序中可用的内置声明文件进行更细粒度的控制。
+有关详细信息，请参阅 [`lib`](/tsconfig#lib) 文档页面。
 
-## External Definitions
+## 外部定义
 
-For non-built-in APIs, there are a variety of ways you can get declaration files.
-How you do this depends on exactly which library you're getting types for.
+对于非内置 API，有多种途径可以获取声明文件。
+具体采用哪种方式取决于你正在为哪个库获取类型。
 
-### Bundled Types
+### 内置捆绑类型（Bundled Types）
 
-If a library you're using is published as an npm package, it may include type declaration files as part of its distribution already.
-You can read the project's documentation to find out, or simply try importing the package and see if TypeScript is able to automatically resolve the types for you.
+如果你使用的库作为 npm 包发布，它可能已经在分发包中包含了类型声明文件。
+你可以查阅该项目的文档了解，或者直接尝试导入该包，看看 TypeScript 能否自动为你解析类型。
 
-If you're a package author considering bundling type definitions with your package, you can read our guide on [bundling type definitions](/docs/handbook/declaration-files/publishing.html#including-declarations-in-your-npm-package).
+如果你是一名包作者并打算随包捆绑类型定义，可以阅读我们的[捆绑类型定义指南](/docs/handbook/declaration-files/publishing.html#including-declarations-in-your-npm-package)。
 
 ### DefinitelyTyped / `@types`
 
-The [DefinitelyTyped repository](https://github.com/DefinitelyTyped/DefinitelyTyped/) is a centralized repo storing declaration files for thousands of libraries.
-The vast majority of commonly-used libraries have declaration files available on DefinitelyTyped.
+[DefinitelyTyped 仓库](https://github.com/DefinitelyTyped/DefinitelyTyped/)是一个集中式代码仓库，收录了成千上万个库的声明文件。
+绝大多数常用库都可以在 DefinitelyTyped 上找到声明文件。
 
-Definitions on DefinitelyTyped are also automatically published to npm under the `@types` scope.
-The name of the types package is always the same as the name of the underlying package itself.
-For example, if you installed the `react` npm package, you can install its corresponding types by running
+DefinitelyTyped 上的类型定义还会自动发布到 npm 的 `@types` 作用域下。
+类型包的名称始终与对应库本身的名称一致。
+例如，如果你安装了 `react` npm 包，可以通过运行以下命令来安装对应的类型：
 
 ```sh
 npm install --save-dev @types/react
 ```
 
-TypeScript automatically finds type definitions under `node_modules/@types`, so there's no other step needed to get these types available in your program.
+TypeScript 会自动在 `node_modules/@types` 下查找类型定义，因此无需任何额外步骤即可在程序中使用这些类型。
 
-### Your Own Definitions
+### 自定义定义
 
-In the uncommon event that a library didn't bundle its own types and didn't have a definition on DefinitelyTyped, you can write a declaration file yourself.
-See the appendix [Writing Declaration Files](/docs/handbook/declaration-files/introduction.html) for a guide.
+在极少数情况下，如果某个库既没有自带类型，也没有在 DefinitelyTyped 上提供定义，你可以自己编写声明文件。
+相关指导请参阅附录[编写声明文件](/docs/handbook/declaration-files/introduction.html)。
 
-If you want to silence warnings about a particular module without writing a declaration file, you can also quick declare the module as type `any` by putting an empty declaration for it in a `.d.ts` file in your project.
-For example, if you wanted to use a module named `some-untyped-module` without having definitions for it, you would write:
+如果你只是想消除关于某个模块的警告而不打算编写完整的声明文件，也可以在项目的 `.d.ts` 文件中为该模块添加一个空声明，将其快速声明为 `any` 类型。
+例如，如果你想使用名为 `some-untyped-module` 的无类型模块，可以这样写：
 
 ```ts twoslash
 declare module 'some-untyped-module'

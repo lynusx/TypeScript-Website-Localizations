@@ -1,21 +1,21 @@
 ---
-title: Project References
+title: 项目引用（Project References）
 layout: docs
 permalink: /zh/docs/handbook/project-references.html
-oneline: How to split up a large TypeScript project
+oneline: 如何拆分大型 TypeScript 项目
 translatable: true
 ---
 
-Project references allows you to structure your TypeScript programs into smaller pieces, available in TypeScript 3.0 and newer.
+项目引用（Project references）允许你将 TypeScript 程序拆分为更小的组成部分，该特性在 TypeScript 3.0 及更高版本中可用。
 
-By doing this, you can greatly improve build times, enforce logical separation between components, and organize your code in new and better ways.
+通过使用项目引用，你可以大幅缩短构建时间、强制组件之间的逻辑解耦，并以更优秀的新方式来组织代码。
 
-We're also introducing a new mode for `tsc`, the `--build` flag, that works hand in hand with project references to enable faster TypeScript builds.
+我们还为 `tsc` 引入了一种全新模式——`--build` 标志，它与项目引用配合使用，从而实现更快的 TypeScript 构建。
 
-## An Example Project
+## 示例项目
 
-Let's look at a fairly normal program and see how project references can help us better organize it.
-Imagine you have a project with two modules, `converter` and `units`, and a corresponding test file for each:
+让我们来看一个相当常见的程序，了解项目引用如何帮助我们更好地组织它。
+假设你有一个包含 `converter` 和 `units` 两个模块的项目，并且每个模块都有对应的测试文件：
 
 ```
 /
@@ -28,7 +28,7 @@ Imagine you have a project with two modules, `converter` and `units`, and a corr
 └── tsconfig.json
 ```
 
-The test files import the implementation files and do some testing:
+测试文件导入实现文件并执行某些测试：
 
 ```ts
 // converter-tests.ts
@@ -37,24 +37,24 @@ import * as converter from '../src/converter'
 assert.areEqual(converter.celsiusToFahrenheit(0), 32)
 ```
 
-Previously, this structure was rather awkward to work with if you used a single tsconfig file:
+在以前，如果只使用单个 tsconfig 文件，这种结构处理起来会相当棘手：
 
-- It was possible for the implementation files to import the test files
-- It wasn't possible to build `test` and `src` at the same time without having `src` appear in the output folder name, which you probably don't want
-- Changing just the _internals_ in the implementation files required _typechecking_ the tests again, even though this wouldn't ever cause new errors
-- Changing just the tests required typechecking the implementation again, even if nothing changed
+- 实现文件可能会错误地导入测试文件
+- 无法在同时构建 `test` 和 `src` 的同时避免 `src` 出现在输出目录名称中（这通常不是你想要的结果）
+- 仅修改实现文件的*内部实现*，也需要重新对测试文件进行*类型检查*，即便这绝不会导致新的错误
+- 仅修改测试文件，也需要重新对实现文件进行类型检查，即便实现代码没有任何变化
 
-You could use multiple tsconfig files to solve _some_ of those problems, but new ones would appear:
+你也可以使用多个 tsconfig 文件来解决其中的*部分*问题，但又会带来新的问题：
 
-- There's no built-in up-to-date checking, so you end up always running `tsc` twice
-- Invoking `tsc` twice incurs more startup time overhead
-- `tsc -w` can't run on multiple config files at once
+- 缺乏内置的新鲜度检查（up-to-date checking），导致你总是需要运行两次 `tsc`
+- 调用两次 `tsc` 会产生额外的启动时间开销
+- `tsc -w` 无法同时监听多个配置文件
 
-Project references can solve all of these problems and more.
+而项目引用可以解决上述所有问题，甚至带来更多好处。
 
-## What is a Project Reference?
+## 什么是项目引用？
 
-`tsconfig.json` files have a new top-level property, [`references`](/tsconfig#references). It's an array of objects that specifies projects to reference:
+`tsconfig.json` 文件新增了一个顶层属性 [`references`](/tsconfig#references)。它是一个对象数组，用于指定要引用的项目：
 
 ```js tsconfig
 {
@@ -67,60 +67,60 @@ Project references can solve all of these problems and more.
 }
 ```
 
-The `path` property of each reference can point to a directory containing a `tsconfig.json` file, or to the config file itself (which may have any name).
+每个引用的 `path` 属性可以指向包含 `tsconfig.json` 文件的目录，也可以直接指向配置文件本身（配置文件可以使用任意名称）。
 
-When you reference a project, new things happen:
+当你引用一个项目时，会产生以下新行为：
 
-- Importing modules from a referenced project will instead load its _output_ declaration file (`.d.ts`)
-- If the referenced project produces an [`outFile`](/tsconfig#outFile), the output file `.d.ts` file's declarations will be visible in this project
-- Build mode (see below) will automatically build the referenced project if needed
+- 从被引用的项目中导入模块时，将改为加载其*输出*声明文件（`.d.ts`）
+- 如果被引用的项目生成了 [`outFile`](/tsconfig#outFile)，则该输出文件 `.d.ts` 中的声明将在此项目中可见
+- 构建模式（见下文）会在需要时自动构建被引用的项目
 
-By separating into multiple projects, you can greatly improve the speed of typechecking and compiling, reduce memory usage when using an editor, and improve enforcement of the logical groupings of your program.
+通过拆分为多个项目，你可以大幅提升类型检查和编译的速度，降低在编辑器中使用的内存占用，并更好地强化程序的逻辑分组。
 
 ## `composite`
 
-Referenced projects must have the new [`composite`](/tsconfig#composite) setting enabled.
-This setting is needed to ensure TypeScript can quickly determine where to find the outputs of the referenced project.
-Enabling the [`composite`](/tsconfig#composite) flag changes a few things:
+被引用的项目必须启用新增的 [`composite`](/tsconfig#composite) 设置。
+这项设置是必须的，以确保 TypeScript 能够快速确定在哪里找到被引用项目的输出产物。
+启用 [`composite`](/tsconfig#composite) 标志会带来以下变化：
 
-- The [`rootDir`](/tsconfig#rootDir) setting, if not explicitly set, defaults to the directory containing the `tsconfig` file
-- All implementation files must be matched by an [`include`](/tsconfig#include) pattern or listed in the [`files`](/tsconfig#files) array. If this constraint is violated, `tsc` will inform you which files weren't specified
-- [`declaration`](/tsconfig#declaration) must be turned on
+- 如果未显式设置 [`rootDir`](/tsconfig#rootDir)，其默认值为包含该 `tsconfig` 文件的目录
+- 所有实现文件都必须与 [`include`](/tsconfig#include) 匹配模式相匹配，或列在 [`files`](/tsconfig#files) 数组中。如果违反了此约束，`tsc` 会提示你哪些文件未被指定
+- 必须开启 [`declaration`](/tsconfig#declaration)
 
 ## `declarationMap`
 
-We've also added support for [declaration source maps](https://github.com/Microsoft/TypeScript/issues/14479).
-If you enable [`declarationMap`](/tsconfig#declarationMap), you'll be able to use editor features like "Go to Definition" and Rename to transparently navigate and edit code across project boundaries in supported editors.
+我们还添加了对[声明源映射（declaration source maps）](https://github.com/Microsoft/TypeScript/issues/14479)的支持。
+如果启用 [`declarationMap`](/tsconfig#declarationMap)，在受支持的编辑器中，你将能够使用诸如“跳转到定义（Go to Definition）”和重命名等编辑器功能，无缝跨越项目边界导航并编辑代码。
 
-## Caveats for Project References
+## 项目引用的注意事项
 
-Project references have a few trade-offs you should be aware of.
+项目引用存在一些需要注意的权衡取舍。
 
-Because dependent projects make use of `.d.ts` files that are built from their dependencies, you'll either have to check in certain build outputs _or_ build a project after cloning it before you can navigate the project in an editor without seeing spurious errors.
+因为依赖其他项目的工程需要使用从其依赖项构建生成的 `.d.ts` 文件，所以你必须要么将某些构建输出检入版本控制，*要么*在克隆项目后先构建一次项目，然后才能在编辑器中正常浏览项目而不会看到虚假报错。
 
-When using VS Code (since TS 3.7) we have a behind-the-scenes in-memory `.d.ts` generation process that should be able to mitigate this, but it has some perf implications. For very large composite projects you might want to disable this using [disableSourceOfProjectReferenceRedirect option](/tsconfig#disableSourceOfProjectReferenceRedirect).
+在使用 VS Code 时（自 TS 3.7 起），我们在后台提供了一个内存中生成 `.d.ts` 的处理流程，这应该能够缓解该问题，但它会对性能产生一定影响。对于超大型 composite 项目，你可能需要通过 [disableSourceOfProjectReferenceRedirect 选项](/tsconfig#disableSourceOfProjectReferenceRedirect)将其禁用。
 
-Additionally, to preserve compatibility with existing build workflows, `tsc` will _not_ automatically build dependencies unless invoked with the `--build` switch.
-Let's learn more about `--build`.
+此外，为了保持与现有构建工作流的兼容性，除非使用 `--build` 参数调用，否则 `tsc` *不会*自动构建依赖项。
+接下来让我们深入了解 `--build`。
 
-## Build Mode for TypeScript
+## TypeScript 的构建模式
 
-A long-awaited feature is smart incremental builds for TypeScript projects.
-In 3.0 you can use the `--build` flag with `tsc`.
-This is effectively a new entry point for `tsc` that behaves more like a build orchestrator than a simple compiler.
+许多人期待已久的一项功能是面向 TypeScript 项目的智能增量构建（incremental builds）。
+在 3.0 中，你可以为 `tsc` 使用 `--build` 标志。
+这实际上是 `tsc` 的一个新入口点，其行为更像是一个构建编排器（build orchestrator），而不仅仅是一个简单的编译器。
 
-Running `tsc --build` (`tsc -b` for short) will do the following:
+运行 `tsc --build`（简写为 `tsc -b`）将执行以下操作：
 
-- Find all referenced projects
-- Detect if they are up-to-date
-- Build out-of-date projects in the correct order
+- 查找所有被引用的项目
+- 检测它们是否是最新的（up-to-date）
+- 按照正确的顺序构建已过期的项目
 
-You can provide `tsc -b` with multiple config file paths (e.g. `tsc -b src test`).
-Just like `tsc -p`, specifying the config file name itself is unnecessary if it's named `tsconfig.json`.
+你可以为 `tsc -b` 提供多个配置文件路径（例如 `tsc -b src test`）。
+就像 `tsc -p` 一样，如果配置文件名为 `tsconfig.json`，则无需显式指定文件名本身。
 
-### `tsc -b` Commandline
+### `tsc -b` 命令行
 
-You can specify any number of config files:
+你可以指定任意数量的配置文件：
 
 ```shell
  > tsc -b                            # Use the tsconfig.json in the current directory
@@ -128,62 +128,62 @@ You can specify any number of config files:
  > tsc -b foo/prd.tsconfig.json bar  # Use foo/prd.tsconfig.json and bar/tsconfig.json
 ```
 
-Don't worry about ordering the files you pass on the commandline - `tsc` will re-order them if needed so that dependencies are always built first.
+无需担心在命令行上传递文件的先后顺序——`tsc` 会在需要时重新对它们进行排序，以确保依赖项始终最先构建。
 
-There are also some flags specific to `tsc -b`:
+`tsc -b` 还提供了一些专属标志：
 
-- [`--verbose`](/tsconfig#verbose): Prints out verbose logging to explain what's going on (may be combined with any other flag)
-- `--dry`: Shows what would be done but doesn't actually build anything
-- `--clean`: Deletes the outputs of the specified projects (may be combined with `--dry`)
-- [`--force`](/tsconfig#force): Act as if all projects are out of date
-- `--watch`: Watch mode (may not be combined with any flag except [`--verbose`](/tsconfig#verbose))
+- [`--verbose`](/tsconfig#verbose)：打印详细日志以解释当前正在发生的事情（可与其他任何标志组合使用）
+- `--dry`：显示将要执行的操作，但实际上不构建任何内容
+- `--clean`：删除指定项目的输出文件（可与 `--dry` 组合使用）
+- [`--force`](/tsconfig#force)：将所有项目均视为已过期并重新构建
+- `--watch`：监听模式（除 [`--verbose`](/tsconfig#verbose) 外，不可与其他任何标志组合使用）
 
-## Caveats
+## 注意事项
 
-Normally, `tsc` will produce outputs (`.js` and `.d.ts`) in the presence of syntax or type errors, unless [`noEmitOnError`](/tsconfig#noEmitOnError) is on.
-Doing this in an incremental build system would be very bad - if one of your out-of-date dependencies had a new error, you'd only see it _once_ because a subsequent build would skip building the now up-to-date project.
-For this reason, `tsc -b` effectively acts as if [`noEmitOnError`](/tsconfig#noEmitOnError) is enabled for all projects.
+通常情况下，除非开启了 [`noEmitOnError`](/tsconfig#noEmitOnError)，否则即使存在语法或类型错误，`tsc` 也会生成输出产物（`.js` 和 `.d.ts`）。
+在增量构建系统中这样做会非常糟糕——如果某个过期的依赖项出现了新的错误，你将只能看到该错误*一次*，因为后续构建会跳过构建当前已是最新状态的项目。
+出于这个原因，`tsc -b` 的实际行为相当于对所有项目都默认启用了 [`noEmitOnError`](/tsconfig#noEmitOnError)。
 
-If you check in any build outputs (`.js`, `.d.ts`, `.d.ts.map`, etc.), you may need to run a [`--force`](/tsconfig#force) build after certain source control operations depending on whether your source control tool preserves timestamps between the local copy and the remote copy.
+如果你将任何构建输出（`.js`、`.d.ts`、`.d.ts.map` 等）检入了版本控制，则在执行某些版本控制操作后，可能需要运行一次 [`--force`](/tsconfig#force) 构建，具体取决于你的版本控制工具是否会在本地副本和远程副本之间保留时间戳。
 
 ## MSBuild
 
-If you have an msbuild project, you can enable build mode by adding
+如果你使用的是 msbuild 项目，可以在项目文件中添加：
 
 ```xml
     <TypeScriptBuildMode>true</TypeScriptBuildMode>
 ```
 
-to your proj file. This will enable automatic incremental build as well as cleaning.
+来启用构建模式。这将开启自动增量构建以及清理功能。
 
-Note that as with `tsconfig.json` / `-p`, existing TypeScript project properties will not be respected - all settings should be managed using your tsconfig file.
+请注意，与 `tsconfig.json` / `-p` 一样，原有的 TypeScript 项目属性将不再生效——所有设置都应通过 tsconfig 文件进行管理。
 
-Some teams have set up msbuild-based workflows wherein tsconfig files have the same _implicit_ graph ordering as the managed projects they are paired with.
-If your solution is like this, you can continue to use `msbuild` with `tsc -p` along with project references; these are fully interoperable.
+一些团队构建了基于 msbuild 的工作流，其中 tsconfig 文件与其配对的托管项目具有相同的*隐式*图顺序。
+如果你的解决方案正是如此，你可以继续将 `msbuild`、`tsc -p` 与项目引用结合使用；它们之间完全互操作。
 
-## Guidance
+## 使用指南
 
-### Overall Structure
+### 整体结构
 
-With more `tsconfig.json` files, you'll usually want to use [Configuration file inheritance](/docs/handbook/tsconfig-json.html) to centralize your common compiler options.
-This way you can change a setting in one file rather than having to edit multiple files.
+随着 `tsconfig.json` 文件的增多，你通常会希望使用[配置文件继承](/docs/handbook/tsconfig-json.html)来集中管理通用的编译器选项。
+这样你只需修改一个文件中的设置，而无需逐一编辑多个文件。
 
-Another good practice is to have a "solution" `tsconfig.json` file that simply has [`references`](/tsconfig#references) to all of your leaf-node projects and sets [`files`](/tsconfig#files) to an empty array (otherwise the solution file will cause double compilation of files). Note that starting with 3.0, it is no longer an error to have an empty [`files`](/tsconfig#files) array if you have at least one `reference` in a `tsconfig.json` file.
+另一个良好的实践是创建一个“解决方案（solution）”`tsconfig.json` 文件，它仅包含指向所有叶子节点项目的 [`references`](/tsconfig#references)，并将 [`files`](/tsconfig#files) 设置为空数组（否则该解决方案文件会导致文件被重复编译）。请注意，从 3.0 开始，如果 `tsconfig.json` 文件中包含至少一个 `reference`，那么 [`files`](/tsconfig#files) 数组为空不再被视为错误。
 
-This presents a simple entry point; e.g. in the TypeScript repo we simply run `tsc -b src` to build all endpoints because we list all the subprojects in `src/tsconfig.json`
+这提供了一个简洁的入口点；例如在 TypeScript 自身的代码仓库中，我们只需运行 `tsc -b src` 即可构建所有端点目标，因为我们在 `src/tsconfig.json` 中列出了所有的子项目。
 
-You can see these patterns in the TypeScript repo - see `src/tsconfig-base.json`, `src/tsconfig.json`, and `src/tsc/tsconfig.json` as key examples.
+你可以在 TypeScript 代码仓库中看到这些模式——以 `src/tsconfig-base.json`、`src/tsconfig.json` 和 `src/tsc/tsconfig.json` 作为核心示例。
 
-### Structuring for relative modules
+### 针对相对模块的项目结构设计
 
-In general, not much is needed to transition a repo using relative modules.
-Simply place a `tsconfig.json` file in each subdirectory of a given parent folder, and add `reference`s to these config files to match the intended layering of the program.
-You will need to either set the [`outDir`](/tsconfig#outDir) to an explicit subfolder of the output folder, or set the [`rootDir`](/tsconfig#rootDir) to the common root of all project folders.
+通常情况下，迁移使用相对模块的代码仓库并不需要做太多调整。
+只需在指定父目录的每个子目录中放置一个 `tsconfig.json` 文件，并向这些配置文件添加 `reference` 以匹配程序预期的分层结构即可。
+你需要将 [`outDir`](/tsconfig#outDir) 设置为输出目录的显式子文件夹，或者将 [`rootDir`](/tsconfig#rootDir) 设置为所有项目文件夹的公共根目录。
 
-### Structuring for outFiles
+### 针对 outFile 的项目结构设计
 
-Layout for compilations using [`outFile`](/tsconfig#outFile) is more flexible because relative paths don't matter as much.
-The TypeScript repo itself is a good reference here - we have some "library" projects and some "endpoint" projects; "endpoint" projects are kept as small as possible and pull in only the libraries they need.
+使用 [`outFile`](/tsconfig#outFile) 进行编译时的结构布局更加灵活，因为相对路径不再那么重要。
+TypeScript 仓库本身就是一个很好的参考——我们拥有若干“库（library）”项目和若干“端点（endpoint）”项目；端点项目保持尽可能轻量，仅引入它们所需的库。
 
 <!--
 ### Structuring for monorepos

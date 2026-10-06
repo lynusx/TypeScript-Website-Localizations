@@ -1,13 +1,13 @@
 ---
-title: Mapped Types
+title: 映射类型
 layout: docs
 permalink: /zh/docs/handbook/2/mapped-types.html
-oneline: 'Generating types by re-using an existing type.'
+oneline: '通过复用现有类型生成新类型。'
 ---
 
-When you don't want to repeat yourself, sometimes a type needs to be based on another type.
+当你不想重复编写重复代码时，有时一个类型需要基于另一个类型来定义。
 
-Mapped types build on the syntax for index signatures, which are used to declare the types of properties which have not been declared ahead of time:
+映射类型建立在索引签名语法之上，而索引签名用于声明尚未提前声明的属性类型：
 
 ```ts twoslash
 type Horse = {}
@@ -22,7 +22,7 @@ const conforms: OnlyBoolsAndHorses = {
 }
 ```
 
-A mapped type is a generic type which uses a union of `PropertyKey`s (frequently created [via a `keyof`](/docs/handbook/2/indexed-access-types.html)) to iterate through keys to create a type:
+映射类型是一种泛型类型，它使用 `PropertyKey` 的联合（通常[通过 `keyof`](/docs/handbook/2/indexed-access-types.html) 创建）来遍历键以创建新类型：
 
 ```ts twoslash
 type OptionsFlags<Type> = {
@@ -30,7 +30,7 @@ type OptionsFlags<Type> = {
 }
 ```
 
-In this example, `OptionsFlags` will take all the properties from the type `Type` and change their values to be a boolean.
+在这个示例中，`OptionsFlags` 会获取类型 `Type` 中的所有属性，并将其值类型都转换为布尔值。
 
 ```ts twoslash
 type OptionsFlags<Type> = {
@@ -46,11 +46,11 @@ type FeatureOptions = OptionsFlags<Features>
 //   ^?
 ```
 
-### Mapping Modifiers
+### 映射修饰符
 
-There are two additional modifiers which can be applied during mapping: `readonly` and `?` which affect mutability and optionality respectively.
+在映射过程中，还可以应用两个额外的修饰符：`readonly` 和 `?`，它们分别影响属性的可变性与可选性。
 
-You can remove or add these modifiers by prefixing with `-` or `+`. If you don't add a prefix, then `+` is assumed.
+你可以通过添加 `-` 或 `+` 前缀来移除或添加这些修饰符。如果不添加前缀，则默认为 `+`。
 
 ```ts twoslash
 // Removes 'readonly' attributes from a type's properties
@@ -83,9 +83,9 @@ type User = Concrete<MaybeUser>
 //   ^?
 ```
 
-## Key Remapping via `as`
+## 通过 `as` 进行键名重映射
 
-In TypeScript 4.1 and onwards, you can re-map keys in mapped types with an `as` clause in a mapped type:
+在 TypeScript 4.1 及更高版本中，你可以通过映射类型中的 `as` 子句来重新映射键名：
 
 ```ts
 type MappedTypeWithNewProperties<Type> = {
@@ -93,7 +93,7 @@ type MappedTypeWithNewProperties<Type> = {
 }
 ```
 
-You can leverage features like [template literal types](/docs/handbook/2/template-literal-types.html) to create new property names from prior ones:
+你可以借助[模板字面量类型](/docs/handbook/2/template-literal-types.html)等特性，基于已有的属性名创建新的属性名：
 
 ```ts twoslash
 type Getters<Type> = {
@@ -112,7 +112,7 @@ type LazyPerson = Getters<Person>
 //   ^?
 ```
 
-You can filter out keys by producing `never` via a conditional type:
+你可以通过条件类型生成 `never` 来过滤掉特定键：
 
 ```ts twoslash
 // Remove the 'kind' property
@@ -129,7 +129,7 @@ type KindlessCircle = RemoveKindField<Circle>
 //   ^?
 ```
 
-You can map over arbitrary unions, not just unions of `string | number | symbol`, but unions of any type:
+你不仅可以映射 `string | number | symbol` 的联合类型，还可以对任意类型的联合进行映射：
 
 ```ts twoslash
 type EventConfig<Events extends { kind: string }> = {
@@ -143,9 +143,9 @@ type Config = EventConfig<SquareEvent | CircleEvent>
 //   ^?
 ```
 
-### Further Exploration
+### 进阶探索
 
-Mapped types work well with other features in this type manipulation section, for example here is [a mapped type using a conditional type](/docs/handbook/2/conditional-types.html) which returns either a `true` or `false` depending on whether an object has the property `pii` set to the literal `true`:
+映射类型可以与本章类型操作中的其他特性完美配合。例如，下面是一个[使用条件类型的映射类型](/docs/handbook/2/conditional-types.html)，它根据对象的 `pii` 属性是否设置为字面量 `true`，来返回 `true` 或 `false`：
 
 ```ts twoslash
 type ExtractPII<Type> = {

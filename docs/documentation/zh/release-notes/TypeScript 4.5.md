@@ -2,27 +2,27 @@
 title: TypeScript 4.5
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-4-5.html
-oneline: TypeScript 4.5 Release Notes
+oneline: TypeScript 4.5 发布说明
 ---
 
-## Supporting `lib` from `node_modules`
+## 支持从 `node_modules` 引入 `lib`
 
-To ensure that TypeScript and JavaScript support works well out of the box, TypeScript bundles a series of declaration files (`.d.ts` files).
-These declaration files represent the available APIs in the JavaScript language, and the standard browser DOM APIs.
-While there are some reasonable defaults based on your [`target`](/tsconfig#target), you can pick and choose which declaration files your program uses by configuring the [`lib`](https://www.typescriptlang.org/tsconfig#lib) setting in the `tsconfig.json`.
+为了确保对 TypeScript 和 JavaScript 提供良好的开箱即用支持，TypeScript 内置打包了一系列声明文件（`.d.ts` 文件）。
+这些声明文件代表了 JavaScript 语言中的可用 API 以及标准的浏览器 DOM API。
+虽然 TypeScript 会根据你的 [`target`](/tsconfig#target) 设置提供合理的默认值，但你也可以通过在 `tsconfig.json` 中配置 [`lib`](https://www.typescriptlang.org/tsconfig#lib) 选项，自由挑选项目所需的声明文件。
 
-There are two occasional downsides to including these declaration files with TypeScript though:
+然而，将这些声明文件与 TypeScript 捆绑在一起偶尔会带来两个缺点：
 
-- When you upgrade TypeScript, you're also forced to handle changes to TypeScript's built-in declaration files, and this can be a challenge when the DOM APIs change as frequently as they do.
-- It is hard to customize these files to match your needs with the needs of your project's dependencies (e.g. if your dependencies declare that they use the DOM APIs, you might also be forced into using the DOM APIs).
+- 当你升级 TypeScript 时，你也必须同时应对 TypeScript 内置声明文件的改动；而在 DOM API 变动如此频繁的情况下，这可能是一项挑战。
+- 很难定制这些文件以同时满足你自身及项目依赖的需求（例如，如果你的依赖声明其使用了 DOM API，你可能也会被迫使用 DOM API）。
 
-TypeScript 4.5 introduces a way to override a specific built-in `lib` in a manner similar to how `@types/` support works.
-When deciding which `lib` files TypeScript should include, it will first look for a scoped `@typescript/lib-*` package in `node_modules`.
-For example, when including `dom` as an option in `lib`, TypeScript will use the types in `node_modules/@typescript/lib-dom` if available.
+TypeScript 4.5 引入了一种覆盖特定内置 `lib` 的方式，其工作机制类似于 `@types/` 的支持方式。
+在决定应包含哪些 `lib` 文件时，TypeScript 会首先在 `node_modules` 中查找 `@typescript/lib-*` 作用域包。
+例如，当在 `lib` 中包含 `dom` 选项时，如果 `node_modules/@typescript/lib-dom` 存在，TypeScript 将优先使用其中的类型。
 
-You can then use your package manager to install a specific package to take over for a given `lib`
-For example, today TypeScript publishes versions of the DOM APIs on `@types/web`.
-If you wanted to lock your project to a specific version of the DOM APIs, you could add this to your `package.json`:
+随后，你可以使用包管理器安装特定包来接管指定的 `lib`。
+例如，目前 TypeScript 在 `@types/web` 上发布了 DOM API 的各个版本。
+如果你希望将项目锁定在特定版本的 DOM API 上，可以在 `package.json` 中添加如下配置：
 
 ```json
 {
@@ -32,17 +32,17 @@ If you wanted to lock your project to a specific version of the DOM APIs, you co
 }
 ```
 
-Then from 4.5 onwards, you can update TypeScript and your dependency manager's lockfile will ensure that it uses the exact same version of the DOM types.
-That means you get to update your types on your own terms.
+这样从 4.5 版本开始，你升级 TypeScript 时，依赖管理器的 lockfile 将确保其始终使用完全相同的 DOM 类型版本。
+这意味着你可以完全按照自己的节奏来更新类型定义。
 
-We'd like to give a shout-out to [saschanaz](https://github.com/saschanaz) who has been extremely helpful and patient as we've been building out and experimenting with this feature.
+我们由衷感谢 [saschanaz](https://github.com/saschanaz)，在我们构建和试验该特性的过程中，他给予了极大的帮助和耐心。
 
-For more information, you can [see the implementation of this change](https://github.com/microsoft/TypeScript/pull/45771).
+更多详细信息，你可以查看 [该改动的实现 PR](https://github.com/microsoft/TypeScript/pull/45771)。
 
-## The `Awaited` Type and `Promise` Improvements
+## `Awaited` 类型与 Promise 改进
 
-TypeScript 4.5 introduces a new utility type called the `Awaited` type.
-This type is meant to model operations like `await` in `async` functions, or the `.then()` method on `Promise`s - specifically, the way that they recursively unwrap `Promise`s.
+TypeScript 4.5 引入了一个名为 `Awaited` 的新工具类型。
+该类型旨在对 `async` 函数中的 `await` 操作或 `Promise` 上的 `.then()` 方法进行建模——具体而言，即它们递归解包 `Promise` 的方式。
 
 ```ts
 // A = string
@@ -55,9 +55,9 @@ type B = Awaited<Promise<Promise<number>>>
 type C = Awaited<boolean | Promise<number>>
 ```
 
-The `Awaited` type can be helpful for modeling existing APIs, including JavaScript built-ins like `Promise.all`, `Promise.race`, etc.
-In fact, some of the problems around inference with `Promise.all` served as motivations for `Awaited`.
-Here's an example that fails in TypeScript 4.4 and earlier.
+`Awaited` 类型对于对现有 API 进行类型建模非常有帮助，包括 JavaScript 内置的 `Promise.all`、`Promise.race` 等。
+事实上，围绕 `Promise.all` 类型推断的一些既有缺陷正是推动设计 `Awaited` 的初衷之一。
+以下是在 TypeScript 4.4 及更早版本中会报错的示例：
 
 ```ts
 declare function MaybePromise<T>(value: T): T | Promise<T> | PromiseLike<T>
@@ -76,15 +76,15 @@ async function doSomething(): Promise<[number, number]> {
 }
 ```
 
-Now `Promise.all` leverages the combination of certain features with `Awaited` to give much better inference results, and the above example works.
+现在，`Promise.all` 结合某些特性与 `Awaited` 带来了更出色的推断结果，上述示例已能顺利通过类型检查。
 
-For more information, you [can read about this change on GitHub](https://github.com/microsoft/TypeScript/pull/45350).
+更多详细信息，你可以 [在 GitHub 上阅读有关该改动的讨论](https://github.com/microsoft/TypeScript/pull/45350)。
 
-## Template String Types as Discriminants
+## 模板字符串类型作为判别属性
 
-TypeScript 4.5 now can narrow values that have template string types, and also recognizes template string types as discriminants.
+TypeScript 4.5 现在能够窄化具有模板字符串类型的值，并能够将模板字符串类型识别为判别属性（discriminants）。
 
-As an example, the following used to fail, but now successfully type-checks in TypeScript 4.5.
+例如，以下代码此前无法通过类型检查，但在 TypeScript 4.5 中可以成功通过：
 
 ```ts twoslash
 export interface Success {
@@ -105,20 +105,20 @@ export function handler(r: Success | Error) {
 }
 ```
 
-For more information, [see the change that enables this feature](https://github.com/microsoft/TypeScript/pull/46137).
+更多详细信息，请参阅 [支持该特性的改动](https://github.com/microsoft/TypeScript/pull/46137)。
 
 ## `module es2022`
 
-Thanks to [Kagami S. Rosylight](https://github.com/saschanaz), TypeScript now supports a new `module` setting: `es2022`.
-The main feature in [`module es2022`](/tsconfig#module) is top-level `await`, meaning you can use `await` outside of `async` functions.
-This was already supported in `--module esnext` (and now [`--module nodenext`](/tsconfig#target)), but `es2022` is the first stable target for this feature.
+感谢 [Kagami S. Rosylight](https://github.com/saschanaz)，TypeScript 现在支持了一个新的 `module` 设置：`es2022`。
+[`module es2022`](/tsconfig#module) 的主要特性是顶层 `await`（top-level `await`），这意味着你可以在 `async` 函数之外使用 `await`。
+此前 `--module esnext`（以及现在的 [`--module nodenext`](/tsconfig#target)）中已经支持了该特性，但 `es2022` 是该特性的首个稳定发布目标。
 
-You can [read up more on this change here](https://github.com/microsoft/TypeScript/pull/44656).
+你可以 [在此处阅读有关该改动的更多信息](https://github.com/microsoft/TypeScript/pull/44656)。
 
-## Tail-Recursion Elimination on Conditional Types
+## 条件类型的尾递归消除
 
-TypeScript often needs to gracefully fail when it detects possibly infinite recursion, or any type expansions that can take a long time and affect your editor experience.
-As a result, TypeScript has heuristics to make sure it doesn't go off the rails when trying to pick apart an infinitely-deep type, or working with types that generate a lot of intermediate results.
+当检测到可能存在的无限递归，或任何可能耗时过长并影响编辑器体验的类型展开时，TypeScript 通常需要优雅地报错退出。
+因此，TypeScript 采用了一套启发式机制，以确保在分析无限深度的类型或处理生成大量中间结果的类型时不会失控。
 
 ```ts
 type InfiniteBox<T> = { item: InfiniteBox<T> }
@@ -129,9 +129,9 @@ type Unpack<T> = T extends { item: infer U } ? Unpack<U> : T
 type Test = Unpack<InfiniteBox<number>>
 ```
 
-The above example is intentionally simple and useless, but there are plenty of types that are actually useful, and unfortunately trigger our heuristics.
-As an example, the following `TrimLeft` type removes spaces from the beginning of a string-like type.
-If given a string type that has a space at the beginning, it immediately feeds the remainder of the string back into `TrimLeft`.
+上述示例特意编写得简单且没有实际意义，但在实际开发中有许多非常有用的类型，却不幸触发了我们的启发式报错限制。
+例如，下面的 `TrimLeft` 类型用于移除类字符串类型开头的空格。
+如果传入的字符串类型开头带有空格，它会立即将剩余字符串递归传入 `TrimLeft`：
 
 ```ts
 type TrimLeft<T extends string> = T extends ` ${infer Rest}`
@@ -142,7 +142,7 @@ type TrimLeft<T extends string> = T extends ` ${infer Rest}`
 type Test = TrimLeft<'   hello' | ' world'>
 ```
 
-This type can be useful, but if a string has 50 leading spaces, you'll get an error.
+这种类型非常有用，但如果字符串开头有 50 个空格，就会报错：
 
 ```ts
 type TrimLeft<T extends string> = T extends ` ${infer Rest}`
@@ -153,18 +153,18 @@ type TrimLeft<T extends string> = T extends ` ${infer Rest}`
 type Test = TrimLeft<'                                                oops'>
 ```
 
-That's unfortunate, because these kinds of types tend to be extremely useful in modeling operations on strings - for example, parsers for URL routers.
-To make matters worse, a more useful type typically creates more type instantiations, and in turn has even more limitations on input length.
+这令人遗憾，因为这类类型在对字符串操作建模时往往极其有用——例如编写 URL 路由的解析器。
+更糟糕的是，越实用的类型通常会产生越多的类型实例化，进而对其输入长度施加更严苛的限制。
 
-But there's a saving grace: `TrimLeft` is written in a way that is _tail-recursive_ in one branch.
-When it calls itself again, it immediately returns the result and doesn't do anything with it.
-Because these types don't need to create any intermediate results, they can be implemented more quickly and in a way that avoids triggering many of type recursion heuristics that are built into TypeScript.
+但好在有一个转机：`TrimLeft` 在其中一个分支上的编写方式是*尾递归*（tail-recursive）的。
+当它再次调用自身时，会直接返回结果而不再对其做任何二次处理。
+因为这些类型不需要创建任何中间结果，所以可以更快速地实现，并且能够避免触发 TypeScript 内置的许多类型递归启发式检查。
 
-That's why TypeScript 4.5 performs some tail-recursion elimination on conditional types.
-As long as one branch of a conditional type is simply another conditional type, TypeScript can avoid intermediate instantiations.
-There are still heuristics to ensure that these types don't go off the rails, but they are much more generous.
+因此，TypeScript 4.5 对条件类型进行了尾递归消除（tail-recursion elimination）优化。
+只要条件类型的一个分支仅仅是另一个条件类型，TypeScript 就可以避免中间的实例化过程。
+虽然仍有启发式机制确保这些类型不会无限膨胀，但其限制阈值已经宽松得多。
 
-Keep in mind, the following type _won't_ be optimized, since it uses the result of a conditional type by adding it to a union.
+需要注意的是，以下类型*不会*被优化，因为它使用了条件类型的结果并将其加入到了联合类型中：
 
 ```ts
 type GetChars<S> = S extends `${infer Char}${infer Rest}`
@@ -172,7 +172,7 @@ type GetChars<S> = S extends `${infer Char}${infer Rest}`
   : never
 ```
 
-If you would like to make it tail-recursive, you can introduce a helper that takes an "accumulator" type parameter, just like with tail-recursive functions.
+如果你希望将其改写为尾递归形式，可以引入一个接收“累加器”（accumulator）类型参数的辅助类型，就像编写尾递归函数一样：
 
 ```ts
 type GetChars<S> = GetCharsHelper<S, never>
@@ -181,12 +181,12 @@ type GetCharsHelper<S, Acc> = S extends `${infer Char}${infer Rest}`
   : Acc
 ```
 
-You can read up more on the implementation [here](https://github.com/microsoft/TypeScript/pull/45711).
+你可以在 [此处](https://github.com/microsoft/TypeScript/pull/45711) 详细阅读有关该实现的更多内容。
 
-## Disabling Import Elision
+## 禁用导入省略（`preserveValueImports`）
 
-There are some cases where TypeScript can't detect that you're using an import.
-For example, take the following code:
+在某些情况下，TypeScript 无法检测到你正在使用某个导入。
+例如以下代码：
 
 ```ts
 import { Animal } from './animal.js'
@@ -194,9 +194,9 @@ import { Animal } from './animal.js'
 eval('console.log(new Animal().isDangerous())')
 ```
 
-By default, TypeScript always removes this import because it appears to be unused.
-In TypeScript 4.5, you can enable a new flag called [`preserveValueImports`](/tsconfig#preserveValueImports) to prevent TypeScript from stripping out any imported values from your JavaScript outputs.
-Good reasons to use `eval` are few and far between, but something very similar to this happens in Svelte:
+默认情况下，TypeScript 总是会移除该导入，因为表面上看它并未被使用。
+在 TypeScript 4.5 中，你可以启用一个名为 [`preserveValueImports`](/tsconfig#preserveValueImports) 的新标志，以防止 TypeScript 从生成的 JavaScript 代码中剥除任何导入的值。
+使用 `eval` 的正当理由屈指可数，但类似的情况在 Svelte 中非常普遍：
 
 ```html
 <!-- A .svelte File -->
@@ -207,7 +207,7 @@ Good reasons to use `eval` are few and far between, but something very similar t
 <button on:click="{someFunc}">Click me!</button>
 ```
 
-along with in Vue.js, using its `<script setup>` feature:
+在 Vue.js 的 `<script setup>` 特性中也存在类似情况：
 
 ```html
 <!-- A .vue File -->
@@ -218,12 +218,11 @@ along with in Vue.js, using its `<script setup>` feature:
 <button @click="someFunc">Click me!</button>
 ```
 
-These frameworks generate some code based on markup outside of their `<script>` tags, but TypeScript _only_ sees code within the `<script>` tags.
-That means TypeScript will automatically drop the import of `someFunc`, and the above code won't be runnable!
-With TypeScript 4.5, you can use [`preserveValueImports`](/tsconfig#preserveValueImports) to avoid these situations.
+这些框架会在 `<script>` 标签外部根据标记生成代码，但 TypeScript *仅*能看到 `<script>` 标签内部的代码。
+这意味着 TypeScript 会自动丢弃对 `someFunc` 的导入，导致上述代码无法正常运行！
+借助 TypeScript 4.5 中的 [`preserveValueImports`](/tsconfig#preserveValueImports)，你可以避免这些情况。
 
-Note that this flag has a special requirement when combined with [--isolatedModules`](/tsconfig#isolatedModules): imported
-types _must_ be marked as type-only because compilers that process single files at a time have no way of knowing whether imports are values that appear unused, or a type that must be removed in order to avoid a runtime crash.
+请注意，当此标志与 [`--isolatedModules`](/tsconfig#isolatedModules) 结合使用时有一项特殊要求：导入的类型*必须*标记为仅类型导入（type-only import），因为一次只处理单个文件的编译器无法判断导入的内容是表面看似未使用的值，还是为了避免运行时崩溃而必须移除的类型。
 
 ```ts
 // Which of these is a value that should be preserved? tsc knows, but `ts.transpileModule`,
@@ -234,13 +233,13 @@ import { someFunc, BaseType } from './some-module.js'
 // when 'preserveValueImports' and 'isolatedModules' are both enabled.
 ```
 
-That makes another TypeScript 4.5 feature, [`type` modifiers on import names](#type-on-import-names), especially important.
+这使得 TypeScript 4.5 的另一项特性——[导入名称上的 `type` 修饰符](#type-on-import-names) 显得尤为重要。
 
-For more information, [see the pull request here](https://github.com/microsoft/TypeScript/pull/44619).
+更多信息请参阅 [此处的 Pull Request](https://github.com/microsoft/TypeScript/pull/44619)。
 
-## `type` Modifiers on Import Names
+## 导入名称上的 `type` 修饰符
 
-As mentioned above, [`preserveValueImports`](/tsconfig#preserveValueImports) and [`isolatedModules`](/tsconfig#isolatedModules) have special requirements so that there's no ambiguity for build tools whether it's safe to drop type imports.
+如前文所述，[`preserveValueImports`](/tsconfig#preserveValueImports) 和 [`isolatedModules`](/tsconfig#isolatedModules) 提出了特殊要求，以确保构建工具在判断是否可以安全丢弃类型导入时不会产生二义性。
 
 ```ts
 // Which of these is a value that should be preserved? tsc knows, but `ts.transpileModule`,
@@ -251,8 +250,8 @@ import { someFunc, BaseType } from './some-module.js'
 // when 'preserveValueImports' and 'isolatedModules' are both enabled.
 ```
 
-When these options are combined, we need a way to signal when an import can be legitimately dropped.
-TypeScript already has something for this with `import type`:
+当这些选项组合使用时，我们需要一种方式来表明某个导入可以被合法丢弃。
+TypeScript 已经通过 `import type` 提供了相应语法：
 
 ```ts
 import type { BaseType } from './some-module.js'
@@ -263,8 +262,8 @@ export class Thing implements BaseType {
 }
 ```
 
-This works, but it would be nice to avoid two import statements for the same module.
-That's part of why TypeScript 4.5 allows a `type` modifier on individual named imports, so that you can mix and match as needed.
+这确实可行，但如果能避免对同一模块编写两条 import 语句就更好了。
+这也正是 TypeScript 4.5 允许在单个具名导入上使用 `type` 修饰符的原因之一，从而让你能够根据需要按需混用：
 
 ```ts
 import { someFunc, type BaseType } from './some-module.js'
@@ -276,7 +275,7 @@ export class Thing implements BaseType {
 }
 ```
 
-In the above example, `BaseType` is always guaranteed to be erased and `someFunc` will be preserved under [`preserveValueImports`](/tsconfig#preserveValueImports), leaving us with the following code:
+在上述示例中，在 [`preserveValueImports`](/tsconfig#preserveValueImports) 下，`BaseType` 始终保证被擦除，而 `someFunc` 则会被保留，最终输出如下代码：
 
 ```js
 import { someFunc } from './some-module.js'
@@ -288,12 +287,12 @@ export class Thing {
 }
 ```
 
-For more information, see [the changes on GitHub](https://github.com/microsoft/TypeScript/pull/45998).
+更多信息请参阅 [GitHub 上的改动](https://github.com/microsoft/TypeScript/pull/45998)。
 
-## Private Field Presence Checks
+## 私有字段存在性检查
 
-TypeScript 4.5 supports an ECMAScript proposal for checking whether an object has a private field on it.
-You can now write a class with a `#private` field member and see whether another object has the same field by using the `in` operator.
+TypeScript 4.5 支持了一项用于检查对象是否包含私有字段的 ECMAScript 提案。
+你现在可以在类中定义一个 `#private` 字段成员，并通过 `in` 运算符来检查另一个对象是否包含该字段：
 
 ```ts
 class Person {
@@ -313,22 +312,22 @@ class Person {
 }
 ```
 
-One interesting aspect of this feature is that the check `#name in other` implies that `other` must have been constructed as a `Person`, since there's no other way that field could be present.
-This is actually one of the key features of the proposal, and it's why the proposal is named "ergonomic brand checks" - because private fields often act as a "brand" to guard against objects that aren't instances of their class.
-As such, TypeScript is able to appropriately narrow the type of `other` on each check, until it ends up with the type `Person`.
+该特性的一个有趣之处在于，`#name in other` 检查意味着 `other` 必定是通过 `Person` 构造实例化的，因为除此之外没有任何其他方式能让该私有字段存在。
+这实际上是该提案的核心特性之一，也是该提案被称为“人体工程学品牌检查”（ergonomic brand checks）的原因——因为私有字段往往充当一种“品牌”（brand），用于防范非该类实例的对象。
+因此，TypeScript 能够在每次检查时适当地窄化 `other` 的类型，直至将其窄化为 `Person` 类型。
 
-We'd like to extend a big thanks to our friends at Bloomberg [who contributed this pull request](https://github.com/microsoft/TypeScript/pull/44648): [Ashley Claymore](https://github.com/acutmore), [Titian Cernicova-Dragomir](https://github.com/dragomirtitian), [Kubilay Kahveci](https://github.com/mkubilayk), and [Rob Palmer](https://github.com/robpalme)!
+我们非常感谢彭博社（Bloomberg）的朋友们 [贡献了此 Pull Request](https://github.com/microsoft/TypeScript/pull/44648)：[Ashley Claymore](https://github.com/acutmore)、[Titian Cernicova-Dragomir](https://github.com/dragomirtitian)、[Kubilay Kahveci](https://github.com/mkubilayk) 以及 [Rob Palmer](https://github.com/robpalme)！
 
-## Import Assertions
+## 导入断言（Import Assertions）
 
-TypeScript 4.5 supports an ECMAScript proposal for _import assertions_.
-This is a syntax used by runtimes to make sure that an import has an expected format.
+TypeScript 4.5 支持了一项关于*导入断言*（import assertions）的 ECMAScript 提案。
+运行时可以使用这种语法来确保导入的内容具有预期的格式。
 
 ```ts
 import obj from './something.json' assert { type: 'json' }
 ```
 
-The contents of these assertions are not checked by TypeScript since they're host-specific, and are simply left alone so that browsers and runtimes can handle them (and possibly error).
+TypeScript 不会检查这些断言的内容，因为它们是宿主环境特有的；TypeScript 会原样保留它们，交由浏览器和运行时去处理（并可能由其抛出错误）：
 
 ```ts
 // TypeScript is fine with this.
@@ -336,7 +335,7 @@ The contents of these assertions are not checked by TypeScript since they're hos
 import obj from './something.json' assert { type: 'fluffy bunny' }
 ```
 
-Dynamic `import()` calls can also use import assertions through a second argument.
+动态 `import()` 调用也可以通过第二个参数使用导入断言：
 
 ```ts
 const obj = await import('./something.json', {
@@ -344,15 +343,15 @@ const obj = await import('./something.json', {
 })
 ```
 
-The expected type of that second argument is defined by a new type called `ImportCallOptions`, and currently only accepts an `assert` property.
+该第二个参数的预期类型由名为 `ImportCallOptions` 的新类型定义，目前仅接受 `assert` 属性。
 
-We'd like to thank [Wenlu Wang](https://github.com/Kingwl/) for [implementing this feature](https://github.com/microsoft/TypeScript/pull/40698)!
+感谢 [王文璐 (Wenlu Wang)](https://github.com/Kingwl/) [实现了该特性](https://github.com/microsoft/TypeScript/pull/40698)！
 
-## Const Assertions and Default Type Arguments in JSDoc
+## JSDoc 中的常量断言和默认类型参数
 
-TypeScript 4.5 brings some extra expressivity to our JSDoc support.
+TypeScript 4.5 为我们的 JSDoc 支持带来了更丰富的表达能力。
 
-One example of this is with `const` assertions. In TypeScript, you can get a more precise and immutable type by writing `as const` after a literal.
+其中一个例子是 `const` 常量断言。在 TypeScript 中，你可以在字面量后编写 `as const` 来获得更精确且不可变的类型：
 
 ```ts
 // type is { prop: string }
@@ -362,7 +361,7 @@ let a = { prop: 'hello' }
 let b = { prop: 'hello' } as const
 ```
 
-In JavaScript files, you can now use JSDoc type assertions to achieve the same thing.
+在 JavaScript 文件中，你现在可以使用 JSDoc 类型断言来实现同样的效果：
 
 ```ts
 // type is { prop: string }
@@ -372,19 +371,19 @@ let a = { prop: 'hello' }
 let b = /** @type {const} */ { prop: 'hello' }
 ```
 
-As a reminder, JSDoc type assertions comments start with `/** @type {TheTypeWeWant} */` and are followed by a parenthesized expression:
+温馨提示，JSDoc 类型断言注释以 `/** @type {TheTypeWeWant} */` 开头，后跟用括号包裹的表达式：
 
 ```js
 /** @type {TheTypeWeWant} */` (someExpression)
 ```
 
-TypeScript 4.5 also adds default type arguments to JSDoc, which means the following `type` declaration in TypeScript:
+TypeScript 4.5 还为 JSDoc 添加了默认类型参数支持，这意味着 TypeScript 中的如下 `type` 声明：
 
 ```ts
 type Foo<T extends string | number = number> = { prop: T }
 ```
 
-can be rewritten as the following `@typedef` declaration in JavaScript:
+在 JavaScript 中可以改写为如下 `@typedef` 声明：
 
 ```js
 /**
@@ -401,67 +400,67 @@ can be rewritten as the following `@typedef` declaration in JavaScript:
  */
 ```
 
-For more information, see [the pull request for const assertions](https://github.com/microsoft/TypeScript/pull/45464) along with [the changes for type argument defaults](https://github.com/microsoft/TypeScript/pull/45483).
+更多信息请参阅 [常量断言的 Pull Request](https://github.com/microsoft/TypeScript/pull/45464) 以及 [类型参数默认值的改动](https://github.com/microsoft/TypeScript/pull/45483)。
 
-## Faster Load Time with `realPathSync.native`
+## 使用 `realPathSync.native` 获得更快的加载时间
 
-TypeScript now leverages a system-native implementation of the Node.js `realPathSync` function on all operating systems.
+TypeScript 现在在所有操作系统上均利用 Node.js `realPathSync` 函数的系统原生实现。
 
-Previously this function was only used on Linux, but in TypeScript 4.5 it has been adopted to operating systems that are typically case-insensitive, like Windows and MacOS.
-On certain codebases, this change sped up project loading by 5-13% (depending on the host operating system).
+此前该函数仅在 Linux 上使用，但在 TypeScript 4.5 中，它已被应用到 Windows 和 MacOS 等通常不区分大小写的操作系统中。
+在某些代码库中，此项改动使项目加载速度提升了 5-13%（取决于宿主操作系统）。
 
-For more information, see [the original change here](https://github.com/microsoft/TypeScript/pull/44966), along with [the 4.5-specific changes here](https://github.com/microsoft/TypeScript/pull/44966).
+更多信息请参阅 [此处的原始改动](https://github.com/microsoft/TypeScript/pull/44966)，以及 [4.5 特定的改动](https://github.com/microsoft/TypeScript/pull/44966)。
 
-## Snippet Completions for JSX Attributes
+## JSX 属性的代码片段补全
 
-TypeScript 4.5 brings _snippet completions_ for JSX attributes.
-When writing out an attribute in a JSX tag, TypeScript will already provide suggestions for those attributes;
-but with snippet completions, they can remove a little bit of extra typing by adding an initializer and putting your cursor in the right place.
+TypeScript 4.5 带来了针对 JSX 属性的*代码片段补全*（snippet completions）。
+在 JSX 标签中编写属性时，TypeScript 已经能为这些属性提供补全建议；
+而通过代码片段补全，它可以通过自动添加初始值并将光标置于合适的位置，从而减少额外的键盘输入。
 
-![Snippet completions for JSX attributes. For a string property, quotes are automatically added. For a numeric properties, braces are added.](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/10/jsx-attributes-snippets-4-5.gif)
+![JSX 属性的代码片段补全。对于字符串属性，会自动添加引号；对于数字属性，会自动添加大括号](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/10/jsx-attributes-snippets-4-5.gif)
 
-TypeScript will typically use the type of an attribute to figure out what kind of initializer to insert, but you can customize this behavior in Visual Studio Code.
+TypeScript 通常会根据属性的类型来决定插入哪种初始值格式，但你可以在 Visual Studio Code 中自定义此行为。
 
-![Settings in VS Code for JSX attribute completions](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/10/jsx-snippet-settings-4-5.png)
+![VS Code 中关于 JSX 属性补全的设置](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/10/jsx-snippet-settings-4-5.png)
 
-Keep in mind, this feature will only work in newer versions of Visual Studio Code, so you might have to use an Insiders build to get this working.
-For more information, [read up on the original pull request](https://github.com/microsoft/TypeScript/pull/45903)
+请注意，该特性仅在较新版本的 Visual Studio Code 中有效，因此你可能需要使用 Insiders 预览版才能体验。
+更多信息请 [参阅原始 Pull Request](https://github.com/microsoft/TypeScript/pull/45903)。
 
-## Better Editor Support for Unresolved Types
+## 编辑器对未解析类型提供更好的支持
 
-In some cases, editors will leverage a lightweight "partial" semantic mode - either while the editor is waiting for the full project to load, or in contexts like [GitHub's web-based editor](https://docs.github.com/en/codespaces/developing-in-codespaces/web-based-editor).
+在某些情况下，编辑器会使用轻量级的“部分”（partial）语义模式——无论是在编辑器等待完整项目加载期间，还是在 [GitHub 基于 Web 的编辑器](https://docs.github.com/en/codespaces/developing-in-codespaces/web-based-editor) 等上下文中。
 
-In older versions of TypeScript, if the language service couldn't find a type, it would just print `any`.
+在较旧版本的 TypeScript 中，如果语言服务找不到某个类型，它会直接显示 `any`：
 
-![Hovering over a signature where `Buffer` isn't found, TypeScript replaces it with `any`.](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/10/quick-info-unresolved-4-4.png)
+![悬停在找不到 `Buffer` 的签名上时，TypeScript 将其替换为 `any`](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/10/quick-info-unresolved-4-4.png)
 
-In the above example, `Buffer` wasn't found, so TypeScript replaced it with `any` in _quick info_.
-In TypeScript 4.5, TypeScript will try its best to preserve what you wrote.
+在上面的示例中，由于未找到 `Buffer`，TypeScript 在*快速信息*（quick info）中将其替换为了 `any`。
+在 TypeScript 4.5 中，TypeScript 将尽最大努力保留你书写的原始名称：
 
-![Hovering over a signature where `Buffer` isn't found, it continues to use the name `Buffer`.](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/10/quick-info-unresolved-4-5.png)
+![悬停在找不到 `Buffer` 的签名上时，它继续使用名称 `Buffer`](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/10/quick-info-unresolved-4-5.png)
 
-However, if you hover over `Buffer` itself, you'll get a hint that TypeScript couldn't find `Buffer`.
+但是，如果你将鼠标悬停在 `Buffer` 本身之上，你会得到一个提示，说明 TypeScript 无法找到 `Buffer`：
 
-![TypeScript displays `type Buffer = /* unresolved */ any;`](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/10/quick-info-unresolved-on-type-4-5.png)
+![TypeScript 显示 `type Buffer = /* unresolved */ any;`](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2021/10/quick-info-unresolved-on-type-4-5.png)
 
-Altogether, this provides a smoother experience when TypeScript doesn't have the full program available.
-Keep in mind, you'll always get an error in regular scenarios to tell you when a type isn't found.
+综合起来，这在 TypeScript 无法获取完整程序信息时提供了更加流畅的体验。
+请记住，在常规场景下，当找不到某个类型时，你始终会收到错误提示。
 
-For more information, [see the implementation here](https://github.com/microsoft/TypeScript/pull/45976).
+更多详细信息，请 [参阅此处的实现](https://github.com/microsoft/TypeScript/pull/45976)。
 
-## Breaking Changes
+## 破坏性变更
 
-### `lib.d.ts` Changes
+### `lib.d.ts` 变更
 
-TypeScript 4.5 contains changes to its built-in declaration files which may affect your compilation;
-however, [these changes were fairly minimal](https://github.com/microsoft/TypeScript-DOM-lib-generator/issues/1143), and we expect most code will be unaffected.
+TypeScript 4.5 包含了对其内置声明文件的改动，这可能会影响你的编译；
+然而，[这些改动相当轻微](https://github.com/microsoft/TypeScript-DOM-lib-generator/issues/1143)，我们预计大多数代码不会受到影响。
 
-### Inference Changes from `Awaited`
+### `Awaited` 引起的推断变更
 
-Because `Awaited` is now used in `lib.d.ts` and as a result of `await`, you may see certain generic types change that might cause incompatibilities;
-however, given many intentional design decisions around `Awaited` to avoid breakage, we expect most code will be unaffected.
+由于 `Awaited` 现在已在 `lib.d.ts` 中使用并作为 `await` 的运算结果，你可能会看到某些泛型类型发生了变化，从而可能导致不兼容；
+然而，鉴于围绕 `Awaited` 做出了许多旨在避免破坏性变更的精心设计，我们预计大多数代码不会受到影响。
 
-### Compiler Options Checking at the Root of `tsconfig.json`
+### `tsconfig.json` 根级别的编译选项检查
 
-It's an easy mistake to accidentally forget about the `compilerOptions` section in a `tsconfig.json`.
-To help catch this mistake, in TypeScript 4.5, it is an error to add a top-level field which matches any of the available options in `compilerOptions` _without_ having also defined `compilerOptions` in that `tsconfig.json`.
+不小心遗漏 `tsconfig.json` 中的 `compilerOptions` 配置层级是一个很容易犯的错误。
+为了帮助捕获该错误，在 TypeScript 4.5 中，如果 `tsconfig.json` 中*未*定义 `compilerOptions`，而直接在顶层添加了与 `compilerOptions` 中任何可用选项相匹配的字段，将会报错。

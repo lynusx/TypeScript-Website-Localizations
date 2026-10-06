@@ -2,14 +2,14 @@
 title: TypeScript 5.0
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-5-0.html
-oneline: TypeScript 5.0 Release Notes
+oneline: TypeScript 5.0 发布说明
 ---
 
-## Decorators
+## 装饰器（Decorators）
 
-Decorators are an upcoming ECMAScript feature that allow us to customize classes and their members in a reusable way.
+装饰器（Decorators）是一项即将加入 ECMAScript 的特性，它允许我们以可复用的方式定制类及其成员。
 
-Let's consider the following code:
+让我们来看以下代码：
 
 ```ts
 class Person {
@@ -27,8 +27,8 @@ const p = new Person('Ray')
 p.greet()
 ```
 
-`greet` is pretty simple here, but let's imagine it's something way more complicated - maybe it does some async logic, it's recursive, it has side effects, etc.
-Regardless of what kind of ball-of-mud you're imagining, let's say you throw in some `console.log` calls to help debug `greet`.
+这里的 `greet` 非常简单，但试想一下它要复杂得多——比如包含异步逻辑、递归调用、带有副作用等。
+无论你面对的是怎样的一团乱麻，假设你添加了一些 `console.log` 调用来帮助调试 `greet`：
 
 ```ts
 class Person {
@@ -47,11 +47,11 @@ class Person {
 }
 ```
 
-This pattern is fairly common.
-It sure would be nice if there was a way we could do this for every method!
+这种模式非常普遍。
+如果能有一种方法对每个方法都统一做到这一点，那就太棒了！
 
-This is where decorators come in.
-We can write a function called `loggedMethod` that looks like the following:
+这正是装饰器的用武之地。
+我们可以编写一个名为 `loggedMethod` 的函数，如下所示：
 
 ```ts
 function loggedMethod(originalMethod: any, _context: any) {
@@ -66,18 +66,18 @@ function loggedMethod(originalMethod: any, _context: any) {
 }
 ```
 
-"What's the deal with all of these `any`s?
-What is this, `any`Script!?"
+“为什么到处都是 `any`？
+难道这是 `any`Script！？”
 
-Just be patient - we're keeping things simple for now so that we can focus on what this function is doing.
-Notice that `loggedMethod` takes the original method (`originalMethod`) and returns a function that
+稍安勿躁——这里为了保持简单，方便我们专注于该函数的作用。
+请注意，`loggedMethod` 接收原始方法（`originalMethod`），并返回一个函数，该函数会：
 
-1. logs an "Entering..." message
-2. passes along `this` and all of its arguments to the original method
-3. logs an "Exiting..." message, and
-4. returns whatever the original method returned.
+1. 输出一条 "Entering..." 日志
+2. 将 `this` 和所有参数传递给原始方法
+3. 输出一条 "Exiting..." 日志
+4. 返回原始方法返回的任何结果。
 
-Now we can use `loggedMethod` to _decorate_ the method `greet`:
+现在我们可以使用 `loggedMethod` 来*装饰*方法 `greet`：
 
 ```ts
 class Person {
@@ -102,13 +102,13 @@ p.greet()
 //   LOG: Exiting method.
 ```
 
-We just used `loggedMethod` as a decorator above `greet` - and notice that we wrote it as `@loggedMethod`.
-When we did that, it got called with the method _target_ and a _context object_.
-Because `loggedMethod` returned a new function, that function replaced the original definition of `greet`.
+我们刚刚在 `greet` 上方将 `loggedMethod` 作为装饰器使用——注意我们将其写为 `@loggedMethod`。
+这样做时，它会被调用并接收方法*目标（target）*和一个*上下文对象（context object）*。
+因为 `loggedMethod` 返回了一个新函数，所以该函数替换了 `greet` 的原始定义。
 
-We didn't mention it yet, but `loggedMethod` was defined with a second parameter.
-It's called a "context object", and it has some useful information about how the decorated method was declared - like whether it was a `#private` member, or `static`, or what the name of the method was.
-Let's rewrite `loggedMethod` to take advantage of that and print out the name of the method that was decorated.
+我们之前还没提到，`loggedMethod` 定义了第二个参数。
+它被称为“上下文对象”，包含有关被装饰方法如何声明的一些有用信息——例如它是否是 `#private` 成员、是否为 `static`、或者方法的名称是什么。
+让我们重写 `loggedMethod` 来利用这一点，并打印出被装饰方法的名称。
 
 ```ts
 function loggedMethod(
@@ -128,13 +128,13 @@ function loggedMethod(
 }
 ```
 
-We're now using the context parameter - and that it's the first thing in `loggedMethod` that has a type stricter than `any` and `any[]`.
-TypeScript provides a type called `ClassMethodDecoratorContext` that models the context object that method decorators take.
+我们现在使用了 context 参数——它是 `loggedMethod` 中第一个类型严于 `any` 和 `any[]` 的地方。
+TypeScript 提供了一个名为 `ClassMethodDecoratorContext` 的类型，用于为方法装饰器接收的上下文对象建模。
 
-Apart from metadata, the context object for methods also has a useful function called `addInitializer`.
-It's a way to hook into the beginning of the constructor (or the initialization of the class itself if we're working with `static`s).
+除了元数据之外，方法对应的上下文对象还提供了一个名为 `addInitializer` 的有用函数。
+它提供了一种钩入构造函数开头（或者在处理 `static` 成员时钩入类自身初始化）的方法。
 
-As an example - in JavaScript, it's common to write something like the following pattern:
+举个例子——在 JavaScript 中，经常会写出类似下面的代码模式：
 
 ```ts
 class Person {
@@ -151,7 +151,7 @@ class Person {
 }
 ```
 
-Alternatively, `greet` might be declared as a property initialized to an arrow function.
+或者，`greet` 也可以声明为一个初始化为箭头函数的属性：
 
 ```ts
 class Person {
@@ -166,7 +166,7 @@ class Person {
 }
 ```
 
-This code is written to ensure that `this` isn't re-bound if `greet` is called as a stand-alone function or passed as a callback.
+这样编写代码是为了确保当 `greet` 作为独立函数调用或作为回调传递时，`this` 不会被重新绑定：
 
 ```ts
 const greet = new Person('Ray').greet
@@ -175,7 +175,7 @@ const greet = new Person('Ray').greet
 greet()
 ```
 
-We can write a decorator that uses `addInitializer` to call `bind` in the constructor for us.
+我们可以编写一个装饰器，使用 `addInitializer` 在构造函数中为我们调用 `bind`：
 
 ```ts
 function bound(originalMethod: any, context: ClassMethodDecoratorContext) {
@@ -191,8 +191,8 @@ function bound(originalMethod: any, context: ClassMethodDecoratorContext) {
 }
 ```
 
-`bound` isn't returning anything - so when it decorates a method, it leaves the original alone.
-Instead, it will add logic before any other fields are initialized.
+`bound` 没有返回任何内容——因此当它装饰一个方法时，它会保持原始方法不变。
+相反，它会在任何其他字段初始化之前添加逻辑。
 
 ```ts
 class Person {
@@ -215,12 +215,12 @@ const greet = p.greet
 greet()
 ```
 
-Notice that we stacked two decorators - `@bound` and `@loggedMethod`.
-These decorations run in "reverse order".
-That is, `@loggedMethod` decorates the original method `greet`, and `@bound` decorates the result of `@loggedMethod`.
-In this example, it doesn't matter - but it could if your decorators have side-effects or expect a certain order.
+注意，我们堆叠了两个装饰器——`@bound` 和 `@loggedMethod`。
+这些装饰器以“相反的顺序”执行。
+也就是说，`@loggedMethod` 装饰原始方法 `greet`，而 `@bound` 装饰 `@loggedMethod` 的结果。
+在这个例子中，顺序并不重要——但如果你的装饰器存在副作用或依赖特定顺序，这就很重要了。
 
-Also worth noting - if you'd prefer stylistically, you can put these decorators on the same line.
+另外值得一提的是——如果你偏好这种代码风格，可以将这些装饰器写在同一行：
 
 ```ts
     @bound @loggedMethod greet() {
@@ -228,9 +228,9 @@ Also worth noting - if you'd prefer stylistically, you can put these decorators 
     }
 ```
 
-Something that might not be obvious is that we can even make functions that _return_ decorator functions.
-That makes it possible to customize the final decorator just a little.
-If we wanted, we could have made `loggedMethod` return a decorator and customize how it logs its messages.
+还有一点可能不那么显而易见：我们甚至可以编写*返回*装饰器函数的函数。
+这使得对最终的装饰器进行定制变得可能。
+如果我们愿意，可以让 `loggedMethod` 返回一个装饰器，并定制其记录日志的方式。
 
 ```ts
 function loggedMethod(headMessage = 'LOG:') {
@@ -252,8 +252,8 @@ function loggedMethod(headMessage = 'LOG:') {
 }
 ```
 
-If we did that, we'd have to call `loggedMethod` before using it as a decorator.
-We could then pass in any string as the prefix for messages that get logged to the console.
+如果这样做，我们需要先调用 `loggedMethod`，再将其作为装饰器使用。
+然后，我们可以传入任意字符串作为打印到控制台的消息前缀。
 
 ```ts
 class Person {
@@ -278,30 +278,30 @@ p.greet()
 //   ⚠️ Exiting method 'greet'.
 ```
 
-Decorators can be used on more than just methods!
-They can be used on properties/fields, getters, setters, and auto-accessors.
-Even classes themselves can be decorated for things like subclassing and registration.
+装饰器不仅可以用于方法！
+它们还可以用于属性/字段、getter、setter 以及自动访问器（auto-accessors）。
+甚至类本身也可以被装饰，用于子类化和注册等操作。
 
-To learn more about decorators in-depth, you can read up on [Axel Rauschmayer's extensive summary](https://2ality.com/2022/10/javascript-decorators.html).
+要深入了解装饰器，可以阅读 [Axel Rauschmayer 的详尽总结](https://2ality.com/2022/10/javascript-decorators.html)。
 
-For more information about the changes involved, you can [view the original pull request](https://github.com/microsoft/TypeScript/pull/50820).
+有关所涉及变更的更多信息，可以[查看原始 Pull Request](https://github.com/microsoft/TypeScript/pull/50820)。
 
-### Differences with Experimental Legacy Decorators
+### 与旧版实验性装饰器的差异
 
-If you've been using TypeScript for a while, you might be aware of the fact that it's had support for "experimental" decorators for years.
-While these experimental decorators have been incredibly useful, they modeled a much older version of the decorators proposal, and always required an opt-in compiler flag called `--experimentalDecorators`.
-Any attempt to use decorators in TypeScript without this flag used to prompt an error message.
+如果你使用 TypeScript 已经有一段时间，可能已经知道它多年来一直支持“实验性”装饰器。
+虽然这些实验性装饰器非常有用，但它们是以旧版装饰器提案为模型的，并且始终需要通过编译器标志 `--experimentalDecorators` 显式开启。
+在没有此标志的情况下，任何在 TypeScript 中使用装饰器的尝试过去都会报错。
 
-`--experimentalDecorators` will continue to exist for the foreseeable future;
-however, without the flag, decorators will now be valid syntax for all new code.
-Outside of `--experimentalDecorators`, they will be type-checked and emitted differently.
-The type-checking rules and emit are sufficiently different that while decorators _can_ be written to support both the old and new decorators behavior, any existing decorator functions are not likely to do so.
+在可预见的未来，`--experimentalDecorators` 将继续存在；
+但是，在未开启该标志的情况下，装饰器现在在所有新代码中都是合法的语法。
+在未开启 `--experimentalDecorators` 时，它们的类型检查和代码生成方式会有所不同。
+类型检查规则和代码生成的差异非常大，尽管装饰器*可以*编写为同时支持新旧两种装饰器行为，但现有的装饰器函数很可能无法做到这一点。
 
-This new decorators proposal is not compatible with `--emitDecoratorMetadata`, and it does not allow decorating parameters.
-Future ECMAScript proposals may be able to help bridge that gap.
+全新的装饰器提案与 `--emitDecoratorMetadata` 不兼容，且不允许装饰参数。
+未来的 ECMAScript 提案可能会弥补这一差距。
 
-On a final note: in addition to allowing decorators to be placed before the `export` keyword, the proposal for decorators now provides the option of placing decorators after `export` or `export default`.
-The only exception is that mixing the two styles is not allowed.
+最后需要指出的是：除了允许将装饰器放置在 `export` 关键字之前外，装饰器提案现在还支持将装饰器放置在 `export` 或 `export default` 之后。
+唯一的例外是不允许混用这两种风格。
 
 ```js
 // ✅ allowed
@@ -320,12 +320,12 @@ export default @register class Bar {
 }
 ```
 
-### Writing Well-Typed Decorators
+### 编写类型完备的装饰器
 
-The `loggedMethod` and `bound` decorator examples above are intentionally simple and omit lots of details about types.
+上述 `loggedMethod` 和 `bound` 装饰器示例故意保持了简单，省略了大量类型细节。
 
-Typing decorators can be fairly complex.
-For example, a well-typed version of `loggedMethod` from above might look something like this:
+为装饰器编写类型可能相当复杂。
+例如，上述 `loggedMethod` 的类型完备版本可能看起来像这样：
 
 ```ts
 function loggedMethod<This, Args extends any[], Return>(
@@ -348,17 +348,17 @@ function loggedMethod<This, Args extends any[], Return>(
 }
 ```
 
-We had to separately model out the type of `this`, the parameters, and the return type of the original method, using the type parameters `This`, `Args`, and `Return`.
+我们必须使用类型参数 `This`、`Args` 和 `Return` 分别为原始方法的 `this` 类型、参数类型和返回值类型建模。
 
-Exactly how complex your decorators functions are defined depends on what you want to guarantee.
-Just keep in mind, your decorators will be used more than they're written, so a well-typed version will usually be preferable - but there's clearly a trade-off with readability, so try to keep things simple.
+装饰器函数的具体定义复杂度取决于你希望保证什么。
+请记住，装饰器的使用次数远多于编写次数，因此类型完备的版本通常更受青睐——但这显然需要在可读性之间做出权衡，因此请尽量保持简单。
 
-More documentation on writing decorators will be available in the future - but [this post](https://2ality.com/2022/10/javascript-decorators.html) should have a good amount of detail for the mechanics of decorators.
+未来将提供更多有关编写装饰器的文档——但[这篇文章](https://2ality.com/2022/10/javascript-decorators.html)已经详细介绍了装饰器的运行机制。
 
-## `const` Type Parameters
+## `const` 类型参数
 
-When inferring the type of an object, TypeScript will usually choose a type that's meant to be general.
-For example, in this case, the inferred type of `names` is `string[]`:
+在推断对象的类型时，TypeScript 通常会选择一个更通用的类型。
+例如在此示例中，`names` 的推断类型为 `string[]`：
 
 ```ts
 type HasNames = { names: readonly string[] }
@@ -370,11 +370,11 @@ function getNamesExactly<T extends HasNames>(arg: T): T['names'] {
 const names = getNamesExactly({ names: ['Alice', 'Bob', 'Eve'] })
 ```
 
-Usually the intent of this is to enable mutation down the line.
+这通常是为了允许后续进行修改。
 
-However, depending on what exactly `getNamesExactly` does and how it's intended to be used, it can often be the case that a more-specific type is desired.
+然而，根据 `getNamesExactly` 的具体作用和使用方式，通常可能希望获得更具体的类型。
 
-Up until now, API authors have typically had to recommend adding `as const` in certain places to achieve the desired inference:
+到目前为止，API 作者通常必须建议在某些地方添加 `as const` 来实现预期的类型推断：
 
 ```ts
 // The type we wanted:
@@ -388,8 +388,8 @@ const names1 = getNamesExactly({ names: ['Alice', 'Bob', 'Eve'] })
 const names2 = getNamesExactly({ names: ['Alice', 'Bob', 'Eve'] } as const)
 ```
 
-This can be cumbersome and easy to forget.
-In TypeScript 5.0, you can now add a `const` modifier to a type parameter declaration to cause `const`-like inference to be the default:
+这样做既繁琐又容易遗忘。
+在 TypeScript 5.0 中，你现在可以为类型参数声明添加 `const` 修饰符，使类似 `const` 的推断行为成为默认规则：
 
 ```ts
 type HasNames = { names: readonly string[] }
@@ -403,9 +403,9 @@ function getNamesExactly<const T extends HasNames>(arg: T): T['names'] {
 const names = getNamesExactly({ names: ['Alice', 'Bob', 'Eve'] })
 ```
 
-Note that the `const` modifier doesn't _reject_ mutable values, and doesn't require immutable constraints.
-Using a mutable type constraint might give surprising results.
-For example:
+请注意，`const` 修饰符并不*拒绝*可变值，也不要求不可变约束。
+使用可变类型约束可能会产生出乎意料的结果。
+例如：
 
 ```ts
 declare function fnBad<const T extends string[]>(args: T): void
@@ -414,10 +414,10 @@ declare function fnBad<const T extends string[]>(args: T): void
 fnBad(['a', 'b', 'c'])
 ```
 
-Here, the inferred candidate for `T` is `readonly ["a", "b", "c"]`, and a `readonly` array can't be used where a mutable one is needed.
-In this case, inference falls back to the constraint, the array is treated as `string[]`, and the call still proceeds successfully.
+在这里，`T` 的推断候选类型是 `readonly ["a", "b", "c"]`，而只读数组不能用于需要可变数组的地方。
+在这种情况下，类型推断会回退到约束条件，数组被视为 `string[]`，调用仍然可以顺利进行。
 
-A better definition of this function should use `readonly string[]`:
+该函数更好的定义应该使用 `readonly string[]`：
 
 ```ts
 declare function fnGood<const T extends readonly string[]>(args: T): void
@@ -426,7 +426,7 @@ declare function fnGood<const T extends readonly string[]>(args: T): void
 fnGood(['a', 'b', 'c'])
 ```
 
-Similarly, remember to keep in mind that the `const` modifier only affects inference of object, array and primitive expressions that were written within the call, so arguments which wouldn't (or couldn't) be modified with `as const` won't see any change in behavior:
+同样需要牢记的是，`const` 修饰符仅影响在调用中直接编写的对象、数组和原始字面量表达式的推断，因此对于那些不会（或不能）通过 `as const` 修饰的参数，行为不会发生改变：
 
 ```ts
 declare function fnGood<const T extends readonly string[]>(args: T): void
@@ -436,12 +436,12 @@ const arr = ['a', 'b', 'c']
 fnGood(arr)
 ```
 
-[See the pull request](https://github.com/microsoft/TypeScript/pull/51865) and the ([first](https://github.com/microsoft/TypeScript/issues/30680) and [second](https://github.com/microsoft/TypeScript/issues/41114)) motivating issues for more details.
+有关更多详细信息，请[查看 Pull Request](https://github.com/microsoft/TypeScript/pull/51865) 以及引起该特性的动机 Issue（[第一篇](https://github.com/microsoft/TypeScript/issues/30680)与[第二篇](https://github.com/microsoft/TypeScript/issues/41114)）。
 
-## Supporting Multiple Configuration Files in `extends`
+## 在 `extends` 中支持多个配置文件
 
-When managing multiple projects, it can be helpful to have a "base" configuration file that other `tsconfig.json` files can extend from.
-That's why TypeScript supports an `extends` field for copying over fields from `compilerOptions`.
+在管理多个项目时，拥有一个供其他 `tsconfig.json` 文件继承的“基础”配置文件会非常有帮助。
+这就是 TypeScript 支持 `extends` 字段以便从 `compilerOptions` 复制字段的原因。
 
 ```jsonc
 // packages/front-end/src/tsconfig.json
@@ -454,9 +454,9 @@ That's why TypeScript supports an `extends` field for copying over fields from `
 }
 ```
 
-However, there are scenarios where you might want to extend from multiple configuration files.
-For example, imagine using [a TypeScript base configuration file shipped to npm](https://github.com/tsconfig/bases).
-If you want all your projects to also use the options from the `@tsconfig/strictest` package on npm, then there's a simple solution: have `tsconfig.base.json` extend from `@tsconfig/strictest`:
+然而在某些场景下，你可能希望继承多个配置文件。
+例如，假设你使用了[发布到 npm 的 TypeScript 基础配置文件](https://github.com/tsconfig/bases)。
+如果你希望所有项目同时也使用来自 npm 上的 `@tsconfig/strictest` 包的配置项，那么有一个简单的解决方案：让 `tsconfig.base.json` 继承 `@tsconfig/strictest`：
 
 ```jsonc
 // tsconfig.base.json
@@ -468,11 +468,11 @@ If you want all your projects to also use the options from the `@tsconfig/strict
 }
 ```
 
-This works to a point.
-If you have any projects that _don't_ want to use `@tsconfig/strictest`, they have to either manually disable the options, or create a separate version of `tsconfig.base.json` that _doesn't_ extend from `@tsconfig/strictest`.
+这在一定程度上是可行的。
+但如果你有任何项目*不*希望使用 `@tsconfig/strictest`，它们要么必须手动禁用这些选项，要么必须创建一个*不*继承 `@tsconfig/strictest` 的独立版本的 `tsconfig.base.json`。
 
-To give some more flexibility here, Typescript 5.0 now allows the `extends` field to take multiple entries.
-For example, in this configuration file:
+为了提供更大的灵活性，TypeScript 5.0 现在允许 `extends` 字段接受多个配置项。
+例如在此配置文件中：
 
 ```jsonc
 {
@@ -483,10 +483,10 @@ For example, in this configuration file:
 }
 ```
 
-Writing this is kind of like extending `c` directly, where `c` extends `b`, and `b` extends `a`.
-If any fields "conflict", the latter entry wins.
+这样写类似于直接继承 `c`，其中 `c` 继承 `b`，而 `b` 继承 `a`。
+如果有任何字段发生“冲突”，则后面的配置项优先。
 
-So in the following example, both `strictNullChecks` and `noImplicitAny` are enabled in the final `tsconfig.json`.
+因此在以下示例中，最终的 `tsconfig.json` 会同时启用 `strictNullChecks` 和 `noImplicitAny`。
 
 ```jsonc
 // tsconfig1.json
@@ -510,7 +510,7 @@ So in the following example, both `strictNullChecks` and `noImplicitAny` are ena
 }
 ```
 
-As another example, we can rewrite our original example in the following way.
+再举一个例子，我们可以通过以下方式重写最初的示例：
 
 ```jsonc
 // packages/front-end/src/tsconfig.json
@@ -526,7 +526,7 @@ As another example, we can rewrite our original example in the following way.
 }
 ```
 
-For more details, [read more on the original pull request](https://github.com/microsoft/TypeScript/pull/50403).
+更多详情请[阅读原始 Pull Request](https://github.com/microsoft/TypeScript/pull/50403)。
 
 <!--
 
@@ -540,9 +540,9 @@ TODO
 
 -->
 
-## All `enum`s Are Union `enum`s
+## 所有 `enum` 都是联合 `enum`
 
-When TypeScript originally introduced enums, they were nothing more than a set of numeric constants with the same type.
+当 TypeScript 最初引入枚举时，它们不过是一组具有相同类型的数值常量。
 
 ```ts
 enum E {
@@ -551,8 +551,8 @@ enum E {
 }
 ```
 
-The only thing special about `E.Foo` and `E.Bar` was that they were assignable to anything expecting the type `E`.
-Other than that, they were pretty much just `number`s.
+`E.Foo` 和 `E.Bar` 唯一特殊之处在于它们可以赋值给任何期望 `E` 类型的变量。
+除此之外，它们几乎就是普通的 `number`。
 
 ```ts
 function takeValue(e: E) {}
@@ -561,9 +561,9 @@ takeValue(E.Foo) // works
 takeValue(123) // error!
 ```
 
-It wasn't until TypeScript 2.0 introduced enum literal types that enums got a bit more special.
-Enum literal types gave each enum member its own type, and turned the enum itself into a _union_ of each member type.
-They also allowed us to refer to only a subset of the types of an enum, and to narrow away those types.
+直到 TypeScript 2.0 引入枚举字面量类型，枚举才变得更加特殊。
+枚举字面量类型赋予每个枚举成员专属的类型，并将枚举本身变成了每个成员类型的*联合（union）*。
+它们还允许我们仅引用枚举类型的一个子集，并能够收窄（narrow）这些类型。
 
 ```ts
 // Color is like a union of Red | Orange | Yellow | Green | Blue | Violet
@@ -588,8 +588,8 @@ function isPrimaryColor(c: Color): c is PrimaryColor {
 }
 ```
 
-One issue with giving each enum member its own type was that those types were in some part associated with the actual value of the member.
-In some cases it's not possible to compute that value - for instance, an enum member could be initialized by a function call.
+为每个枚举成员赋予独立类型带来的一个问题是：这些类型在某种程度上与成员的实际值相关联。
+在某些情况下，无法在编译时计算出该值——例如枚举成员可能是通过函数调用初始化的。
 
 ```ts
 enum E {
@@ -597,21 +597,21 @@ enum E {
 }
 ```
 
-Whenever TypeScript ran into these issues, it would quietly back out and use the old enum strategy.
-That meant giving up all the advantages of unions and literal types.
+每当遇到这些情况时，TypeScript 就会默默回退并采用旧的枚举策略。
+这意味着放弃了联合和字面量类型的所有优势。
 
-TypeScript 5.0 manages to make all enums into union enums by creating a unique type for each computed member.
-That means that all enums can now be narrowed and have their members referenced as types as well.
+TypeScript 5.0 通过为每个计算成员创建唯一样式类型，成功使所有枚举都成为联合枚举。
+这意味着现在所有枚举都可以被收窄，其成员也可以作为类型被引用。
 
-For more details on this change, you can [read the specifics on GitHub](https://github.com/microsoft/TypeScript/pull/50528).
+有关此变更的更多详细信息，可以[在 GitHub 上阅读具体内容](https://github.com/microsoft/TypeScript/pull/50528)。
 
 ## `--moduleResolution bundler`
 
-TypeScript 4.7 introduced the `node16` and `nodenext` options for its `--module` and `--moduleResolution` settings.
-The intent of these options was to better model the precise lookup rules for ECMAScript modules in Node.js;
-however, this mode has many restrictions that other tools don't really enforce.
+TypeScript 4.7 为 `--module` 和 `--moduleResolution` 设置引入了 `node16` 和 `nodenext` 选项。
+这些选项的初衷是更准确地模拟 Node.js 中 ECMAScript 模块的具体查找规则；
+然而该模式包含很多其他工具并不强制执行的限制。
 
-For example, in an ECMAScript module in Node.js, any relative import needs to include a file extension.
+例如，在 Node.js 的 ECMAScript 模块中，任何相对导入都必须包含文件扩展名：
 
 ```js
 // entry.mjs
@@ -620,15 +620,15 @@ import * as utils from './utils' // ❌ wrong - we need to include the file exte
 import * as utils from './utils.mjs' // ✅ works
 ```
 
-There are certain reasons for this in Node.js and the browser - it makes file lookups faster and works better for naive file servers.
-But for many developers using tools like bundlers, the `node16`/`nodenext` settings were cumbersome because bundlers don't have most of these restrictions.
-In some ways, the `node` resolution mode was better for anyone using a bundler.
+在 Node.js 和浏览器中存在这样做的理由——它加快了文件查找速度，并且对简易文件服务器更友好。
+但对于许多使用打包工具（bundler）等工具的开发者来说，`node16`/`nodenext` 设置非常繁琐，因为打包工具并没有其中的大部分限制。
+在某种程度上，原有的 `node` 解析模式对使用打包工具的人来说反而更合适。
 
-But in some ways, the original `node` resolution mode was already out of date.
-Most modern bundlers use a fusion of the ECMAScript module and CommonJS lookup rules in Node.js.
-For example, extensionless imports work just fine just like in CommonJS, but when looking through the [`export` conditions](https://nodejs.org/api/packages.html#nested-conditions) of a package, they'll prefer an `import` condition just like in an ECMAScript file.
+但从某些方面来看，原始的 `node` 解析模式已经过时了。
+大多数现代打包工具采用了 Node.js 中 ECMAScript 模块与 CommonJS 查找规则的融合机制。
+例如，省略扩展名的导入可以像 CommonJS 一样正常工作；但在查找包的 [`export` 条件](https://nodejs.org/api/packages.html#nested-conditions)时，它们又会像 ECMAScript 文件一样优先匹配 `import` 条件。
 
-To model how bundlers work, TypeScript now introduces a new strategy: `--moduleResolution bundler`.
+为了模拟打包工具的工作方式，TypeScript 现在引入了一种新策略：`--moduleResolution bundler`。
 
 ```jsonc
 {
@@ -639,41 +639,41 @@ To model how bundlers work, TypeScript now introduces a new strategy: `--moduleR
 }
 ```
 
-If you are using a modern bundler like Vite, esbuild, swc, Webpack, Parcel, and others that implement a hybrid lookup strategy, the new `bundler` option should be a good fit for you.
+如果你正在使用 Vite、esbuild、swc、Webpack、Parcel 等实现了混合查找策略的现代打包工具，新的 `bundler` 选项会非常契合你的需求。
 
-On the other hand, if you're writing a library that's meant to be published on npm, using the `bundler` option can hide compatibility issues that may arise for your users who _aren't_ using a bundler.
-So in these cases, using the `node16` or `nodenext` resolution options is likely to be a better path.
+另一方面，如果你正在编写打算发布到 npm 的库，使用 `bundler` 选项可能会掩盖那些*没有*使用打包工具的用户可能遇到的兼容性问题。
+因此在这些情况下，使用 `node16` 或 `nodenext` 解析选项通常是更好的选择。
 
-To read more on `--moduleResolution bundler`, [take a look at the implementing pull request](https://github.com/microsoft/TypeScript/pull/51669).
+欲了解有关 `--moduleResolution bundler` 的更多信息，请[查看实现该特性的 Pull Request](https://github.com/microsoft/TypeScript/pull/51669)。
 
-## Resolution Customization Flags
+## 模块解析自定义标志
 
-JavaScript tooling may now model "hybrid" resolution rules, like in the `bundler` mode we described above.
-Because tools may differ in their support slightly, TypeScript 5.0 provides ways to enable or disable a few features that may or may not work with your configuration.
+JavaScript 工具现在可能会模拟“混合”解析规则，就像我们在上述 `bundler` 模式中所描述的那样。
+由于不同工具的支持程度可能略有差异，TypeScript 5.0 提供了启用或禁用若干特性的方式，以适配你的具体配置。
 
 ### `allowImportingTsExtensions`
 
-`--allowImportingTsExtensions` allows TypeScript files to import each other with a TypeScript-specific extension like `.ts`, `.mts`, or `.tsx`.
+`--allowImportingTsExtensions` 允许 TypeScript 文件使用 TypeScript 特有的扩展名（如 `.ts`、`.mts` 或 `.tsx`）相互导入。
 
-This flag is only allowed when `--noEmit` or `--emitDeclarationOnly` is enabled, since these import paths would not be resolvable at runtime in JavaScript output files.
-The expectation here is that your resolver (e.g. your bundler, a runtime, or some other tool) is going to make these imports between `.ts` files work.
+该标志仅在启用 `--noEmit` 或 `--emitDeclarationOnly` 时才允许使用，因为这些导入路径在 JavaScript 输出文件中无法在运行时解析。
+这里的预期是你的解析器（如打包工具、运行时或其他工具）能够处理 `.ts` 文件之间的此类导入。
 
 ### `resolvePackageJsonExports`
 
-`--resolvePackageJsonExports` forces TypeScript to consult [the `exports` field of `package.json` files](https://nodejs.org/api/packages.html#exports) if it ever reads from a package in `node_modules`.
+`--resolvePackageJsonExports` 强制 TypeScript 在从 `node_modules` 中读取包时参考 [`package.json` 文件的 `exports` 字段](https://nodejs.org/api/packages.html#exports)。
 
-This option defaults to `true` under the `node16`, `nodenext`, and `bundler` options for `--moduleResolution`.
+在 `--moduleResolution` 设为 `node16`、`nodenext` 和 `bundler` 时，该选项默认为 `true`。
 
 ### `resolvePackageJsonImports`
 
-`--resolvePackageJsonImports` forces TypeScript to consult [the `imports` field of `package.json` files](https://nodejs.org/api/packages.html#imports) when performing a lookup that starts with `#` from a file whose ancestor directory contains a `package.json`.
+当从其祖先目录包含 `package.json` 的文件中执行以 `#` 开头的查找时，`--resolvePackageJsonImports` 强制 TypeScript 参考 [`package.json` 文件的 `imports` 字段](https://nodejs.org/api/packages.html#imports)。
 
-This option defaults to `true` under the `node16`, `nodenext`, and `bundler` options for `--moduleResolution`.
+在 `--moduleResolution` 设为 `node16`、`nodenext` 和 `bundler` 时，该选项默认为 `true`。
 
 ### `allowArbitraryExtensions`
 
-In TypeScript 5.0, when an import path ends in an extension that isn't a known JavaScript or TypeScript file extension, the compiler will look for a declaration file for that path in the form of `{file basename}.d.{extension}.ts`.
-For example, if you are using a CSS loader in a bundler project, you might want to write (or generate) declaration files for those stylesheets:
+在 TypeScript 5.0 中，当导入路径以非已知 JavaScript 或 TypeScript 文件扩展名结尾时，编译器将按 `{file basename}.d.{extension}.ts` 的格式查找该路径的声明文件。
+例如，如果你在打包工具项目中使用 CSS 加载器，你可能希望为这些样式表编写（或生成）声明文件：
 
 ```css
 /* app.css */
@@ -697,21 +697,21 @@ import styles from './app.css'
 styles.cookieBanner // string
 ```
 
-By default, this import will raise an error to let you know that TypeScript doesn't understand this file type and your runtime might not support importing it.
-But if you've configured your runtime or bundler to handle it, you can suppress the error with the new `--allowArbitraryExtensions` compiler option.
+默认情况下，此导入将抛出错误，提示 TypeScript 无法识别此文件类型，且你的运行时可能不支持导入它。
+但如果你已配置运行时或打包工具对其进行处理，则可以使用新的 `--allowArbitraryExtensions` 编译器选项来忽略该错误。
 
-Note that historically, a similar effect has often been achievable by adding a declaration file named `app.css.d.ts` instead of `app.d.css.ts` - however, this just worked through Node's `require` resolution rules for CommonJS.
-Strictly speaking, the former is interpreted as a declaration file for a JavaScript file named `app.css.js`.
-Because relative files imports need to include extensions in Node's ESM support, TypeScript would error on our example in an ESM file under `--moduleResolution node16` or `nodenext`.
+需要注意的是，在过去通常可以通过添加名为 `app.css.d.ts` 而非 `app.d.css.ts` 的声明文件来实现类似的效果——然而这只是通过 Node 针对 CommonJS 的 `require` 解析规则起作用的。
+严格来说，前者被解释为名为 `app.css.js` 的 JavaScript 文件的声明文件。
+因为在 Node 的 ESM 支持中相对文件导入必须包含扩展名，所以在 `--moduleResolution node16` 或 `nodenext` 下的 ESM 文件中，TypeScript 会针对我们的示例报错。
 
-For more information, read up [the proposal for this feature](https://github.com/microsoft/TypeScript/issues/50133) and [its corresponding pull request](https://github.com/microsoft/TypeScript/pull/51435).
+有关更多信息，请阅读[该特性的提案](https://github.com/microsoft/TypeScript/issues/50133)以及[对应的 Pull Request](https://github.com/microsoft/TypeScript/pull/51435)。
 
 ### `customConditions`
 
-`--customConditions` takes a list of additional [conditions](https://nodejs.org/api/packages.html#nested-conditions) that should succeed when TypeScript resolves from an [`exports`](https://nodejs.org/api/packages.html#exports) or [`imports`](https://nodejs.org/api/packages.html#imports) field of a `package.json`.
-These conditions are added to whatever existing conditions a resolver will use by default.
+`--customConditions` 接受一个额外的[条件（conditions）](https://nodejs.org/api/packages.html#nested-conditions)列表，当 TypeScript 从 `package.json` 的 [`exports`](https://nodejs.org/api/packages.html#exports) 或 [`imports`](https://nodejs.org/api/packages.html#imports) 字段进行解析时应满足这些条件。
+这些条件会添加到解析器默认使用的任何现有条件中。
 
-For example, when this field is set in a `tsconfig.json` as so:
+例如，在 `tsconfig.json` 中设置此字段如下：
 
 ```jsonc
 {
@@ -723,9 +723,9 @@ For example, when this field is set in a `tsconfig.json` as so:
 }
 ```
 
-Any time an `exports` or `imports` field is referenced in `package.json`, TypeScript will consider conditions called `my-condition`.
+只要在 `package.json` 中引用了 `exports` 或 `imports` 字段，TypeScript 就会考虑名为 `my-condition` 的条件。
 
-So when importing from a package with the following `package.json`
+因此，当从包含以下 `package.json` 的包中导入时：
 
 ```jsonc
 {
@@ -741,14 +741,14 @@ So when importing from a package with the following `package.json`
 }
 ```
 
-TypeScript will try to look for files corresponding to `foo.mjs`.
+TypeScript 将尝试查找与 `foo.mjs` 对应的文件。
 
-This field is only valid under the `node16`, `nodenext`, and `bundler` options for `--moduleResolution`
+该字段仅在 `--moduleResolution` 选项为 `node16`、`nodenext` 和 `bundler` 时有效。
 
 ## `--verbatimModuleSyntax`
 
-By default, TypeScript does something called _import elision_.
-Basically, if you write something like
+默认情况下，TypeScript 会执行名为*导入擦除（import elision）*的操作。
+简单来说，如果你编写了类似以下的代码：
 
 ```ts
 import { Car } from './car'
@@ -758,8 +758,8 @@ export function drive(car: Car) {
 }
 ```
 
-TypeScript detects that you're only using an import for types and drops the import entirely.
-Your output JavaScript might look something like this:
+TypeScript 会检测到你仅将导入用于类型，并完全丢弃该导入。
+生成的 JavaScript 代码可能看起来像这样：
 
 ```js
 export function drive(car) {
@@ -767,27 +767,27 @@ export function drive(car) {
 }
 ```
 
-Most of the time this is good, because if `Car` isn't a value that's exported from `./car`, we'll get a runtime error.
+大多数情况下这很好，因为如果 `Car` 不是从 `./car` 导出的值，我们就会遇到运行时错误。
 
-But it does add a layer of complexity for certain edge cases.
-For example, notice there's no statement like `import "./car";` - the import was dropped entirely.
-That actually makes a difference for modules that have side-effects or not.
+但在某些边缘情况下，这确实增加了一层复杂性。
+例如，请注意这里没有类似 `import "./car";` 的语句——该导入被完全丢弃了。
+对于带有或不带有副作用的模块，这实际上会带来行为差异。
 
-TypeScript's emit strategy for JavaScript also has another few layers of complexity - import elision isn't always just driven by how an import is used - it often consults how a value is declared as well.
-So it's not always clear whether code like the following
+TypeScript 输出 JavaScript 的生成策略还具有另外几层复杂性——导入擦除并不总是只取决于导入的使用方式，它通常还会参考值的声明方式。
+因此，类似以下的代码：
 
 ```ts
 export { Car } from './car'
 ```
 
-should be preserved or dropped.
-If `Car` is declared with something like a `class`, then it can be preserved in the resulting JavaScript file.
-But if `Car` is only declared as a `type` alias or `interface`, then the JavaScript file shouldn't export `Car` at all.
+究竟应该保留还是丢弃，并不总是那么明确。
+如果 `Car` 是使用 `class` 之类声明的，那么它可以在生成的 JavaScript 文件中保留。
+但如果 `Car` 仅声明为 `type` 别名或 `interface`，那么 JavaScript 文件根本不应该导出 `Car`。
 
-While TypeScript might be able to make these emit decisions based on information from across files, not every compiler can.
+虽然 TypeScript 或许能够根据跨文件的信息做出这些代码生成决策，但并非每个编译器都能做到。
 
-The `type` modifier on imports and exports helps with these situations a bit.
-We can make it explicit whether an import or export is only being used for type analysis, and can be dropped entirely in JavaScript files by using the `type` modifier.
+在导入和导出中使用 `type` 修饰符在一定程度上有助于解决这些情况。
+我们可以使用 `type` 修饰符明确标明某个导入或导出仅用于类型分析，并可以在 JavaScript 文件中完全丢弃：
 
 ```ts
 // This statement can be dropped entirely in JS output
@@ -798,13 +798,13 @@ import { type Car } from './car'
 export { type Car } from './car'
 ```
 
-`type` modifiers are not quite useful on their own - by default, module elision will still drop imports, and nothing forces you to make the distinction between `type` and plain imports and exports.
-So TypeScript has the flag `--importsNotUsedAsValues` to make sure you use the `type` modifier, `--preserveValueImports` to prevent _some_ module elision behavior, and `--isolatedModules` to make sure that your TypeScript code works across different compilers.
-Unfortunately, understanding the fine details of those 3 flags is hard, and there are still some edge cases with unexpected behavior.
+`type` 修饰符单独使用时作用有限——默认情况下模块擦除仍然会丢弃导入，而且没有任何机制强制你区分 `type` 与普通导入/导出。
+因此，TypeScript 提供了 `--importsNotUsedAsValues` 标志以确保你使用 `type` 修饰符，提供了 `--preserveValueImports` 以防止*某些*模块擦除行为，并提供了 `--isolatedModules` 以确保你的 TypeScript 代码可以在不同的编译器间正常工作。
+遗憾的是，理解这 3 个标志的细节非常困难，并且仍然存在一些会出现意外行为的边缘情况。
 
-TypeScript 5.0 introduces a new option called `--verbatimModuleSyntax` to simplify the situation.
-The rules are much simpler - any imports or exports without a `type` modifier are left around.
-Anything that uses the `type` modifier is dropped entirely.
+TypeScript 5.0 引入了一个名为 `--verbatimModuleSyntax` 的新选项来简化这一局面。
+其规则要简单得多——任何没有 `type` 修饰符的导入或导出都会被原样保留。
+任何使用了 `type` 修饰符的内容都会被完全丢弃。
 
 ```ts
 // Erased away entirely.
@@ -817,18 +817,18 @@ import { b, type c, type d } from 'bcd'
 import { type xyz } from 'xyz'
 ```
 
-With this new option, what you see is what you get.
+使用这个新选项后，所见即所得。
 
-That does have some implications when it comes to module interop though.
-Under this flag, ECMAScript `import`s and `export`s won't be rewritten to `require` calls when your settings or file extension implied a different module system.
-Instead, you'll get an error.
-If you need to emit code that uses `require` and `module.exports`, you'll have to use TypeScript's module syntax that predates ES2015:
+不过在模块互操作性方面，这确实会产生一些影响。
+在该标志下，当你的设置或文件扩展名暗指不同的模块系统时，ECMAScript 的 `import` 和 `export` 不会被重写为 `require` 调用。
+相反，你会收到一个错误。
+如果你需要生成使用 `require` 和 `module.exports` 的代码，你必须使用早于 ES2015 的 TypeScript 模块语法：
 
 <table>
 <thead>
     <tr>
-        <th>Input TypeScript</th>
-        <th>Output JavaScript</th>
+        <th>输入 TypeScript</th>
+        <th>输出 JavaScript</th>
     </tr>
 </thead>
 
@@ -882,18 +882,18 @@ module.exports = {
 </tr>
 </table>
 
-While this is a limitation, it does help make some issues more obvious.
-For example, it's very common to forget to set the [`type` field in `package.json`](https://nodejs.org/api/packages.html#type) under `--module node16`.
-As a result, developers would start writing CommonJS modules instead of ES modules without realizing it, giving surprising lookup rules and JavaScript output.
-This new flag ensures that you're intentional about the file type you're using because the syntax is intentionally different.
+虽然这是一项限制，但它确实有助于使某些问题变得更加清晰。
+例如，在 `--module node16` 下很容易忘记设置 [`package.json` 中的 `type` 字段](https://nodejs.org/api/packages.html#type)。
+结果，开发者在不知不觉中开始编写 CommonJS 模块而不是 ES 模块，从而导致意外的查找规则和 JavaScript 输出。
+这个新标志确保你对自己使用的文件类型有清晰的预期，因为两者语法本就有所不同。
 
-Because `--verbatimModuleSyntax` provides a more consistent story than `--importsNotUsedAsValues` and `--preserveValueImports`, those two existing flags are being deprecated in its favor.
+由于 `--verbatimModuleSyntax` 提供了比 `--importsNotUsedAsValues` 和 `--preserveValueImports` 更一致的体验，这两个现有的标志已被弃用，推荐使用新选项。
 
-For more details, read up on [the original pull request]https://github.com/microsoft/TypeScript/pull/52203 and [its proposal issue](https://github.com/microsoft/TypeScript/issues/51479).
+更多详情请阅读[原始 Pull Request](https://github.com/microsoft/TypeScript/pull/52203)及其[提案 Issue](https://github.com/microsoft/TypeScript/issues/51479)。
 
-## Support for `export type *`
+## 支持 `export type *`
 
-When TypeScript 3.8 introduced type-only imports, the new syntax wasn't allowed on `export * from "module"` or `export * as ns from "module"` re-exports. TypeScript 5.0 adds support for both of these forms:
+当 TypeScript 3.8 引入仅类型导入（type-only imports）时，这种新语法不允许用于 `export * from "module"` 或 `export * as ns from "module"` 重新导出。TypeScript 5.0 增加了对这两种形式的支持：
 
 ```ts
 // models/vehicles.ts
@@ -918,13 +918,13 @@ function makeASpaceship() {
 }
 ```
 
-You can [read more about the implementation here](https://github.com/microsoft/TypeScript/pull/52217).
+你可以[在此阅读有关实现的更多信息](https://github.com/microsoft/TypeScript/pull/52217)。
 
-## `@satisfies` Support in JSDoc
+## JSDoc 支持 `@satisfies`
 
-TypeScript 4.9 introduced the `satisfies` operator.
-It made sure that the type of an expression was compatible, without affecting the type itself.
-For example, let's take the following code:
+TypeScript 4.9 引入了 `satisfies` 运算符。
+它确保表达式的类型兼容，同时不影响类型本身。
+例如，看以下代码：
 
 ```ts
 interface CompilerOptions {
@@ -950,8 +950,8 @@ let myConfigSettings = {
 } satisfies ConfigSettings
 ```
 
-Here, TypeScript knows that `myConfigSettings.extends` was declared with an array - because while `satisfies` validated the type of our object, it didn't bluntly change it to `CompilerOptions` and lose information.
-So if we want to map over `extends`, that's fine.
+在这里，TypeScript 知道 `myConfigSettings.extends` 声明为一个数组——因为虽然 `satisfies` 验证了对象的类型，但它并没有粗暴地将其转换为 `CompilerOptions` 并丢失信息。
+因此，如果我们想要对 `extends` 调用 map，完全没有问题：
 
 ```ts
 declare function resolveConfig(configPath: string): CompilerOptions
@@ -959,10 +959,10 @@ declare function resolveConfig(configPath: string): CompilerOptions
 let inheritedConfigs = myConfigSettings.extends.map(resolveConfig)
 ```
 
-This was helpful for TypeScript users, but plenty of people use TypeScript to type-check their JavaScript code using JSDoc annotations.
-That's why TypeScript 5.0 is supporting a new JSDoc tag called `@satisfies` that does exactly the same thing.
+这对 TypeScript 用户很有帮助，但许多人使用带有 JSDoc 注解的 TypeScript 来对 JavaScript 代码进行类型检查。
+这就是为什么 TypeScript 5.0 支持了一个名为 `@satisfies` 的新 JSDoc 标签，其功能完全相同。
 
-`/** @satisfies */` can catch type mismatches:
+`/** @satisfies */` 可以捕获类型不匹配：
 
 ```js
 // @ts-check
@@ -982,7 +982,7 @@ let myCompilerOptions = {
 }
 ```
 
-But it will preserve the original type of our expressions, allowing us to use our values more precisely later on in our code.
+但它会保留表达式的原始类型，使我们稍后在代码中可以更精确地使用这些值：
 
 ```js
 // @ts-check
@@ -1013,8 +1013,8 @@ let myConfigSettings = {
 let inheritedConfigs = myConfigSettings.extends.map(resolveConfig)
 ```
 
-`/** @satisfies */` can also be used inline on any parenthesized expression.
-We could have written `myCompilerOptions` like this:
+`/** @satisfies */` 也可以内联用于任何带括号的表达式中。
+我们可以将 `myConfigSettings` 写成这样：
 
 ```ts
 let myConfigSettings = /** @satisfies {ConfigSettings} */ {
@@ -1026,8 +1026,8 @@ let myConfigSettings = /** @satisfies {ConfigSettings} */ {
 }
 ```
 
-Why?
-Well, it usually makes more sense when you're deeper in some other code, like a function call.
+为什么这么做？
+好吧，当你处于更深层的代码中（例如函数调用内部）时，这通常更有意义：
 
 ```js
 compileCode(
@@ -1039,13 +1039,13 @@ compileCode(
 )
 ```
 
-[This feature](https://github.com/microsoft/TypeScript/pull/51753) was provided thanks to [Oleksandr Tarasiuk](https://github.com/a-tarasyuk)!
+感谢 [Oleksandr Tarasiuk](https://github.com/a-tarasyuk) 提供了[该特性](https://github.com/microsoft/TypeScript/pull/51753)！
 
-## `@overload` Support in JSDoc
+## JSDoc 支持 `@overload`
 
-In TypeScript, you can specify overloads for a function.
-Overloads give us a way to say that a function can be called with different arguments, and possibly return different results.
-They can restrict how callers can actually use our functions, and refine what results they'll get back.
+在 TypeScript 中，你可以为函数指定重载。
+重载使我们能够声明一个函数可以使用不同的参数调用，并可能返回不同的结果。
+它们可以限制调用方实际使用函数的方式，并细化返回的结果：
 
 ```ts
 // Our overloads:
@@ -1065,11 +1065,11 @@ function printValue(value: string | number, maximumFractionDigits?: number) {
 }
 ```
 
-Here, we've said that `printValue` takes either a `string` or a `number` as its first argument.
-If it takes a `number`, it can take a second argument to determine how many fractional digits we can print.
+在这里，我们声明了 `printValue` 的第一个参数既可以是 `string` 也可以是 `number`。
+如果传入的是 `number`，它还可以接收第二个参数来决定可以打印多少位小数。
 
-TypeScript 5.0 now allows JSDoc to declare overloads with a new `@overload` tag.
-Each JSDoc comment with an `@overload` tag is treated as a distinct overload for the following function declaration.
+TypeScript 5.0 现在允许 JSDoc 使用新的 `@overload` 标签声明重载。
+每个带有 `@overload` 标签的 JSDoc 注释都会被视为后续函数声明的独立重载：
 
 ```js
 // @ts-check
@@ -1103,7 +1103,7 @@ function printValue(value, maximumFractionDigits) {
 }
 ```
 
-Now regardless of whether we're writing in a TypeScript or JavaScript file, TypeScript can let us know if we've called our functions incorrectly.
+现在，无论我们是在 TypeScript 还是 JavaScript 文件中编写代码，如果我们调用函数的方式不正确，TypeScript 都能向我们报错：
 
 ```ts
 // all allowed
@@ -1114,11 +1114,11 @@ printValue(123.45, 2)
 printValue('hello!', 123) // error!
 ```
 
-This new tag [was implemented](https://github.com/microsoft/TypeScript/pull/51234) thanks to [Tomasz Lenarcik](https://github.com/apendua).
+感谢 [Tomasz Lenarcik](https://github.com/apendua)[实现](https://github.com/microsoft/TypeScript/pull/51234)了这一全新标签。
 
-## Passing Emit-Specific Flags Under `--build`
+## 在 `--build` 模式下传递特定于代码生成的标志
 
-TypeScript now allows the following flags to be passed under `--build` mode
+TypeScript 现在允许在 `--build` 模式下传递以下标志：
 
 - `--declaration`
 - `--emitDeclarationOnly`
@@ -1126,52 +1126,52 @@ TypeScript now allows the following flags to be passed under `--build` mode
 - `--sourceMap`
 - `--inlineSourceMap`
 
-This makes it way easier to customize certain parts of a build where you might have different development and production builds.
+这使得在开发构建与生产构建不同的场景下定制构建过程变得容易得多。
 
-For example, a development build of a library might not need to produce declaration files, but a production build would.
-A project can configure declaration emit to be off by default and simply be built with
+例如，库的开发构建可能不需要生成声明文件，但生产构建需要。
+项目可以配置默认关闭声明生成，只需使用以下命令进行构建：
 
 ```sh
 tsc --build -p ./my-project-dir
 ```
 
-Once you're done iterating in the inner loop, a "production" build can just pass the `--declaration` flag.
+当你在内循环中完成迭代后，“生产”构建只需传递 `--declaration` 标志即可：
 
 ```sh
 tsc --build -p ./my-project-dir --declaration
 ```
 
-[More information on this change is available here](https://github.com/microsoft/TypeScript/pull/51241).
+有关此变更的[更多信息请参见此处](https://github.com/microsoft/TypeScript/pull/51241)。
 
-## Case-Insensitive Import Sorting in Editors
+## 编辑器中不区分大小写的导入排序
 
-In editors like Visual Studio and VS Code, TypeScript powers the experience for organizing and sorting imports and exports.
-Often though, there can be different interpretations of when a list is "sorted".
+在 Visual Studio 和 VS Code 等编辑器中，TypeScript 为整理和排序导入/导出提供了支持。
+然而，对于列表何时算作“已排序”，通常会有不同的理解。
 
-For example, is the following import list sorted?
+例如，以下导入列表是否已排序？
 
 ```ts
 import { Toggle, freeze, toBoolean } from './utils'
 ```
 
-The answer might surprisingly be "it depends".
-If we _don't_ care about case-sensitivity, then this list is clearly not sorted.
-The letter `f` comes before both `t` and `T`.
+令人惊讶的是，答案可能是“视情况而定”。
+如果我们*不*关心大小写敏感性，那么这个列表显然没有排序。
+字母 `f` 排在 `t` 和 `T` 之前。
 
-But in most programming languages, sorting defaults to comparing the byte values of strings.
-The way JavaScript compares strings means that `"Toggle"` always comes before `"freeze"` because according to the [ASCII character encoding](https://en.wikipedia.org/wiki/ASCII), uppercase letters come before lowercase.
-So from that perspective, the import list is sorted.
+但在大多数编程语言中，排序默认是比较字符串的字节值。
+JavaScript 比较字符串的方式意味着 `"Toggle"` 始终排在 `"freeze"` 之前，因为根据 [ASCII 字符编码](https://en.wikipedia.org/wiki/ASCII)，大写字母排在小写字母之前。
+因此从这个角度来看，该导入列表是已排序的。
 
-TypeScript previously considered the import list to be sorted because it was doing a basic case-sensitive sort.
-This could be a point of frustration for developers who preferred a case-_insensitive_ ordering, or who used tools like ESLint which require case-insensitive ordering by default.
+TypeScript 此前认为该导入列表已排序，因为它执行的是基本的大小写敏感排序。
+对于偏好大小写*不敏感*排序、或者使用默认要求大小写不敏感排序的 ESLint 等工具的开发者来说，这可能会让人感到沮丧。
 
-TypeScript now detects case sensitivity by default.
-This means that TypeScript and tools like ESLint typically won't "fight" each other over how to best sort imports.
+TypeScript 现在默认自动检测大小写敏感性。
+这意味着 TypeScript 与 ESLint 等工具通常不会在如何最好地对导入进行排序上产生“冲突”。
 
-Our team has also been experimenting [with further sorting strategies which you can read about here](https://github.com/microsoft/TypeScript/pull/52115).
-These options may eventually be configurable by editors.
-For now, they are still unstable and experimental, and you can opt into them in VS Code today by using the `typescript.unstable` entry in your JSON options.
-Below are all of the options you can try out (set to their defaults):
+我们的团队还在试验[更多的排序策略，你可以在这里了解](https://github.com/microsoft/TypeScript/pull/52115)。
+这些选项最终可能会通过编辑器进行配置。
+目前它们仍处于不稳定和实验阶段，今天你已经可以在 VS Code 中通过 JSON 配置中的 `typescript.unstable` 入口来体验它们。
+以下是你可以尝试的所有选项（均设置为默认值）：
 
 ```jsonc
 {
@@ -1219,86 +1219,86 @@ Below are all of the options you can try out (set to their defaults):
 }
 ```
 
-You can read more details on [the original work for auto-detecting and specifying case-insensitivity](https://github.com/microsoft/TypeScript/pull/51733), followed by the [the broader set of options](https://github.com/microsoft/TypeScript/pull/52115).
+你可以阅读有关[自动检测并指定大小写敏感性的原始工作](https://github.com/microsoft/TypeScript/pull/51733)，以及随后的[更广泛选项集](https://github.com/microsoft/TypeScript/pull/52115)的更多详细信息。
 
-## Exhaustive `switch`/`case` Completions
+## 穷尽式 `switch`/`case` 补全
 
-When writing a `switch` statement, TypeScript now detects when the value being checked has a literal type.
-If so, it will offer a completion that scaffolds out each uncovered `case`.
+编写 `switch` 语句时，TypeScript 现在会检测被检查的值是否具有字面量类型。
+如果是，它将提供代码补全，自动为每个未覆盖的 `case` 生成脚手架代码。
 
-![A set of `case` statements generated through auto-completion based on literal types.](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2023/01/switchCaseSnippets-5-0_1.gif)
+![基于字面量类型通过自动补全生成的一组 `case` 语句。](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2023/01/switchCaseSnippets-5-0_1.gif)
 
-You can [see specifics of the implementation on GitHub](https://github.com/microsoft/TypeScript/pull/50996).
+你可以[在 GitHub 上查看实现的具体细节](https://github.com/microsoft/TypeScript/pull/50996)。
 
-## Speed, Memory, and Package Size Optimizations
+## 速度、内存和包体积优化
 
-TypeScript 5.0 contains lots of powerful changes across our code structure, our data structures, and algorithmic implementations.
-What these all mean is that your entire experience should be faster - not just running TypeScript, but even installing it.
+TypeScript 5.0 在代码结构、数据结构和算法实现方面进行了大量强有力的改进。
+这一切意味着你的整体体验都将更快——不仅运行 TypeScript 更快，连安装它都更快。
 
-Here are a few interesting wins in speed and size that we've been able to capture relative to TypeScript 4.9.
+以下是我们记录的相对于 TypeScript 4.9 在速度和体积方面的一些显著提升：
 
-| Scenario                            | Time or Size Relative to TS 4.9 |
-| ----------------------------------- | ------------------------------- |
-| material-ui build time              | 89%                             |
-| TypeScript Compiler startup time    | 89%                             |
-| Playwright build time               | 88%                             |
-| TypeScript Compiler self-build time | 87%                             |
-| Outlook Web build time              | 82%                             |
-| VS Code build time                  | 80%                             |
-| typescript npm Package Size         | 59%                             |
+| 场景                        | 相比 TS 4.9 的时间或体积 |
+| --------------------------- | ------------------------ |
+| material-ui 构建时间        | 89%                      |
+| TypeScript 编译器启动时间   | 89%                      |
+| Playwright 构建时间         | 88%                      |
+| TypeScript 编译器自构建时间 | 87%                      |
+| Outlook Web 构建时间        | 82%                      |
+| VS Code 构建时间            | 80%                      |
+| typescript npm 包体积       | 59%                      |
 
-![Chart of build/run times and package size of TypeScript 5.0 relative to TypeScript 4.9: material-ui docs build time: 89%; Playwright build time: 88%; tsc startup time: 87%; tsc build time: 87%; Outlook Web build time: 82%; VS Code build time: 80%; typescript Package Size: 59%](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2023/03/speed-and-size-5-0-rc.png?1)
+![TypeScript 5.0 相比 TypeScript 4.9 的构建/运行时间及包体积图表：material-ui 文档构建时间：89%；Playwright 构建时间：88%；tsc 启动时间：87%；tsc 构建时间：87%；Outlook Web 构建时间：82%；VS Code 构建时间：80%；typescript 包体积：59%](https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2023/03/speed-and-size-5-0-rc.png?1)
 
-How?
-There are a few notable improvements we'd like give more details on in the future.
-But we won't make you wait for that blog post.
+如何做到的？
+我们未来会详细介绍几项值得注意的改进。
+不过我们不会让你苦等那篇博客文章。
 
-First off, we recently migrated TypeScript from namespaces to modules, allowing us to leverage modern build tooling that can perform optimizations like scope hoisting.
-Using this tooling, revisiting our packaging strategy, and removing some deprecated code has shaved off about 26.4 MB from TypeScript 4.9's 63.8 MB package size.
-It also brought us a notable speed-up through direct function calls.
+首先，我们最近将 TypeScript 从命名空间（namespaces）迁移到了模块（modules），这使我们能够利用现代构建工具来执行诸如作用域提升（scope hoisting）等优化。
+借助这些工具、重新审视打包策略并移除部分已弃用的代码，我们将 TypeScript 4.9 的 63.8 MB 包体积缩减了约 26.4 MB。
+它还通过直接函数调用带来了显著的速度提升。
 
-TypeScript also added more uniformity to internal object types within the compiler, and also slimmed the data stored on some of these object types as well.
-This reduced polymorphic and megamorphic use sites, while offsetting most of the necessary memory consumption that was necessary for uniform shapes.
+TypeScript 还增强了编译器内部对象类型的一致性（uniformity），并精简了其中一些对象类型所存储的数据。
+这减少了多态（polymorphic）和超多态（megamorphic）调用点，同时抵消了统一对象形态所需的大部分必要内存消耗。
 
-We've also performed some caching when serializing information to strings.
-Type display, which can happen as part of error reporting, declaration emit, code completions, and more, can end up being fairly expensive.
-TypeScript now caches some commonly used machinery to reuse across these operations.
+我们在将信息序列化为字符串时还执行了一些缓存操作。
+类型展示（可能发生在错误报告、声明生成、代码补全等环节中）最终开销相当大。
+TypeScript 现在缓存了一些常用机制，以便在这些操作之间复用。
 
-Another notable change we made that improved our parser was leveraging `var` to occasionally side-step the cost of using `let` and `const` across closures.
-This improved some of our parsing performance.
+我们对解析器进行的另一项显著改进是利用 `var` 偶尔规避跨闭包使用 `let` 和 `const` 的开销。
+这提高了一部分解析性能。
 
-Overall, we expect most codebases should see speed improvements from TypeScript 5.0, and have consistently been able to reproduce wins between 10% to 20%.
-Of course this will depend on hardware and codebase characteristics, but we encourage you to try it out on your codebase today!
+总体而言，我们预期大多数代码库在 TypeScript 5.0 中都会看到速度提升，并且能够稳定复现 10% 到 20% 的性能提升。
+当然，具体情况取决于硬件和代码库特征，但我们鼓励你立即在自己的代码库中尝试！
 
-For more information, see some of our notable optimizations:
+有关更多信息，请参阅我们的一些显著优化：
 
-- [Migrate to Modules](https://github.com/microsoft/TypeScript/pull/51387)
-- [`Node` Monomorphization](https://github.com/microsoft/TypeScript/pull/51682)
-- [`Symbol` Monomorphization](https://github.com/microsoft/TypeScript/pull/51880)
-- [`Identifier` Size Reduction](https://github.com/microsoft/TypeScript/pull/52170)
-- [`Printer` Caching](https://github.com/microsoft/TypeScript/pull/52382)
-- [Limited Usage of `var`](https://github.com/microsoft/TypeScript/issues/52924)
+- [迁移到模块（Migrate to Modules）](https://github.com/microsoft/TypeScript/pull/51387)
+- [`Node` 单态化（`Node` Monomorphization）](https://github.com/microsoft/TypeScript/pull/51682)
+- [`Symbol` 单态化（`Symbol` Monomorphization）](https://github.com/microsoft/TypeScript/pull/51880)
+- [`Identifier` 体积缩减（`Identifier` Size Reduction）](https://github.com/microsoft/TypeScript/pull/52170)
+- [`Printer` 缓存机制（`Printer` Caching）](https://github.com/microsoft/TypeScript/pull/52382)
+- [有限使用 `var`（Limited Usage of `var`）](https://github.com/microsoft/TypeScript/issues/52924)
 
-## Breaking Changes and Deprecations
+## 破坏性变更与弃用项
 
-### Runtime Requirements
+### 运行时要求
 
-TypeScript now targets ECMAScript 2018.
-For Node users, that means a minimum version requirement of at least Node.js 10 and later.
+TypeScript 现在以 ECMAScript 2018 为目标。
+对于 Node 用户，这意味着最低版本要求至少为 Node.js 10 及更高版本。
 
-### `lib.d.ts` Changes
+### `lib.d.ts` 变更
 
-Changes to how types for the DOM are generated might have an impact on existing code.
-Notably, certain properties have been converted from `number` to numeric literal types, and properties and methods for cut, copy, and paste event handling have been moved across interfaces.
+DOM 类型的生成方式发生变更可能会对现有代码产生影响。
+值得注意的是，某些属性已从 `number` 转换为数值字面量类型，用于剪切、复制和粘贴事件处理的属性和方法已跨接口移动。
 
-### API Breaking Changes
+### API 破坏性变更
 
-In TypeScript 5.0, we moved to modules, removed some unnecessary interfaces, and made some correctness improvements.
-For more details on what's changed, see our [API Breaking Changes](https://github.com/microsoft/TypeScript/wiki/API-Breaking-Changes) page.
+在 TypeScript 5.0 中，我们迁移到了模块结构，移除了一些不必要的接口，并进行了一些正确性改进。
+有关变更的更多详细信息，请参阅我们的 [API 破坏性变更](https://github.com/microsoft/TypeScript/wiki/API-Breaking-Changes)页面。
 
-### Forbidden Implicit Coercions in Relational Operators
+### 关系运算符中禁止隐式类型转换
 
-Certain operations in TypeScript will already warn you if you write code which may cause an implicit string-to-number coercion:
+如果你编写可能导致隐式字符串到数字转换的代码，TypeScript 中的某些运算此前已经会发出警告：
 
 ```ts
 function func(ns: number | string) {
@@ -1306,7 +1306,7 @@ function func(ns: number | string) {
 }
 ```
 
-In 5.0, this will also be applied to the relational operators `>`, `<`, `<=`, and `>=`:
+在 5.0 中，这同样适用于关系运算符 `>`, `<`, `<=`, 和 `>=`：
 
 ```ts
 function func(ns: number | string) {
@@ -1314,7 +1314,7 @@ function func(ns: number | string) {
 }
 ```
 
-To allow this if desired, you can explicitly coerce the operand to a `number` using `+`:
+如有需要，可以使用 `+` 显式将操作数转换为 `number`：
 
 ```ts
 function func(ns: number | string) {
@@ -1322,15 +1322,15 @@ function func(ns: number | string) {
 }
 ```
 
-This [correctness improvement](https://github.com/microsoft/TypeScript/pull/52048) was contributed courtesy of [Mateusz Burzyński](https://github.com/Andarist).
+该[正确性改进](https://github.com/microsoft/TypeScript/pull/52048)由 [Mateusz Burzyński](https://github.com/Andarist) 贡献。
 
-### Enum Overhaul
+### 枚举机制重构
 
-TypeScript has had some long-standing oddities around `enum`s ever since its first release.
-In 5.0, we're cleaning up some of these problems, as well as reducing the concept count needed to understand the various kinds of `enum`s you can declare.
+自第一个版本发布以来，TypeScript 的 `enum` 就一直存在一些长期存在的怪异行为。
+在 5.0 中，我们清理了其中一些问题，并减少了理解可声明的各种 `enum` 所需的概念数量。
 
-There are two main new errors you might see as part of this.
-The first is that assigning an out-of-domain literal to an `enum` type will now error as one might expect:
+作为其中的一部分，你可能会看到两个主要的新错误。
+首先，将超出域范围的字面量赋值给 `enum` 类型现在会按预期报错：
 
 ```ts
 enum SomeEvenDigit {
@@ -1343,7 +1343,7 @@ enum SomeEvenDigit {
 let m: SomeEvenDigit = 1
 ```
 
-The other is that declaration of certain kinds of indirected mixed string/number `enum` forms would, incorrectly, create an all-number `enum`:
+另一个问题是，声明某些间接混合字符串/数字的 `enum` 形式会错误地创建全数字的 `enum`：
 
 ```ts
 enum Letters {
@@ -1358,12 +1358,12 @@ enum Numbers {
 const t: number = Numbers.two
 ```
 
-You can [see more details in relevant change](https://github.com/microsoft/TypeScript/pull/50528).
+你可以[查看相关变更了解更多详情](https://github.com/microsoft/TypeScript/pull/50528)。
 
-### More Accurate Type-Checking for Parameter Decorators in Constructors Under `--experimentalDecorators`
+### 在 `--experimentalDecorators` 下对构造函数参数装饰器进行更准确的类型检查
 
-TypeScript 5.0 makes type-checking more accurate for decorators under `--experimentalDecorators`.
-One place where this becomes apparent is when using a decorator on a constructor parameter.
+TypeScript 5.0 让 `--experimentalDecorators` 下的装饰器类型检查更加准确。
+一个显而易见的地方是在构造函数参数上使用装饰器时：
 
 ```ts
 export declare const inject: (
@@ -1377,15 +1377,15 @@ export class C {
 }
 ```
 
-This call will fail because `key` expects a `string | symbol`, but constructor parameters receive a key of `undefined`.
-The correct fix is to change the type of `key` within `inject`.
-A reasonable workaround if you're using a library that can't be upgraded is is to wrap `inject` in a more type-safe decorator function, and use a type-assertion on `key`.
+该调用将失败，因为 `key` 期望是 `string | symbol`，但构造函数参数接收到的 key 为 `undefined`。
+正确的修复方法是更改 `inject` 中 `key` 的类型。
+如果你使用的库无法升级，一个合理的变通方法是将 `inject` 包装在一个更类型安全的装饰器函数中，并在 `key` 上使用类型断言。
 
-For more details, [see this issue](https://github.com/microsoft/TypeScript/issues/52435).
+更多详情请[参见此 Issue](https://github.com/microsoft/TypeScript/issues/52435)。
 
-### Deprecations and Default Changes
+### 弃用项与默认值变更
 
-In TypeScript 5.0, we've deprecated the following settings and setting values:
+在 TypeScript 5.0 中，我们弃用了以下设置及设置值：
 
 - `--target: ES3`
 - `--out`
@@ -1397,18 +1397,18 @@ In TypeScript 5.0, we've deprecated the following settings and setting values:
 - `--charset`
 - `--importsNotUsedAsValues`
 - `--preserveValueImports`
-- `prepend` in project references
+- 项目引用中的 `prepend`（`prepend` in project references）
 
-These configurations will continue to be allowed until TypeScript 5.5, at which point they will be removed entirely, however, you will receive a warning if you are using these settings.
-In TypeScript 5.0, as well as future releases 5.1, 5.2, 5.3, and 5.4, you can specify `"ignoreDeprecations": "5.0"` to silence those warnings.
-We'll also shortly be releasing a 4.9 patch to allow specifying `ignoreDeprecations` to allow for smoother upgrades.
-Aside from deprecations, we've changed some settings to better improve cross-platform behavior in TypeScript.
+这些配置在 TypeScript 5.5 之前仍将允许使用，届时它们将被彻底移除；不过如果你正在使用这些设置，将会收到警告。
+在 TypeScript 5.0 以及未来的 5.1、5.2、5.3 和 5.4 版本中，你可以指定 `"ignoreDeprecations": "5.0"` 来消除这些警告。
+我们很快还会发布 4.9 补丁版本，以允许指定 `ignoreDeprecations`，从而实现更平滑的升级。
+除了弃用项之外，我们还更改了一些设置，以更好地改进 TypeScript 的跨平台行为。
 
-`--newLine`, which controls the line endings emitted in JavaScript files, used to be inferred based on the current operating system if not specified.
-We think builds should be as deterministic as possible, and Windows Notepad supports line-feed line endings now, so the new default setting is `LF`.
-The old OS-specific inference behavior is no longer available.
+`--newLine` 控制输出的 JavaScript 文件中的换行符，如果未指定，过去会根据当前操作系统进行推断。
+我们认为构建应该尽可能具有确定性，而且 Windows 记事本现在也支持换行符（LF），因此新的默认设置为 `LF`。
+原先针对特定操作系统的推断行为不再提供。
 
-`--forceConsistentCasingInFileNames`, which ensured that all references to the same file name in a project agreed in casing, now defaults to `true`.
-This can help catch differences issues with code written on case-insensitive file systems.
+`--forceConsistentCasingInFileNames` 确保项目中对同一文件名的所有引用在大小写上保持一致，现在的默认值为 `true`。
+这有助于发现在不区分大小写的文件系统上编写代码时的大小写差异问题。
 
-You can leave feedback and view more information on the [tracking issue for 5.0 deprecations](https://github.com/microsoft/TypeScript/issues/51909)
+你可以留下反馈，并在 [5.0 弃用项追踪 Issue](https://github.com/microsoft/TypeScript/issues/51909) 中查看更多信息。

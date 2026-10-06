@@ -1,22 +1,22 @@
 ---
-title: 'Global: Modifying Module'
+title: '全局修改模块 .d.ts'
 layout: docs
 permalink: /zh/docs/handbook/declaration-files/templates/global-modifying-module-d-ts.html
 ---
 
-## _Global-modifying Modules_
+## _全局修改模块_
 
-A _global-modifying module_ alters existing values in the global scope when they are imported.
-For example, there might exist a library which adds new members to `String.prototype` when imported.
-This pattern is somewhat dangerous due to the possibility of runtime conflicts,
-but we can still write a declaration file for it.
+_全局修改模块_在被导入时会修改全局作用域中的现有值。
+例如，可能存在一个库在导入时向 `String.prototype` 添加新成员。
+由于可能引发运行时冲突，这种模式存在一定风险，
+但我们仍然可以为其编写声明文件。
 
-## Identifying global-modifying modules
+## 识别全局修改模块
 
-Global-modifying modules are generally easy to identify from their documentation.
-In general, they're similar to global plugins, but need a `require` call to activate their effects.
+全局修改模块通常很容易从其文档中识别出来。
+通常来说，它们类似于全局插件，但需要通过 `require` 调用来使其生效。
 
-You might see documentation like this:
+你可能会看到类似这样的文档：
 
 ```js
 // 'require' call that doesn't use its return value
@@ -33,7 +33,7 @@ var y = [1, 2, 3]
 console.log(y.reverseAndSort())
 ```
 
-Here is an example
+下面是一个示例：
 
 ```ts
 // Type definitions for [~THE LIBRARY NAME~] [~OPTIONAL VERSION NUMBER~]

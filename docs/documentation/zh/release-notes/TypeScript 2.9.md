@@ -2,36 +2,36 @@
 title: TypeScript 2.9
 layout: docs
 permalink: /zh/docs/handbook/release-notes/typescript-2-9.html
-oneline: TypeScript 2.9 Release Notes
+oneline: TypeScript 2.9 发布说明
 ---
 
-## Support `number` and `symbol` named properties with `keyof` and mapped types
+## `keyof` 和映射类型支持 `number` 与 `symbol` 命名属性
 
-TypeScript 2.9 adds support for `number` and `symbol` named properties in index types and mapped types.
-Previously, the `keyof` operator and mapped types only supported `string` named properties.
+TypeScript 2.9 在索引类型和映射类型中新增了对 `number` 和 `symbol` 命名属性的支持。
+此前，`keyof` 运算符和映射类型仅支持 `string` 命名属性。
 
-Changes include:
+主要变更如下：
 
-- An index type `keyof T` for some type `T` is a subtype of `string | number | symbol`.
-- A mapped type `{ [P in K]: XXX }` permits any `K` assignable to `string | number | symbol`.
-- In a `for...in` statement for an object of a generic type `T`, the inferred type of the iteration variable was previously `keyof T` but is now `Extract<keyof T, string>`. (In other words, the subset of `keyof T` that includes only string-like values.)
+- 对于某个类型 `T`，其索引类型 `keyof T` 现在是 `string | number | symbol` 的子类型。
+- 映射类型 `{ [P in K]: XXX }` 允许 `K` 为任何可赋值给 `string | number | symbol` 的类型。
+- 在对泛型类型 `T` 的对象使用 `for...in` 语句时，迭代变量的推断类型此前为 `keyof T`，现在变更为 `Extract<keyof T, string>`（即 `keyof T` 中仅包含字符串类型的子集）。
 
-Given an object type `X`, `keyof X` is resolved as follows:
+对于对象类型 `X`，`keyof X` 的解析规则如下：
 
-- If `X` contains a string index signature, `keyof X` is a union of `string`, `number`, and the literal types representing symbol-like properties, otherwise
-- If `X` contains a numeric index signature, `keyof X` is a union of `number` and the literal types representing string-like and symbol-like properties, otherwise
-- `keyof X` is a union of the literal types representing string-like, number-like, and symbol-like properties.
+- 若 `X` 包含字符串索引签名，则 `keyof X` 为 `string`、`number` 以及所有 symbol-like 属性字面量类型的联合类型；
+- 若 `X` 包含数字索引签名，则 `keyof X` 为 `number` 以及所有 string-like 和 symbol-like 属性字面量类型的联合类型；
+- 否则，`keyof X` 为所有 string-like、number-like 和 symbol-like 属性字面量类型的联合类型。
 
-Where:
+其中：
 
-- String-like properties of an object type are those declared using an identifier, a string literal, or a computed property name of a string literal type.
-- Number-like properties of an object type are those declared using a numeric literal or computed property name of a numeric literal type.
-- Symbol-like properties of an object type are those declared using a computed property name of a unique symbol type.
+- 对象类型的 string-like 属性，是指通过标识符、字符串字面量或字符串字面量类型的计算属性名声明的属性。
+- 对象类型的 number-like 属性，是指通过数字字面量或数字字面量类型的计算属性名声明的属性。
+- 对象类型的 symbol-like 属性，是指通过唯一 symbol 类型的计算属性名声明的属性。
 
-In a mapped type `{ [P in K]: XXX }`, each string literal type in `K` introduces a property with a string name, each numeric literal type in `K` introduces a property with a numeric name, and each unique symbol type in `K` introduces a property with a unique symbol name.
-Furthermore, if `K` includes type `string`, a string index signature is introduced, and if `K` includes type `number`, a numeric index signature is introduced.
+在映射类型 `{ [P in K]: XXX }` 中，`K` 里的每个字符串字面量类型会引入一个字符串名称属性，每个数字字面量类型会引入一个数字名称属性，每个唯一 symbol 类型会引入一个唯一 symbol 名称属性。
+此外，若 `K` 包含 `string` 类型，则会引入字符串索引签名；若 `K` 包含 `number` 类型，则会引入数字索引签名。
 
-##### Example
+##### 示例
 
 ```ts
 const c = 'c'
@@ -65,7 +65,7 @@ type K3 = Extract<keyof Foo, number> // 5 | 10 | E1.A
 type K4 = Extract<keyof Foo, symbol> // typeof e
 ```
 
-Since `keyof` now reflects the presence of a numeric index signature by including type `number` in the key type, mapped types such as `Partial<T>` and `Readonly<T>` work correctly when applied to object types with numeric index signatures:
+由于 `keyof` 现在通过在键类型中包含 `number` 来反映数字索引签名的存在，`Partial<T>` 和 `Readonly<T>` 等映射类型在应用于带有数字索引签名的对象类型时可以正确工作：
 
 ```ts
 type Arrayish<T> = {
@@ -80,7 +80,7 @@ let n = map.length
 let x = map[123] // Previously of type any (or an error with --noImplicitAny)
 ```
 
-Furthermore, with the `keyof` operator's support for `number` and `symbol` named keys, it is now possible to abstract over access to properties of objects that are indexed by numeric literals (such as numeric enum types) and unique symbols.
+此外，随着 `keyof` 运算符支持 `number` 和 `symbol` 命名键，现在可以对通过数字字面量（如数字枚举类型）和唯一 symbol 索引的对象属性访问进行抽象。
 
 ```ts
 const enum Enum {
@@ -116,10 +116,10 @@ let x1 = getValue(enumToStringMap, Enum.C) // Returns "Name C"
 let x2 = getValue(symbolToNumberMap, sym3) // Returns 3
 ```
 
-This is a breaking change; previously, the `keyof` operator and mapped types only supported `string` named properties.
-Code that assumed values typed with `keyof T` were always `string`s, will now be flagged as error.
+这是一项破坏性变更：此前，`keyof` 运算符和映射类型仅支持 `string` 命名属性。
+原先假设 `keyof T` 的值始终为 `string` 的代码，现在将被标记为错误。
 
-##### Example
+##### 示例
 
 ```ts
 function useKey<T, K extends keyof T>(o: T, k: K) {
@@ -127,9 +127,9 @@ function useKey<T, K extends keyof T>(o: T, k: K) {
 }
 ```
 
-#### Recommendations
+#### 建议
 
-- If your functions are only able to handle string named property keys, use `Extract<keyof T, string>` in the declaration:
+- 如果函数只能处理字符串命名的属性键，请在声明中使用 `Extract<keyof T, string>`：
 
   ```ts
   function useKey<T, K extends Extract<keyof T, string>>(o: T, k: K) {
@@ -137,7 +137,7 @@ function useKey<T, K extends keyof T>(o: T, k: K) {
   }
   ```
 
-- If your functions are open to handling all property keys, then the changes should be done down-stream:
+- 如果函数需要处理所有类型的属性键，则应在下游进行相应修改：
 
   ```ts
   function useKey<T, K extends keyof T>(o: T, k: K) {
@@ -145,13 +145,13 @@ function useKey<T, K extends keyof T>(o: T, k: K) {
   }
   ```
 
-- Otherwise use [`keyofStringsOnly`](/tsconfig#keyofStringsOnly) compiler option to disable the new behavior.
+- 或者使用 [`keyofStringsOnly`](/tsconfig#keyofStringsOnly) 编译选项来禁用新行为。
 
-## Generic type arguments in JSX elements
+## JSX 元素中的泛型类型参数
 
-JSX elements now allow passing type arguments to generic components.
+JSX 元素现在支持向泛型组件传递类型参数。
 
-##### Example
+##### 示例
 
 ```ts
 class GenericComponent<P> extends React.Component<P> {
@@ -165,14 +165,14 @@ const x = <GenericComponent<Props> a={10} b="hi" />; // OK
 const y = <GenericComponent<Props> a={10} b={20} />; // Error
 ```
 
-## Generic type arguments in generic tagged templates
+## 泛型标签模板中的泛型类型参数
 
-Tagged templates are a form of invocation introduced in ECMAScript 2015.
-Like call expressions, generic functions may be used in a tagged template and TypeScript will infer the type arguments utilized.
+标签模板是 ECMAScript 2015 引入的一种调用形式。
+与普通的函数调用类似，泛型函数可以在标签模板中使用，TypeScript 会推断其类型参数。
 
-TypeScript 2.9 allows passing generic type arguments to tagged template strings.
+TypeScript 2.9 允许向标签模板字符串传递泛型类型参数。
 
-##### Example
+##### 示例
 
 ```ts
 declare function styledComponent<Props>(
@@ -196,15 +196,15 @@ declare function tag<T>(strs: TemplateStringsArray, ...args: T[]): T
 let a = tag<string | number>`${100} ${'hello'}`
 ```
 
-## `import` types
+## `import` 类型
 
-Modules can import types declared in other modules. But non-module global scripts cannot access types declared in modules. Enter `import` types.
+模块可以导入其他模块中声明的类型，但非模块的全局脚本无法访问模块中声明的类型。`import` 类型正是为此而生。
 
-Using `import("mod")` in a type annotation allows for reaching in a module and accessing its exported declaration without importing it.
+在类型注解中使用 `import("mod")`，可以在不导入模块的情况下访问该模块导出的声明。
 
-##### Example
+##### 示例
 
-Given a declaration of a class `Pet` in a module file:
+给定模块文件中 `Pet` 类的声明：
 
 ```ts
 // module.d.ts
@@ -214,7 +214,7 @@ export declare class Pet {
 }
 ```
 
-Can be used in a non-module file `global-script.ts`:
+可以在非模块文件 `global-script.ts` 中使用：
 
 ```ts
 // global-script.ts
@@ -224,7 +224,7 @@ function adopt(p: import('./module').Pet) {
 }
 ```
 
-This also works in JSDoc comments to refer to types from other modules in `.js`:
+在 JSDoc 注释中同样适用，可在 `.js` 文件中引用其他模块的类型：
 
 ```js
 // a.js
@@ -237,11 +237,11 @@ function walk(p) {
 }
 ```
 
-## Relaxing declaration emit visibility rules
+## 放宽声明文件生成的可见性规则
 
-With `import` types available, many of the visibility errors reported during declaration file generation can be handled by the compiler without the need to change the input.
+有了 `import` 类型后，编译器可以在不修改源代码的情况下，自动处理声明文件生成期间报告的许多可见性错误。
 
-For instance:
+例如：
 
 ```ts
 import { createHash } from 'crypto'
@@ -251,23 +251,23 @@ export const hash = createHash('sha256')
 // Exported variable 'hash' has or is using name 'Hash' from external module "crypto" but cannot be named.
 ```
 
-With TypeScript 2.9, no errors are reported, and now the generated file looks like:
+在 TypeScript 2.9 中，上述错误不再出现，生成的文件如下：
 
 ```ts
 export declare const hash: import('crypto').Hash
 ```
 
-## Support for `import.meta`
+## 支持 `import.meta`
 
-TypeScript 2.9 introduces support for `import.meta`, a new meta-property as described by the current [TC39 proposal](https://github.com/tc39/proposal-import-meta).
+TypeScript 2.9 引入了对 `import.meta` 的支持。这是一个新的元属性，由当前的 [TC39 提案](https://github.com/tc39/proposal-import-meta) 定义。
 
-The type of `import.meta` is the global `ImportMeta` type which is defined in `lib.es5.d.ts`.
-This interface is extremely limited.
-Adding well-known properties for Node or browsers requires interface merging and possibly a global augmentation depending on the context.
+`import.meta` 的类型是全局的 `ImportMeta` 类型，定义于 `lib.es5.d.ts` 中。
+该接口目前功能极为有限。
+如需为 Node 或浏览器添加常用属性，需要通过接口合并，并视情况进行全局扩充。
 
-##### Example
+##### 示例
 
-Assuming that `__dirname` is always available on `import.meta`, the declaration would be done through reopening `ImportMeta` interface:
+假设 `import.meta` 上始终存在 `__dirname`，可通过重新打开 `ImportMeta` 接口来声明：
 
 ```ts
 // node.d.ts
@@ -276,19 +276,19 @@ interface ImportMeta {
 }
 ```
 
-And usage would be:
+使用方式如下：
 
 ```ts
 import.meta.__dirname // Has type 'string'
 ```
 
-`import.meta` is only allowed when targeting `ESNext` modules and ECMAScript targets.
+`import.meta` 仅在目标为 `ESNext` 模块和 ECMAScript 目标时才被允许使用。
 
-## New `--resolveJsonModule`
+## 新增 `--resolveJsonModule`
 
-Often in Node.js applications a `.json` is needed. With TypeScript 2.9, [`resolveJsonModule`](/tsconfig#resolveJsonModule) allows for importing, extracting types from and generating `.json` files.
+在 Node.js 应用中，经常需要使用 `.json` 文件。TypeScript 2.9 新增了 [`resolveJsonModule`](/tsconfig#resolveJsonModule) 选项，支持导入 `.json` 文件、从中提取类型并生成相应的声明文件。
 
-##### Example
+##### 示例
 
 ```ts
 // settings.json
@@ -321,16 +321,16 @@ settings.dry === 2 // Error: Operator '===' cannot be applied boolean and number
 }
 ```
 
-## `--pretty` output by default
+## `--pretty` 输出默认启用
 
-Starting TypeScript 2.9 errors are displayed under [`pretty`](/tsconfig#pretty) by default if the output device is applicable for colorful text.
-TypeScript will check if the output stream has [`isTty`](https://nodejs.org/api/tty.html) property set.
+从 TypeScript 2.9 开始，若输出设备支持彩色文本，错误信息将默认以 [`pretty`](/tsconfig#pretty) 模式显示。
+TypeScript 会检测输出流是否设置了 [`isTty`](https://nodejs.org/api/tty.html) 属性。
 
-Use `--pretty false` on the command line or set `"pretty": false` in your `tsconfig.json` to disable [`pretty`](/tsconfig#pretty) output.
+在命令行中使用 `--pretty false`，或在 `tsconfig.json` 中设置 `"pretty": false`，可以关闭 [`pretty`](/tsconfig#pretty) 输出。
 
-## New `--declarationMap`
+## 新增 `--declarationMap`
 
-Enabling [`declarationMap`](/tsconfig#declarationMap) alongside [`declaration`](/tsconfig#declaration) causes the compiler to emit `.d.ts.map` files alongside the output `.d.ts` files.
-Language Services can also now understand these map files, and uses them to map declaration-file based definition locations to their original source, when available.
+同时启用 [`declarationMap`](/tsconfig#declarationMap) 和 [`declaration`](/tsconfig#declaration) 后，编译器会在输出 `.d.ts` 文件的同时生成对应的 `.d.ts.map` 文件。
+语言服务现在也能识别这些 map 文件，并在可用时将基于声明文件的定义位置映射回原始源码。
 
-In other words, hitting go-to-definition on a declaration from a `.d.ts` file generated with [`declarationMap`](/tsconfig#declarationMap) will take you to the source file (`.ts`) location where that declaration was defined, and not to the `.d.ts`.
+换言之，对通过 [`declarationMap`](/tsconfig#declarationMap) 生成的 `.d.ts` 文件中的声明执行"转到定义"操作时，将跳转到该声明所在的源文件（`.ts`）位置，而非 `.d.ts` 文件。

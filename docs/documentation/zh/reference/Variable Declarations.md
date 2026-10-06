@@ -1,33 +1,33 @@
 ---
-title: Variable Declaration
+title: 变量声明
 layout: docs
 permalink: /zh/docs/handbook/variable-declarations.html
-oneline: How TypeScript handles variable declaration
+oneline: TypeScript 处理变量声明的方式
 translatable: true
 ---
 
-`let` and `const` are two relatively new concepts for variable declarations in JavaScript.
-[As we mentioned earlier](/docs/handbook/basic-types.html#a-note-about-let), `let` is similar to `var` in some respects, but allows users to avoid some of the common "gotchas" that users run into in JavaScript.
+在 JavaScript 中，`let` 和 `const` 是两个相对较新的变量声明概念。
+[正如我们之前提到的](/docs/handbook/basic-types.html#a-note-about-let)，`let` 在某些方面与 `var` 类似，但它能帮助开发者避开在 JavaScript 中经常遇到的一些常见“陷阱”（gotchas）。
 
-`const` is an augmentation of `let` in that it prevents re-assignment to a variable.
+`const` 则是对 `let` 的增强，它禁止对变量进行重新赋值。
 
-With TypeScript being an extension of JavaScript, the language naturally supports `let` and `const`.
-Here we'll elaborate more on these new declarations and why they're preferable to `var`.
+TypeScript 作为 JavaScript 的超集，自然原生支持 `let` 和 `const`。
+本节我们将详细阐述这些新的声明方式，以及为什么它们比 `var` 更值得推荐。
 
-If you've used JavaScript offhandedly, the next section might be a good way to refresh your memory.
-If you're intimately familiar with all the quirks of `var` declarations in JavaScript, you might find it easier to skip ahead.
+如果你只是随手用过 JavaScript，下一节可以帮你重温相关知识。
+如果你已经对 JavaScript 中 `var` 声明的所有怪异行为（quirks）了如指掌，也可以直接跳过该部分。
 
-## `var` declarations
+## `var` 声明
 
-Declaring a variable in JavaScript has always traditionally been done with the `var` keyword.
+传统上，在 JavaScript 中声明变量一直都是使用 `var` 关键字。
 
 ```ts
 var a = 10
 ```
 
-As you might've figured out, we just declared a variable named `a` with the value `10`.
+显然，我们刚刚声明了一个名为 `a` 且值为 `10` 的变量。
 
-We can also declare a variable inside of a function:
+我们也可以在函数内部声明变量：
 
 ```ts
 function f() {
@@ -37,7 +37,7 @@ function f() {
 }
 ```
 
-and we can also access those same variables within other functions:
+并且还可以在其他函数中访问这些相同的变量：
 
 ```ts
 function f() {
@@ -52,9 +52,9 @@ var g = f()
 g() // returns '11'
 ```
 
-In this above example, `g` captured the variable `a` declared in `f`.
-At any point that `g` gets called, the value of `a` will be tied to the value of `a` in `f`.
-Even if `g` is called once `f` is done running, it will be able to access and modify `a`.
+在上面的例子中，`g` 捕获了在 `f` 中声明的变量 `a`。
+无论在何时调用 `g`，`a` 的值都将与 `f` 中的 `a` 关联在一起。
+即使 `g` 在 `f` 执行完毕后才被调用，它依然能够访问并修改 `a`。
 
 ```ts
 function f() {
@@ -74,10 +74,10 @@ function f() {
 f() // returns '2'
 ```
 
-### Scoping rules
+### 作用域规则
 
-`var` declarations have some odd scoping rules for those used to other languages.
-Take the following example:
+对于习惯了其他语言的人来说，`var` 声明的作用域规则有些古怪。
+来看下面的例子：
 
 ```ts
 function f(shouldInitialize: boolean) {
@@ -92,14 +92,14 @@ f(true) // returns '10'
 f(false) // returns 'undefined'
 ```
 
-Some readers might do a double-take at this example.
-The variable `x` was declared _within the `if` block_, and yet we were able to access it from outside that block.
-That's because `var` declarations are accessible anywhere within their containing function, module, namespace, or global scope - all which we'll go over later on - regardless of the containing block.
-Some people call this _`var`-scoping_ or _function-scoping_.
-Parameters are also function scoped.
+有些读者看到这个例子可能会感到诧异。
+变量 `x` 是在 *`if` 块内部*声明的，但我们却可以在该代码块外部访问它。
+这是因为 `var` 声明在其包含它的函数、模块、命名空间或全局作用域中的任何位置都是可访问的（这些概念我们稍后都会讲到），不论它被包含在哪个代码块中。
+有人称之为 *`var` 作用域*或*函数作用域*（function-scoping）。
+函数参数同样也是函数作用域的。
 
-These scoping rules can cause several types of mistakes.
-One problem they exacerbate is the fact that it is not an error to declare the same variable multiple times:
+这些作用域规则可能会引发好几类错误。
+其中尤为严重的一个问题是：多次声明同一个变量并不会报错：
 
 ```ts
 function sumMatrix(matrix: number[][]) {
@@ -115,12 +115,12 @@ function sumMatrix(matrix: number[][]) {
 }
 ```
 
-Maybe it was easy to spot out for some experienced JavaScript developers, but the inner `for`-loop will accidentally overwrite the variable `i` because `i` refers to the same function-scoped variable.
-As experienced developers know by now, similar sorts of bugs slip through code reviews and can be an endless source of frustration.
+也许经验丰富的 JavaScript 开发者很容易看出来，但内层的 `for` 循环会意外覆盖变量 `i`，因为两个 `i` 引用的都是同一个函数作用域变量。
+经验丰富的开发者都知道，类似的 bug 很容易逃过代码审查，带来无尽的烦恼。
 
-### Variable capturing quirks
+### 变量捕获的怪异行为
 
-Take a quick second to guess what the output of the following snippet is:
+花几秒钟猜猜下面代码片段的输出是什么：
 
 ```ts
 for (var i = 0; i < 10; i++) {
@@ -130,9 +130,9 @@ for (var i = 0; i < 10; i++) {
 }
 ```
 
-For those unfamiliar, `setTimeout` will try to execute a function after a certain number of milliseconds (though waiting for anything else to stop running).
+如果你对此还不熟悉，`setTimeout` 会在指定的毫秒数后尝试执行一个函数（不过需要等待当前正在运行的其他代码结束）。
 
-Ready? Take a look:
+准备好了吗？来看结果：
 
 ```
 10
@@ -147,8 +147,8 @@ Ready? Take a look:
 10
 ```
 
-Many JavaScript developers are intimately familiar with this behavior, but if you're surprised, you're certainly not alone.
-Most people expect the output to be
+很多 JavaScript 开发者对这种行为非常熟悉，但如果你感到意外，也绝不是只有你一个人这样想。
+大多数人预期的输出通常是：
 
 ```
 0
@@ -163,15 +163,15 @@ Most people expect the output to be
 9
 ```
 
-Remember what we mentioned earlier about variable capturing?
-Every function expression we pass to `setTimeout` actually refers to the same `i` from the same scope.
+还记得我们前面提到的变量捕获吗？
+我们传递给 `setTimeout` 的每个函数表达式，实际上引用的都是来自同一个作用域中的同一个 `i`。
 
-Let's take a minute to consider what that means.
-`setTimeout` will run a function after some number of milliseconds, _but only_ after the `for` loop has stopped executing;
-By the time the `for` loop has stopped executing, the value of `i` is `10`.
-So each time the given function gets called, it will print out `10`!
+让我们花点时间思考一下这意味着什么。
+`setTimeout` 会在若干毫秒后运行函数，_但前提是_ `for` 循环已经停止执行；
+当 `for` 循环执行结束时，`i` 的值已经是 `10` 了。
+因此，每次调用传入的函数时，打印出的都是 `10`！
 
-A common work around is to use an IIFE - an Immediately Invoked Function Expression - to capture `i` at each iteration:
+一种常见的变通解决方案是使用 IIFE（立即调用函数表达式，Immediately Invoked Function Expression）在每次迭代时捕获 `i`：
 
 ```ts
 for (var i = 0; i < 10; i++) {
@@ -185,24 +185,24 @@ for (var i = 0; i < 10; i++) {
 }
 ```
 
-This odd-looking pattern is actually pretty common.
-The `i` in the parameter list actually shadows the `i` declared in the `for` loop, but since we named them the same, we didn't have to modify the loop body too much.
+这种看起来有些奇特的写法其实相当常见。
+参数列表中的 `i` 实际上遮蔽（shadow）了 `for` 循环中声明的 `i`，但因为我们将它们命名相同，所以不需要对循环体做太多修改。
 
-## `let` declarations
+## `let` 声明
 
-By now you've figured out that `var` has some problems, which is precisely why `let` statements were introduced.
-Apart from the keyword used, `let` statements are written the same way `var` statements are.
+现在你已经了解到 `var` 存在的一些问题，而这正是引入 `let` 语句的原因。
+除了使用的关键字不同外，`let` 语句的书写方式与 `var` 语句完全相同。
 
 ```ts
 let hello = 'Hello!'
 ```
 
-The key difference is not in the syntax, but in the semantics, which we'll now dive into.
+关键的区别不在于语法，而在于语义，我们现在就来深入探讨这一点。
 
-### Block-scoping
+### 块级作用域
 
-When a variable is declared using `let`, it uses what some call _lexical-scoping_ or _block-scoping_.
-Unlike variables declared with `var` whose scopes leak out to their containing function, block-scoped variables are not visible outside of their nearest containing block or `for`-loop.
+当使用 `let` 声明变量时，它使用的是人们常说的*词法作用域*（lexical-scoping）或*块级作用域*（block-scoping）。
+与使用 `var` 声明的变量（其作用域会泄漏到外层函数）不同，块级作用域变量在包含它们的最近代码块或 `for` 循环之外是不可见的。
 
 ```ts
 function f(input: boolean) {
@@ -219,10 +219,10 @@ function f(input: boolean) {
 }
 ```
 
-Here, we have two local variables `a` and `b`.
-`a`'s scope is limited to the body of `f` while `b`'s scope is limited to the containing `if` statement's block.
+在这里，我们有两个局部变量 `a` 和 `b`。
+`a` 的作用域限定在 `f` 的函数体内，而 `b` 的作用域则限定在包含它的 `if` 语句块中。
 
-Variables declared in a `catch` clause also have similar scoping rules.
+在 `catch` 子句中声明的变量也具有类似的作用域规则。
 
 ```ts
 try {
@@ -235,18 +235,18 @@ try {
 console.log(e)
 ```
 
-Another property of block-scoped variables is that they can't be read or written to before they're actually declared.
-While these variables are "present" throughout their scope, all points up until their declaration are part of their _temporal dead zone_.
-This is just a sophisticated way of saying you can't access them before the `let` statement, and luckily TypeScript will let you know that.
+块级作用域变量的另一个特性是：在它们被正式声明之前，不能对其进行读写操作。
+尽管这些变量在其整个作用域内都是“存在”的，但在其实际声明之前的所有位置都属于它们的*暂存死区*（temporal dead zone，TDZ）。
+这只是一种专业说法，用来表明你不能在 `let` 语句之前访问它们；幸运的是，TypeScript 会明确提示这一点。
 
 ```ts
 a++ // illegal to use 'a' before it's declared;
 let a
 ```
 
-Something to note is that you can still _capture_ a block-scoped variable before it's declared.
-The only catch is that it's illegal to call that function before the declaration.
-If targeting ES2015, a modern runtime will throw an error; however, right now TypeScript is permissive and won't report this as an error.
+需要注意的是，你仍然可以在块级作用域变量声明之前*捕获*它。
+唯一的限制是不能在声明之前调用那个函数。
+如果编译目标是 ES2015，现代运行时环境将会抛出错误；不过目前 TypeScript 比较宽容，不会将其报告为错误。
 
 ```ts
 function foo() {
@@ -261,11 +261,11 @@ foo()
 let a
 ```
 
-For more information on temporal dead zones, see relevant content on the [Mozilla Developer Network](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/let#Temporal_dead_zone_and_errors_with_let).
+有关暂存死区的更多信息，请参阅 [Mozilla Developer Network](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/let#Temporal_dead_zone_and_errors_with_let) 上的相关内容。
 
-### Re-declarations and Shadowing
+### 重复声明与变量遮蔽
 
-With `var` declarations, we mentioned that it didn't matter how many times you declared your variables; you just got one.
+对于 `var` 声明，我们之前提到过，声明变量多少次都无所谓；最终都只会得到一个变量。
 
 ```ts
 function f(x) {
@@ -278,16 +278,16 @@ function f(x) {
 }
 ```
 
-In the above example, all declarations of `x` actually refer to the _same_ `x`, and this is perfectly valid.
-This often ends up being a source of bugs.
-Thankfully, `let` declarations are not as forgiving.
+在上面的示例中，对 `x` 的所有声明实际上都指向*同一个* `x`，这在语法上是完全合法的。
+但这种行为往往会成为 bug 的温床。
+值得庆幸的是，`let` 声明就不那么宽容了。
 
 ```ts
 let x = 10
 let x = 20 // error: can't re-declare 'x' in the same scope
 ```
 
-The variables don't necessarily need to both be block-scoped for TypeScript to tell us that there's a problem.
+两个变量并不一定都需要是块级作用域变量，TypeScript 才会报错。
 
 ```ts
 function f(x) {
@@ -300,8 +300,8 @@ function g() {
 }
 ```
 
-That's not to say that a block-scoped variable can never be declared with a function-scoped variable.
-The block-scoped variable just needs to be declared within a distinctly different block.
+这并不是说块级作用域变量永远不能与函数作用域变量同名。
+块级作用域变量只需要声明在截然不同的代码块中即可。
 
 ```ts
 function f(condition, x) {
@@ -317,9 +317,9 @@ f(false, 0) // returns '0'
 f(true, 0) // returns '100'
 ```
 
-The act of introducing a new name in a more nested scope is called _shadowing_.
-It is a bit of a double-edged sword in that it can introduce certain bugs on its own in the event of accidental shadowing, while also preventing certain bugs.
-For instance, imagine we had written our earlier `sumMatrix` function using `let` variables.
+在更深层嵌套的作用域中引入新名称的行为称为*变量遮蔽*（shadowing）。
+这是一把双刃剑：如果发生意外遮蔽，可能会引发某些 bug；但与此同时，它也能防止某些 bug 的发生。
+例如，设想一下我们用 `let` 变量重写之前的 `sumMatrix` 函数。
 
 ```ts
 function sumMatrix(matrix: number[][]) {
@@ -335,16 +335,16 @@ function sumMatrix(matrix: number[][]) {
 }
 ```
 
-This version of the loop will actually perform the summation correctly because the inner loop's `i` shadows `i` from the outer loop.
+这个版本的循环实际上能正确计算求和，因为内层循环的 `i` 遮蔽了外层循环的 `i`。
 
-Shadowing should _usually_ be avoided in the interest of writing clearer code.
-While there are some scenarios where it may be fitting to take advantage of it, you should use your best judgement.
+为了编写更清晰的代码，*通常*应该避免变量遮蔽。
+虽然在某些场景下利用它可以带来便利，但你应当根据实际情况权衡决断。
 
-### Block-scoped variable capturing
+### 块级作用域变量捕获
 
-When we first touched on the idea of variable capturing with `var` declaration, we briefly went into how variables act once captured.
-To give a better intuition of this, each time a scope is run, it creates an "environment" of variables.
-That environment and its captured variables can exist even after everything within its scope has finished executing.
+当我们最初探讨 `var` 声明中的变量捕获概念时，曾简要说明了变量被捕获后的行为表现。
+为了建立更直观的理解：每次执行一个作用域时，都会创建一个变量“环境”（environment）。
+即使该作用域内的所有内容都已执行完毕，该环境及其捕获的变量依然可以继续存在。
 
 ```ts
 function theCityThatAlwaysSleeps() {
@@ -361,15 +361,15 @@ function theCityThatAlwaysSleeps() {
 }
 ```
 
-Because we've captured `city` from within its environment, we're still able to access it despite the fact that the `if` block finished executing.
+因为我们从其环境内部捕获了 `city`，所以尽管 `if` 块已经执行完毕，我们依然能够访问它。
 
-Recall that with our earlier `setTimeout` example, we ended up needing to use an IIFE to capture the state of a variable for every iteration of the `for` loop.
-In effect, what we were doing was creating a new variable environment for our captured variables.
-That was a bit of a pain, but luckily, you'll never have to do that again in TypeScript.
+回想一下之前的 `setTimeout` 示例，我们最终不得不使用 IIFE 在 `for` 循环的每次迭代中捕获变量的状态。
+实际上，我们当时做的是为被捕获的变量创建了一个新的变量环境。
+那确实有点麻烦，不过幸运的是，在 TypeScript 中你再也不需要这样做了。
 
-`let` declarations have drastically different behavior when declared as part of a loop.
-Rather than just introducing a new environment to the loop itself, these declarations sort of create a new scope _per iteration_.
-Since this is what we were doing anyway with our IIFE, we can change our old `setTimeout` example to just use a `let` declaration.
+当 `let` 声明作为循环的一部分时，其行为有着截然不同的表现。
+这些声明不仅仅是为循环本身引入一个新的环境，而是在*每次迭代*时都会创建一个新的作用域。
+既然这正是我们之前通过 IIFE 所做的事，那么我们只需将旧的 `setTimeout` 示例改成使用 `let` 声明即可。
 
 ```ts
 for (let i = 0; i < 10; i++) {
@@ -379,7 +379,7 @@ for (let i = 0; i < 10; i++) {
 }
 ```
 
-and as expected, this will print out
+正如预期的那样，这段代码将打印出：
 
 ```
 0
@@ -394,18 +394,18 @@ and as expected, this will print out
 9
 ```
 
-## `const` declarations
+## `const` 声明
 
-`const` declarations are another way of declaring variables.
+`const` 声明是另一种声明变量的方式。
 
 ```ts
 const numLivesForCat = 9
 ```
 
-They are like `let` declarations but, as their name implies, their value cannot be changed once they are bound.
-In other words, they have the same scoping rules as `let`, but you can't re-assign to them.
+它们与 `let` 声明类似，但顾名思义，它们的值一旦绑定就不能被修改。
+换句话说，它们拥有与 `let` 相同的作用域规则，但不能对它们重新赋值。
 
-This should not be confused with the idea that the values they refer to are _immutable_.
+这不应与它们所引用的值是*不可变*（immutable）的概念混为一谈。
 
 ```ts
 const numLivesForCat = 9
@@ -427,32 +427,32 @@ kitty.name = 'Cat'
 kitty.numLives--
 ```
 
-Unless you take specific measures to avoid it, the internal state of a `const` variable is still modifiable.
-Fortunately, TypeScript allows you to specify that members of an object are `readonly`.
-The [chapter on Interfaces](/docs/handbook/interfaces.html) has the details.
+除非你采取特定手段来避免，否则 `const` 变量的内部状态仍然是可修改的。
+幸运的是，TypeScript 允许你将对象的成员指定为 `readonly`。
+详情请参阅[接口章节](/docs/handbook/interfaces.html)。
 
-## `let` vs. `const`
+## `let` 与 `const`
 
-Given that we have two types of declarations with similar scoping semantics, it's natural to find ourselves asking which one to use.
-Like most broad questions, the answer is: it depends.
+既然有两种具有类似作用域语义的声明方式，我们很自然会问到底该用哪一个。
+像大多数宽泛的问题一样，答案是：视具体情况而定。
 
-Applying the [principle of least privilege](https://wikipedia.org/wiki/Principle_of_least_privilege), all declarations other than those you plan to modify should use `const`.
-The rationale is that if a variable didn't need to get written to, others working on the same codebase shouldn't automatically be able to write to the object, and will need to consider whether they really need to reassign to the variable.
-Using `const` also makes code more predictable when reasoning about flow of data.
+根据[最小特权原则](https://wikipedia.org/wiki/Principle_of_least_privilege)，除了那些你计划修改的变量外，所有声明都应使用 `const`。
+其基本理念是：如果一个变量不需要被写入，那么在同一个代码库中协作的其他人就不应该能随意写入该对象，并且需要仔细权衡是否确实需要对该变量重新赋值。
+此外，使用 `const` 在推导数据流时也能让代码更具可预测性。
 
-Use your best judgement, and if applicable, consult the matter with the rest of your team.
+请根据实际情况自行决断；在适用的情况下，也可以与团队其他成员协商确定。
 
-The majority of this handbook uses `let` declarations.
+本手册的大部分内容都使用 `let` 声明。
 
-## Destructuring
+## 解构（Destructuring）
 
-Another ECMAScript 2015 feature that TypeScript has is destructuring.
-For a complete reference, see [the article on the Mozilla Developer Network](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment).
-In this section, we'll give a short overview.
+TypeScript 支持的另一个 ECMAScript 2015 特性是解构。
+完整的参考信息请参阅 [Mozilla Developer Network 上的文章](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)。
+在本节中，我们将对此进行简要概述。
 
-### Array destructuring
+### 数组解构
 
-The simplest form of destructuring is array destructuring assignment:
+最简单的解构形式是数组解构赋值：
 
 ```ts
 let input = [1, 2]
@@ -461,22 +461,22 @@ console.log(first) // outputs 1
 console.log(second) // outputs 2
 ```
 
-This creates two new variables named `first` and `second`.
-This is equivalent to using indexing, but is much more convenient:
+这创建了两个名为 `first` 和 `second` 的新变量。
+这等价于使用索引访问，但要方便得多：
 
 ```ts
 first = input[0]
 second = input[1]
 ```
 
-Destructuring works with already-declared variables as well:
+解构同样适用于已声明的变量：
 
 ```ts
 // swap variables
 ;[first, second] = [second, first]
 ```
 
-And with parameters to a function:
+也适用于函数参数：
 
 ```ts
 function f([first, second]: [number, number]) {
@@ -486,7 +486,7 @@ function f([first, second]: [number, number]) {
 f([1, 2])
 ```
 
-You can create a variable for the remaining items in a list using the syntax `...`:
+你可以使用 `...` 语法为列表中剩余的项创建变量：
 
 ```ts
 let [first, ...rest] = [1, 2, 3, 4]
@@ -494,14 +494,14 @@ console.log(first) // outputs 1
 console.log(rest) // outputs [ 2, 3, 4 ]
 ```
 
-Of course, since this is JavaScript, you can just ignore trailing elements you don't care about:
+当然，既然这是 JavaScript，你完全可以忽略后面不关心的尾部元素：
 
 ```ts
 let [first] = [1, 2, 3, 4]
 console.log(first) // outputs 1
 ```
 
-Or other elements:
+或者忽略其他位置的元素：
 
 ```ts
 let [, second, , fourth] = [1, 2, 3, 4]
@@ -509,9 +509,9 @@ console.log(second) // outputs 2
 console.log(fourth) // outputs 4
 ```
 
-### Tuple destructuring
+### 元组解构
 
-Tuples may be destructured like arrays; the destructuring variables get the types of the corresponding tuple elements:
+元组可以像数组一样被解构；解构出的变量将获得对应元组元素的类型：
 
 ```ts
 let tuple: [number, string, boolean] = [7, 'hello', true]
@@ -519,29 +519,29 @@ let tuple: [number, string, boolean] = [7, 'hello', true]
 let [a, b, c] = tuple // a: number, b: string, c: boolean
 ```
 
-It's an error to destructure a tuple beyond the range of its elements:
+超出元组元素范围进行解构会导致错误：
 
 ```ts
 let [a, b, c, d] = tuple // Error, no element at index 3
 ```
 
-As with arrays, you can destructure the rest of the tuple with `...`, to get a shorter tuple:
+与数组一样，你可以使用 `...` 解构元组的剩余部分，从而得到一个更短的元组：
 
 ```ts
 let [a, ...bc] = tuple // bc: [string, boolean]
 let [a, b, c, ...d] = tuple // d: [], the empty tuple
 ```
 
-Or ignore trailing elements, or other elements:
+或者忽略尾部元素，或其他位置的元素：
 
 ```ts
 let [a] = tuple // a: number
 let [, b] = tuple // b: string
 ```
 
-### Object destructuring
+### 对象解构
 
-You can also destructure objects:
+你也可以解构对象：
 
 ```ts
 let o = {
@@ -552,52 +552,52 @@ let o = {
 let { a, b } = o
 ```
 
-This creates new variables `a` and `b` from `o.a` and `o.b`.
-Notice that you can skip `c` if you don't need it.
+这将从 `o.a` 和 `o.b` 创建新的变量 `a` 和 `b`。
+注意，如果不需要 `c`，你可以直接略过它。
 
-Like array destructuring, you can have assignment without declaration:
+与数组解构一样，你也可以在不声明新变量的情况下进行解构赋值：
 
 ```ts
 ;({ a, b } = { a: 'baz', b: 101 })
 ```
 
-Notice that we had to surround this statement with parentheses.
-JavaScript normally parses a `{` as the start of block.
+注意，我们必须用括号将该语句包裹起来。
+因为 JavaScript 通常会将 `{` 解析为代码块的开始。
 
-You can create a variable for the remaining items in an object using the syntax `...`:
+你可以使用 `...` 语法为对象中剩余的属性创建变量：
 
 ```ts
 let { a, ...passthrough } = o
 let total = passthrough.b + passthrough.c.length
 ```
 
-#### Property renaming
+#### 属性重命名
 
-You can also give different names to properties:
+你还可以为属性赋予不同的名称：
 
 ```ts
 let { a: newName1, b: newName2 } = o
 ```
 
-Here the syntax starts to get confusing.
-You can read `a: newName1` as "`a` as `newName1`".
-The direction is left-to-right, as if you had written:
+这里的语法开始变得容易令人混淆。
+你可以将 `a: newName1` 理解为“将 `a` 重命名为 `newName1`”。
+其方向是从左到右，就好像你写成了：
 
 ```ts
 let newName1 = o.a
 let newName2 = o.b
 ```
 
-Confusingly, the colon here does _not_ indicate the type.
-The type, if you specify it, still needs to be written after the entire destructuring:
+容易让人困惑的是，这里的冒号并*不*表示类型。
+如果指定类型，仍然需要写在整个解构的后面：
 
 ```ts
 let { a: newName1, b: newName2 }: { a: string; b: number } = o
 ```
 
-#### Default values
+#### 默认值
 
-Default values let you specify a default value in case a property is undefined:
+默认值允许你在属性为 `undefined` 时指定一个默认值：
 
 ```ts
 function keepWholeObject(wholeObject: { a: string; b?: number }) {
@@ -605,13 +605,13 @@ function keepWholeObject(wholeObject: { a: string; b?: number }) {
 }
 ```
 
-In this example the `b?` indicates that `b` is optional, so it may be `undefined`.
-`keepWholeObject` now has a variable for `wholeObject` as well as the properties `a` and `b`, even if `b` is undefined.
+在这个示例中，`b?` 表示 `b` 是可选的，因此它可能是 `undefined`。
+现在 `keepWholeObject` 拥有变量 `wholeObject` 以及属性 `a` 和 `b`，即使 `b` 是 `undefined` 也是如此。
 
-## Function declarations
+## 函数声明
 
-Destructuring also works in function declarations.
-For simple cases this is straightforward:
+解构同样适用于函数声明。
+对于简单的场景，这非常直观：
 
 ```ts
 type C = { a: string; b?: number }
@@ -620,8 +620,8 @@ function f({ a, b }: C): void {
 }
 ```
 
-But specifying defaults is more common for parameters, and getting defaults right with destructuring can be tricky.
-First of all, you need to remember to put the pattern before the default value.
+但在参数中指定默认值更为常见，而在解构中正确设置默认值可能会有些棘手。
+首先，你需要记住将解构模式放在默认值之前：
 
 ```ts
 function f({ a = '', b = 0 } = {}): void {
@@ -630,10 +630,10 @@ function f({ a = '', b = 0 } = {}): void {
 f()
 ```
 
-> The snippet above is an example of type inference, explained earlier in the handbook.
+> 上面的代码片段是类型推断的一个示例，本手册前面已做过说明。
 
-Then, you need to remember to give a default for optional properties on the destructured property instead of the main initializer.
-Remember that `C` was defined with `b` optional:
+其次，你需要记住为可选属性在解构属性上指定默认值，而不是在主初始化表达式中指定。
+请记住，`C` 定义中的 `b` 是可选的：
 
 ```ts
 function f({ a, b = 0 } = { a: '' }): void {
@@ -644,17 +644,17 @@ f() // ok, default to { a: "" }, which then defaults b = 0
 f({}) // error, 'a' is required if you supply an argument
 ```
 
-Use destructuring with care.
-As the previous example demonstrates, anything but the simplest destructuring expression is confusing.
-This is especially true with deeply nested destructuring, which gets _really_ hard to understand even without piling on renaming, default values, and type annotations.
-Try to keep destructuring expressions small and simple.
-You can always write the assignments that destructuring would generate yourself.
+请谨慎使用解构。
+如上面的示例所示，除了最简单的解构表达式外，其他任何形式都容易令人困惑。
+对于深层嵌套的解构更是如此，即使不加上重命名、默认值和类型注解，它也*极度*难以理解。
+尽量保持解构表达式简短明了。
+你完全可以亲手编写解构本会生成的赋值语句。
 
-## Spread
+## 展开运算符（Spread）
 
-The spread operator is the opposite of destructuring.
-It allows you to spread an array into another array, or an object into another object.
-For example:
+展开运算符与解构相反。
+它允许你将一个数组展开到另一个数组中，或者将一个对象展开到另一个对象中。
+例如：
 
 ```ts
 let first = [1, 2]
@@ -662,34 +662,33 @@ let second = [3, 4]
 let bothPlus = [0, ...first, ...second, 5]
 ```
 
-This gives bothPlus the value `[0, 1, 2, 3, 4, 5]`.
-Spreading creates a shallow copy of `first` and `second`.
-They are not changed by the spread.
+这使得 `bothPlus` 的值为 `[0, 1, 2, 3, 4, 5]`。
+展开操作会创建 `first` 和 `second` 的浅拷贝。
+它们本身不会被展开操作改变。
 
-You can also spread objects:
+你也可以展开对象：
 
 ```ts
 let defaults = { food: 'spicy', price: '$$', ambiance: 'noisy' }
 let search = { ...defaults, food: 'rich' }
 ```
 
-Now `search` is `{ food: "rich", price: "$$", ambiance: "noisy" }`.
-Object spreading is more complex than array spreading.
-Like array spreading, it proceeds from left-to-right, but the result is still an object.
-This means that properties that come later in the spread object overwrite properties that come earlier.
-So if we modify the previous example to spread at the end:
+现在 `search` 的值为 `{ food: "rich", price: "$$", ambiance: "noisy" }`。
+对象展开比数组展开更复杂。
+与数组展开一样，它是从左到右进行的，但结果仍然是一个对象。
+这意味着在展开对象中靠后的属性会覆盖靠前的属性。
+因此，如果我们将前面的示例修改为在末尾展开：
 
 ```ts
 let defaults = { food: 'spicy', price: '$$', ambiance: 'noisy' }
 let search = { food: 'rich', ...defaults }
 ```
 
-Then the `food` property in `defaults` overwrites `food: "rich"`, which is not what we want in this case.
+那么 `defaults` 中的 `food` 属性就会覆盖 `food: "rich"`，在当前场景下这并不是我们想要的结果。
 
-Object spread also has a couple of other surprising limits.
-First, it only includes an objects'
-[own, enumerable properties](https://developer.mozilla.org/docs/Web/JavaScript/Enumerability_and_ownership_of_properties).
-Basically, that means you lose methods when you spread instances of an object:
+对象展开还有其他几个令人意外的限制。
+首先，它仅包含对象的[自身可枚举属性](https://developer.mozilla.org/docs/Web/JavaScript/Enumerability_and_ownership_of_properties)。
+基本上，这意味着当你展开一个对象的实例时，会丢失其方法：
 
 ```ts
 class C {
@@ -702,18 +701,15 @@ clone.p // ok
 clone.m() // error!
 ```
 
-Second, the TypeScript compiler doesn't allow spreads of type parameters from generic functions.
-That feature is expected in future versions of the language.
+其次，TypeScript 编译器不允许展开泛型函数中的类型参数。
+该特性预计将在未来的语言版本中提供。
 
-## `using` declarations
+## `using` 声明
 
-`using` declarations are an upcoming feature for JavaScript that are part of the
-[Stage 3 Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) proposal. A
-`using` declaration is much like a `const` declaration, except that it couples the _lifetime_ of the value bound to the
-declaration with the _scope_ of the variable.
+`using` 声明是 JavaScript 中即将推出的新特性，属于 [Stage 3 显式资源管理（Explicit Resource Management）](https://github.com/tc39/proposal-explicit-resource-management)提案的一部分。
+`using` 声明与 `const` 声明非常相似，区别在于它将绑定到声明的值的*生命周期*与变量的*作用域*关联在一起。
 
-When control exits the block containing a `using` declaration, the `[Symbol.dispose]()` method of the
-declared value is executed, which allows that value to perform cleanup:
+当控制流离开包含 `using` 声明的代码块时，声明的值的 `[Symbol.dispose]()` 方法会被执行，从而允许该值执行清理操作：
 
 ```ts
 function f() {
@@ -722,7 +718,7 @@ function f() {
 } // `x[Symbol.dispose]()` is called
 ```
 
-At runtime, this has an effect _roughly_ equivalent to the following:
+在运行时，这*大致*等价于以下代码的效果：
 
 ```ts
 function f() {
@@ -735,8 +731,7 @@ function f() {
 }
 ```
 
-`using` declarations are extremely useful for avoiding memory leaks when working with JavaScript objects that hold on to
-native references like file handles
+在处理持有文件句柄等原生引用的 JavaScript 对象时，`using` 声明在避免内存泄漏方面非常有用：
 
 ```ts
 {
@@ -746,7 +741,7 @@ native references like file handles
 } // `file` is disposed, even if an error is thrown
 ```
 
-or scoped operations like tracing
+或者用于追踪（tracing）等有界操作：
 
 ```ts
 function f() {
@@ -755,12 +750,11 @@ function f() {
 } // traces exit of function
 ```
 
-Unlike `var`, `let`, and `const`, `using` declarations do not support destructuring.
+与 `var`、`let` 和 `const` 不同，`using` 声明不支持解构。
 
-### `null` and `undefined`
+### `null` 和 `undefined`
 
-It's important to note that the value can be `null` or `undefined`, in which case nothing is disposed at the end of the
-block:
+需要注意的是，该值可以是 `null` 或 `undefined`，在这种情况下，在代码块结束时不会执行任何释放操作：
 
 ```ts
 {
@@ -769,7 +763,7 @@ block:
 }
 ```
 
-which is _roughly_ equivalent to:
+这*大致*等价于：
 
 ```ts
 {
@@ -782,12 +776,11 @@ which is _roughly_ equivalent to:
 }
 ```
 
-This allows you to conditionally acquire resources when declaring a `using` declaration without the need for complex
-branching or repetition.
+这允许你在使用 `using` 声明时有条件地获取资源，而无需进行复杂的分支或重复操作。
 
-### Defining a disposable resource
+### 定义可释放资源
 
-You can indicate the classes or objects you produce are disposable by implementing the `Disposable` interface:
+你可以通过实现 `Disposable` 接口来表明你生成的类或对象是可释放的：
 
 ```ts
 // from the default lib:
@@ -820,11 +813,9 @@ f()
 //   Exiting: f
 ```
 
-## `await using` declarations
+## `await using` 声明
 
-Some resources or operations may have cleanup that needs to be performed asynchronously. To accommodate this, the
-[Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) proposal also introduces
-the `await using` declaration:
+某些资源或操作的清理工作可能需要以异步方式执行。为了满足这一需求，[显式资源管理（Explicit Resource Management）](https://github.com/tc39/proposal-explicit-resource-management)提案还引入了 `await using` 声明：
 
 ```ts
 async function f() {
@@ -832,15 +823,13 @@ async function f() {
 } // `await x[Symbol.asyncDispose]()` is invoked
 ```
 
-An `await using` declaration invokes, and _awaits_, its value's `[Symbol.asyncDispose]()` method as control leaves the
-containing block. This allows for asynchronous cleanup, such as a database transaction performing a rollback or commit,
-or a file stream flushing any pending writes to storage before it is closed.
+当控制流离开包含 `await using` 声明的代码块时，它会调用并 _await_ 其值的 `[Symbol.asyncDispose]()` 方法。这支持异步清理操作，例如数据库事务执行回滚或提交，或者文件流在关闭前将所有待写入数据刷新（flush）到存储中。
 
-As with `await`, `await using` can only be used in an `async` function or method, or at the top level of a module.
+与 `await` 一样，`await using` 只能在 `async` 函数或方法内部，或者在模块顶层使用。
 
-### Defining an asynchronously disposable resource
+### 定义异步可释放资源
 
-Just as `using` relies on objects that are `Disposable`, an `await using` relies on objects that are `AsyncDisposable`:
+正如 `using` 依赖于实现 `Disposable` 的对象一样，`await using` 依赖于实现 `AsyncDisposable` 的对象：
 
 ```ts
 // from the default lib:
@@ -891,10 +880,9 @@ async function transfer(
 }
 ```
 
-### `await using` vs `await`
+### `await using` 与 `await`
 
-The `await` keyword that is part of the `await using` declaration only indicates that the _disposal_ of the resource is
-`await`-ed. It does _not_ `await` the value itself:
+`await using` 声明中的 `await` 关键字仅表示资源的*释放*会被 `await`。它并*不*代表 `await` 该值本身：
 
 ```ts
 {
@@ -906,10 +894,9 @@ The `await` keyword that is part of the `await using` declaration only indicates
 } // performs `await y[Symbol.asyncDispose]()`
 ```
 
-### `await using` and `return`
+### `await using` 与 `return`
 
-It's important to note that there is a small caveat with this behavior if you are using an `await using` declaration in
-an `async` function that returns a `Promise` without first `await`-ing it:
+需要特别注意的是，如果你在返回 `Promise` 的 `async` 函数中使用 `await using` 声明，但返回时没有先对其进行 `await`，就会存在一个小小的注意事项：
 
 ```ts
 function g() {
@@ -922,10 +909,7 @@ async function f() {
 }
 ```
 
-Because the returned promise isn't `await`-ed, it's possible that the JavaScript runtime may report an unhandled
-rejection since execution pauses while `await`-ing the asynchronous disposal of `x`, without having subscribed to the
-returned promise. This is not a problem that is unique to `await using`, however, as this can also occur in an `async`
-function that uses `try..finally`:
+因为返回的 Promise 没有被 `await`，当执行暂停以 `await` 异步释放 `x` 时，由于尚未订阅返回的 Promise，JavaScript 运行时可能会报告未处理的拒绝（unhandled rejection）。不过这并不是 `await using` 独有的问题，在使用 `try..finally` 的 `async` 函数中同样可能发生这种情况：
 
 ```ts
 async function f() {
@@ -937,7 +921,7 @@ async function f() {
 }
 ```
 
-To avoid this situation, it is recommended that you `await` your return value if it may be a `Promise`:
+为了避免这种情况，如果返回值可能是一个 `Promise`，建议对其进行 `await`：
 
 ```ts
 async function f() {
@@ -946,9 +930,9 @@ async function f() {
 }
 ```
 
-## `using` and `await using` in `for` and `for..of` statements
+## 在 `for` 和 `for..of` 语句中使用 `using` 与 `await using`
 
-Both `using` and `await using` can be used in a `for` statement:
+`using` 和 `await using` 都可以用于 `for` 语句中：
 
 ```ts
 for (using x = getReader(); !x.eof; x.next()) {
@@ -956,10 +940,9 @@ for (using x = getReader(); !x.eof; x.next()) {
 }
 ```
 
-In this case, the lifetime of `x` is scoped to the entire `for` statement and is only disposed when control leaves the
-loop due to `break`, `return`, `throw`, or when the loop condition is false.
+在这种情况下，`x` 的生命周期限定在整个 `for` 语句范围内，并且仅在控制流因 `break`、`return`、`throw` 或循环条件为 false 而离开循环时才会被释放。
 
-In addition to `for` statements, both declarations can also be used in `for..of` statements:
+除了 `for` 语句外，这两种声明也可以用于 `for..of` 语句：
 
 ```ts
 function* g() {
@@ -972,11 +955,8 @@ for (using x of g()) {
 }
 ```
 
-Here, `x` is disposed at the end of _each iteration of the loop_, and is then reinitialized with the next value. This is
-especially useful when consuming resources produced one at a time by a generator.
+在这里，`x` 会在*循环的每次迭代*结束时被释放，然后用下一个值重新初始化。当依次消费生成器逐个产出的资源时，这一点尤其有用。
 
-## `using` and `await using` in older runtimes
+## 在旧版运行时中使用 `using` 和 `await using`
 
-`using` and `await using` declarations can be used when targeting older ECMAScript editions as long as you are using
-a compatible polyfill for `Symbol.dispose`/`Symbol.asyncDispose`, such as the one provided by default in recent
-editions of NodeJS.
+当以较旧的 ECMAScript 版本为编译目标时，只要使用了兼容的 `Symbol.dispose`/`Symbol.asyncDispose` polyfill（例如最近版本的 NodeJS 默认提供的 polyfill），就可以使用 `using` 和 `await using` 声明。

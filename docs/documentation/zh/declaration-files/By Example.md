@@ -1,24 +1,24 @@
 ---
-title: Declaration Reference
+title: 规范与示例
 layout: docs
 permalink: /zh/docs/handbook/declaration-files/by-example.html
-oneline: 'How to create a d.ts file for a module'
+oneline: '如何为模块创建 d.ts 文件'
 ---
 
-The purpose of this guide is to teach you how to write a high-quality definition file.
-This guide is structured by showing documentation for some API, along with sample usage of that API,
-and explaining how to write the corresponding declaration.
+本指南旨在指导你如何编写高质量的声明文件。
+本指南的结构是先展示某 API 的文档说明，再给出该 API 的使用示例，
+并解释如何编写对应的声明。
 
-These examples are ordered in approximately increasing order of complexity.
+这些示例大致按照复杂度递增的顺序排列。
 
-## Objects with Properties
+## 包含属性的对象
 
-_Documentation_
+_文档_
 
-> The global variable `myLib` has a function `makeGreeting` for creating greetings,
-> and a property `numberOfGreetings` indicating the number of greetings made so far.
+> 全局变量 `myLib` 包含一个用于创建问候语的函数 `makeGreeting`，
+> 以及一个表示迄今已创建问候语数量的属性 `numberOfGreetings`。
 
-_Code_
+_代码_
 
 ```ts
 let result = myLib.makeGreeting('hello, world')
@@ -27,9 +27,9 @@ console.log('The computed greeting is:' + result)
 let count = myLib.numberOfGreetings
 ```
 
-_Declaration_
+_声明_
 
-Use `declare namespace` to describe types or values accessed by dotted notation.
+使用 `declare namespace` 描述通过点号表示法访问的类型或值。
 
 ```ts
 declare namespace myLib {
@@ -38,13 +38,13 @@ declare namespace myLib {
 }
 ```
 
-## Overloaded Functions
+## 函数重载
 
-_Documentation_
+_文档_
 
-The `getWidget` function accepts a number and returns a Widget, or accepts a string and returns a Widget array.
+`getWidget` 函数接收一个数字并返回一个 Widget，或者接收一个字符串并返回一个 Widget 数组。
 
-_Code_
+_代码_
 
 ```ts
 let x: Widget = getWidget(43)
@@ -52,27 +52,27 @@ let x: Widget = getWidget(43)
 let arr: Widget[] = getWidget('all of them')
 ```
 
-_Declaration_
+_声明_
 
 ```ts
 declare function getWidget(n: number): Widget
 declare function getWidget(s: string): Widget[]
 ```
 
-## Reusable Types (Interfaces)
+## 可复用类型（接口）
 
-_Documentation_
+_文档_
 
-> When specifying a greeting, you must pass a `GreetingSettings` object.
-> This object has the following properties:
+> 指定问候语时，必须传入一个 `GreetingSettings` 对象。
+> 该对象具有以下属性：
 >
-> 1 - greeting: Mandatory string
+> 1 - greeting：必填的字符串
 >
-> 2 - duration: Optional length of time (in milliseconds)
+> 2 - duration：可选的时长（单位为毫秒）
 >
-> 3 - color: Optional string, e.g. '#ff00ff'
+> 3 - color：可选的字符串，例如 '#ff00ff'
 
-_Code_
+_代码_
 
 ```ts
 greet({
@@ -81,9 +81,9 @@ greet({
 })
 ```
 
-_Declaration_
+_声明_
 
-Use an `interface` to define a type with properties.
+使用 `interface` 定义带有属性的类型。
 
 ```ts
 interface GreetingSettings {
@@ -95,13 +95,13 @@ interface GreetingSettings {
 declare function greet(setting: GreetingSettings): void
 ```
 
-## Reusable Types (Type Aliases)
+## 可复用类型（类型别名）
 
-_Documentation_
+_文档_
 
-> Anywhere a greeting is expected, you can provide a `string`, a function returning a `string`, or a `Greeter` instance.
+> 任何需要问候语的地方，都可以提供一个 `string`、一个返回 `string` 的函数或一个 `Greeter` 实例。
 
-_Code_
+_代码_
 
 ```ts
 function getGreeting() {
@@ -114,9 +114,9 @@ greet(getGreeting)
 greet(new MyGreeter())
 ```
 
-_Declaration_
+_声明_
 
-You can use a type alias to make a shorthand for a type:
+你可以使用类型别名为类型定义简写形式：
 
 ```ts
 type GreetingLike = string | (() => string) | MyGreeter
@@ -124,14 +124,14 @@ type GreetingLike = string | (() => string) | MyGreeter
 declare function greet(g: GreetingLike): void
 ```
 
-## Organizing Types
+## 组织类型
 
-_Documentation_
+_文档_
 
-> The `greeter` object can log to a file or display an alert.
-> You can provide LogOptions to `.log(...)` and alert options to `.alert(...)`
+> `greeter` 对象可以将日志记录到文件或显示弹窗。
+> 你可以向 `.log(...)` 传递 LogOptions，向 `.alert(...)` 传递弹窗选项。
 
-_Code_
+_代码_
 
 ```ts
 const g = new Greeter('Hello')
@@ -139,9 +139,9 @@ g.log({ verbose: true })
 g.alert({ modal: false, title: 'Current Greeting' })
 ```
 
-_Declaration_
+_声明_
 
-Use namespaces to organize types.
+使用命名空间来组织类型。
 
 ```ts
 declare namespace GreetingLib {
@@ -156,7 +156,7 @@ declare namespace GreetingLib {
 }
 ```
 
-You can also create nested namespaces in one declaration:
+你也可以在单个声明中创建嵌套命名空间：
 
 ```ts
 declare namespace GreetingLib.Options {
@@ -172,13 +172,13 @@ declare namespace GreetingLib.Options {
 }
 ```
 
-## Classes
+## 类
 
-_Documentation_
+_文档_
 
-> You can create a greeter by instantiating the `Greeter` object, or create a customized greeter by extending from it.
+> 你可以通过实例化 `Greeter` 对象来创建问候器，也可以通过继承它来创建自定义的问候器。
 
-_Code_
+_代码_
 
 ```ts
 const myGreeter = new Greeter('hello, world')
@@ -192,10 +192,10 @@ class SpecialGreeter extends Greeter {
 }
 ```
 
-_Declaration_
+_声明_
 
-Use `declare class` to describe a class or class-like object.
-Classes can have properties and methods as well as a constructor.
+使用 `declare class` 描述类或类似类的对象。
+类可以拥有属性和方法，也可以拥有构造函数。
 
 ```ts
 declare class Greeter {
@@ -206,44 +206,44 @@ declare class Greeter {
 }
 ```
 
-## Global Variables
+## 全局变量
 
-_Documentation_
+_文档_
 
-> The global variable `foo` contains the number of widgets present.
+> 全局变量 `foo` 包含了现有小部件（widget）的数量。
 
-_Code_
+_代码_
 
 ```ts
 console.log('Half the number of widgets is ' + foo / 2)
 ```
 
-_Declaration_
+_声明_
 
-Use `declare var` to declare variables.
-If the variable is read-only, you can use `declare const`.
-You can also use `declare let` if the variable is block-scoped.
+使用 `declare var` 声明变量。
+如果变量是只读的，可以使用 `declare const`。
+如果变量具有块级作用域，也可以使用 `declare let`。
 
 ```ts
 /** The number of widgets present */
 declare var foo: number
 ```
 
-## Global Functions
+## 全局函数
 
-_Documentation_
+_文档_
 
-> You can call the function `greet` with a string to show a greeting to the user.
+> 你可以传入一个字符串来调用函数 `greet`，从而向用户显示问候语。
 
-_Code_
+_代码_
 
 ```ts
 greet('hello, world')
 ```
 
-_Declaration_
+_声明_
 
-Use `declare function` to declare functions.
+使用 `declare function` 声明函数。
 
 ```ts
 declare function greet(greeting: string): void
