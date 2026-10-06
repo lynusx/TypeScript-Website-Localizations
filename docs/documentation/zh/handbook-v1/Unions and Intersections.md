@@ -23,9 +23,9 @@ For instance, take the following function:
 
 ```ts twoslash
 /**
- * Takes a string and adds "padding" to the left.
- * If 'padding' is a string, then 'padding' is appended to the left side.
- * If 'padding' is a number, then that number of spaces is added to the left side.
+ * 接收一个字符串并在左侧添加 "padding"。
+ * 如果 'padding' 是一个字符串，则将 'padding' 追加到左侧。
+ * 如果 'padding' 是一个数字，则在左侧添加相应数量的空格。
  */
 function padLeft(value: string, padding: any) {
   if (typeof padding === 'number') {
@@ -37,7 +37,7 @@ function padLeft(value: string, padding: any) {
   throw new Error(`Expected string or number, got '${typeof padding}'.`)
 }
 
-padLeft('Hello world', 4) // returns "    Hello world"
+padLeft('Hello world', 4) // 返回 "    Hello world"
 ```
 
 The problem with `padLeft` in the above example is that its `padding` parameter is typed as `any`.
@@ -46,7 +46,7 @@ That means that we can call it with an argument that's neither a `number` nor a 
 ```ts twoslash
 declare function padLeft(value: string, padding: any): string
 // ---cut---
-// passes at compile time, fails at runtime.
+// 编译期通过，运行时失败。
 let indentedString = padLeft('Hello world', true)
 ```
 
@@ -61,9 +61,9 @@ Instead of `any`, we can use a _union type_ for the `padding` parameter:
 ```ts twoslash
 // @errors: 2345
 /**
- * Takes a string and adds "padding" to the left.
- * If 'padding' is a string, then 'padding' is appended to the left side.
- * If 'padding' is a number, then that number of spaces is added to the left side.
+ * 接收一个字符串并在左侧添加 "padding"。
+ * 如果 'padding' 是一个字符串，则将 'padding' 追加到左侧。
+ * 如果 'padding' 是一个数字，则在左侧添加相应数量的空格。
  */
 function padLeft(value: string, padding: string | number) {
   // ...
@@ -97,7 +97,7 @@ declare function getSmallPet(): Fish | Bird
 let pet = getSmallPet()
 pet.layEggs()
 
-// Only available in one of the two possible types
+// 仅在两种可能类型之一中可用
 pet.swim()
 ```
 
@@ -130,8 +130,8 @@ type NetworkSuccessState = {
   }
 }
 
-// Create a type which represents only one of the above types
-// but you aren't sure which it is yet.
+// 创建一个仅代表上述类型之一的类型，
+// 但你目前还不确定具体是哪一个。
 type NetworkState =
   NetworkLoadingState | NetworkFailedState | NetworkSuccessState
 ```
@@ -233,21 +233,21 @@ type NetworkState =
   NetworkLoadingState | NetworkFailedState | NetworkSuccessState
 
 function logger(state: NetworkState): string {
-  // Right now TypeScript does not know which of the three
-  // potential types state could be.
+  // 目前 TypeScript 尚不知道 state 可能是这三种
+  // 潜在类型中的哪一种。
 
-  // Trying to access a property which isn't shared
-  // across all types will raise an error
+  // 尝试访问未在所有类型之间共享的
+  // 属性将引发错误
   state.code
 
-  // By switching on state, TypeScript can narrow the union
-  // down in code flow analysis
+  // 通过对 state 执行 switch 分支，TypeScript 可以在
+  // 代码流分析中收窄联合类型
   switch (state.state) {
     case 'loading':
       return 'Downloading...'
     case 'failed':
-      // The type must be NetworkFailedState here,
-      // so accessing the `code` field is safe
+      // 此处的类型必须是 NetworkFailedState，
+      // 因此访问 `code` 字段是安全的
       return `Error ${state.code} downloading`
     case 'success':
       return `Downloaded ${state.response.title} - ${state.response.summary}`
@@ -391,8 +391,8 @@ interface ArtistsData {
   artists: { name: string }[]
 }
 
-// These interfaces are composed to have
-// consistent error handling, and their own data.
+// 这些接口组合在一起以具有
+// 一致的错误处理，并包含各自的数据。
 
 type ArtworksResponse = ArtworksData & ErrorHandling
 type ArtistsResponse = ArtistsData & ErrorHandling

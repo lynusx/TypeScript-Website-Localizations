@@ -88,10 +88,10 @@ function getLength(s: string) {
   return s.length
 }
 
-// has type '(p: Person) => number'
+// 类型为 '(p: Person) => number'
 const getDisplayNameLength = compose(getDisplayName, getLength)
 
-// works and returns the type 'number'
+// 正常工作并返回类型 'number'
 getDisplayNameLength({ name: 'Person McPersonface', age: 42 })
 ```
 
@@ -111,12 +111,12 @@ function makeBox<U>(value: U): Box<U> {
   return { value }
 }
 
-// has type '(arg: {}) => Box<{}[]>'
+// 类型为 '(arg: {}) => Box<{}[]>'
 const makeBoxedArray = compose(makeArray, makeBox)
 
 makeBoxedArray('hello!').value[0].toUpperCase()
 //                                ~~~~~~~~~~~
-// error: Property 'toUpperCase' does not exist on type '{}'.
+// 错误：类型 '{}' 上不存在属性 'toUpperCase'。
 ```
 
 在旧版本中，当从其他类型变量（如 `T` 和 `U`）进行推断时，TypeScript 会推断为空对象类型（`{}`）。
@@ -151,10 +151,10 @@ function makeBox<U>(value: U): Box<U> {
   return { value }
 }
 
-// has type '<T>(arg: T) => Box<T[]>'
+// 类型为 '<T>(arg: T) => Box<T[]>'
 const makeBoxedArray = compose(makeArray, makeBox)
 
-// works with no problem!
+// 毫无问题地正常工作！
 makeBoxedArray('hello!').value[0].toUpperCase()
 ```
 
@@ -171,8 +171,8 @@ TypeScript 3.4 让只读类数组类型的使用变得更加轻松。
 
 ```ts
 function foo(arr: ReadonlyArray<string>) {
-  arr.slice() // okay
-  arr.push('hello!') // error!
+  arr.slice() // 正常
+  arr.push('hello!') // 错误！
 }
 ```
 
@@ -183,8 +183,8 @@ TypeScript 3.4 针对数组类型引入了全新的 `readonly` 修饰符，为 `
 
 ```ts
 function foo(arr: readonly string[]) {
-  arr.slice() // okay
-  arr.push('hello!') // error!
+  arr.slice() // 正常
+  arr.push('hello!') // 错误！
 }
 ```
 
@@ -196,8 +196,8 @@ TypeScript 3.4 还引入了对 `readonly` 元组的支持。
 
 ```ts
 function foo(pair: readonly [string, string]) {
-  console.log(pair[0]) // okay
-  pair[1] = 'hello!' // error
+  console.log(pair[0]) // 正常
+  pair[1] = 'hello!' // 错误
 }
 ```
 
@@ -235,7 +235,7 @@ type Readonly<T> = {
   readonly [K in keyof T]: T[K]
 }
 
-// How code acted *before* TypeScript 3.4
+// 在 TypeScript 3.4 *之前*代码的行为方式
 
 // { readonly a: string, readonly b: number }
 type A = Readonly<{ a: string; b: number }>
@@ -250,7 +250,7 @@ type C = Readonly<[string, boolean]>
 在 TypeScript 3.4 中，映射类型中的 `readonly` 修饰符会自动将类数组类型转换为对应的 `readonly` 版本。
 
 ```ts
-// How code acts now *with* TypeScript 3.4
+// 现在在 TypeScript 3.4 *中*代码的行为方式
 
 // { readonly a: string, readonly b: number }
 type A = Readonly<{ a: string; b: number }>
@@ -288,10 +288,10 @@ type C = Writable<readonly [string, boolean]>
 它并不是通用的类型操作符。
 
 ```ts
-let err1: readonly Set<number> // error!
-let err2: readonly Array<boolean> // error!
+let err1: readonly Set<number> // 错误！
+let err2: readonly Array<boolean> // 错误！
 
-let okay: readonly boolean[] // works fine
+let okay: readonly boolean[] // 正常工作
 ```
 
 更多详情可参阅[该 Pull Request](https://github.com/Microsoft/TypeScript/pull/29435)。
@@ -307,34 +307,34 @@ TypeScript 3.4 为字面量值引入了一种称为 _`const`_ 断言的新结构
 - 数组字面量将变为 `readonly` 元组
 
 ```ts
-// Type '"hello"'
+// 类型为 '"hello"'
 let x = 'hello' as const
 
-// Type 'readonly [10, 20]'
+// 类型为 'readonly [10, 20]'
 let y = [10, 20] as const
 
-// Type '{ readonly text: "hello" }'
+// 类型为 '{ readonly text: "hello" }'
 let z = { text: 'hello' } as const
 ```
 
 在 `.tsx` 文件之外，也可以使用尖括号断言语法。
 
 ```ts
-// Type '"hello"'
+// 类型为 '"hello"'
 let x = <const>'hello'
 
-// Type 'readonly [10, 20]'
+// 类型为 'readonly [10, 20]'
 let y = <const>[10, 20]
 
-// Type '{ readonly text: "hello" }'
+// 类型为 '{ readonly text: "hello" }'
 let z = <const>{ text: 'hello' }
 ```
 
 这项特性意味着，原本仅用于向编译器提示不可变性的类型注解往往可以省略。
 
 ```ts
-// Works with no types referenced or declared.
-// We only needed a single const assertion.
+// 无需引用或声明任何类型即可正常工作。
+// 我们只需要一个 const 断言。
 function getShapes() {
   let result = [
     { kind: 'circle', radius: 100 },
@@ -345,7 +345,7 @@ function getShapes() {
 }
 
 for (const shape of getShapes()) {
-  // Narrows perfectly!
+  // 完美收窄！
   if (shape.kind === 'circle') {
     console.log('Circle radius', shape.radius)
   } else {
@@ -366,7 +366,7 @@ export const Colors = {
   green: 'GREEN',
 } as const
 
-// or use an 'export default'
+// 或者使用 'export default'
 
 export default {
   red: 'RED',
@@ -380,12 +380,12 @@ export default {
 需要注意的一点是，`const` 断言只能直接应用于简单的字面量表达式。
 
 ```ts
-// Error! A 'const' assertion can only be applied
-// to a string, number, boolean, array, or object literal.
+// 错误！'const' 断言只能应用于
+// 字符串、数字、布尔值、数组或对象字面量。
 let a = (Math.random() < 0.5 ? 0 : 1) as const
 let b = (60 * 60 * 1000) as const
 
-// Works!
+// 正常！
 let c = Math.random() < 0.5 ? (0 as const) : (1 as const)
 let d = 3_600_000 as const
 ```
@@ -400,10 +400,10 @@ let foo = {
   contents: arr,
 } as const
 
-foo.name = 'bar' // error!
-foo.contents = [] // error!
+foo.name = 'bar' // 错误！
+foo.contents = [] // 错误！
 
-foo.contents.push(5) // ...works!
+foo.contents.push(5) // ...正常！
 ```
 
 更多详情请参阅[对应的 Pull Request](https://github.com/Microsoft/TypeScript/pull/29510)。
@@ -414,11 +414,11 @@ TypeScript 3.4 引入了对 ECMAScript 新增的 `globalThis` 的类型检查支
 与以往的解决方案不同，`globalThis` 提供了跨不同环境访问全局作用域的标准方式。
 
 ```ts
-// in a global file:
+// 在全局文件中：
 
 var abc = 100
 
-// Refers to 'abc' from above.
+// 引用上面的 'abc'。
 globalThis.abc = 200
 ```
 
@@ -427,7 +427,7 @@ globalThis.abc = 200
 ```ts
 let answer = 42
 
-// error! Property 'answer' does not exist on 'typeof globalThis'.
+// 错误！'typeof globalThis' 上不存在属性 'answer'。
 globalThis.answer = 333333
 ```
 

@@ -65,10 +65,10 @@ export function doStuff(value: BasicPrimitive) {
 在 TypeScript 中，元组类型用于为具有固定长度和特定元素类型的数组建模。
 
 ```ts
-// A tuple that stores a pair of numbers
+// 存储一对数字的元组
 let a: [number, number] = [1, 2]
 
-// A tuple that stores a string, a number, and a boolean
+// 存储一个字符串、一个数字和一个布尔值的元组
 let b: [string, number, boolean] = ['hello', 42, true]
 ```
 
@@ -76,16 +76,16 @@ let b: [string, number, boolean] = ['hello', 42, true]
 因此，元组类型不仅支持可选元素和 rest 元素，还可以带有标签以改善工具支持和可读性。
 
 ```ts twoslash
-// A tuple that has either one or two strings.
+// 包含一个或两个字符串的元组。
 let c: [string, string?] = ['hello']
 c = ['hello', 'world']
 
-// A labeled tuple that has either one or two strings.
+// 包含一个或两个字符串的带标签元组。
 let d: [first: string, second?: string] = ['hello']
 d = ['hello', 'world']
 
-// A tuple with a *rest element* - holds at least 2 strings at the front,
-// and any number of booleans at the back.
+// 带有*剩余元素*的元组 —— 前部至少包含 2 个字符串，
+// 且后部包含任意数量的布尔值。
 let e: [string, string, ...boolean[]]
 
 e = ['hello', 'world']
@@ -165,7 +165,7 @@ TypeScript 4.2 确保在设计时即可捕获该错误。
 
 ```ts twoslash
 interface SomeType {
-  /** This is an index signature. */
+  /** 这是一个索引签名。 */
   [propName: string]: any
 }
 
@@ -179,17 +179,17 @@ function doStuff(value: SomeType) {
 
 ```ts twoslash
 interface Options {
-  /** File patterns to be excluded. */
+  /** 要排除的文件模式。 */
   exclude?: string[]
 
   /**
-   * It handles any extra properties that we haven't declared as type 'any'.
+   * 它将我们未声明的任何额外属性处理为 'any' 类型。
    */
   [x: string]: any
 }
 
 function processOptions(opts: Options) {
-  // Notice we're *intentionally* accessing `excludes`, not `exclude`
+  // 注意我们是*故意*访问 `excludes`，而不是 `exclude`
   if (opts.excludes) {
     console.error('The option `excludes` is not valid. Did you mean `exclude`?')
   }
@@ -203,11 +203,11 @@ function processOptions(opts: Options) {
 
 ```ts twoslash
 interface Options {
-  /** File patterns to be excluded. */
+  /** 要排除的文件模式。 */
   exclude?: string[]
 
   /**
-   * It handles any extra properties that we haven't declared as type 'any'.
+   * 它将我们未声明的任何额外属性处理为 'any' 类型。
    */
   [x: string]: any
 }
@@ -215,8 +215,8 @@ interface Options {
 function processOptions(opts: Options) {
   // ...
 
-  // Notice we're *accidentally* accessing `excludes` this time.
-  // Oops! Totally valid.
+  // 注意这次我们是*不小心*访问了 `excludes`。
+  // 哎呀！但这完全合法。
   for (const excludePattern of opts.excludes) {
     // ...
   }
@@ -258,7 +258,7 @@ class Square extends Shape {
   }
 }
 
-// Works fine.
+// 正常运行。
 new Square(42)
 ```
 
@@ -322,7 +322,7 @@ interface HasArea {
   getArea(): number
 }
 
-// Works!
+// 正常！
 let Ctor: abstract new () => HasArea = Shape
 ```
 
@@ -431,8 +431,8 @@ function shouldDisplayElement(element: Element) {
 function getVisibleItems(elements: Element[]) {
   return elements.filter((e) => shouldDisplayElement && e.children.length)
   //                          ~~~~~~~~~~~~~~~~~~~~
-  // This condition will always return true since the function is always defined.
-  // Did you mean to call it instead.
+  // 此条件将始终返回 true，因为该函数始终已定义。
+  // 你是否想要调用它？
 }
 ```
 
@@ -476,11 +476,11 @@ type WesAndersonWatchCount = {
 
 declare const wesAndersonWatchCount: WesAndersonWatchCount
 const movieWatchCount: { [key: string]: number } = wesAndersonWatchCount
-//    ~~~~~~~~~~~~~~~ error!
-// Type 'WesAndersonWatchCount' is not assignable to type '{ [key: string]: number; }'.
-//    Property '"Fantastic Mr. Fox"' is incompatible with index signature.
-//      Type 'number | undefined' is not assignable to type 'number'.
-//        Type 'undefined' is not assignable to type 'number'. (2322)
+//    ~~~~~~~~~~~~~~~ 错误！
+// 类型 'WesAndersonWatchCount' 不能赋值给类型 '{ [key: string]: number; }'。
+//    属性 '"Fantastic Mr. Fox"' 与索引签名不兼容。
+//      类型 'number | undefined' 不能赋值给类型 'number'。
+//        类型 'undefined' 不能赋值给类型 'number'。(2322)
 ```
 
 TypeScript 4.2 允许这种赋值。但是，它*不*允许赋值类型中包含 `undefined` 的非可选属性，也不允许向特定键写入 `undefined`：
@@ -495,11 +495,11 @@ type BatmanWatchCount = {
 
 declare const batmanWatchCount: BatmanWatchCount
 
-// Still an error in TypeScript 4.2.
+// 在 TypeScript 4.2 中仍然报错。
 const movieWatchCount: { [key: string]: number } = batmanWatchCount
 
-// Still an error in TypeScript 4.2.
-// Index signatures don't implicitly allow explicit `undefined`.
+// 在 TypeScript 4.2 中仍然报错。
+// 索引签名不会隐式允许显式的 `undefined`。
 movieWatchCount["It's the Great Pumpkin, Charlie Brown"] = undefined
 ```
 
@@ -542,21 +542,21 @@ function* g1() {
 }
 
 function* g2() {
-  // No error.
-  // The result of `yield 1` is unused.
+  // 无错误。
+  // `yield 1` 的结果未被使用。
   yield 1
 }
 
 function* g3() {
-  // No error.
-  // `yield 1` is contextually typed by 'string'.
+  // 无错误。
+  // `yield 1` 受到 'string' 的上下文类型推断。
   const value: string = yield 1
 }
 
 function* g4(): Generator<number, void, string> {
-  // No error.
-  // TypeScript can figure out the type of `yield 1`
-  // from the explicit return type of `g4`.
+  // 无错误。
+  // TypeScript 可以根据 `g4` 的显式返回类型
+  // 推断出 `yield 1` 的类型。
   const value = yield 1
 }
 ```
@@ -592,11 +592,11 @@ f < T > 100
 在 TypeScript 中，可以通过任意展开语法（`...`）构造元组类型。
 
 ```ts
-// Tuple types with spread elements
+// 带有展开元素的元组类型
 type NumStr = [number, string]
 type NumStrNumStr = [...NumStr, ...NumStr]
 
-// Array spread expressions
+// 数组展开表达式
 const numStr = [123, 'hello'] as const
 const numStrNumStr = [...numStr, ...numStr] as const
 ```
@@ -611,7 +611,7 @@ const numStrNumStr = [...numStr, ...numStr] as const
 在 TypeScript 4.2 中，导入路径的扩展名中包含 `.d.ts` 现在属于错误。
 
 ```ts
-// must be changed to something like
+// 必须修改为类似以下形式：
 //   - "./foo"
 //   - "./foo.js"
 import { Foo } from './foo.d.ts'
@@ -638,22 +638,22 @@ TypeScript 4.2 Beta 版本包含了一项针对模板字符串推断的改动。
 ```ts
 declare const yourName: string
 
-// 'bar' is constant.
-// It has type '`hello ${string}`'.
+// 'bar' 是常量。
+// 它的类型为 '`hello ${string}`'。
 const bar = `hello ${yourName}`
 
-// 'baz' is mutable.
-// It has type 'string'.
+// 'baz' 是可变的。
+// 它的类型为 'string'。
 let baz = `hello ${yourName}`
 ```
 
 这类似于字符串字面量推断的工作方式：
 
 ```ts
-// 'bar' has type '"hello"'.
+// 'bar' 的类型为 '"hello"'。
 const bar = 'hello'
 
-// 'baz' has type 'string'.
+// 'baz' 的类型为 'string'。
 let baz = 'hello'
 ```
 
@@ -666,11 +666,11 @@ let baz = 'hello'
 ```ts
 declare const yourName: string
 
-// 'bar' has type '`hello ${string}`'.
+// 'bar' 的类型为 '`hello ${string}`'。
 const bar = `hello ${yourName}` as const
 //                              ^^^^^^^^
 
-// 'baz' has type 'string'.
+// 'baz' 的类型为 'string'。
 const baz = `hello ${yourName}`
 ```
 

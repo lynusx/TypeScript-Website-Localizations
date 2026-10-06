@@ -31,24 +31,24 @@ TSConfig 是一个 jsonc 文件，它既用于配置编译器标志，也用于�
 
 ```jsonc tsconfig
 {
-  // Change this to match your project
+  // 修改此处以匹配你的项目
   "include": ["src/**/*"],
 
   "compilerOptions": {
-    // Tells TypeScript to read JS files, as
-    // normally they are ignored as source files
+    // 告知 TypeScript 读取 JS 文件，因为
+    // 它们在通常情况下不会被作为源文件处理
     "allowJs": true,
-    // Generate d.ts files
+    // 生成 d.ts 文件
     "declaration": true,
-    // This compiler run should
-    // only output d.ts files
+    // 本次编译器运行应
+    // 仅输出 d.ts 文件
     "emitDeclarationOnly": true,
-    // Types should go into this directory.
-    // Removing this would place the .d.ts files
-    // next to the .js files
+    // 类型文件应输出到此目录。
+    // 移除此项会将 .d.ts 文件
+    // 放置在 .js 文件的旁边
     "outDir": "dist",
-    // go to js file when using IDE functions like
-    // "Go to Definition" in VSCode
+    // 在 VSCode 中使用类似“跳转到定义”等 IDE 功能时
+    // 跳转到 js 文件
     "declarationMap": true,
   },
 }

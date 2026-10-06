@@ -43,15 +43,15 @@ class ZipCodeValidator implements StringValidator {
   }
 }
 
-// Some samples to try
+// 一些用于测试的示例
 let strings = ['Hello', '98052', '101']
 
-// Validators to use
+// 要使用的验证器
 let validators: { [s: string]: StringValidator } = {}
 validators['ZIP code'] = new ZipCodeValidator()
 validators['Letters only'] = new LettersOnlyValidator()
 
-// Show whether each string passed each validator
+// 显示每个字符串是否通过了各验证器的检查
 for (let s of strings) {
   for (let name in validators) {
     let isMatch = validators[name].isAcceptable(s)
@@ -94,15 +94,15 @@ namespace Validation {
   }
 }
 
-// Some samples to try
+// 一些用于测试的示例
 let strings = ['Hello', '98052', '101']
 
-// Validators to use
+// 要使用的验证器
 let validators: { [s: string]: Validation.StringValidator } = {}
 validators['ZIP code'] = new Validation.ZipCodeValidator()
 validators['Letters only'] = new Validation.LettersOnlyValidator()
 
-// Show whether each string passed each validator
+// 显示每个字符串是否通过了各验证器的检查
 for (let s of strings) {
   for (let name in validators) {
     console.log(
@@ -170,15 +170,15 @@ namespace Validation {
 /// <reference path="LettersOnlyValidator.ts" />
 /// <reference path="ZipCodeValidator.ts" />
 
-// Some samples to try
+// 一些用于测试的示例
 let strings = ['Hello', '98052', '101']
 
-// Validators to use
+// 要使用的验证器
 let validators: { [s: string]: Validation.StringValidator } = {}
 validators['ZIP code'] = new Validation.ZipCodeValidator()
 validators['Letters only'] = new Validation.LettersOnlyValidator()
 
-// Show whether each string passed each validator
+// 显示每个字符串是否通过了各验证器的检查
 for (let s of strings) {
   for (let name in validators) {
     console.log(
@@ -232,7 +232,7 @@ namespace Shapes {
 }
 
 import polygons = Shapes.Polygons
-let sq = new polygons.Square() // Same as 'new Shapes.Polygons.Square()'
+let sq = new polygons.Square() // 等同于 'new Shapes.Polygons.Square()'
 ```
 
 请注意，我们并没有使用 `require` 关键字；而是直接从所导入符号的限定名进行赋值。

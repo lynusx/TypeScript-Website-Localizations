@@ -282,7 +282,7 @@ class Person {
   }
 }
 
-// Employee can extend Person
+// Employee 可以继承 Person
 class Employee extends Person {
   private department: string
 
@@ -428,8 +428,8 @@ class Grid {
   constructor(public scale: number) {}
 }
 
-let grid1 = new Grid(1.0) // 1x scale
-let grid2 = new Grid(5.0) // 5x scale
+let grid1 = new Grid(1.0) // 1 倍缩放
+let grid2 = new Grid(5.0) // 5 倍缩放
 
 console.log(grid1.calculateDistanceFromOrigin({ x: 10, y: 10 }))
 console.log(grid2.calculateDistanceFromOrigin({ x: 10, y: 10 }))
@@ -466,12 +466,12 @@ abstract class Department {
     console.log('Department name: ' + this.name)
   }
 
-  abstract printMeeting(): void // must be implemented in derived classes
+  abstract printMeeting(): void // 必须在派生类中实现
 }
 
 class AccountingDepartment extends Department {
   constructor() {
-    super('Accounting and Auditing') // constructors in derived classes must call super()
+    super('Accounting and Auditing') // 派生类中的构造函数必须调用 super()
   }
 
   printMeeting(): void {
@@ -483,12 +483,12 @@ class AccountingDepartment extends Department {
   }
 }
 
-let department: Department // ok to create a reference to an abstract type
-department = new Department() // error: cannot create an instance of an abstract class
-department = new AccountingDepartment() // ok to create and assign a non-abstract subclass
+let department: Department // 允许创建对抽象类型的引用
+department = new Department() // 错误：无法创建抽象类的实例
+department = new AccountingDepartment() // 允许创建并赋值非抽象子类
 department.printName()
 department.printMeeting()
-department.generateReports() // error: department is not of type AccountingDepartment, cannot access generateReports
+department.generateReports() // 错误：department 不是 AccountingDepartment 类型，无法访问 generateReports
 ```
 
 ## Advanced Techniques

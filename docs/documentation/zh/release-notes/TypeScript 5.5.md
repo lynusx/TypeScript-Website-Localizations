@@ -18,16 +18,16 @@ interface Bird {
   sing(): void
 }
 
-// Maps country names -> national bird.
-// Not all nations have official birds (looking at you, Canada!)
+// 将国家名称映射到国鸟。
+// 并非所有国家都有官方国鸟（说的就是你，加拿大！）
 declare const nationalBirds: Map<string, Bird>
 
 function makeNationalBirdCall(country: string) {
-  const bird = nationalBirds.get(country) // bird has a declared type of Bird | undefined
+  const bird = nationalBirds.get(country) // bird 的声明类型为 Bird | undefined
   if (bird) {
-    bird.sing() // bird has type Bird inside the if statement
+    bird.sing() // 在 if 语句内部，bird 的类型为 Bird
   } else {
-    // bird has type undefined here.
+    // 在此处，bird 的类型为 undefined。
   }
 }
 ```
@@ -44,7 +44,7 @@ function makeBirdCalls(countries: string[]) {
     .filter((bird) => bird !== undefined)
 
   for (const bird of birds) {
-    bird.sing() // error: 'bird' is possibly 'undefined'.
+    bird.sing() // 错误：'bird' 可能为 'undefined'。
   }
 }
 ```
@@ -62,7 +62,7 @@ function makeBirdCalls(countries: string[]) {
     .filter((bird) => bird !== undefined)
 
   for (const bird of birds) {
-    bird.sing() // ok!
+    bird.sing() // 正常！
   }
 }
 ```
@@ -123,7 +123,7 @@ function getClassroomAverage(
 
   return studentScores.reduce((a, b) => a + b) / studentScores.length
   //     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // error: Object is possibly 'undefined'.
+  // 错误：对象可能为 'undefined'。
 }
 ```
 
@@ -143,7 +143,7 @@ function getClassroomAverage(
     .map((student) => allScores.get(student))
     .filter((score) => score !== undefined)
 
-  return studentScores.reduce((a, b) => a + b) / studentScores.length // ok!
+  return studentScores.reduce((a, b) => a + b) / studentScores.length // 正常！
 }
 ```
 
@@ -157,18 +157,18 @@ TypeScript 不会检查自己推断出的谓词是否与显式标注一致。
 如果 TypeScript 推断出的类型比你预期的更精确，这项特性可能会对现有代码造成破坏性变更（breaking change）。例如：
 
 ```tsx
-// Previously, nums: (number | null)[]
-// Now, nums: number[]
+// 此前，nums: (number | null)[]
+// 现在，nums: number[]
 const nums = [1, 2, 3, null, 5].filter((x) => x !== null)
 
-nums.push(null) // ok in TS 5.4, error in TS 5.5
+nums.push(null) // 在 TS 5.4 中正常，在 TS 5.5 中报错
 ```
 
 修复方法是通过显式类型标注告诉 TypeScript 你期望的类型：
 
 ```tsx
 const nums: (number | null)[] = [1, 2, 3, null, 5].filter((x) => x !== null)
-nums.push(null) // ok in all versions
+nums.push(null) // 在所有版本中均正常
 ```
 
 有关更多信息，请查阅[实现该特性的 Pull Request](https://github.com/microsoft/TypeScript/pull/57465) 以及 [Dan 关于实现该特性的博文](https://effectivetypescript.com/2024/04/16/inferring-a-type-predicate/)。
@@ -180,7 +180,7 @@ nums.push(null) // ok in all versions
 ```ts
 function f1(obj: Record<string, unknown>, key: string) {
   if (typeof obj[key] === 'string') {
-    // Now okay, previously was error
+    // 现在正常，此前报错
     obj[key].toUpperCase()
   }
 }
@@ -201,7 +201,7 @@ export interface SomeType {
 }
 
 // ./index.js
-import { SomeType } from "./some-module"; // ❌ runtime error!
+import { SomeType } from "./some-module"; // ❌ 运行时错误！
 
 /**
  * @param {SomeType} myValue
@@ -297,8 +297,8 @@ function doSomething(myValue) {
 ```ts
 let myRegex = /@robot(\s+(please|immediately)))? do some task/
 //                                            ~
-// error!
-// Unexpected ')'. Did you mean to escape it with backslash?
+// 错误！
+// 意外的 ')'。你是想用反斜杠对其进行转义吗？
 ```
 
 这是一个简单的示例，但这项检查能够捕获大量常见错误。
@@ -308,9 +308,9 @@ let myRegex = /@robot(\s+(please|immediately)))? do some task/
 ```ts
 let myRegex = /@typedef \{import\((.+)\)\.([a-zA-Z_]+)\} \3/u
 //                                                        ~
-// error!
-// This backreference refers to a group that does not exist.
-// There are only 2 capturing groups in this regular expression.
+// 错误！
+// 此反向引用指向了一个不存在的分组。
+// 此正则表达式中仅有 2 个捕获组。
 ```
 
 具名捕获组（named capturing groups）同样如此：
@@ -319,8 +319,8 @@ let myRegex = /@typedef \{import\((.+)\)\.([a-zA-Z_]+)\} \3/u
 let myRegex =
   /@typedef \{import\((?<importPath>.+)\)\.(?<importedEntity>[a-zA-Z_]+)\} \k<namedImport>/
 //                                                                                        ~~~~~~~~~~~
-// error!
-// There is no capturing group named 'namedImport' in this regular expression.
+// 错误！
+// 此正则表达式中没有名为 'namedImport' 的捕获组。
 ```
 
 TypeScript 的检查现在还能感知某些正则表达式特性是否高于你配置的目标 ECMAScript 版本。
@@ -330,8 +330,8 @@ TypeScript 的检查现在还能感知某些正则表达式特性是否高于你
 let myRegex =
   /@typedef \{import\((?<importPath>.+)\)\.(?<importedEntity>[a-zA-Z_]+)\} \k<importedEntity>/
 //                                  ~~~~~~~~~~~~         ~~~~~~~~~~~~~~~~
-// error!
-// Named capturing groups are only available when targeting 'ES2018' or later.
+// 错误！
+// 具名捕获组仅在目标设置为 'ES2018' 或更高版本时可用。
 ```
 
 对于某些正则表达式标志（flags）也是如此。
@@ -399,7 +399,7 @@ console.log(applesAndBananas.difference(applesAndOranges))
 ////
 
 // Set(2) {'bananas', 'oranges'}
-console.log(applesAndBananas.symmetricDifference(applesAndOranges)) // no apples
+console.log(applesAndBananas.symmetricDifference(applesAndOranges)) // 没有 apples
 
 ////
 // isDisjointFrom
@@ -555,8 +555,8 @@ export function foo() {
 ```ts
 export function foo() {
   //              ~~~
-  // error! Function must have an explicit
-  // return type annotation with --isolatedDeclarations.
+  // 错误！在 --isolatedDeclarations 下，函数必须
+  // 具有显式的返回类型注解。
   return x
 }
 ```
@@ -575,7 +575,7 @@ export function foo() {
 ```ts
 import { add } from './add'
 
-const x = add('1', '2') // no error on 'x', it's not exported.
+const x = add('1', '2') // 'x' 没有报错，因为它未被导出。
 
 export function foo(): string {
   return x
@@ -585,18 +585,18 @@ export function foo(): string {
 对于某些类型推导显而易见（"trivial"）的表达式，同样不需要显式标注：
 
 ```ts
-// No error on 'x'.
-// It's trivial to calculate the type is 'number'
+// 'x' 没有报错。
+// 很容易计算出其类型为 'number'
 export let x = 10
 
-// No error on 'y'.
-// We can get the type from the return expression.
+// 'y' 没有报错。
+// 我们可以从 return 表达式中获取其类型。
 export function y() {
   return 20
 }
 
-// No error on 'z'.
-// The type assertion makes it clear what the type is.
+// 'z' 没有报错。
+// 类型断言清楚地表明了其类型是什么。
 export function z() {
   return Math.max(x, y()) as number
 }
@@ -853,22 +853,22 @@ export const boolStr: boolean | string
 此前，如果你在 Node.js 中编写 ECMAScript 模块，是无法从 `typescript` 软件包中使用具名导入（named imports）的：
 
 ```ts
-import { createSourceFile } from 'typescript' // ❌ error
+import { createSourceFile } from 'typescript' // ❌ 错误
 
 import * as ts from 'typescript'
 ts.createSourceFile // ❌ undefined???
 
-ts.default.createSourceFile // ✅ works - but ugh!
+ts.default.createSourceFile // ✅ 可以运行 —— 但很别扭！
 ```
 
 这是因为 [cjs-module-lexer](https://github.com/nodejs/cjs-module-lexer) 无法识别 TypeScript 生成的 CommonJS 代码模式。
 该问题现已修复，用户现在可以在 Node.js 的 ECMAScript 模块中直接从 TypeScript npm 包中使用具名导入：
 
 ```ts
-import { createSourceFile } from 'typescript' // ✅ works now!
+import { createSourceFile } from 'typescript' // ✅ 现在可以正常运行！
 
 import * as ts from 'typescript'
-ts.createSourceFile // ✅ works now!
+ts.createSourceFile // ✅ 现在可以正常运行！
 ```
 
 更多信息，[请参见此处变更](https://github.com/microsoft/TypeScript/pull/57133)。
@@ -935,10 +935,10 @@ class DecoratorProvider {
 class D extends DecoratorProvider {
   m() {
     class C {
-      @(super.decorate) // ❌ error
+      @(super.decorate) // ❌ 错误
       method1() {}
 
-      @(super.decorate) // ✅ okay
+      @(super.decorate) // ✅ 正常
       method2() {}
     }
   }
@@ -952,13 +952,13 @@ class D extends DecoratorProvider {
 TypeScript 一直以来都禁止类型别名与内置类型名称冲突：
 
 ```ts
-// Illegal
+// 非法
 type null = any;
-// Illegal
+// 非法
 type number = any;
-// Illegal
+// 非法
 type object = any;
-// Illegal
+// 非法
 type any = any;
 ```
 
@@ -966,7 +966,7 @@ type any = any;
 在 5.5 中，这现在会被正确识别为错误：
 
 ```ts
-// Now also illegal
+// 现在同样非法
 type undefined = any
 ```
 
@@ -977,7 +977,7 @@ type undefined = any
 export type undefined = string
 export const m: undefined = ''
 //           ^
-// Errors in 5.4 and earlier - the local definition of 'undefined' was not even consulted.
+// 在 5.4 及更早版本中报错 —— 甚至根本没有参考 'undefined' 的局部定义。
 ```
 
 更多信息，[请参见此处变更](https://github.com/microsoft/TypeScript/pull/57575)。

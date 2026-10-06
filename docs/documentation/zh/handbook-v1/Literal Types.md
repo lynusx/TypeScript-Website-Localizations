@@ -18,13 +18,13 @@ When you declare a variable via `var` or `let`, you are telling the compiler tha
 In contrast, using `const` to declare a variable will inform TypeScript that this object will never change.
 
 ```ts twoslash
-// We're making a guarantee that this variable
-// helloWorld will never change, by using const.
+// 我们通过使用 const 保证了变量
+// helloWorld 永远不会改变。
 
-// So, TypeScript sets the type to be "Hello World", not string
+// 因此，TypeScript 将其类型设置为 "Hello World"，而不是 string
 const helloWorld = 'Hello World'
 
-// On the other hand, a let can change, and so the compiler declares it a string
+// 另一方面，let 可以被改变，因此编译器将其声明为 string
 let hiWorld = 'Hi World'
 ```
 
@@ -46,8 +46,8 @@ class UIElement {
     } else if (easing === 'ease-out') {
     } else if (easing === 'ease-in-out') {
     } else {
-      // It's possible that someone could reach this
-      // by ignoring your types though.
+      // 不过，如果有人忽略了你的类型，
+      // 仍然可能会进入这个分支。
     }
   }
 }
@@ -68,9 +68,9 @@ String literal types can be used in the same way to distinguish overloads:
 ```ts
 function createElement(tagName: 'img'): HTMLImageElement
 function createElement(tagName: 'input'): HTMLInputElement
-// ... more overloads ...
+// ... 更多重载 ...
 function createElement(tagName: string): Element {
-  // ... code goes here ...
+  // ... 具体代码实现 ...
 }
 ```
 
@@ -89,7 +89,7 @@ const result = rollDice()
 A common case for their use is for describing config values:
 
 ```ts twoslash
-/** Creates a map centered at loc/lat */
+/** 创建以经纬度（loc/lat）为中心的地图 */
 declare function setupMap(config: MapConfig): void
 // ---cut---
 interface MapConfig {

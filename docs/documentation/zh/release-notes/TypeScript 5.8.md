@@ -36,7 +36,7 @@ declare const untypedCache: Map<any, any>
 function getUrlObject(urlString: string): URL {
   return untypedCache.has(urlString) ? untypedCache.get(urlString) : urlString
   //  ~~~~~~~~~
-  // error! Type 'string' is not assignable to type 'URL'.
+  // 错误！类型 'string' 不能赋值给类型 'URL'。
 }
 ```
 
@@ -96,27 +96,27 @@ Node.js 默认启用的 `--experimental-strip-types` 模式要求所有 TypeScri
 以下是不受支持的语法示例：
 
 ```ts
-// ❌ error: An `import ... = require(...)` alias
+// ❌ 错误：`import ... = require(...)` 别名
 import foo = require('foo')
 
-// ❌ error: A namespace with runtime code.
+// ❌ 错误：包含运行时代码的 namespace。
 namespace container {}
 
-// ❌ error: An `import =` alias
+// ❌ 错误：`import =` 别名
 import Bar = container.Bar
 
 class Point {
-  // ❌ error: Parameter properties
+  // ❌ 错误：参数属性
   constructor(
     public x: number,
     public y: number,
   ) {}
 }
 
-// ❌ error: An `export =` assignment.
+// ❌ 错误：`export =` 赋值。
 export = Point
 
-// ❌ error: An enum declaration.
+// ❌ 错误：enum 声明。
 enum Direction {
   Up,
   Down,
@@ -135,7 +135,7 @@ enum Direction {
 class C {
     constructor(public x: number) { }
     //          ~~~~~~~~~~~~~~~~
-    // error! This syntax is not allowed when 'erasableSyntaxOnly' is enabled.
+    // 错误！启用 'erasableSyntaxOnly' 时不允许使用该语法。
     }
 }
 ```
@@ -181,8 +181,8 @@ export let propName = 'theAnswer'
 export class MyClass {
   [propName] = 42
   //  ~~~~~~~~~~
-  // error!
-  // A computed property name in a class property declaration must have a simple literal type or a 'unique symbol' type.
+  // 错误！
+  // 类属性声明中的计算属性名必须具有简单的字面量类型或 'unique symbol' 类型。
 }
 ```
 
@@ -246,10 +246,10 @@ TypeScript 现在避免了分配数组，而是更直接地在原始路径的索
 作为过渡的一部分，语法从使用 `assert` 关键字转变为使用 `with` 关键字。
 
 ```ts
-// An import assertion ❌ - not future-compatible with most runtimes.
+// 导入断言 ❌ - 与大多数运行时的未来版本不兼容。
 import data from './data.json' assert { type: 'json' }
 
-// An import attribute ✅ - the preferred way to import a JSON file.
+// 导入属性 ✅ - 导入 JSON 文件的推荐方式。
 import data from './data.json' with { type: 'json' }
 ```
 
@@ -259,7 +259,7 @@ Node.js 22 不再接受使用 `assert` 语法的导入断言。
 ```ts
 import data from './data.json' assert { type: 'json' }
 //                             ~~~~~~
-// error! Import assertions have been replaced by import attributes. Use 'with' instead of 'assert'
+// 错误！导入断言已被导入属性取代。请使用 'with' 代替 'assert'
 ```
 
 有关更多信息，请[参阅此处的变更](https://github.com/microsoft/TypeScript/pull/60761)。

@@ -175,7 +175,7 @@ namespace Animal {
 
 namespace Animal {
   export function doAnimalsHaveMuscles() {
-    return haveMuscles // Error, because haveMuscles is not accessible here
+    return haveMuscles // 错误，因为此处无法访问 haveMuscles
   }
 }
 ```
@@ -260,13 +260,13 @@ TypeScript 中并非所有的合并都被允许。
 ```ts
 // observable.ts
 export class Observable<T> {
-  // ... implementation left as an exercise for the reader ...
+  // ... 具体实现留给读者作为练习 ...
 }
 
 // map.ts
 import { Observable } from './observable'
 Observable.prototype.map = function (f) {
-  // ... another exercise for the reader
+  // ... 给读者的另一个练习
 }
 ```
 
@@ -276,7 +276,7 @@ Observable.prototype.map = function (f) {
 ```ts
 // observable.ts
 export class Observable<T> {
-  // ... implementation left as an exercise for the reader ...
+  // ... 具体实现留给读者作为练习 ...
 }
 
 // map.ts
@@ -287,7 +287,7 @@ declare module './observable' {
   }
 }
 Observable.prototype.map = function (f) {
-  // ... another exercise for the reader
+  // ... 给读者的另一个练习
 }
 
 // consumer.ts
@@ -313,7 +313,7 @@ o.map((x) => x.toFixed())
 ```ts
 // observable.ts
 export class Observable<T> {
-  // ... still no implementation ...
+  // ... 依然没有实现 ...
 }
 
 declare global {

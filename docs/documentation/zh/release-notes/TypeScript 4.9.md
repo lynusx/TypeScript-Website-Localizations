@@ -12,7 +12,7 @@ TypeScript 开发者经常面临两难境地：我们既希望确保某个表达
 例如：
 
 ```ts
-// Each property can be a string or an RGB tuple.
+// 每个属性可以是字符串或 RGB 元组。
 const palette = {
   red: [255, 0, 0],
   green: '#00ff00',
@@ -20,7 +20,7 @@ const palette = {
   //  ^^^^ sacrebleu - we've made a typo!
 }
 
-// We want to be able to use string methods on 'green'...
+// 我们希望能够对 'green' 使用字符串方法...
 const greenNormalized = palette.green.toUpperCase()
 ```
 
@@ -35,11 +35,11 @@ const palette: Record<Colors, string | RGB> = {
   red: [255, 0, 0],
   green: '#00ff00',
   bleu: [0, 0, 255],
-  //  ~~~~ The typo is now correctly detected
+  //  ~~~~ 现在正确检测到了该拼写错误
 }
 
-// But we now have an undesirable error here - 'palette.green' "could" be of type RGB and
-// property 'toUpperCase' does not exist on type 'string | RGB'.
+// 但我们现在在这里遇到了一个不希望看到的错误 —— 'palette.green' “可能”是 RGB 类型，
+// 且类型 'string | RGB' 上不存在属性 'toUpperCase'。
 const greenNormalized = palette.green.toUpperCase()
 ```
 
@@ -54,10 +54,10 @@ const palette = {
   red: [255, 0, 0],
   green: '#00ff00',
   bleu: [0, 0, 255],
-  //  ~~~~ The typo is now caught!
+  //  ~~~~ 该拼写错误现已被捕获！
 } satisfies Record<Colors, string | RGB>
 
-// toUpperCase() method is still accessible!
+// toUpperCase() 方法仍然可以访问！
 const greenNormalized = palette.green.toUpperCase()
 ```
 
@@ -66,16 +66,16 @@ const greenNormalized = palette.green.toUpperCase()
 ```ts
 type Colors = 'red' | 'green' | 'blue'
 
-// Ensure that we have exactly the keys from 'Colors'.
+// 确保我们拥有的键与 'Colors' 完全一致。
 const favoriteColors = {
   red: 'yes',
   green: false,
   blue: 'kinda',
   platypus: false,
-  //  ~~~~~~~~~~ error - "platypus" was never listed in 'Colors'.
+  //  ~~~~~~~~~~ 错误 - "platypus" 从未列在 'Colors' 中。
 } satisfies Record<Colors, unknown>
 
-// All the information about the 'red', 'green', and 'blue' properties are retained.
+// 关于 'red'、'green' 和 'blue' 属性的所有信息均被保留。
 const g: boolean = favoriteColors.green
 ```
 
@@ -88,10 +88,10 @@ const palette = {
   red: [255, 0, 0],
   green: '#00ff00',
   blue: [0, 0],
-  //    ~~~~~~ error!
+  //    ~~~~~~ 错误！
 } satisfies Record<string, string | RGB>
 
-// Information about each property is still maintained.
+// 每个属性的信息仍被保留。
 const redComponent = palette.red.at(0)
 const greenNormalized = palette.green.toUpperCase()
 ```
@@ -119,7 +119,7 @@ interface HSV {
 
 function setColor(color: RGB | HSV) {
   if ('hue' in color) {
-    // 'color' now has the type HSV
+    // 'color' 现在具有类型 HSV
   }
   // ...
 }
@@ -132,9 +132,9 @@ function setColor(color: RGB | HSV) {
 ```js
 function tryGetPackageName(context) {
   const packageJSON = context.packageJSON
-  // Check to see if we have an object.
+  // 检查是否为对象。
   if (packageJSON && typeof packageJSON === 'object') {
-    // Check to see if it has a string name property.
+    // 检查它是否具有字符串类型的 name 属性。
     if ('name' in packageJSON && typeof packageJSON.name === 'string') {
       return packageJSON.name
     }
@@ -153,15 +153,15 @@ interface Context {
 
 function tryGetPackageName(context: Context) {
   const packageJSON = context.packageJSON
-  // Check to see if we have an object.
+  // 检查是否为对象。
   if (packageJSON && typeof packageJSON === 'object') {
-    // Check to see if it has a string name property.
+    // 检查它是否具有字符串类型的 name 属性。
     if ('name' in packageJSON && typeof packageJSON.name === 'string') {
       //                                              ~~~~
-      // error! Property 'name' does not exist on type 'object.
+      // 错误！类型 'object' 上不存在属性 'name'。
       return packageJSON.name
       //                     ~~~~
-      // error! Property 'name' does not exist on type 'object.
+      // 错误！类型 'object' 上不存在属性 'name'。
     }
   }
 
@@ -182,11 +182,11 @@ interface Context {
 
 function tryGetPackageName(context: Context): string | undefined {
   const packageJSON = context.packageJSON
-  // Check to see if we have an object.
+  // 检查是否为对象。
   if (packageJSON && typeof packageJSON === 'object') {
-    // Check to see if it has a string name property.
+    // 检查它是否具有字符串类型的 name 属性。
     if ('name' in packageJSON && typeof packageJSON.name === 'string') {
-      // Just works!
+      // 正常工作！
       return packageJSON.name
     }
   }
@@ -266,8 +266,8 @@ TypeScript 现在会对与 `NaN` 的直接比较报错，并建议使用 `Number
 function validate(someValue: number) {
   return someValue !== NaN
   //     ~~~~~~~~~~~~~~~~~
-  // error: This condition will always return 'true'.
-  //        Did you mean '!Number.isNaN(someValue)'?
+  // 错误：此条件将始终返回 'true'。
+  //        你的意思是 '!Number.isNaN(someValue)' 吗？
 }
 ```
 
@@ -388,19 +388,19 @@ TypeScript 在检查 `Zoo<A>` 是否合法时必须“记住” `A` 也必须是
 这种行为值得商榷，尤其是检测导入是否不指代值这一项，因为这意味着 TypeScript 必须信任有时并不准确的声明文件。因此，TypeScript 现在会在 JavaScript 文件中保留导入语句。
 
 ```js
-// Input:
+// 输入：
 import { someValue, SomeClass } from 'some-module'
 
 /** @type {SomeClass} */
 let val = someValue
 
-// Previous Output:
+// 此前的输出：
 import { someValue } from 'some-module'
 
 /** @type {SomeClass} */
 let val = someValue
 
-// Current Output:
+// 当前的输出：
 import { someValue, SomeClass } from 'some-module'
 
 /** @type {SomeClass} */

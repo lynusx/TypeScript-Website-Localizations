@@ -50,13 +50,13 @@ const enum E2 {
 }
 
 type Foo = {
-  a: string // String-like name
-  5: string // Number-like name
-  [c]: string // String-like name
-  [d]: string // Number-like name
-  [e]: string // Symbol-like name
-  [E1.A]: string // Number-like name
-  [E2.A]: string // String-like name
+  a: string // 类似字符串的名称
+  5: string // 类似数字的名称
+  [c]: string // 类似字符串的名称
+  [d]: string // 类似数字的名称
+  [e]: string // 类似 Symbol 的名称
+  [E1.A]: string // 类似数字的名称
+  [E2.A]: string // 类似字符串的名称
 }
 
 type K1 = keyof Foo // "a" | 5 | "c" | 10 | typeof e | E1.A | E2.A
@@ -77,7 +77,7 @@ type ReadonlyArrayish<T> = Readonly<Arrayish<T>>
 
 declare const map: ReadonlyArrayish<string>
 let n = map.length
-let x = map[123] // Previously of type any (or an error with --noImplicitAny)
+let x = map[123] // 此前类型为 any（或在启用 --noImplicitAny 时报错）
 ```
 
 此外，随着 `keyof` 运算符支持 `number` 和 `symbol` 命名键，现在可以对通过数字字面量（如数字枚举类型）和唯一 symbol 索引的对象属性访问进行抽象。
@@ -105,15 +105,15 @@ const symbolToNumberMap = {
   [sym3]: 3,
 }
 
-type KE = keyof typeof enumToStringMap // Enum (i.e. Enum.A | Enum.B | Enum.C)
+type KE = keyof typeof enumToStringMap // Enum（即 Enum.A | Enum.B | Enum.C）
 type KS = keyof typeof symbolToNumberMap // typeof sym1 | typeof sym2 | typeof sym3
 
 function getValue<T, K extends keyof T>(obj: T, key: K): T[K] {
   return obj[key]
 }
 
-let x1 = getValue(enumToStringMap, Enum.C) // Returns "Name C"
-let x2 = getValue(symbolToNumberMap, sym3) // Returns 3
+let x1 = getValue(enumToStringMap, Enum.C) // 返回 "Name C"
+let x2 = getValue(symbolToNumberMap, sym3) // 返回 3
 ```
 
 这是一项破坏性变更：此前，`keyof` 运算符和映射类型仅支持 `string` 命名属性。
@@ -123,7 +123,7 @@ let x2 = getValue(symbolToNumberMap, sym3) // Returns 3
 
 ```ts
 function useKey<T, K extends keyof T>(o: T, k: K) {
-  var name: string = k // Error: keyof T is not assignable to string
+  var name: string = k // 错误：keyof T 不可赋值给 string
 }
 ```
 
@@ -133,7 +133,7 @@ function useKey<T, K extends keyof T>(o: T, k: K) {
 
   ```ts
   function useKey<T, K extends Extract<keyof T, string>>(o: T, k: K) {
-    var name: string = k // OK
+    var name: string = k // 正常
   }
   ```
 
@@ -160,9 +160,9 @@ class GenericComponent<P> extends React.Component<P> {
 
 type Props = { a: number; b: string };
 
-const x = <GenericComponent<Props> a={10} b="hi" />; // OK
+const x = <GenericComponent<Props> a={10} b="hi" />; // 正常
 
-const y = <GenericComponent<Props> a={10} b={20} />; // Error
+const y = <GenericComponent<Props> a={10} b={20} />; // 错误
 ```
 
 ## 泛型标签模板中的泛型类型参数
@@ -192,7 +192,7 @@ styledComponent<MyProps>`
 
 declare function tag<T>(strs: TemplateStringsArray, ...args: T[]): T
 
-// inference fails because 'number' and 'string' are both candidates that conflict
+// 推断失败，因为 'number' 和 'string' 都是相互冲突的候选类型
 let a = tag<string | number>`${100} ${'hello'}`
 ```
 
@@ -248,7 +248,7 @@ import { createHash } from 'crypto'
 
 export const hash = createHash('sha256')
 //           ^^^^
-// Exported variable 'hash' has or is using name 'Hash' from external module "crypto" but cannot be named.
+// 导出的变量 'hash' 拥有或正在使用来自外部模块 "crypto" 的名称 'Hash'，但无法被命名。
 ```
 
 在 TypeScript 2.9 中，上述错误不再出现，生成的文件如下：
@@ -279,7 +279,7 @@ interface ImportMeta {
 使用方式如下：
 
 ```ts
-import.meta.__dirname // Has type 'string'
+import.meta.__dirname // 类型为 'string'
 ```
 
 `import.meta` 仅在目标为 `ESNext` 模块和 ECMAScript 目标时才被允许使用。
@@ -305,8 +305,8 @@ import.meta.__dirname // Has type 'string'
 
 import settings from './settings.json'
 
-settings.debug === true // OK
-settings.dry === 2 // Error: Operator '===' cannot be applied boolean and number
+settings.debug === true // 正常
+settings.dry === 2 // 错误：运算符 '===' 不能应用于 boolean 和 number
 ```
 
 ```json tsconfig

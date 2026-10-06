@@ -231,9 +231,9 @@ sayHello('world')
 尽管 ECMAScript 规范定义了如何解析和解释 `import` 和 `export` 语句，但它将模块解析交由宿主决定。如果你要创建一个热门的新 JavaScript 运行时，你可以随意创建如下的模块解析方案：
 
 ```ts
-import monkey from '🐒' // Looks for './eats/bananas.js'
-import cow from '🐄' // Looks for './eats/grass.js'
-import lion from '🦁' // Looks for './eats/you.js'
+import monkey from '🐒' // 查找 './eats/bananas.js'
+import cow from '🐄' // 查找 './eats/grass.js'
+import lion from '🦁' // 查找 './eats/you.js'
 ```
 
 并且依然可以声称自己实现了“符合标准的 ESM”。不用说，如果没有内置该运行时模块解析算法的知识，TypeScript 根本无法知道应该为 `monkey`、`cow` 和 `lion` 赋予什么类型。正如 `module` 告知编译器宿主所期望的模块格式一样，`moduleResolution` 连同一些自定义选项，指定了宿主用于将模块说明符解析为文件的算法。这也阐明了为什么 TypeScript 在生成代码期间不会修改导入说明符：导入说明符与磁盘上文件之间的关系（如果存在的话）是由宿主定义的，而 TypeScript 不是宿主。
@@ -335,7 +335,7 @@ export function add(a: number, b: number) {
 // @Filename: src/main.ts
 import { add } from './math.ts'
 //                  ^^^^^^^^^^^
-// An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+// 仅在启用 'allowImportingTsExtensions' 时，导入路径才能以 '.ts' 扩展名结尾。
 ```
 
 这项限制之所以存在，是因为 TypeScript [不会将扩展名重写](#module-specifiers-are-not-transformed)为 `.js`，而如果 `"./math.ts"` 出现在输出的 JS 文件中，该导入在运行时将无法解析为另一个 JS 文件。TypeScript 极力希望防止你生成不安全的输出 JS 文件。但如果根本*没有*输出 JS 文件呢？如果你处于以下某种情况：

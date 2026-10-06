@@ -11,7 +11,7 @@ oneline: TypeScript 5.6 发布说明
 
 ```ts
 if (/0x[0-9a-f]/) {
-  // Oops! This block always runs.
+  // 糟糕！此代码块始终会执行。
   // ...
 }
 ```
@@ -20,7 +20,7 @@ if (/0x[0-9a-f]/) {
 
 ```ts
 if ((x) => 0) {
-  // Oops! This block always runs.
+  // 糟糕！此代码块始终会执行。
   // ...
 }
 ```
@@ -37,7 +37,7 @@ function isValid(
     value = +value
   }
   return value < options.max ?? 100
-  // Oops! This is parsed as (value < options.max) ?? 100
+  // 糟糕！这会被解析为 (value < options.max) ?? 100
 }
 ```
 
@@ -63,12 +63,12 @@ if (
 ```ts
 if (/0x[0-9a-f]/) {
   //  ~~~~~~~~~~~~
-  // error: This kind of expression is always truthy.
+  // 错误：此类表达式始终为真值（truthy）。
 }
 
 if ((x) => 0) {
   //  ~~~~~~
-  // error: This kind of expression is always truthy.
+  // 错误：此类表达式始终为真值（truthy）。
 }
 
 function isValid(
@@ -81,7 +81,7 @@ function isValid(
   }
   return value < options.max ?? 100
   //     ~~~~~~~~~~~~~~~~~~~
-  // error: Right operand of ?? is unreachable because the left operand is never nullish.
+  // 错误：?? 的右操作数不可达，因为左操作数绝不为空值（nullish）。
 }
 
 if (
@@ -90,7 +90,7 @@ if (
   isValid(primaryValue, 'loose' || isValid(secondaryValue, 'loose'))
 ) {
   //                    ~~~~~~~
-  // error: This kind of expression is always truthy.
+  // 错误：此类表达式始终为真值（truthy）。
 }
 ```
 
@@ -146,7 +146,7 @@ function* positiveIntegers() {
 
 const evenNumbers = positiveIntegers().map((x) => x * 2)
 
-// Output:
+// 输出：
 //    2
 //    4
 //    6
@@ -179,7 +179,7 @@ class Zeroes extends Iterator<number> {
 
 const zeroes = new Zeroes()
 
-// Transform into an endless stream of `1`s.
+// 转换为无限连续的 `1` 流。
 const ones = zeroes.map((x) => x + 1)
 ```
 
@@ -267,7 +267,7 @@ iter.next() // { value: 123, done: true }
 function* uppercase(iter: Iterator<string, any>) {
   while (true) {
     const { value, done } = iter.next()
-    yield value.toUppercase() // oops! forgot to check for `done` first and misspelled `toUpperCase`
+    yield value.toUppercase() // 糟糕！忘记先检查 `done`，且拼错了 `toUpperCase`
 
     if (done) {
       return
@@ -321,10 +321,10 @@ function* uppercase(iter: Iterator<string, BuiltinIteratorReturn>) {
     const { value, done } = iter.next()
     yield value.toUppercase()
     //    ~~~~~ ~~~~~~~~~~~
-    // error! ┃      ┃
-    //        ┃      ┗━ Property 'toUppercase' does not exist on type 'string'. Did you mean 'toUpperCase'?
+    // 错误！ ┃      ┃
+    //        ┃      ┗━ 属性 'toUppercase' 不存在于类型 'string' 上。你是想写 'toUpperCase' 吗？
     //        ┃
-    //        ┗━ 'value' is possibly 'undefined'.
+    //        ┗━ 'value' 可能为 'undefined'.
 
     if (done) {
       return
@@ -400,7 +400,7 @@ export function Button() {
 ```ts
 import 'oops-this-module-does-not-exist'
 //     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// error: Cannot find module 'oops-this-module-does-not-exist' or its corresponding type declarations.
+// 错误：找不到模块 'oops-this-module-does-not-exist' 或其对应的类型声明。
 ```
 
 启用该选项后，某些原本能够正常工作的代码可能会出现错误，例如上面提到的 CSS 示例。
@@ -410,7 +410,7 @@ import 'oops-this-module-does-not-exist'
 ```ts
 // ./src/globals.d.ts
 
-// Recognize all CSS files as module imports.
+// 将所有 CSS 文件识别为模块导入。
 declare module '*.css' {}
 ```
 
@@ -555,9 +555,9 @@ TypeScript 语言服务现在允许你指定一组正则表达式模式，用于
 ```json5
 {
   'typescript.preferences.autoImportSpecifierExcludeRegexes': [
-    '^./lib/internal', // no escaping needed
-    '/^.\\/lib\\/internal/', // escaping needed - note the leading and trailing slashes
-    '/^.\\/lib\\/internal/i', // escaping needed - we needed slashes to provide the 'i' regex flag
+    '^./lib/internal', // 无需转义
+    '/^.\\/lib\\/internal/', // 需要转义 —— 注意开头和结尾的斜杠
+    '/^.\\/lib\\/internal/i', // 需要转义 —— 我们需要斜杠来提供 'i' 正则修饰符
   ],
 }
 ```
@@ -593,8 +593,8 @@ TypeScript 语言服务现在允许你指定一组正则表达式模式，用于
 export declare function doSomething(): void
 
 // index.ts
-// Okay if "dep" is a CommonJS module, but fails if
-// it's an ECMAScript module - even in bundlers!
+// 如果 "dep" 是 CommonJS 模块则正常，但如果
+// 它是 ECMAScript 模块则会失败 —— 即使在打包器中也是如此！
 import dep from 'dep'
 dep.doSomething()
 ```
@@ -643,11 +643,11 @@ class Base {
 class Derived extends Base {
   override [foo]() {}
   //           ~~~~~
-  // error: This member cannot have an 'override' modifier because it is not declared in the base class 'Base'.
+  // 错误：此成员不能具有 'override' 修饰符，因为它未在基类 'Base' 中声明。
 
   [bar]() {}
   //  ~~~~~
-  // error under noImplicitOverride: This member must have an 'override' modifier because it overrides a member in the base class 'Base'.
+  // 在 noImplicitOverride 下报错：此成员必须具有 'override' 修饰符，因为它重写了基类 'Base' 中的成员。
 }
 ```
 

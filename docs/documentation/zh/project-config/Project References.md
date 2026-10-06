@@ -59,7 +59,7 @@ assert.areEqual(converter.celsiusToFahrenheit(0), 32)
 ```js tsconfig
 {
     "compilerOptions": {
-        // The usual
+        // 常用配置
     },
     "references": [
         { "path": "../src" }

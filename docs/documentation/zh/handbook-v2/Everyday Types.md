@@ -42,9 +42,9 @@ TypeScript 还提供了一个特殊类型 `any`，当你不希望某个特定值
 
 ```ts twoslash
 let obj: any = { x: 0 }
-// None of the following lines of code will throw compiler errors.
-// Using `any` disables all further type checking, and it is assumed
-// you know the environment better than TypeScript.
+// 以下任何一行代码都不会抛出编译器错误。
+// 使用 `any` 会禁用所有后续的类型检查，并且假设
+// 你比 TypeScript 更了解所处的运行环境。
 obj.foo()
 obj()
 obj.bar = 100
@@ -67,7 +67,7 @@ const n: number = obj
 
 ```ts twoslash
 let myName: string = 'Alice'
-//        ^^^^^^^^ Type annotation
+//        ^^^^^^^^ 类型注解
 ```
 
 > TypeScript 不使用类似 `int x = 0;` 这样“类型在左侧”的声明风格。
@@ -78,7 +78,7 @@ TypeScript 会尽可能尝试自动*推断*代码中的类型。
 例如，变量的类型会根据其初始值的类型来进行推断：
 
 ```ts twoslash
-// No type annotation needed -- 'myName' inferred as type 'string'
+// 无需类型注解——'myName' 会被推断为 'string' 类型
 let myName = 'Alice'
 ```
 
@@ -96,7 +96,7 @@ TypeScript 允许你指定函数输入值和输出值的类型。
 参数类型注解放在参数名称之后：
 
 ```ts twoslash
-// Parameter type annotation
+// 参数类型注解
 function greet(name: string) {
   //                 ^^^^^^^^
   console.log('Hello, ' + name.toUpperCase() + '!!')
@@ -109,7 +109,7 @@ function greet(name: string) {
 // @errors: 2345
 declare function greet(name: string): void
 // ---cut---
-// Would be a runtime error if executed!
+// 如果执行，将在运行时报错！
 greet(42)
 ```
 
@@ -152,12 +152,12 @@ async function getFavoriteNumber(): Promise<number> {
 // @errors: 2551
 const names = ['Alice', 'Bob', 'Eve']
 
-// Contextual typing for function - parameter s inferred to have type string
+// 函数的上下文类型推断——参数 s 被推断为 string 类型
 names.forEach(function (s) {
   console.log(s.toUpperCase())
 })
 
-// Contextual typing also applies to arrow functions
+// 上下文类型推断同样适用于箭头函数
 names.forEach((s) => {
   console.log(s.toUpperCase())
 })
@@ -179,7 +179,7 @@ names.forEach((s) => {
 例如，下面是一个接受类似坐标点对象的函数：
 
 ```ts twoslash
-// The parameter's type annotation is an object type
+// 参数的类型注解是一个对象类型
 function printCoord(pt: { x: number; y: number }) {
   //                      ^^^^^^^^^^^^^^^^^^^^^^^^
   console.log("The coordinate's x value is " + pt.x)
@@ -203,7 +203,7 @@ printCoord({ x: 3, y: 7 })
 function printName(obj: { first: string; last?: string }) {
   // ...
 }
-// Both OK
+// 两种方式均正常
 printName({ first: 'Bob' })
 printName({ first: 'Alice', last: 'Alisson' })
 ```
@@ -214,14 +214,14 @@ printName({ first: 'Alice', last: 'Alisson' })
 ```ts twoslash
 // @errors: 18048
 function printName(obj: { first: string; last?: string }) {
-  // Error - might crash if 'obj.last' wasn't provided!
+  // 错误——如果未提供 'obj.last'，可能会崩溃！
   console.log(obj.last.toUpperCase())
   if (obj.last !== undefined) {
-    // OK
+    // 正常
     console.log(obj.last.toUpperCase())
   }
 
-  // A safe alternative using modern JavaScript syntax:
+  // 使用现代 JavaScript 语法的安全替代方案：
   console.log(obj.last?.toUpperCase())
 }
 ```
@@ -244,11 +244,11 @@ TypeScript 的类型系统允许你使用各种操作符基于现有类型构建
 function printId(id: number | string) {
   console.log('Your ID is: ' + id)
 }
-// OK
+// 正常
 printId(101)
-// OK
+// 正常
 printId('202')
-// Error
+// 错误
 printId({ myID: 22342 })
 ```
 
@@ -285,10 +285,10 @@ function printId(id: number | string) {
 ```ts twoslash
 function printId(id: number | string) {
   if (typeof id === 'string') {
-    // In this branch, id is of type 'string'
+    // 在此分支中，id 的类型为 'string'
     console.log(id.toUpperCase())
   } else {
-    // Here, id is of type 'number'
+    // 在这里，id 的类型为 'number'
     console.log(id)
   }
 }
@@ -299,10 +299,10 @@ function printId(id: number | string) {
 ```ts twoslash
 function welcomePeople(x: string[] | string) {
   if (Array.isArray(x)) {
-    // Here: 'x' is 'string[]'
+    // 在这里：'x' 为 'string[]'
     console.log('Hello, ' + x.join(' and '))
   } else {
-    // Here: 'x' is 'string'
+    // 在这里：'x' 为 'string'
     console.log('Welcome lone traveler ' + x)
   }
 }
@@ -315,7 +315,7 @@ function welcomePeople(x: string[] | string) {
 如果联合类型中的每个成员都具有某个共同属性，则无需缩小范围即可直接使用该属性：
 
 ```ts twoslash
-// Return type is inferred as number[] | string
+// 返回值类型被推断为 number[] | string
 function getFirstThree(x: number[] | string) {
   return x.slice(0, 3)
 }
@@ -341,7 +341,7 @@ type Point = {
   y: number
 }
 
-// Exactly the same as the earlier example
+// 与前面的示例完全相同
 function printCoord(pt: Point) {
   console.log("The coordinate's x value is " + pt.x)
   console.log("The coordinate's y value is " + pt.y)
@@ -371,10 +371,10 @@ function sanitizeInput(str: string): UserInputSanitizedString {
   return sanitize(str)
 }
 
-// Create a sanitized input
+// 创建一个经过净化的输入
 let userInput = sanitizeInput(getInput())
 
-// Can still be re-assigned with a string though
+// 不过仍然可以被重新赋值为字符串
 userInput = 'new input'
 ```
 
@@ -465,7 +465,7 @@ type Window = {
 type Window = {
   ts: TypeScriptAPI;
 }<br/>
-<span style="color: #A31515"> // Error: Duplicate identifier 'Window'.</span><br/>
+<span style="color: #A31515"> // 错误：标识符 'Window' 重复。</span><br/>
         </pre></code>
       </td>
     </tr>
@@ -533,14 +533,14 @@ const a = expr as any as T
 ```ts twoslash
 let changingString = 'Hello World'
 changingString = 'Olá Mundo'
-// Because `changingString` can represent any possible string, that
-// is how TypeScript describes it in the type system
+// 因为 `changingString` 可以表示任何可能的字符串，
+// 所以 TypeScript 在类型系统中也是这样描述它的
 changingString
 // ^?
 
 const constantString = 'Hello World'
-// Because `constantString` can only represent 1 possible string, it
-// has a literal type representation
+// 因为 `constantString` 只能表示 1 种可能的字符串，
+// 所以它具有字面量类型表示
 constantString
 // ^?
 ```
@@ -550,7 +550,7 @@ constantString
 ```ts twoslash
 // @errors: 2322
 let x: 'hello' = 'hello'
-// OK
+// 正常
 x = 'hello'
 // ...
 x = 'howdy'
@@ -632,9 +632,9 @@ handleRequest(req.url, req.method)
    ```ts twoslash
    declare function handleRequest(url: string, method: 'GET' | 'POST'): void
    // ---cut---
-   // Change 1:
+   // 修改 1：
    const req = { url: 'https://example.com', method: 'GET' as 'GET' }
-   // Change 2
+   // 修改 2
    handleRequest(req.url, req.method as 'GET')
    ```
 
@@ -672,7 +672,7 @@ TypeScript 具有两个同名的对应*类型*。这两个类型的行为取决�
 ```ts twoslash
 function doSomething(x: string | null) {
   if (x === null) {
-    // do nothing
+    // 什么也不做
   } else {
     console.log('Hello, ' + x.toUpperCase())
   }
@@ -686,7 +686,7 @@ TypeScript 还提供了一种特殊的语法，可以在不进行显式检查的
 
 ```ts twoslash
 function liveDangerously(x?: number | null) {
-  // No error
+  // 没有错误
   console.log(x!.toFixed())
 }
 ```
@@ -709,10 +709,10 @@ function liveDangerously(x?: number | null) {
 ```ts twoslash
 // @target: es2020
 
-// Creating a bigint via the BigInt function
+// 通过 BigInt 函数创建 bigint
 const oneHundred: bigint = BigInt(100)
 
-// Creating a BigInt via the literal syntax
+// 通过字面量语法创建 BigInt
 const anotherHundred: bigint = 100n
 ```
 
@@ -728,7 +728,7 @@ const firstName = Symbol('name')
 const secondName = Symbol('name')
 
 if (firstName === secondName) {
-  // Can't ever happen
+  // 绝不可能发生
 }
 ```
 

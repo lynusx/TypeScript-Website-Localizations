@@ -99,12 +99,12 @@ Tuple types allow you to express an array with a fixed number of elements whose 
 
 ```ts twoslash
 // @errors: 2322
-// Declare a tuple type
+// 声明一个元组类型
 let x: [string, number]
-// Initialize it
-x = ['hello', 10] // OK
-// Initialize it incorrectly
-x = [10, 'hello'] // Error
+// 初始化它
+x = ['hello', 10] // 正常
+// 不正确地初始化它
+x = [10, 'hello'] // 错误
 ```
 
 When accessing an element with a known index, the correct type is retrieved:
@@ -112,9 +112,9 @@ When accessing an element with a known index, the correct type is retrieved:
 ```ts twoslash
 // @errors: 2339
 let x: [string, number]
-x = ['hello', 10] // OK
+x = ['hello', 10] // 正常
 /// ---cut---
-// OK
+// 正常
 console.log(x[0].substring(1))
 
 console.log(x[1].substring(1))
@@ -125,7 +125,7 @@ Accessing an element outside the set of known indices fails with an error:
 ```ts twoslash
 // @errors: 2493 2532 2322
 let x: [string, number]
-x = ['hello', 10] // OK
+x = ['hello', 10] // 正常
 /// ---cut---
 x[3] = 'world'
 
@@ -181,7 +181,7 @@ enum Color {
 }
 let colorName: string = Color[2]
 
-// Displays 'Green'
+// 显示 'Green'
 console.log(colorName)
 ```
 
@@ -195,7 +195,7 @@ In these cases, we want to provide a type that tells the compiler and future rea
 let notSure: unknown = 4
 notSure = 'maybe a string instead'
 
-// OK, definitely a boolean
+// 正常，明确是布尔值
 notSure = false
 ```
 
@@ -204,20 +204,20 @@ If you have a variable with an unknown type, you can narrow it to something more
 ```ts twoslash
 // @errors: 2322 2322 2322
 declare const maybe: unknown
-// 'maybe' could be a string, object, boolean, undefined, or other types
+// 'maybe' 可能是 string、object、boolean、undefined 或其他类型
 const aNumber: number = maybe
 
 if (maybe === true) {
-  // TypeScript knows that maybe is a boolean now
+  // TypeScript 现在知道 maybe 是一个布尔值
   const aBoolean: boolean = maybe
-  // So, it cannot be a string
+  // 因此，它不能是字符串
   const aString: string = maybe
 }
 
 if (typeof maybe === 'string') {
-  // TypeScript knows that maybe is a string
+  // TypeScript 现在知道 maybe 是一个字符串
   const aString: string = maybe
-  // So, it cannot be a boolean
+  // 因此，它不能是布尔值
   const aBoolean: boolean = maybe
 }
 ```
@@ -231,7 +231,7 @@ To do so, we label these values with the `any` type:
 
 ```ts twoslash
 declare function getValue(key: string): any
-// OK, return value of 'getValue' is not checked
+// 正常，不会检查 'getValue' 的返回值
 const str: string = getValue('myString')
 ```
 
@@ -243,9 +243,9 @@ These properties include functions and TypeScript will not check their existence
 ```ts twoslash
 // @errors: 2571 18046
 let looselyTyped: any = 4
-// OK, ifItExists might exist at runtime
+// 正常，ifItExists 可能在运行时存在
 looselyTyped.ifItExists()
-// OK, toFixed exists (but the compiler doesn't check)
+// 正常，toFixed 存在（但编译器不进行检查）
 looselyTyped.toFixed()
 
 let strictlyTyped: unknown = 4
@@ -279,7 +279,7 @@ Declaring variables of type `void` is not useful because you can only assign `nu
 ```ts twoslash
 // @strict: false
 let unusable: void = undefined
-// OK if `--strictNullChecks` is not given
+// 如果未指定 `--strictNullChecks` 则正常
 unusable = null
 ```
 
@@ -289,7 +289,7 @@ In TypeScript, both `undefined` and `null` actually have their types named `unde
 Much like `void`, they're not extremely useful on their own:
 
 ```ts twoslash
-// Not much else we can assign to these variables!
+// 我们几乎无法向这些变量赋予其他任何值！
 let u: undefined = undefined
 let n: null = null
 ```
@@ -317,17 +317,17 @@ Even `any` isn't assignable to `never`.
 Some examples of functions returning `never`:
 
 ```ts twoslash
-// Function returning never must not have a reachable end point
+// 返回 never 的函数不能具有可到达的终点
 function error(message: string): never {
   throw new Error(message)
 }
 
-// Inferred return type is never
+// 推断的返回类型为 never
 function fail() {
   return error('Something failed')
 }
 
-// Function returning never must not have a reachable end point
+// 返回 never 的函数不能具有可到达的终点
 function infiniteLoop(): never {
   while (true) {}
 }
@@ -343,10 +343,10 @@ With `object` type, APIs like `Object.create` can be better represented. For exa
 // @errors: 2345
 declare function create(o: object | null): void
 
-// OK
+// 正常
 create({ prop: 0 })
 create(null)
-create(undefined) // with `--strictNullChecks` flag enabled, undefined is not a subtype of null
+create(undefined) // 在启用了 `--strictNullChecks` 标志的情况下，undefined 不是 null 的子类型
 
 create(42)
 create('string')

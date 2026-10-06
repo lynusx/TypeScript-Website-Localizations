@@ -20,7 +20,7 @@ ES6 模块引入了数种新的导出与导入声明。
 ```ts
 interface Stream { ... }
 function writeToStream(stream: Stream, data: string) { ... }
-export { Stream, writeToStream as write };  // writeToStream exported as write
+export { Stream, writeToStream as write };  // writeToStream 作为 write 导出
 ```
 
 导入声明同样可以使用 `as` 子句为导入项指定不同的本地名称。例如：
@@ -109,10 +109,10 @@ var [x, y, z = 10] = getSomeArray()
 
 ```ts
 function drawText({ text = '', location: [x, y] = [0, 0], bold = false }) {
-  // Draw text
+  // 绘制文本
 }
 
-// Call drawText with an object literal
+// 使用对象字面量调用 drawText
 var item = { text: 'someText', location: [1, 2, 3], style: 'italics' }
 drawText(item)
 ```
@@ -161,8 +161,8 @@ namespace Math {
 ```ts
 const MAX = 100
 
-++MAX // Error: The operand of an increment or decrement
-//        operator cannot be a constant.
+++MAX // 错误：自增或自减运算符的操作数
+//        不能是常量。
 ```
 
 #### 块级作用域
@@ -170,13 +170,13 @@ const MAX = 100
 ```ts
 if (true) {
   let a = 4
-  // use a
+  // 使用 a
 } else {
   let a = 'string'
-  // use a
+  // 使用 a
 }
 
-alert(a) // Error: a is not defined in this scope.
+alert(a) // 错误：a 未在此作用域中定义。
 ```
 
 ## `for..of` 循环支持

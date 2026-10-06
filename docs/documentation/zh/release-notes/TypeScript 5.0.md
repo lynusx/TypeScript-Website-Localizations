@@ -95,11 +95,11 @@ class Person {
 const p = new Person('Ray')
 p.greet()
 
-// Output:
+// 输出：
 //
-//   LOG: Entering method.
-//   Hello, my name is Ray.
-//   LOG: Exiting method.
+//   日志：进入方法。
+//   你好，我的名字是 Ray。
+//   日志：退出方法。
 ```
 
 我们刚刚在 `greet` 上方将 `loggedMethod` 作为装饰器使用——注意我们将其写为 `@loggedMethod`。
@@ -171,7 +171,7 @@ class Person {
 ```ts
 const greet = new Person('Ray').greet
 
-// We don't want this to fail!
+// 我们不希望这里失败！
 greet()
 ```
 
@@ -211,7 +211,7 @@ class Person {
 const p = new Person('Ray')
 const greet = p.greet
 
-// Works!
+// 正常工作！
 greet()
 ```
 
@@ -271,11 +271,11 @@ class Person {
 const p = new Person('Ray')
 p.greet()
 
-// Output:
+// 输出：
 //
-//   ⚠️ Entering method 'greet'.
-//   Hello, my name is Ray.
-//   ⚠️ Exiting method 'greet'.
+//   ⚠️ 进入方法 'greet'。
+//   你好，我的名字是 Ray。
+//   ⚠️ 退出方法 'greet'。
 ```
 
 装饰器不仅可以用于方法！
@@ -304,17 +304,17 @@ p.greet()
 唯一的例外是不允许混用这两种风格。
 
 ```js
-// ✅ allowed
+// ✅ 允许
 @register export default class Foo {
     // ...
 }
 
-// ✅ also allowed
+// ✅ 也允许
 export default @register class Bar {
     // ...
 }
 
-// ❌ error - before *and* after is not allowed
+// ❌ 错误 —— 不允许同时在前面*和*后面使用
 @before export @after class Bar {
     // ...
 }
@@ -366,7 +366,7 @@ function getNamesExactly<T extends HasNames>(arg: T): T['names'] {
   return arg.names
 }
 
-// Inferred type: string[]
+// 推断类型：string[]
 const names = getNamesExactly({ names: ['Alice', 'Bob', 'Eve'] })
 ```
 
@@ -377,13 +377,13 @@ const names = getNamesExactly({ names: ['Alice', 'Bob', 'Eve'] })
 到目前为止，API 作者通常必须建议在某些地方添加 `as const` 来实现预期的类型推断：
 
 ```ts
-// The type we wanted:
+// 我们期望的类型：
 //    readonly ["Alice", "Bob", "Eve"]
-// The type we got:
+// 我们得到的类型：
 //    string[]
 const names1 = getNamesExactly({ names: ['Alice', 'Bob', 'Eve'] })
 
-// Correctly gets what we wanted:
+// 正确获得了我们期望的类型：
 //    readonly ["Alice", "Bob", "Eve"]
 const names2 = getNamesExactly({ names: ['Alice', 'Bob', 'Eve'] } as const)
 ```
@@ -398,8 +398,8 @@ function getNamesExactly<const T extends HasNames>(arg: T): T['names'] {
   return arg.names
 }
 
-// Inferred type: readonly ["Alice", "Bob", "Eve"]
-// Note: Didn't need to write 'as const' here
+// 推断类型：readonly ["Alice", "Bob", "Eve"]
+// 注意：这里无需书写 'as const'
 const names = getNamesExactly({ names: ['Alice', 'Bob', 'Eve'] })
 ```
 
@@ -410,7 +410,7 @@ const names = getNamesExactly({ names: ['Alice', 'Bob', 'Eve'] })
 ```ts
 declare function fnBad<const T extends string[]>(args: T): void
 
-// 'T' is still 'string[]' since 'readonly ["a", "b", "c"]' is not assignable to 'string[]'
+// 'T' 仍然是 'string[]'，因为 'readonly ["a", "b", "c"]' 无法分配给 'string[]'
 fnBad(['a', 'b', 'c'])
 ```
 
@@ -422,7 +422,7 @@ fnBad(['a', 'b', 'c'])
 ```ts
 declare function fnGood<const T extends readonly string[]>(args: T): void
 
-// T is readonly ["a", "b", "c"]
+// T 为 readonly ["a", "b", "c"]
 fnGood(['a', 'b', 'c'])
 ```
 
@@ -432,7 +432,7 @@ fnGood(['a', 'b', 'c'])
 declare function fnGood<const T extends readonly string[]>(args: T): void
 const arr = ['a', 'b', 'c']
 
-// 'T' is still 'string[]'-- the 'const' modifier has no effect here
+// 'T' 仍然是 'string[]' —— 'const' 修饰符在此处不起作用
 fnGood(arr)
 ```
 
@@ -557,8 +557,8 @@ enum E {
 ```ts
 function takeValue(e: E) {}
 
-takeValue(E.Foo) // works
-takeValue(123) // error!
+takeValue(E.Foo) // 正常
+takeValue(123) // 错误！
 ```
 
 直到 TypeScript 2.0 引入枚举字面量类型，枚举才变得更加特殊。
@@ -566,7 +566,7 @@ takeValue(123) // error!
 它们还允许我们仅引用枚举类型的一个子集，并能够收窄（narrow）这些类型。
 
 ```ts
-// Color is like a union of Red | Orange | Yellow | Green | Blue | Violet
+// Color 类似于 Red | Orange | Yellow | Green | Blue | Violet 的联合类型
 enum Color {
   Red,
   Orange,
@@ -576,14 +576,14 @@ enum Color {
   /* Indigo, */ Violet,
 }
 
-// Each enum member has its own type that we can refer to!
+// 每个枚举成员都有其自身可以引用的类型！
 type PrimaryColor = Color.Red | Color.Green | Color.Blue
 
 function isPrimaryColor(c: Color): c is PrimaryColor {
-  // Narrowing literal types can catch bugs.
-  // TypeScript will error here because
-  // we'll end up comparing 'Color.Red' to 'Color.Green'.
-  // We meant to use ||, but accidentally wrote &&.
+  // 收窄字面量类型可以捕获错误。
+  // TypeScript 将在此处报错，因为
+  // 我们最终将 'Color.Red' 与 'Color.Green' 进行比较。
+  // 我们本想使用 ||，却不小心写成了 &&。
   return c === Color.Red && c === Color.Green && c === Color.Blue
 }
 ```
@@ -615,9 +615,9 @@ TypeScript 4.7 为 `--module` 和 `--moduleResolution` 设置引入了 `node16` 
 
 ```js
 // entry.mjs
-import * as utils from './utils' // ❌ wrong - we need to include the file extension.
+import * as utils from './utils' // ❌ 错误 —— 我们需要包含文件扩展名。
 
-import * as utils from './utils.mjs' // ✅ works
+import * as utils from './utils.mjs' // ✅ 正常
 ```
 
 在 Node.js 和浏览器中存在这样做的理由——它加快了文件查找速度，并且对简易文件服务器更友好。
@@ -694,7 +694,7 @@ export default css
 // App.tsx
 import styles from './app.css'
 
-styles.cookieBanner // string
+styles.cookieBanner // string 类型
 ```
 
 默认情况下，此导入将抛出错误，提示 TypeScript 无法识别此文件类型，且你的运行时可能不支持导入它。
@@ -790,10 +790,10 @@ export { Car } from './car'
 我们可以使用 `type` 修饰符明确标明某个导入或导出仅用于类型分析，并可以在 JavaScript 文件中完全丢弃：
 
 ```ts
-// This statement can be dropped entirely in JS output
+// 该语句在 JS 输出中可以被完全丢弃
 import type * as car from './car'
 
-// The named import/export 'Car' can be dropped in JS output
+// 具名导入/导出 'Car' 在 JS 输出中可以被丢弃
 import { type Car } from './car'
 export { type Car } from './car'
 ```
@@ -807,13 +807,13 @@ TypeScript 5.0 引入了一个名为 `--verbatimModuleSyntax` 的新选项来简
 任何使用了 `type` 修饰符的内容都会被完全丢弃。
 
 ```ts
-// Erased away entirely.
+// 被彻底擦除。
 import type { A } from 'a'
 
-// Rewritten to 'import { b } from "bcd";'
+// 重写为 'import { b } from "bcd";'
 import { b, type c, type d } from 'bcd'
 
-// Rewritten to 'import {} from "xyz";'
+// 重写为 'import {} from "xyz";'
 import { type xyz } from 'xyz'
 ```
 
@@ -908,13 +908,13 @@ export type * as vehicles from './vehicles'
 import { vehicles } from './models'
 
 function takeASpaceship(s: vehicles.Spaceship) {
-  // ✅ ok - `vehicles` only used in a type position
+  // ✅ 正常 —— `vehicles` 仅在类型位置使用
 }
 
 function makeASpaceship() {
   return new vehicles.Spaceship()
   //         ^^^^^^^^
-  // 'vehicles' cannot be used as a value because it was exported using 'export type'.
+  // 'vehicles' 不能作为值使用，因为它是使用 'export type' 导出的。
 }
 ```
 
@@ -978,7 +978,7 @@ let inheritedConfigs = myConfigSettings.extends.map(resolveConfig)
  */
 let myCompilerOptions = {
   outdir: '../lib',
-  //  ~~~~~~ oops! we meant outDir
+  //  ~~~~~~ 糟糕！我们原本指的是 outDir
 }
 ```
 
@@ -1048,11 +1048,11 @@ compileCode(
 它们可以限制调用方实际使用函数的方式，并细化返回的结果：
 
 ```ts
-// Our overloads:
+// 我们的重载：
 function printValue(str: string): void
 function printValue(num: number, maxFractionDigits?: number): void
 
-// Our implementation:
+// 我们的实现：
 function printValue(value: string | number, maximumFractionDigits?: number) {
   if (typeof value === 'number') {
     const formatter = Intl.NumberFormat('en-US', {
@@ -1106,12 +1106,12 @@ function printValue(value, maximumFractionDigits) {
 现在，无论我们是在 TypeScript 还是 JavaScript 文件中编写代码，如果我们调用函数的方式不正确，TypeScript 都能向我们报错：
 
 ```ts
-// all allowed
+// 均允许
 printValue('hello!')
 printValue(123.45)
 printValue(123.45, 2)
 
-printValue('hello!', 123) // error!
+printValue('hello!', 123) // 错误！
 ```
 
 感谢 [Tomasz Lenarcik](https://github.com/apendua)[实现](https://github.com/microsoft/TypeScript/pull/51234)了这一全新标签。
@@ -1176,45 +1176,45 @@ TypeScript 现在默认自动检测大小写敏感性。
 ```jsonc
 {
   "typescript.unstable": {
-    // Should sorting be case-sensitive? Can be:
+    // 排序是否区分大小写？可以是：
     // - true
     // - false
-    // - "auto" (auto-detect)
+    // - "auto"（自动检测）
     "organizeImportsIgnoreCase": "auto",
 
-    // Should sorting be "ordinal" and use code points or consider Unicode rules? Can be:
+    // 排序是按“序号（ordinal）”使用码点，还是考虑 Unicode 规则？可以是：
     // - "ordinal"
     // - "unicode"
     "organizeImportsCollation": "ordinal",
 
-    // Under `"organizeImportsCollation": "unicode"`,
-    // what is the current locale? Can be:
-    // - [any other locale code]
-    // - "auto" (use the editor's locale)
+    // 在 `"organizeImportsCollation": "unicode"` 下，
+    // 当前区域设置（locale）是什么？可以是：
+    // - [任何其他区域设置代码]
+    // - "auto"（使用编辑器的区域设置）
     "organizeImportsLocale": "en",
 
-    // Under `"organizeImportsCollation": "unicode"`,
-    // should upper-case letters or lower-case letters come first? Can be:
-    // - false (locale-specific)
+    // 在 `"organizeImportsCollation": "unicode"` 下，
+    // 大写字母还是小写字母排在前面？可以是：
+    // - false（由区域设置决定）
     // - "upper"
     // - "lower"
     "organizeImportsCaseFirst": false,
 
-    // Under `"organizeImportsCollation": "unicode"`,
-    // do runs of numbers get compared numerically (i.e. "a1" < "a2" < "a100")? Can be:
+    // 在 `"organizeImportsCollation": "unicode"` 下，
+    // 连续的数字是否按数值进行比较（即 "a1" < "a2" < "a100"）？可以是：
     // - true
     // - false
     "organizeImportsNumericCollation": true,
 
-    // Under `"organizeImportsCollation": "unicode"`,
-    // do letters with accent marks/diacritics get sorted distinctly
-    // from their "base" letter (i.e. is é different from e)? Can be
+    // 在 `"organizeImportsCollation": "unicode"` 下，
+    // 带有重音符号/变音符号的字母是否与它们的“基础”字母分开排序
+    // （即 é 是否与 e 不同）？可以是
     // - true
     // - false
     "organizeImportsAccentCollation": true,
   },
   "javascript.unstable": {
-    // same options valid here...
+    // 此处适用的相同选项...
   },
 }
 ```
@@ -1302,7 +1302,7 @@ DOM 类型的生成方式发生变更可能会对现有代码产生影响。
 
 ```ts
 function func(ns: number | string) {
-  return ns * 4 // Error, possible implicit coercion
+  return ns * 4 // 错误，可能发生隐式类型转换
 }
 ```
 
@@ -1310,7 +1310,7 @@ function func(ns: number | string) {
 
 ```ts
 function func(ns: number | string) {
-  return ns > 4 // Now also an error
+  return ns > 4 // 现在同样报错
 }
 ```
 
@@ -1318,7 +1318,7 @@ function func(ns: number | string) {
 
 ```ts
 function func(ns: number | string) {
-  return +ns > 4 // OK
+  return +ns > 4 // 正常
 }
 ```
 
@@ -1339,7 +1339,7 @@ enum SomeEvenDigit {
   Four = 4,
 }
 
-// Now correctly an error
+// 现在正确地报错
 let m: SomeEvenDigit = 1
 ```
 
@@ -1354,7 +1354,7 @@ enum Numbers {
   two = Letters.A,
 }
 
-// Now correctly an error
+// 现在正确地报错
 const t: number = Numbers.two
 ```
 

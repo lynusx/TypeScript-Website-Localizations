@@ -23,7 +23,7 @@ function assign<T extends U, U>(target: T, source: U): T {
 
 let x = { a: 1, b: 2, c: 3, d: 4 }
 assign(x, { b: 10, d: 20 })
-assign(x, { e: 0 }) // Error
+assign(x, { e: 0 }) // 错误
 ```
 
 ## 控制流分析错误
@@ -51,7 +51,7 @@ function f(x) {
     return false
   }
 
-  x = 0 // Error: Unreachable code detected.
+  x = 0 // 错误：检测到无法访问的代码。
 }
 ```
 
@@ -59,9 +59,9 @@ function f(x) {
 
 ```ts
 function f() {
-  return // Automatic Semicolon Insertion triggered at newline
+  return // 在换行处触发了自动分号插入（ASI）
   {
-    x: 'string' // Error: Unreachable code detected.
+    x: 'string' // 错误：检测到无法访问的代码。
   }
 }
 ```
@@ -78,7 +78,7 @@ function f() {
 
 ```ts
 loop: while (x > 0) {
-  // Error: Unused label.
+  // 错误：未使用的标签。
   x++
 }
 ```
@@ -93,12 +93,12 @@ loop: while (x > 0) {
 
 ```ts
 function f(x) {
-  // Error: Not all code paths return a value.
+  // 错误：并非所有代码路径都有返回值。
   if (x) {
     return false
   }
 
-  // implicitly returns `undefined`
+  // 隐式返回 `undefined`
 }
 ```
 
@@ -113,7 +113,7 @@ function f(x) {
 
 ```ts
 switch (x % 2) {
-  case 0: // Error: Fallthrough case in switch.
+  case 0: // 错误：switch 中存在贯穿（Fallthrough）case。
     console.log('even')
 
   case 1:
@@ -143,10 +143,10 @@ TypeScript 现在支持[函数组件（Function components）](https://reactjs.o
 这是一种能够轻松组合其他组件的轻量级组件：
 
 ```ts
-// Use parameter destructuring and defaults for easy definition of 'props' type
+// 使用参数解构和默认值轻松定义 'props' 类型
 const Greeter = ({ name = "world" }) => <div>Hello, {name}!</div>;
 
-// Properties get validated
+// 属性会进行验证
 let example = <Greeter name="TypeScript 1.8" />;
 ```
 
@@ -190,10 +190,10 @@ export class Observable<T> {
 // map.ts
 import { Observable } from "./observable";
 
-// Create an augmentation for "./observable"
+// 为 "./observable" 创建扩充
 declare module "./observable" {
 
-    // Augment the 'Observable' class definition with interface merging
+    // 通过接口合并扩充 'Observable' 类定义
     interface Observable<T> {
         map<U>(proj: (el: T) => U): Observable<U>;
     }
@@ -217,7 +217,7 @@ o.map((x) => x.toFixed())
 ##### 示例
 
 ```ts
-// Ensure this is treated as a module.
+// 确保此文件被视为模块。
 export {}
 
 declare global {
@@ -244,14 +244,14 @@ declare class UIElement {
 interface AnimationOptions {
   deltaX: number
   deltaY: number
-  easing: string // Can be "ease-in", "ease-out", "ease-in-out"
+  easing: string // 可以是 "ease-in"、"ease-out"、"ease-in-out"
 }
 ```
 
 然而这种做法很容易出错——无法阻止用户不小心拼错合法的缓动值：
 
 ```ts
-// No errors
+// 无错误
 new UIElement().animate({ deltaX: 100, deltaY: 100, easing: 'ease-inout' })
 ```
 
@@ -268,7 +268,7 @@ interface AnimationOptions {
   easing: 'ease-in' | 'ease-out' | 'ease-in-out'
 }
 
-// Error: Type '"ease-inout"' is not assignable to type '"ease-in" | "ease-out" | "ease-in-out"'
+// 错误：类型 '"ease-inout"' 不能赋给类型 '"ease-in" | "ease-out" | "ease-in-out"'
 new UIElement().animate({ deltaX: 100, deltaY: 100, easing: 'ease-inout' })
 ```
 
@@ -316,7 +316,7 @@ function test2(x: Maybe<number>) {
 ##### 示例
 
 ```ts
-// file src/a.ts
+// 文件 src/a.ts
 import * as B from './lib/b'
 export function createA() {
   return B.createB()
@@ -324,7 +324,7 @@ export function createA() {
 ```
 
 ```ts
-// file src/lib/b.ts
+// 文件 src/lib/b.ts
 export function createB() {
   return {}
 }
@@ -414,8 +414,8 @@ list.forEach(function (f) {
 ```ts
 var a: MyObject[]
 for (var x in a) {
-  // Type of x is implicitly string
-  var obj = a[x] // Type of obj is MyObject
+  // x 的类型隐式为 string
+  var obj = a[x] // obj 的类型为 MyObject
 }
 ```
 
@@ -504,11 +504,11 @@ interface Networked {
 
 let fso: FileSystemObject = new File('foo/bar.txt', 'foo')
 if (fso.isFile()) {
-  fso.content // fso is File
+  fso.content // fso 为 File
 } else if (fso.isDirectory()) {
-  fso.children // fso is Directory
+  fso.children // fso 为 Directory
 } else if (fso.isNetworked()) {
-  fso.host // fso is networked
+  fso.host // fso 具有网络属性
 }
 ```
 
@@ -559,11 +559,11 @@ if (fso.isFile()) {
 ```json tsconfig
 {
   "compilerOptions": {
-    "target": "ES2015", // running on node v5, yaay!
-    "sourceMap": true // makes debugging easier
+    "target": "ES2015", // 运行在 node v5 上，好耶！
+    "sourceMap": true // 让调试更轻松
   },
   /*
-   * Excluded files
+   * 排除的文件
    */
   "exclude": ["file.d.ts"]
 }

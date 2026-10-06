@@ -37,7 +37,7 @@ type Person = {
 
 type QuantumPerson = Omit<Person, 'location'>
 
-// equivalent to
+// 等价于
 type QuantumPerson = {
   name: string
   age: number
@@ -66,7 +66,7 @@ type Label = {
 const thing: Point | Label = {
   x: 0,
   y: 0,
-  name: true, // uh-oh!
+  name: true, // 糟糕！
 }
 ```
 
@@ -80,7 +80,7 @@ const thing: Point | Label = {
 const pl: Point | Label = {
   x: 0,
   y: 0,
-  name: 'origin', // okay
+  name: 'origin', // 正常
 }
 ```
 
@@ -133,7 +133,7 @@ function doSomething(x: Foo | Bar) {
   }
 }
 
-// uh-oh - luckily TypeScript errors here!
+// 糟糕——幸好 TypeScript 在这里报错了！
 doSomething({
   kind: 'foo',
   value: 123,
@@ -202,8 +202,8 @@ function composeCtor<T, U, V>(
   return (x) => new G(new F(x))
 }
 
-let f = composeCtor(Box, Bag) // has type '<T>(x: T) => Bag<Box<T>>'
-let a = f(1024) // has type 'Bag<Box<number>>'
+let f = composeCtor(Box, Bag) // 类型为 '<T>(x: T) => Bag<Box<T>>'
+let a = f(1024) // 类型为 'Bag<Box<number>>'
 ```
 
 除了上述组合模式外，对泛型构造函数的新推断还意味着在 React 等 UI 库中操作类组件的函数能够更准确地操作泛型类组件。
@@ -221,7 +221,7 @@ type NestedProps<T> = { foo: number; stuff: T }
 
 declare class GenericComponent<T> extends Component<NestedProps<T>> {}
 
-// type is 'new <T>(props: NestedProps<T>) => Component<NestedProps<T>>'
+// 类型为 'new <T>(props: NestedProps<T>) => Component<NestedProps<T>>'
 const GenericComponent2 = myHoc(GenericComponent)
 ```
 

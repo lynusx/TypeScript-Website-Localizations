@@ -129,10 +129,10 @@ TypeScript 的类型系统也**不是具化的（not reified）**：在运行时
 class Empty {}
 
 function fn(arg: Empty) {
-  // do something?
+  // 执行某些操作？
 }
 
-// No error, but this isn't an 'Empty' ?
+// 没有报错，但这并不是一个 'Empty'？
 fn({ k: 10 })
 ```
 
@@ -152,16 +152,16 @@ TypeScript 通过检查传入的实参是否是合法的 `Empty` 来判断这里
 ```ts
 class Car {
   drive() {
-    // hit the gas
+    // 踩油门
   }
 }
 class Golfer {
   drive() {
-    // hit the ball far
+    // 把球打远
   }
 }
 
-// No error?
+// 没有报错？
 let w: Car = new Golfer()
 ```
 

@@ -34,12 +34,12 @@ let x = foo === null || foo === undefined ? undefined : foo.bar.baz()
 你可能会发现，可以使用 `?.` 来替换大量使用 `&&` 运算符进行重复空值检查的代码：
 
 ```ts
-// Before
+// 之前
 if (foo && foo.bar && foo.bar.baz) {
   // ...
 }
 
-// After-ish
+// 之后大致如此
 if (foo?.bar?.baz) {
   // ...
 }
@@ -53,12 +53,12 @@ if (foo?.bar?.baz) {
 
 ```ts
 /**
- * Get the first element of the array if we have an array.
- * Otherwise return undefined.
+ * 获取数组的第一个元素（如果传入了数组）。
+ * 否则返回 undefined。
  */
 function tryGetFirstElement<T>(arr?: T[]) {
   return arr?.[0]
-  // equivalent to
+  // 等价于
   //   return (arr === null || arr === undefined) ?
   //       undefined :
   //       arr[0];
@@ -70,7 +70,7 @@ function tryGetFirstElement<T>(arr?: T[]) {
 ```ts
 async function makeRequest(url: string, log?: (msg: string) => void) {
   log?.(`Request started at ${new Date().toISOString()}`)
-  // roughly equivalent to
+  // 大致等价于
   //   if (log != null) {
   //       log(`Request started at ${new Date().toISOString()}`);
   //   }
@@ -105,7 +105,7 @@ let result = temp / someComputation()
 function barPercentage(foo?: { bar: number }) {
   return foo?.bar / 100
   //     ~~~~~~~~
-  // Error: Object is possibly undefined.
+  // 错误：对象可能为 undefined。
 }
 ```
 
@@ -185,8 +185,8 @@ function yell(str) {
   assert(typeof str === 'string')
 
   return str.toUppercase()
-  // Oops! We misspelled 'toUpperCase'.
-  // Would be great if TypeScript still caught this!
+  // 糟糕！我们把 'toUpperCase' 拼错了。
+  // 如果 TypeScript 仍然能捕获到这一点就太棒了！
 }
 ```
 
@@ -197,7 +197,7 @@ function yell(str) {
   if (typeof str !== 'string') {
     throw new TypeError('str should have been a string.')
   }
-  // Error caught!
+  // 捕获到错误！
   return str.toUppercase()
 }
 ```
@@ -226,8 +226,8 @@ function yell(str) {
 
   return str.toUppercase()
   //         ~~~~~~~~~~~
-  // error: Property 'toUppercase' does not exist on type 'string'.
-  //        Did you mean 'toUpperCase'?
+  // 错误：类型 'string' 上不存在属性 'toUppercase'。
+  //        你指的是 'toUpperCase' 吗？
 }
 
 function assert(condition: any, msg?: string): asserts condition {
@@ -253,12 +253,12 @@ function assertIsString(val: any): asserts val is string {
 function yell(str: any) {
   assertIsString(str)
 
-  // Now TypeScript knows that 'str' is a 'string'.
+  // 现在 TypeScript 知道 'str' 是一个 'string'。
 
   return str.toUppercase()
   //         ~~~~~~~~~~~
-  // error: Property 'toUppercase' does not exist on type 'string'.
-  //        Did you mean 'toUpperCase'?
+  // 错误：类型 'string' 上不存在属性 'toUppercase'。
+  //        你指的是 'toUpperCase' 吗？
 }
 ```
 
@@ -351,7 +351,7 @@ type Foo = Foo
 ```ts
 type ValueOrArray<T> = T | Array<ValueOrArray<T>>
 //   ~~~~~~~~~~~~
-// error: Type alias 'ValueOrArray' circularly references itself.
+// 错误：类型别名 'ValueOrArray' 循环引用了自身。
 ```
 
 这很奇怪，因为在技术上这种使用方式没有任何问题，而且用户总是可以通过引入一个接口来编写效果相同的代码：
@@ -432,7 +432,7 @@ const assert = require('assert')
 module.exports.blurImage = blurImage
 
 /**
- * Produces a blurred image from an input buffer.
+ * 根据输入缓冲区生成模糊图像。
  *
  * @param input {Uint8Array}
  * @param width {number}
@@ -453,7 +453,7 @@ function blurImage(input, width, height) {
 
 ```ts
 /**
- * Produces a blurred image from an input buffer.
+ * 根据输入缓冲区生成模糊图像。
  *
  * @param input {Uint8Array}
  * @param width {number}
@@ -474,19 +474,19 @@ export function blurImage(
  * @returns {void}
  */
 
-/** Queues work */
+/** 将工作任务排队 */
 export class Worker {
   constructor(maxDepth = 10) {
     this.started = false
     this.depthLimit = maxDepth
     /**
-     * NOTE: queued jobs may add more items to queue
+     * 注意：排队的任务可能会向队列添加更多项
      * @type {Job[]}
      */
     this.queue = []
   }
   /**
-   * Adds a work item to the queue
+   * 向队列中添加一个工作项
    * @param {Job} work
    */
   push(work) {
@@ -494,7 +494,7 @@ export class Worker {
     this.queue.push(work)
   }
   /**
-   * Starts the queue if it has not yet started
+   * 如果队列尚未启动，则启动队列
    */
   start() {
     if (this.started) return false
@@ -514,23 +514,23 @@ export class Worker {
  * @callback Job
  * @returns {void}
  */
-/** Queues work */
+/** 将工作任务排队 */
 export class Worker {
   constructor(maxDepth?: number)
   started: boolean
   depthLimit: number
   /**
-   * NOTE: queued jobs may add more items to queue
+   * 注意：排队的任务可能会向队列添加更多项
    * @type {Job[]}
    */
   queue: Job[]
   /**
-   * Adds a work item to the queue
+   * 向队列中添加一个工作项
    * @param {Job} work
    */
   push(work: Job): void
   /**
-   * Starts the queue if it has not yet started
+   * 如果队列尚未启动，则启动队列
    */
   start(): boolean
 }
@@ -603,8 +603,8 @@ class Base {
 }
 
 class Derived extends Base {
-  // No longer triggers a 'console.log'
-  // when using 'useDefineForClassFields'.
+  // 当使用 'useDefineForClassFields' 时，
+  // 不再触发 'console.log'。
   data = 10
 }
 ```
@@ -627,9 +627,8 @@ class AnimalHouse {
 }
 
 class DogHouse extends AnimalHouse {
-  // Initializes 'resident' to 'undefined'
-  // after the call to 'super()' when
-  // using 'useDefineForClassFields'!
+  // 当使用 'useDefineForClassFields' 时，
+  // 在调用 'super()' 之后将 'resident' 初始化为 'undefined'！
   resident: Dog
 
   constructor(dog: Dog) {
@@ -678,8 +677,8 @@ class AnimalHouse {
 class DogHouse extends AnimalHouse {
   declare resident: Dog
   //  ^^^^^^^
-  // 'resident' now has a 'declare' modifier,
-  // and won't produce any output code.
+  // 'resident' 现在拥有 'declare' 修饰符，
+  // 并且不会生成任何输出代码。
 
   constructor(dog: Dog) {
     super(dog)
@@ -717,11 +716,11 @@ interface User {
   doNotDisturb?(): boolean
 }
 
-// later...
+// 稍后...
 
-// Broken code, do not use!
+// 损坏的代码，请勿使用！
 function doAdminThing(user: User) {
-  // oops!
+  // 糟糕！
   if (user.isAdministrator) {
     sudo()
     editTheConfiguration()
@@ -739,8 +738,8 @@ function doAdminThing(user: User) {
 function doAdminThing(user: User) {
     if (user.isAdministrator) {
     //  ~~~~~~~~~~~~~~~~~~~~
-    // error! This condition will always return true since the function is always defined.
-    //        Did you mean to call it instead?
+    // 错误！此条件将始终返回 true，因为该函数始终已定义。
+    //        你是不是想调用它？
 ```
 
 此项检查属于破坏性变更，但正因如此，该检查非常保守。
@@ -755,10 +754,10 @@ interface User {
 
 function issueNotification(user: User) {
   if (user.doNotDisturb) {
-    // OK, property is optional
+    // 正常，属性是可选的
   }
   if (user.notify) {
-    // OK, called the function
+    // 正常，调用了该函数
     user.notify()
   }
 }
@@ -826,7 +825,7 @@ export interface SomeType {
 }
 
 function fn(arg: SomeType) {
-  console.log(arg.x) // Error! 'x' doesn't exist on 'SomeType'
+  console.log(arg.x) // 错误！'SomeType' 上不存在 'x'
 }
 ```
 

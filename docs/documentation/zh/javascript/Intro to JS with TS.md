@@ -31,8 +31,8 @@ translatable: true
 /** @type {number} */
 var x
 
-x = 0 // OK
-x = false // OK?!
+x = 0 // 正常
+x = false // 正常？！
 ```
 
 你可以在 [JSDoc 支持的类型](/docs/handbook/jsdoc-supported-types.html)中查看受支持的 JSDoc 模式的完整列表。
@@ -48,8 +48,8 @@ x = false // OK?!
 /** @type {number} */
 var x
 
-x = 0 // OK
-x = false // Not OK
+x = 0 // 正常
+x = false // 报错
 ```
 
 如果你有大量需要开启错误检查的 JavaScript 文件，可以改用 [`jsconfig.json`](/docs/handbook/tsconfig-json.html)。
@@ -62,9 +62,9 @@ TypeScript 报告的某些错误可能并不符合你的预期，遇到这些情
 /** @type {number} */
 var x
 
-x = 0 // OK
+x = 0 // 正常
 // @ts-expect-error
-x = false // Not OK
+x = false // 报错
 ```
 
 要了解有关 TypeScript 如何解析 JavaScript 的更多信息，请阅读[在 JavaScript 文件中进行类型检查](/docs/handbook/type-checking-javascript-files.html)。

@@ -19,54 +19,54 @@ _全局修改模块_在被导入时会修改全局作用域中的现有值。
 你可能会看到类似这样的文档：
 
 ```js
-// 'require' call that doesn't use its return value
+// 不使用其返回值的 'require' 调用
 var unused = require('magic-string-time')
-/* or */
+/* 或者 */
 require('magic-string-time')
 
 var x = 'hello, world'
-// Creates new methods on built-in types
+// 在内置类型上创建新方法
 console.log(x.startsWithHello())
 
 var y = [1, 2, 3]
-// Creates new methods on built-in types
+// 在内置类型上创建新方法
 console.log(y.reverseAndSort())
 ```
 
 下面是一个示例：
 
 ```ts
-// Type definitions for [~THE LIBRARY NAME~] [~OPTIONAL VERSION NUMBER~]
-// Project: [~THE PROJECT NAME~]
-// Definitions by: [~YOUR NAME~] <[~A URL FOR YOU~]>
+// Type definitions for [~库名称~] [~可选版本号~]
+// Project: [~项目名称~]
+// Definitions by: [~你的姓名~] <[~你的 URL~]>
 
-/*~ This is the global-modifying module template file. You should rename it to index.d.ts
- *~ and place it in a folder with the same name as the module.
- *~ For example, if you were writing a file for "super-greeter", this
- *~ file should be 'super-greeter/index.d.ts'
+/*~ 这是全局修改模块的模板文件。你应该将其重命名为 index.d.ts
+ *~ 并放置在与该模块同名的文件夹中。
+ *~ 例如，如果你正在为 "super-greeter" 编写文件，
+ *~ 该文件应为 'super-greeter/index.d.ts'
  */
 
-/*~ Note: If your global-modifying module is callable or constructable, you'll
- *~ need to combine the patterns here with those in the module-class or module-function
- *~ template files
+/*~ 注意：如果你的全局修改模块是可调用的或可构造的，
+ *~ 你需要将此处的模式与 module-class 或 module-function
+ *~ 模板文件中的模式结合起来
  */
 declare global {
-  /*~ Here, declare things that go in the global namespace, or augment
-   *~ existing declarations in the global namespace
+  /*~ 在这里声明属于全局命名空间的内容，或对
+   *~ 全局命名空间中的现有声明进行扩充
    */
   interface String {
     fancyFormat(opts: StringFormatOptions): string
   }
 }
 
-/*~ If your module exports types or values, write them as usual */
+/*~ 如果你的模块导出了类型或值，请按常规方式编写它们 */
 export interface StringFormatOptions {
   fancinessLevel: number
 }
 
-/*~ For example, declaring a method on the module (in addition to its global side effects) */
+/*~ 例如，在模块上声明一个方法（除了其全局副作用之外） */
 export function doSomething(): void
 
-/*~ If your module exports nothing, you'll need this line. Otherwise, delete it */
+/*~ 如果你的模块没有任何导出，则需要此行。否则，请删除它 */
 export {}
 ```

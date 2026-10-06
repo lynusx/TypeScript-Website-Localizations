@@ -52,7 +52,7 @@ translatable: true
 - `myModules.d.ts`
 
   ```ts
-  // In a .d.ts file or .ts file that is not a module:
+  // 在 .d.ts 文件或非模块的 .ts 文件中：
   declare module 'SomeModule' {
     export function fn(): string
   }
@@ -92,7 +92,7 @@ translatable: true
 
   ```ts
   import * as shapes from './shapes'
-  let t = new shapes.Shapes.Triangle() // shapes.Shapes?
+  let t = new shapes.Shapes.Triangle() // shapes.Shapes？
   ```
 
 TypeScript 中模块的一个关键特性是：两个不同的模块绝不会向同一个作用域添加名称。

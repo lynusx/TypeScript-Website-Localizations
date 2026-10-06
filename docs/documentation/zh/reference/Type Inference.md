@@ -92,15 +92,15 @@ window.onmousedown = function (mouseEvent) {
 这之所以有效，是因为 `window` 的类型中已经声明了 `onmousedown`：
 
 ```ts
-// Declares there is a global variable called 'window'
+// 声明存在一个名为 'window' 的全局变量
 declare var window: Window & typeof globalThis
 
-// Which is declared as (simplified):
+// 它的声明如下（简化版）：
 interface Window extends GlobalEventHandlers {
   // ...
 }
 
-// Which defines a lot of known handler events
+// 其中定义了许多已知的事件处理程序
 interface GlobalEventHandlers {
   onmousedown: ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null
   // ...
@@ -123,7 +123,7 @@ window.onscroll = function (uiEvent) {
 ```ts twoslash
 // @noImplicitAny: false
 const handler = function (uiEvent) {
-  console.log(uiEvent.button) // <- OK
+  console.log(uiEvent.button) // <- 正常
 }
 ```
 
@@ -131,7 +131,7 @@ const handler = function (uiEvent) {
 
 ```ts twoslash
 window.onscroll = function (uiEvent: any) {
-  console.log(uiEvent.button) // <- Now, no error is given
+  console.log(uiEvent.button) // <- 现在不会报错
 }
 ```
 

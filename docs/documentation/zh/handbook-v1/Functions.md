@@ -21,12 +21,12 @@ To quickly recap what these two approaches look like in JavaScript:
 
 ```ts twoslash
 // @strict: false
-// Named function
+// 命名函数
 function add(x, y) {
   return x + y
 }
 
-// Anonymous function
+// 匿名函数
 let myAdd = function (x, y) {
   return x + y
 }
@@ -107,12 +107,12 @@ In effect, captured variables are part of the "hidden state" of any function and
 In playing with the example, you may notice that the TypeScript compiler can figure out the type even if you only have types on one side of the equation:
 
 ```ts twoslash
-// The parameters 'x' and 'y' have the type number
+// 参数 'x' 和 'y' 具有类型 number
 let myAdd = function (x: number, y: number): number {
   return x + y
 }
 
-// myAdd has the full function type
+// myAdd 具有完整的函数类型
 let myAdd2: (baseValue: number, increment: number) => number = function (x, y) {
   return x + y
 }
@@ -134,9 +134,9 @@ function buildName(firstName: string, lastName: string) {
   return firstName + ' ' + lastName
 }
 
-let result1 = buildName('Bob') // error, too few parameters
-let result2 = buildName('Bob', 'Adams', 'Sr.') // error, too many parameters
-let result3 = buildName('Bob', 'Adams') // ah, just right
+let result1 = buildName('Bob') // 错误，参数太少
+let result2 = buildName('Bob', 'Adams', 'Sr.') // 错误，参数太多
+let result3 = buildName('Bob', 'Adams') // 正好合适
 ```
 
 In JavaScript, every parameter is optional, and users may leave them off as they see fit.
@@ -151,9 +151,9 @@ function buildName(firstName: string, lastName?: string) {
   else return firstName
 }
 
-let result1 = buildName('Bob') // works correctly now
-let result2 = buildName('Bob', 'Adams', 'Sr.') // error, too many parameters
-let result3 = buildName('Bob', 'Adams') // ah, just right
+let result1 = buildName('Bob') // 现在可以正常工作
+let result2 = buildName('Bob', 'Adams', 'Sr.') // 错误，参数太多
+let result3 = buildName('Bob', 'Adams') // 正好合适
 ```
 
 Any optional parameters must follow required parameters.
@@ -169,10 +169,10 @@ function buildName(firstName: string, lastName = 'Smith') {
   return firstName + ' ' + lastName
 }
 
-let result1 = buildName('Bob') // works correctly now, returns "Bob Smith"
-let result2 = buildName('Bob', undefined) // still works, also returns "Bob Smith"
-let result3 = buildName('Bob', 'Adams', 'Sr.') // error, too many parameters
-let result4 = buildName('Bob', 'Adams') // ah, just right
+let result1 = buildName('Bob') // 现在可以正常工作，返回 "Bob Smith"
+let result2 = buildName('Bob', undefined) // 依然可以工作，同样返回 "Bob Smith"
+let result3 = buildName('Bob', 'Adams', 'Sr.') // 错误，参数太多
+let result4 = buildName('Bob', 'Adams') // 正好合适
 ```
 
 Default-initialized parameters that come after all required parameters are treated as optional, and just like optional parameters, can be omitted when calling their respective function.
@@ -205,10 +205,10 @@ function buildName(firstName = 'Will', lastName: string) {
   return firstName + ' ' + lastName
 }
 
-let result1 = buildName('Bob') // error, too few parameters
-let result2 = buildName('Bob', 'Adams', 'Sr.') // error, too many parameters
-let result3 = buildName('Bob', 'Adams') // okay and returns "Bob Adams"
-let result4 = buildName(undefined, 'Adams') // okay and returns "Will Adams"
+let result1 = buildName('Bob') // 错误，参数太少
+let result2 = buildName('Bob', 'Adams', 'Sr.') // 错误，参数太多
+let result3 = buildName('Bob', 'Adams') // 正常且返回 "Bob Adams"
+let result4 = buildName(undefined, 'Adams') // 正常且返回 "Will Adams"
 ```
 
 ### Rest Parameters
@@ -224,7 +224,7 @@ function buildName(firstName: string, ...restOfName: string[]) {
   return firstName + ' ' + restOfName.join(' ')
 }
 
-// employeeName will be "Joseph Samuel Lucas MacKinzie"
+// employeeName 将为 "Joseph Samuel Lucas MacKinzie"
 let employeeName = buildName('Joseph', 'Samuel', 'Lucas', 'MacKinzie')
 ```
 
@@ -297,7 +297,7 @@ let deck = {
   suits: ['hearts', 'spades', 'clubs', 'diamonds'],
   cards: Array(52),
   createCardPicker: function () {
-    // NOTE: the line below is now an arrow function, allowing us to capture 'this' right here
+    // 注意：下面这一行现在是箭头函数，允许我们在此处捕获 'this'
     return () => {
       let pickedCard = Math.floor(Math.random() * 52)
       let pickedSuit = Math.floor(pickedCard / 13)
@@ -325,7 +325,7 @@ To fix this, you can provide an explicit `this` parameter.
 
 ```ts
 function f(this: void) {
-  // make sure `this` is unusable in this standalone function
+  // 确保 `this` 在此独立函数中不可用
 }
 ```
 
@@ -346,7 +346,7 @@ interface Deck {
 let deck: Deck = {
   suits: ['hearts', 'spades', 'clubs', 'diamonds'],
   cards: Array(52),
-  // NOTE: The function now explicitly specifies that its callee must be of type Deck
+  // 注意：该函数现在显式指定了其调用者必须为 Deck 类型
   createCardPicker: function (this: Deck) {
     return () => {
       let pickedCard = Math.floor(Math.random() * 52)
@@ -396,13 +396,13 @@ declare const uiElement: UIElement
 class Handler {
   info: string
   onClickBad(this: Handler, e: Event) {
-    // oops, used `this` here. using this callback would crash at runtime
+    // 糟糕，这里使用了 `this`。使用此回调在运行时会崩溃
     this.info = e.message
   }
 }
 
 let h = new Handler()
-uiElement.addClickListener(h.onClickBad) // error!
+uiElement.addClickListener(h.onClickBad) // 错误！
 ```
 
 With `this` annotated, you make it explicit that `onClickBad` must be called on an instance of `Handler`.
@@ -422,7 +422,7 @@ declare const uiElement: UIElement
 class Handler {
   info: string
   onClickGood(this: void, e: Event) {
-    // can't use `this` here because it's of type void!
+    // 不能在这里使用 `this`，因为它的类型是 void！
     console.log('clicked!')
   }
 }
@@ -468,13 +468,13 @@ It's not uncommon for a single JavaScript function to return different types of 
 let suits = ['hearts', 'spades', 'clubs', 'diamonds']
 
 function pickCard(x: any): any {
-  // Check to see if we're working with an object/array
-  // if so, they gave us the deck and we'll pick the card
+  // 检查是否传入了对象/数组
+  // 如果是，说明传入了牌组，我们将抽一张牌
   if (typeof x == 'object') {
     let pickedCard = Math.floor(Math.random() * x.length)
     return pickedCard
   }
-  // Otherwise just let them pick the card
+  // 否则直接让他们抽牌
   else if (typeof x == 'number') {
     let pickedSuit = Math.floor(x / 13)
     return { suit: suits[pickedSuit], card: x % 13 }
@@ -509,13 +509,13 @@ let suits = ['hearts', 'spades', 'clubs', 'diamonds']
 function pickCard(x: { suit: string; card: number }[]): number
 function pickCard(x: number): { suit: string; card: number }
 function pickCard(x: any): any {
-  // Check to see if we're working with an object/array
-  // if so, they gave us the deck and we'll pick the card
+  // 检查是否传入了对象/数组
+  // 如果是，说明传入了牌组，我们将抽一张牌
   if (typeof x == 'object') {
     let pickedCard = Math.floor(Math.random() * x.length)
     return pickedCard
   }
-  // Otherwise just let them pick the card
+  // 否则直接让他们抽牌
   else if (typeof x == 'number') {
     let pickedSuit = Math.floor(x / 13)
     return { suit: suits[pickedSuit], card: x % 13 }

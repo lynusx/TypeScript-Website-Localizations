@@ -18,12 +18,12 @@ class Thing {
 
 class MyThing extends Thing {
   public myMethod() {
-    // OK, can access protected member from subclass
+    // 正常，可以从子类中访问受保护成员
     this.doSomething()
   }
 }
 var t = new MyThing()
-t.doSomething() // Error, cannot call protected member from outside class
+t.doSomething() // 错误，无法从类外部调用受保护成员
 ```
 
 ## 元组类型（Tuple types）
@@ -31,25 +31,25 @@ t.doSomething() // Error, cannot call protected member from outside class
 元组类型用于表示已知特定位置元素类型的数组，各元素的类型不必相同。例如，你可能想要表示一个在索引 0 处为 `string`、在索引 1 处为 `number` 的数组：
 
 ```ts
-// Declare a tuple type
+// 声明一个元组类型
 var x: [string, number]
-// Initialize it
-x = ['hello', 10] // OK
-// Initialize it incorrectly
-x = [10, 'hello'] // Error
+// 初始化元组
+x = ['hello', 10] // 正常
+// 错误的初始化
+x = [10, 'hello'] // 错误
 ```
 
 访问已知索引的元素时，可以获取到对应的正确类型：
 
 ```ts
-console.log(x[0].substr(1)) // OK
-console.log(x[1].substr(1)) // Error, 'number' does not have 'substr'
+console.log(x[0].substr(1)) // 正常
+console.log(x[1].substr(1)) // 错误，'number' 没有 'substr'
 ```
 
 注意，在 TypeScript 1.4 中，当访问超出已知索引集合的元素时，将改用联合类型：
 
 ```ts
-x[3] = 'world' // OK
-console.log(x[5].toString()) // OK, 'string' and 'number' both have toString
-x[6] = true // Error, boolean isn't number or string
+x[3] = 'world' // 正常
+console.log(x[5].toString()) // 正常，'string' 和 'number' 都具有 toString
+x[6] = true // 错误，boolean 既不是 number 也不是 string
 ```

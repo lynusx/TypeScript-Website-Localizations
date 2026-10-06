@@ -173,13 +173,13 @@ const f1 = partialCall(foo, 100)
 
 const f2 = partialCall(foo, 'hello', 100, true, 'oops')
 
-// This works!
+// 这样可以！
 const f3 = partialCall(foo, 'hello')
 //    ^?
 
-// What can we do with f3 now?
+// 现在我们可以用 f3 做什么呢？
 
-// Works!
+// 正常工作！
 f3(123, true)
 
 f3()
@@ -257,7 +257,7 @@ type Bar = [first: string, number]
 function foo(x: [first: string, second: number]) {
   // ...
 
-  // note: we didn't need to name these 'first' and 'second'
+  // 注意：我们不必将它们命名为 'first' 和 'second'
   const [a, b] = x
   a
   //  ^?
@@ -280,7 +280,7 @@ function foo(x: [first: string, second: number]) {
 <!--prettier-ignore -->
 ```ts twoslash
 class Square {
-  // Previously both of these were any
+  // 此前这两者都是 any
   area;
 // ^?
   sideLength;
@@ -317,11 +317,11 @@ class Square {
 
 ```ts twoslash
 class Square {
-  // definite assignment assertion
+  // 确定赋值断言
   //        v
   sideLength!: number
   //         ^^^^^^^^
-  // type annotation
+  // 类型注解
 
   constructor(sideLength: number) {
     this.initialize(sideLength)
@@ -346,27 +346,27 @@ JavaScript 以及许多其他语言都支持一组称为“复合赋值运算符
 你之前可能见过这些：
 
 ```ts
-// Addition
+// 加法
 // a = a + b
 a += b
 
-// Subtraction
+// 减法
 // a = a - b
 a -= b
 
-// Multiplication
+// 乘法
 // a = a * b
 a *= b
 
-// Division
+// 除法
 // a = a / b
 a /= b
 
-// Exponentiation
+// 幂运算
 // a = a ** b
 a **= b
 
-// Left Bit Shift
+// 左移位运算
 // a = a << b
 a <<= b
 ```
@@ -387,7 +387,7 @@ a = a ?? b
 或者类似的 `if` 代码块：
 
 ```ts
-// could be 'a ||= b'
+// 可以写为 'a ||= b'
 if (!a) {
   a = b
 }
@@ -399,7 +399,7 @@ if (!a) {
 let values: string[]
 ;(values ?? (values = [])).push('hello')
 
-// After
+// 改写后
 ;(values ??= []).push('hello')
 ```
 
@@ -411,7 +411,7 @@ let values: string[]
 ```ts
 obj.prop ||= foo()
 
-// roughly equivalent to either of the following
+// 大致相当于以下任一形式
 
 obj.prop || (obj.prop = foo())
 
@@ -427,7 +427,7 @@ const obj = {
   get prop() {
     console.log('getter has run')
 
-    // Replace me!
+    // 替换我！
     return Math.random() < 0.5
   },
   set prop(_val: boolean) {
@@ -460,9 +460,9 @@ obj.prop ||= foo()
 ```ts twoslash
 // @useUnknownInCatchVariables: false
 try {
-  // Do some work
+  // 执行一些操作
 } catch (x) {
-  // x has type 'any' - have fun!
+  // x 的类型为 'any' —— 随意调用！
   console.log(x.message)
   console.log(x.toUpperCase())
   x++
@@ -482,11 +482,11 @@ try {
 try {
   // ...
 } catch (e: unknown) {
-  // Can't access values on unknowns
+  // 不能访问 unknown 类型上的属性
   console.log(e.toUpperCase());
 
   if (typeof e === "string") {
-    // We've narrowed 'e' down to the type 'string'.
+    // 我们已将 'e' 收窄为 'string' 类型。
     console.log(e.toUpperCase());
   }
 }
@@ -524,8 +524,7 @@ try {
 
 ```tsx twoslash
 // @noErrors
-// Note: these pragma comments need to be written
-// with a JSDoc-style multiline syntax to take effect.
+// 注意：这些编译指示注释需要使用 JSDoc 风格的多行语法书写才能生效。
 
 /** @jsx h */
 /** @jsxFrag Fragment */
@@ -544,8 +543,7 @@ export const Header = (
 ```tsx twoslash
 // @noErrors
 // @showEmit
-// Note: these pragma comments need to be written
-// with a JSDoc-style multiline syntax to take effect.
+// 注意：这些编译指示注释需要使用 JSDoc 风格的多行语法书写才能生效。
 
 /** @jsx h */
 /** @jsxFrag Fragment */

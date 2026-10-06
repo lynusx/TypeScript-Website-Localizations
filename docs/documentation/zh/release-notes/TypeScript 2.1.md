@@ -41,7 +41,7 @@ type P5 = string[][0] // string
 
 ```ts
 function getProperty<T, K extends keyof T>(obj: T, key: K) {
-  return obj[key] // Inferred type is T[K]
+  return obj[key] // 推断类型为 T[K]
 }
 
 function setProperty<T, K extends keyof T>(obj: T, key: K, value: T[K]) {
@@ -53,9 +53,9 @@ let x = { foo: 10, bar: 'hello!' }
 let foo = getProperty(x, 'foo') // number
 let bar = getProperty(x, 'bar') // string
 
-let oops = getProperty(x, 'wargarbl') // Error! "wargarbl" is not "foo" | "bar"
+let oops = getProperty(x, 'wargarbl') // 错误！"wargarbl" 不是 "foo" | "bar"
 
-setProperty(x, 'foo', 'string') // Error!, string expected number
+setProperty(x, 'foo', 'string') // 错误！应为 number 类型，传入了 string
 ```
 
 ## 映射类型
@@ -95,17 +95,17 @@ type PartialPerson = Partial<Person>
 除 `Partial` 外，映射类型还能表达许多有用的类型变换：
 
 ```ts
-// Keep types the same, but make each property to be read-only.
+// 保持类型不变，但将每个属性设为只读。
 type Readonly<T> = {
   readonly [P in keyof T]: T[P]
 }
 
-// Same property names, but make the value a promise instead of a concrete one
+// 属性名称相同，但将值转换为 Promise 而不是具体值
 type Deferred<T> = {
   [P in keyof T]: Promise<T[P]>
 }
 
-// Wrap proxies around properties of T
+// 为 T 的属性包装 Proxy
 type Proxify<T> = {
   [P in keyof T]: { get(): T[P]; set(v: T[P]): void }
 }
@@ -125,14 +125,14 @@ function freeze<T>(obj: T): Readonly<T>
 此外，我们还新增了两个工具类型：`Record` 和 `Pick`。
 
 ```ts
-// From T pick a set of properties K
+// 从 T 中选取一组属性 K
 declare function pick<T, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K>
 
 const nameAndAgeOnly = pick(person, 'name', 'age') // { name: string, age: number }
 ```
 
 ```ts
-// For every properties K of type T, transform it to U
+// 对于类型 T 的每个属性 K，将其转换为 U
 function mapObject<K extends string, T, U>(
   obj: Record<K, T>,
   f: (x: T) => U,
@@ -272,7 +272,7 @@ TypeScript 2.1 允许在没有类型声明的情况下导入 JavaScript 模块�
 ##### 示例
 
 ```ts
-// Succeeds if `node_modules/asdf/index.js` exists
+// 如果 `node_modules/asdf/index.js` 存在则成功
 import { x } from 'asdf'
 ```
 
@@ -291,10 +291,10 @@ TypeScript 2.1 新增了三个编译目标值：`--target ES2016`、`--target ES
 以前，当 TypeScript 无法确定变量类型时，会直接选择 `any` 类型。
 
 ```ts
-let x // implicitly 'any'
-let y = [] // implicitly 'any[]'
+let x // 隐式为 'any'
+let y = [] // 隐式为 'any[]'
 
-let z: any // explicitly 'any'.
+let z: any // 显式为 'any'。
 ```
 
 TypeScript 2.1 改变了这一行为：它不再直接选择 `any`，而是根据后续赋值来推断类型。
@@ -306,21 +306,21 @@ TypeScript 2.1 改变了这一行为：它不再直接选择 `any`，而是根�
 ```ts
 let x
 
-// You can still assign anything you want to 'x'.
+// 你仍然可以给 'x' 赋任意值。
 x = () => 42
 
-// After that last assignment, TypeScript 2.1 knows that 'x' has type '() => number'.
+// 在上次赋值后，TypeScript 2.1 已知 'x' 的类型为 '() => number'。
 let y = x()
 
-// Thanks to that, it will now tell you that you can't add a number to a function!
+// 正因如此，它现在会提示你不能将数字与函数相加！
 console.log(x + y)
 //          ~~~~~
-// Error! Operator '+' cannot be applied to types '() => number' and 'number'.
+// 错误！运算符 '+' 不能应用于类型 '() => number' 和 'number'。
 
-// TypeScript still allows you to assign anything you want to 'x'.
+// TypeScript 仍然允许给 'x' 赋任意值。
 x = 'Hello world!'
 
-// But now it also knows that 'x' is a 'string'!
+// 但现在它也知道 'x' 是一个 'string'！
 x.toLowerCase()
 ```
 
@@ -357,10 +357,10 @@ function f2() {
 
 ```ts
 function f3() {
-  let x = [] // Error: Variable 'x' implicitly has type 'any[]' in some locations where its type cannot be determined.
+  let x = [] // 错误：在某些无法确定类型的变量位置，变量 'x' 隐式具有类型 'any[]'。
   x.push(5)
   function g() {
-    x // Error: Variable 'x' implicitly has an 'any[]' type.
+    x // 错误：变量 'x' 隐式具有 'any[]' 类型。
   }
 }
 ```
@@ -374,17 +374,17 @@ function f3() {
 ##### 示例
 
 ```ts
-const c1 = 1 // Type 1
-const c2 = c1 // Type 1
-const c3 = 'abc' // Type "abc"
-const c4 = true // Type true
-const c5 = cond ? 1 : 'abc' // Type 1 | "abc"
+const c1 = 1 // 类型为 1
+const c2 = c1 // 类型为 1
+const c3 = 'abc' // 类型为 "abc"
+const c4 = true // 类型为 true
+const c5 = cond ? 1 : 'abc' // 类型为 1 | "abc"
 
-let v1 = 1 // Type number
-let v2 = c2 // Type number
-let v3 = c3 // Type string
-let v4 = c4 // Type boolean
-let v5 = c5 // Type number | string
+let v1 = 1 // 类型为 number
+let v2 = c2 // 类型为 number
+let v3 = c3 // 类型为 string
+let v4 = c4 // 类型为 boolean
+let v5 = c5 // 类型为 number | string
 ```
 
 字面量类型的拓宽行为可通过显式类型注解来控制。具体而言，当一个字面量类型的表达式在没有类型注解的 `const` 声明处被推断时，该 `const` 变量会得到一个可拓宽的字面量类型；而当 `const` 声明处存在显式字面量类型注解时，变量则会得到一个不可拓宽的字面量类型。
@@ -392,11 +392,11 @@ let v5 = c5 // Type number | string
 ##### 示例
 
 ```ts
-const c1 = 'hello' // Widening type "hello"
-let v1 = c1 // Type string
+const c1 = 'hello' // 拓宽类型 "hello"
+let v1 = c1 // 类型为 string
 
-const c2: 'hello' = 'hello' // Type "hello"
-let v2 = c2 // Type "hello"
+const c2: 'hello' = 'hello' // 类型为 "hello"
+let v2 = c2 // 类型为 "hello"
 ```
 
 ## 将 super 调用的返回值用作 `this`
@@ -409,7 +409,7 @@ let v2 = c2 // Type "hello"
 class Base {
   x: number
   constructor() {
-    // return a new object other than `this`
+    // 返回不同于 `this` 的新对象
     return {
       x: 1,
     }

@@ -18,9 +18,9 @@ TypeScript 编译器在 TypeScript 和 JavaScript 文件中均能识别标准的
 与任何标准的 JavaScript 声明一样，类型别名、接口、枚举和命名空间也可以使用 `export` 修饰符从模块中导出：
 
 ```ts
-// Standard JavaScript syntax...
+// 标准 JavaScript 语法...
 export function f() {}
-// ...extended to type declarations
+// ...扩展至类型声明
 export type SomeType = /* ... */;
 export interface SomeInterface { /* ... */ }
 ```
@@ -42,8 +42,8 @@ import { f, SomeType, SomeInterface } from './module.js'
 ```ts
 import * as mod from './module.js'
 mod.f()
-mod.SomeType // Property 'SomeType' does not exist on type 'typeof import("./module.js")'
-let x: mod.SomeType // Ok
+mod.SomeType // 属性 'SomeType' 不存在于类型 'typeof import("./module.js")' 上
+let x: mod.SomeType // 正常
 ```
 
 ### 仅类型导入与导出
@@ -77,8 +77,8 @@ class C {
 
 ```ts
 import type { f } from './module.js'
-f() // 'f' cannot be used as a value because it was imported using 'import type'
-let otherFunction: typeof f = () => {} // Ok
+f() // 'f' 不能作为值使用，因为它是使用 'import type' 导入的
+let otherFunction: typeof f = () => {} // 正常
 ```
 
 仅类型导入声明不能同时声明默认导入和具名绑定，因为这会导致无法明确 `type` 是仅修饰默认导入还是修饰整个导入声明。遇到这种情况，请将导入声明拆分为两条，或使用 `default` 作为具名绑定：
@@ -86,9 +86,9 @@ let otherFunction: typeof f = () => {} // Ok
 ```ts
 import type fs, { BigIntOptions } from "fs";
 //          ^^^^^^^^^^^^^^^^^^^^^
-// Error: A type-only import can specify a default import or named bindings, but not both.
+// 错误：仅类型导入可以指定默认导入或命名绑定，但不能同时指定两者。
 
-import type { default as fs, BigIntOptions } from "fs"; // Ok
+import type { default as fs, BigIntOptions } from "fs"; // 正常
 ```
 
 ### `import()` 类型
@@ -96,9 +96,9 @@ import type { default as fs, BigIntOptions } from "fs"; // Ok
 TypeScript 提供了一种类似于 JavaScript 动态 `import` 的类型语法，用于在无需编写导入声明的情况下直接引用模块的类型：
 
 ```ts
-// Access an exported type:
+// 访问导出的类型：
 type WriteFileOptions = import('fs').WriteFileOptions
-// Access the type of an exported value:
+// 访问导出值的类型：
 type WriteFileFunction = typeof import('fs').writeFile
 ```
 
@@ -133,16 +133,16 @@ module.exports = fs.readFileSync('...')
 interface Options {
   /* ... */
 }
-module.exports = Options // Error: 'Options' only refers to a type, but is being used as a value here.
-export = Options // Ok
+module.exports = Options // 错误：'Options' 仅表示类型，但此处被用作值。
+export = Options // 正常
 
 // @Filename: b.ts
 const Options = require('./a')
-const options: Options = {/* ... */} // Error: 'Options' refers to a value, but is being used as a type here.
+const options: Options = {/* ... */} // 错误：'Options' 表示一个值，但此处被用作类型。
 
 // @Filename: c.ts
 import Options = require('./a')
-const options: Options = {/* ... */} // Ok
+const options: Options = {/* ... */} // 正常
 ```
 
 ### 环境模块
@@ -160,9 +160,9 @@ declare module 'path' {
 一旦环境模块被加载到 TypeScript 程序中，TypeScript 就能在其他文件中识别对该声明模块的导入：
 
 ```ts
-// 👇 Ensure the ambient module is loaded -
-//    may be unnecessary if path.d.ts is included
-//    by the project tsconfig.json somehow.
+// 👇 确保环境模块已加载 -
+//    如果 path.d.ts 已通过某种方式包含在
+//    项目的 tsconfig.json 中，则可能不需要此项。
 /// <reference path="path.d.ts" />
 
 import { normalize, join } from 'path'
@@ -171,7 +171,7 @@ import { normalize, join } from 'path'
 环境模块声明很容易与[模块扩展](https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation)混淆，因为二者使用了完全相同的语法。当所在文件本身是一个模块（即包含顶层 `import` 或 `export` 语句，或受到 [`--moduleDetection force` 或 `auto`](https://www.typescriptlang.org/tsconfig#moduleDetection) 的影响）时，这种模块声明语法就会变为模块扩展：
 
 ```ts
-// Not an ambient module declaration anymore!
+// 不再是环境模块声明！
 export {}
 declare module 'path' {
   export function normalize(p: string): string
@@ -184,7 +184,7 @@ declare module 'path' {
 
 ```ts
 declare module 'm' {
-  // Moving this outside "m" would totally change the meaning of the file!
+  // 将其移到 "m" 外部会彻底改变该文件的含义！
   import { SomeType } from 'other'
   export function f(): SomeType
 }
@@ -255,8 +255,8 @@ CommonJS 发射与 [`--module commonjs`](#commonjs) 类似，但不会转换动�
 
 ```ts
 // @Filename: main.ts
-import fs from 'fs' // transformed
-const dynamic = import('mod') // not transformed
+import fs from 'fs' // 已转换
+const dynamic = import('mod') // 未转换
 ```
 
 ```js
@@ -268,8 +268,8 @@ var __importDefault =
     return mod && mod.__esModule ? mod : { default: mod }
   }
 Object.defineProperty(exports, '__esModule', { value: true })
-const fs_1 = __importDefault(require('fs')) // transformed
-const dynamic = import('mod') // not transformed
+const fs_1 = __importDefault(require('fs')) // 已转换
+const dynamic = import('mod') // 未转换
 ```
 
 #### 隐式与强制选项
@@ -578,10 +578,10 @@ TypeScript 始终希望在内部解析到一个能够提供类型信息的文件
 
 ```ts
 import x from './mod.js'
-// Runtime lookup: "./mod.js"
-// TypeScript lookup #1: "./mod.ts"
-// TypeScript lookup #2: "./mod.d.ts"
-// TypeScript lookup #3: "./mod.js"
+// 运行时查找："./mod.js"
+// TypeScript 查找 #1："./mod.ts"
+// TypeScript 查找 #2："./mod.d.ts"
+// TypeScript 查找 #3："./mod.js"
 ```
 
 关于 TypeScript 模块解析为何采用这种机制的解释，请参见[_TypeScript 模拟宿主的模块解析，但附加类型_](/docs/handbook/modules/theory.html#typescript-imitates-the-hosts-module-resolution-but-with-types)。
@@ -595,7 +595,7 @@ TypeScript 的所有 `moduleResolution` 算法都支持通过包含文件扩展�
 export {}
 
 // @Filename: b.ts
-import {} from './a.js' // ✅ Works in every `moduleResolution`
+import {} from './a.js' // ✅ 在每种 `moduleResolution` 下均可正常工作
 ```
 
 #### 无扩展名相对路径
@@ -652,7 +652,7 @@ TypeScript 提供了 `paths` 编译器选项，用于覆盖编译器针对裸标
 ```
 
 ```ts
-// Typed by ./node_modules/@types/lodash/index.d.ts due to `paths` entry
+// 由于配置了 `paths` 项，类型由 ./node_modules/@types/lodash/index.d.ts 提供
 import { add } from 'https://esm.sh/lodash@4.17.21'
 ```
 
@@ -1021,9 +1021,9 @@ TypeScript 通过 `"exports"` 将模块标识符解析为文件路径的实现�
 
 ```ts
 // @Filename: module.mts
-import 'pkg/dist/foo' // ❌ import, needs `.js` extension
+import 'pkg/dist/foo' // ❌ import，需要 `.js` 扩展名
 import 'pkg/dist/foo.js' // ✅
-import foo = require('pkg/dist/foo') // ✅ require, no extension needed
+import foo = require('pkg/dist/foo') // ✅ require，不需要扩展名
 ```
 
 #### package.json `"imports"` 与自名称导入
@@ -1124,16 +1124,16 @@ import foo = require('pkg/dist/foo') // ✅ require, no extension needed
 
 ```ts
 // @Filename: module.mts
-import x from './mod.js' // `import` algorithm due to file format (emitted as-written)
-import('./mod.js') // `import` algorithm due to syntax (emitted as-written)
-type Mod = typeof import('./mod.js') // `import` algorithm due to file format
-import mod = require('./mod') // `require` algorithm due to syntax (emitted as `require`)
+import x from './mod.js' // 基于文件格式采用 `import` 算法（原样发射）
+import('./mod.js') // 基于语法采用 `import` 算法（原样发射）
+type Mod = typeof import('./mod.js') // 基于文件格式采用 `import` 算法
+import mod = require('./mod') // 基于语法采用 `require` 算法（发射为 `require`）
 
 // @Filename: commonjs.cts
-import x from './mod' // `require` algorithm due to file format (emitted as `require`)
-import('./mod.js') // `import` algorithm due to syntax (emitted as-written)
-type Mod = typeof import('./mod') // `require` algorithm due to file format
-import mod = require('./mod') // `require` algorithm due to syntax (emitted as `require`)
+import x from './mod' // 基于文件格式采用 `require` 算法（发射为 `require`）
+import('./mod.js') // 基于语法采用 `import` 算法（原样发射）
+type Mod = typeof import('./mod') // 基于文件格式采用 `require` 算法
+import mod = require('./mod') // 基于语法采用 `require` 算法（发射为 `require`）
 ```
 
 #### 隐式与强制选项
@@ -1176,8 +1176,8 @@ import { foo } from 'pkg'
 
 ```ts
 // index.ts
-import pkg1 from 'pkg' // Resolved with "import" condition
-import pkg2 = require('pkg') // Resolved with "require" condition
+import pkg1 from 'pkg' // 使用 "import" 条件解析
+import pkg2 = require('pkg') // 使用 "require" 条件解析
 ```
 
 #### 隐式与强制选项

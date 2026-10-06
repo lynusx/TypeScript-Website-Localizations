@@ -93,7 +93,7 @@ function printAll(strs: string | string[] | null) {
   } else if (typeof strs === 'string') {
     console.log(strs)
   } else {
-    // do nothing
+    // 什么也不做
   }
 }
 ```
@@ -136,9 +136,9 @@ function getUsersOnlineMessage(numUsersOnline: number) {
 你随时可以通过 `Boolean` 函数将值转换为 `boolean`，或者使用更简洁的双重非运算（`!!`）。（后者的优势在于 TypeScript 会推断出更狭窄的字面量布尔类型 `true`，而前者推断出的类型则是 `boolean`。）
 
 ```ts twoslash
-// both of these result in 'true'
-Boolean('hello') // type: boolean, value: true
-!!'world' // type: true,    value: true
+// 两者计算结果均为 'true'
+Boolean('hello') // 类型：boolean，值：true
+!!'world' // 类型：true，   值：true
 ```
 
 利用这一特性非常普遍，特别是在防范 `null` 或 `undefined` 这类值的时候。
@@ -169,8 +169,8 @@ TypeError: null is not iterable
 ```ts twoslash {class: "do-not-do-this"}
 function printAll(strs: string | string[] | null) {
   // !!!!!!!!!!!!!!!!
-  //  DON'T DO THIS!
-  //   KEEP READING
+  //  千万不要这样做！
+  //   请继续往下阅读
   // !!!!!!!!!!!!!!!!
   if (strs) {
     if (typeof strs === 'object') {
@@ -213,7 +213,7 @@ TypeScript 还会使用 `switch` 语句以及像 `===`、`!==`、`==` 和 `!=` �
 ```ts twoslash
 function example(x: string | number, y: string | boolean) {
   if (x === y) {
-    // We can now call any 'string' method on 'x' or 'y'.
+    // 现在我们可以对 'x' 或 'y' 调用任何 'string' 方法。
     x.toUpperCase()
     // ^?
     y.toLowerCase()
@@ -260,12 +260,12 @@ interface Container {
 }
 
 function multiplyValue(container: Container, factor: number) {
-  // Remove both 'null' and 'undefined' from the type.
+  // 从类型中同时移除 'null' 和 'undefined'。
   if (container.value != null) {
     console.log(container.value)
     //                    ^?
 
-    // Now we can safely multiply 'container.value'.
+    // 现在我们可以安全地对 'container.value' 进行乘法运算。
     container.value *= factor
   }
 }
@@ -442,7 +442,7 @@ function isFish(pet: Fish | Bird): pet is Fish {
   return (pet as Fish).swim !== undefined
 }
 // ---cut---
-// Both calls to 'swim' and 'fly' are now okay.
+// 现在对 'swim' 和 'fly' 的调用都可以正常通过。
 let pet = getSmallPet()
 
 if (isFish(pet)) {
@@ -467,10 +467,10 @@ function isFish(pet: Fish | Bird): pet is Fish {
 // ---cut---
 const zoo: (Fish | Bird)[] = [getSmallPet(), getSmallPet(), getSmallPet()]
 const underWater1: Fish[] = zoo.filter(isFish)
-// or, equivalently
+// 或者，等价地
 const underWater2: Fish[] = zoo.filter(isFish) as Fish[]
 
-// The predicate may need repeating for more complex examples
+// 对于更复杂的示例，可能需要重复编写谓词
 const underWater3: Fish[] = zoo.filter((pet): pet is Fish => {
   if (pet.name === 'sharkey') return false
   return isFish(pet)
@@ -514,7 +514,7 @@ interface Shape {
 
 // ---cut---
 function handleShape(shape: Shape) {
-  // oops!
+  // 哎呀！
   if (shape.kind === 'rect') {
     // ...
   }

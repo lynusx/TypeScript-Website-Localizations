@@ -52,7 +52,7 @@ type Person = (typeof MyArray)[number]
 //   ^?
 type Age = (typeof MyArray)[number]['age']
 //   ^?
-// Or
+// 或者
 type Age2 = Person['age']
 //   ^?
 ```

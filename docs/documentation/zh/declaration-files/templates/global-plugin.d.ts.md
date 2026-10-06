@@ -57,7 +57,7 @@ UMD 库的文档通常还会提供一个展示 `require` 的“在 Node.js 中�
 
 ```js
 var x = require('foo')
-// Note: calling 'x' as a function
+// 注意：将 'x' 作为函数调用
 var y = x(42)
 ```
 
@@ -67,7 +67,7 @@ var y = x(42)
 
 ```js
 var x = require('bar')
-// Note: using 'new' operator on the imported variable
+// 注意：对导入的变量使用 'new' 运算符
 var y = new x('hello')
 ```
 
@@ -101,11 +101,11 @@ _全局插件_是一种修改某些全局对象形态的全局代码。
 
 ```js
 var x = 'hello, world'
-// Creates new methods on built-in types
+// 在内置类型上创建新方法
 console.log(x.startsWithHello())
 
 var y = [1, 2, 3]
-// Creates new methods on built-in types
+// 在内置类型上创建新方法
 console.log(y.reverseAndSort())
 ```
 
@@ -128,17 +128,17 @@ _全局修改模块_在被导入时会修改全局作用域中的现有值。
 你可能会看到类似这样的文档：
 
 ```js
-// 'require' call that doesn't use its return value
+// 不使用其返回值的 'require' 调用
 var unused = require('magic-string-time')
-/* or */
+/* 或者 */
 require('magic-string-time')
 
 var x = 'hello, world'
-// Creates new methods on built-in types
+// 在内置类型上创建新方法
 console.log(x.startsWithHello())
 
 var y = [1, 2, 3]
-// Creates new methods on built-in types
+// 在内置类型上创建新方法
 console.log(y.reverseAndSort())
 ```
 
@@ -212,7 +212,7 @@ declare namespace cats {
 而_不要_这样写：
 
 ```ts
-// at top-level
+// 顶层作用域
 interface CatsKittySettings {}
 ```
 
@@ -275,15 +275,15 @@ var d = require('myLib/bar/baz')
 ```
 
 ```ts
-// Type definitions for [~THE LIBRARY NAME~] [~OPTIONAL VERSION NUMBER~]
-// Project: [~THE PROJECT NAME~]
-// Definitions by: [~YOUR NAME~] <[~A URL FOR YOU~]>
+// Type definitions for [~库名称~] [~可选版本号~]
+// Project: [~项目名称~]
+// Definitions by: [~你的姓名~] <[~你的 URL~]>
 
-/*~ This template shows how to write a global plugin. */
+/*~ 此模板展示了如何编写全局插件。 */
 
-/*~ Write a declaration for the original type and add new members.
- *~ For example, this adds a 'toBinaryString' method with overloads to
- *~ the built-in number type.
+/*~ 为原始类型编写声明并添加新成员。
+ *~ 例如，这里为内置的 number 类型添加了带有重载的
+ *~ 'toBinaryString' 方法。
  */
 interface Number {
   toBinaryString(opts?: MyLibrary.BinaryFormatOptions): string
@@ -294,8 +294,8 @@ interface Number {
   ): string
 }
 
-/*~ If you need to declare several types, place them inside a namespace
- *~ to avoid adding too many things to the global namespace.
+/*~ 如果需要声明多个类型，请将它们放在命名空间内，
+ *~ 以避免向全局命名空间添加过多内容。
  */
 declare namespace MyLibrary {
   type BinaryFormatCallback = (n: number) => string

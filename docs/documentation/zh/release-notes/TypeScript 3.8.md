@@ -30,7 +30,7 @@ interface ButtonProps {
 
 class Button extends Component<ButtonProps> {
   //               ~~~~~~~~~
-  // error! 'Component' only refers to a type, but is being used as a value here.
+  // 错误！'Component' 仅表示类型，但在此处作为值使用。
   // ...
 }
 ```
@@ -38,12 +38,12 @@ class Button extends Component<ButtonProps> {
 如果你之前用过 Flow，会发现该语法十分相似。不同之处在于，我们添加了一些限制以避免可能产生歧义的代码。
 
 ```ts
-// Is only 'Foo' a type? Or every declaration in the import?
-// We just give an error because it's not clear.
+// 仅有 'Foo' 是类型？还是 import 中的每个声明都是类型？
+// 因为含义不明确，我们直接报错。
 
 import type Foo, { Bar, Baz } from "some-module";
 //     ~~~~~~~~~~~~~~~~~~~~~~
-// error! A type-only import can specify a default import or named bindings, but not both.
+// 错误！仅类型导入可以指定默认导入或命名绑定，但不能同时指定两者。
 ```
 
 与 `import type` 配套，TypeScript 3.8 还添加了一个新的编译器标志，用于控制未在运行时使用的导入的处理方式：[`importsNotUsedAsValues`](/tsconfig#importsNotUsedAsValues)。
@@ -76,8 +76,8 @@ let jeremy = new Person('Jeremy Bearimy')
 
 jeremy.#name
 //     ~~~~~
-// Property '#name' is not accessible outside class 'Person'
-// because it has a private identifier.
+// 属性 '#name' 在类 'Person' 外部不可访问，
+// 因为它具有私有标识符。
 ```
 
 与常规属性（即使是使用 `private` 修饰符声明的属性）不同，私有字段有以下几条规则需要注意：
@@ -107,9 +107,9 @@ class D extends C {
 }
 
 let instance = new D()
-// 'this.foo' refers to the same property on each instance.
-console.log(instance.cHelper()) // prints '20'
-console.log(instance.dHelper()) // prints '20'
+// 'this.foo' 在每个实例上引用相同的属性。
+console.log(instance.cHelper()) // 打印 '20'
+console.log(instance.dHelper()) // 打印 '20'
 ```
 
 使用私有字段时，你完全无需担心这一点，因为每个字段名称对于包含它的类来说都是唯一的。
@@ -132,9 +132,9 @@ class D extends C {
 }
 
 let instance = new D()
-// 'this.#foo' refers to a different field within each class.
-console.log(instance.cHelper()) // prints '10'
-console.log(instance.dHelper()) // prints '20'
+// 'this.#foo' 在每个类中引用不同的字段。
+console.log(instance.cHelper()) // 打印 '10'
+console.log(instance.dHelper()) // 打印 '20'
 ```
 
 另一处值得注意的是，在任何其他类型的对象上访问私有字段都将抛出 `TypeError`！
@@ -155,9 +155,9 @@ class Square {
 const a = new Square(100)
 const b = { sideLength: 100 }
 
-// Boom!
-// TypeError: attempted to get private field on non-instance
-// This fails because 'b' is not an instance of 'Square'.
+// 报错！
+// TypeError: 试图在非实例上获取私有字段
+// 此处失败是因为 'b' 不是 'Square' 的实例。
 console.log(a.equals(b))
 ```
 
@@ -165,12 +165,12 @@ console.log(a.equals(b))
 
 ```js
 class C {
-  // No declaration for '#foo'
+  // 没有 '#foo' 的声明
   // :(
 
   constructor(foo: number) {
-    // SyntaxError!
-    // '#foo' needs to be declared before writing to it.
+    // SyntaxError！
+    // 在对 '#foo' 写入之前需要先声明它。
     this.#foo = foo;
   }
 }
@@ -184,7 +184,7 @@ class C {
   #foo;
 
   constructor(foo: number) {
-    // This works.
+    // 这样可行。
     this.#foo = foo;
   }
 }
@@ -204,16 +204,16 @@ class C {
   private foo = 10
 }
 
-// This is an error at compile time,
-// but when TypeScript outputs .js files,
-// it'll run fine and print '10'.
-console.log(new C().foo) // prints '10'
+// 这在编译时会报错，
+// 但当 TypeScript 输出 .js 文件时，
+// 它会正常运行并打印 '10'。
+console.log(new C().foo) // 打印 '10'
 //                  ~~~
-// error! Property 'foo' is private and only accessible within class 'C'.
+// 错误！属性 'foo' 为私有，只能在类 'C' 中访问。
 
-// TypeScript allows this at compile-time
-// as a "work-around" to avoid the error.
-console.log(new C()['foo']) // prints '10'
+// TypeScript 在编译时允许这种写法，
+// 作为避免报错的“变通方案”。
+console.log(new C()['foo']) // 打印 '10'
 ```
 
 这种“软私有（soft privacy）”的好处在于，它可以帮助使用者临时绕过无法访问某些 API 的限制，并且可以在任何运行时环境中工作。
@@ -225,15 +225,15 @@ class C {
   #foo = 10
 }
 
-console.log(new C().#foo) // SyntaxError
+console.log(new C().#foo) // 语法错误 (SyntaxError)
 //                  ~~~~
-// TypeScript reports an error *and*
-// this won't work at runtime!
+// TypeScript 会报错，*并且*
+// 在运行时也无法正常工作！
 
-console.log(new C()['#foo']) // prints undefined
+console.log(new C()['#foo']) // 打印 undefined
 //          ~~~~~~~~~~~~~~~
-// TypeScript reports an error under 'noImplicitAny',
-// and this prints 'undefined'.
+// TypeScript 在 'noImplicitAny' 下会报错，
+// 且此处打印 'undefined'。
 ```
 
 这种硬私有对于严格确保没有任何人能够使用你的内部实现非常有用。如果你是库的作者，移除或重命名私有字段永远不会导致破坏性变更。
@@ -284,7 +284,7 @@ const response = await fetch('...')
 const greeting = await response.text()
 console.log(greeting)
 
-// Make sure we're a module
+// 确保此文件是一个模块
 export {}
 ```
 
@@ -322,7 +322,7 @@ class Foo {
 
 new Foo().stuff
 //        ~~~~~
-// error! Property 'stuff' is private and only accessible within class 'Foo'.
+// 错误！属性 'stuff' 为私有，只能在类 'Foo' 中访问。
 ```
 
 - `@public` 始终是默认隐含的，可以省略，表示属性可以从任何地方访问。
@@ -343,13 +343,13 @@ class Foo {
   writeToStuff() {
     this.stuff = 200
     //   ~~~~~
-    // Cannot assign to 'stuff' because it is a read-only property.
+    // 无法分配给 'stuff'，因为它是只读属性。
   }
 }
 
 new Foo().stuff++
 //        ~~~~~
-// Cannot assign to 'stuff' because it is a read-only property.
+// 无法分配给 'stuff'，因为它是只读属性。
 ```
 
 ## Linux 上更好的目录监视与 `watchOptions`
@@ -364,21 +364,21 @@ TypeScript 3.8 引入了一种监视目录的新策略，这对于高效捕获 `
 
 ```jsonc tsconfig
 {
-  // Some typical compiler options
+  // 一些典型的编译器选项
   "compilerOptions": {
     "target": "es2020",
     "moduleResolution": "node",
     // ...
   },
 
-  // NEW: Options for file/directory watching
+  // 新增：文件/目录监视选项
   "watchOptions": {
-    // Use native file system events for files and directories
+    // 对文件和目录使用原生文件系统事件
     "watchFile": "useFsEvents",
     "watchDirectory": "useFsEvents",
 
-    // Poll files for updates more frequently
-    // when they're updated a lot.
+    // 在文件频繁更新时
+    // 更高频地轮询更新。
     "fallbackPolling": "dynamicPriority",
   },
 }

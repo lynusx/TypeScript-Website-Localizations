@@ -136,12 +136,12 @@ console.log(x.count)
 interface Foo {
   x: number;
 }
-// ... elsewhere ...
+// ... 其他地方 ...
 interface Foo {
   y: number;
 }
 let a: Foo = ...;
-console.log(a.x + a.y); // OK
+console.log(a.x + a.y); // 正常
 ```
 
 这也同样适用于类：
@@ -150,12 +150,12 @@ console.log(a.x + a.y); // OK
 class Foo {
   x: number;
 }
-// ... elsewhere ...
+// ... 其他地方 ...
 interface Foo {
   y: number;
 }
 let a: Foo = ...;
-console.log(a.x + a.y); // OK
+console.log(a.x + a.y); // 正常
 ```
 
 请注意，我们无法使用接口向类型别名（`type s = string;`）添加成员。
@@ -168,11 +168,11 @@ console.log(a.x + a.y); // OK
 
 ```ts
 class C {}
-// ... elsewhere ...
+// ... 其他地方 ...
 namespace C {
   export let x: number
 }
-let y = C.x // OK
+let y = C.x // 正常
 ```
 
 注意，在这个例子中，我们向 `C` 的*静态*部分（即它的构造函数）添加了一个值。
@@ -183,11 +183,11 @@ let y = C.x // OK
 
 ```ts
 class C {}
-// ... elsewhere ...
+// ... 其他地方 ...
 namespace C {
   export interface D {}
 }
-let y: C.D // OK
+let y: C.D // 正常
 ```
 
 在这个例子中，在我们为它编写 `namespace` 声明之前，并不存在命名空间 `C`。
@@ -202,7 +202,7 @@ namespace X {
   export class Z {}
 }
 
-// ... elsewhere ...
+// ... 其他地方 ...
 namespace X {
   export var Y: number
   export namespace Z {

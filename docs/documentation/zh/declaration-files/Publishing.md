@@ -168,7 +168,7 @@ TypeScript 决定编译器与语言版本是否匹配的方式是使用 Node 的
   "version": "1.0",
   "types": "./index.d.ts",
   "typesVersions": {
-    // NOTE: this doesn't work!
+    // 注意：这种写法不起作用！
     ">=3.1": { "*": ["ts3.1/*"] },
     ">=3.2": { "*": ["ts3.2/*"] },
   },

@@ -15,13 +15,13 @@ declare function callIt<T>(obj: {
   consume: (y: T) => void
 }): void
 
-// Works, no issues.
+// 正常运行，无问题。
 callIt({
   produce: (x: number) => x * 2,
   consume: (y) => y.toFixed(),
 })
 
-// Works, no issues even though the order of the properties is flipped.
+// 正常运行，即使属性顺序颠倒也没有问题。
 callIt({
   consume: (y) => y.toFixed(),
   produce: (x: number) => x * 2,
@@ -37,7 +37,7 @@ declare function callIt<T>(obj: {
   consume: (y: T) => void
 }): void
 
-// Works fine, `x` is inferred to be a number.
+// 运行正常，`x` 被推断为 number。
 callIt({
   produce(x: number) {
     return x * 2
@@ -52,7 +52,7 @@ callIt({
     return y.toFixed()
   },
   //                  ~
-  // error: 'y' is of type 'unknown'.
+  // 错误：'y' 的类型为 'unknown'。
 
   produce(x: number) {
     return x * 2
@@ -74,8 +74,8 @@ function callFunc<T>(callback: (x: T) => void, value: T) {
 
 callFunc((x) => x.toFixed(), 42)
 //       ^
-// We need to figure out the type of `x` here,
-// but we also need to figure out the type of `T` to check the callback.
+// 我们需要在此推导 `x` 的类型，
+// 但我们还需要推导 `T` 的类型以检查回调。
 ```
 
 为了解决这个问题，TypeScript 在类型实参推断期间会跳过上下文敏感函数，而是优先检查其他参数并从中进行推断。
@@ -86,19 +86,19 @@ callFunc((x) => x.toFixed(), 42)
 那么我们之前的例子中究竟发生了什么？
 
 ```ts
-// Arrow syntax - no errors.
+// 箭头函数语法 —— 无错误。
 callIt({
   consume: (y) => y.toFixed(),
   produce: (x: number) => x * 2,
 })
 
-// Method syntax - errors!
+// 方法语法 —— 报错！
 callIt({
   consume(y) {
     return y.toFixed()
   },
   //                  ~
-  // error: 'y' is of type 'unknown'.
+  // 错误：'y' 的类型为 'unknown'。
 
   produce(x: number) {
     return x * 2
@@ -195,30 +195,30 @@ TypeScript 的 `--moduleResolution bundler` 选项此前仅允许与 `--module e
 例如，考虑此文件的声明文件输出：
 
 ```ts
-// Input: some-file.ts
+// 输入：some-file.ts
 export function foo(condition: boolean) {
   return condition ? 100 : 500
 }
 
-// Output: some-file.d.ts
+// 输出：some-file.d.ts
 export declare function foo(condition: boolean): 100 | 500
 //                                               ^^^^^^^^^
-//             Note the order of this union: 100, then 500.
+//             注意此联合类型的顺序：先 100，后 500。
 ```
 
 如果在 `foo` _上方_ 添加一个无关的 `const`，生成的声明文件就会发生改变：
 
 ```ts
-// Input: some-file.ts
+// 输入：some-file.ts
 const x = 500
 export function foo(condition: boolean) {
   return condition ? 100 : 500
 }
 
-// Output: some-file.d.ts
+// 输出：some-file.d.ts
 export declare function foo(condition: boolean): 500 | 100
 //                                               ^^^^^^^^^
-//                           Note the change in order here.
+//                           注意此处顺序的变化。
 ```
 
 之所以会发生这种情况，是因为在分析 `const x` 声明时字面量类型 `500` 先被处理，从而获得了比 `100` 更小的类型 ID。
@@ -374,8 +374,8 @@ TypeScript 的 `lib` 选项允许你指定目标运行时所具备的全局声�
 你仍然可以在配置文件的 `"lib"` 数组中引用 `dom.iterable` 和 `dom.asynciterable`，但它们现在只是空文件。
 
 ```ts
-// Before TypeScript 6.0, this required "lib": ["dom", "dom.iterable"]
-// Now it works with just "lib": ["dom"]
+// 在 TypeScript 6.0 之前，这需要 "lib": ["dom", "dom.iterable"]
+// 现在仅需 "lib": ["dom"] 即可工作
 for (const element of document.querySelectorAll('div')) {
   console.log(element.textContent)
 }
@@ -502,7 +502,7 @@ TypeScript 6.0 是一个重要的过渡版本，旨在帮助开发者为即将�
 ```diff
   {
       "compilerOptions": {
-          // Explicitly list the @types packages you need
+          // 显式列出你需要的 @types 包
 +         "types": ["node", "jest"]
       }
   }
@@ -513,7 +513,7 @@ TypeScript 6.0 是一个重要的过渡版本，旨在帮助开发者为即将�
 ```diff
   {
       "compilerOptions": {
-          // Load ALL the types - the default from TypeScript 5.9 and before.
+          // 加载所有类型 —— TypeScript 5.9 及更早版本的默认行为。
 +         "types": ["*"]
       }
   }
@@ -639,10 +639,10 @@ TypeScript 可能会将其解析为 `src/someModule.js`，即使开发者的初�
   compilerOptions: {
     // ...
     paths: {
-      // A new catch-all that replaces the baseUrl:
+      // 替代 baseUrl 的新通用匹配：
       '*': ['./src/*'],
 
-      // Every other path now has an explicit common prefix:
+      // 其他所有路径现在都具有显式的通用前缀：
       '@app/*': ['./src/app/*'],
       '@lib/*': ['./src/lib/*'],
     },
@@ -679,10 +679,10 @@ TypeScript 可能会将其解析为 `src/someModule.js`，即使开发者的初�
 如果你的代码中存在依赖旧行为的导入，可能需要进行调整：
 
 ```ts
-// Before (with esModuleInterop: false)
+// 之前（esModuleInterop: false）
 import * as express from 'express'
 
-// After (with esModuleInterop always enabled)
+// 之后（始终启用 esModuleInterop）
 import express from 'express'
 ```
 
@@ -706,7 +706,7 @@ import express from 'express'
 早期版本的 TypeScript 使用 `module` 关键字来声明命名空间：
 
 ```ts
-// ❌ Deprecated syntax - now an error
+// ❌ 已弃用语法 —— 现在报错
 module Foo {
   export const bar = 10
 }
@@ -715,7 +715,7 @@ module Foo {
 该语法后来被更名为现代推荐的形式——使用 `namespace` 关键字：
 
 ```ts
-// ✅ The correct syntax
+// ✅ 正确语法
 namespace Foo {
   export const bar = 10
 }
@@ -730,7 +730,7 @@ namespace Foo {
 外部环境模块声明形式仍然得到完全支持：
 
 ```ts
-// ✅ Still works perfectly
+// ✅ 仍然完全正常工作
 declare module 'some-module' {
   export function doSomething(): void
 }
@@ -746,16 +746,16 @@ declare module 'some-module' {
 因此，`asserts` 语法在 TypeScript 6.0 中现已被弃用，使用它将导致报错：
 
 ```ts
-// ❌ Deprecated syntax - now an error.
+// ❌ 已弃用语法 —— 现在报错。
 import blob from "./blahb.json" asserts { type: "json" }
 //                              ~~~~~~~
-// error: Import assertions have been replaced by import attributes. Use 'with' instead of 'asserts'.
+// 错误：导入断言已被导入属性取代。请使用 'with' 代替 'asserts'。
 ```
 
 相反，请改用导入属性的 `with` 语法：
 
 ```ts
-// ✅ Works with the new import attributes syntax.
+// ✅ 适用于新的导入属性语法。
 import blob from './blahb.json' with { type: 'json' }
 ```
 

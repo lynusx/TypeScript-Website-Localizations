@@ -92,13 +92,13 @@ interface CallOrConstruct {
 }
 
 function fn(ctor: CallOrConstruct) {
-  // Passing an argument of type `number` to `ctor` matches it against
-  // the first definition in the `CallOrConstruct` interface.
+  // 向 `ctor` 传递 `number` 类型的参数会将其与
+  // `CallOrConstruct` 接口中的第一个定义相匹配。
   console.log(ctor(10))
   // ^?
 
-  // Similarly, passing an argument of type `string` to `ctor` matches it
-  // against the second definition in the `CallOrConstruct` interface.
+  // 同样，向 `ctor` 传递 `string` 类型的参数会将其
+  // 与 `CallOrConstruct` 接口中的第二个定义相匹配。
   console.log(new ctor('10'))
   // ^?
 }
@@ -135,11 +135,11 @@ function firstElement<Type>(arr: Type[]): Type | undefined {
 ```ts twoslash
 declare function firstElement<Type>(arr: Type[]): Type | undefined
 // ---cut---
-// s is of type 'string'
+// s 的类型为 'string'
 const s = firstElement(['a', 'b', 'c'])
-// n is of type 'number'
+// n 的类型为 'number'
 const n = firstElement([1, 2, 3])
-// u is of type undefined
+// u 的类型为 undefined
 const u = firstElement([])
 ```
 
@@ -157,8 +157,8 @@ function map<Input, Output>(arr: Input[], func: (arg: Input) => Output): Output[
   return arr.map(func);
 }
 
-// Parameter 'n' is of type 'string'
-// 'parsed' is of type 'number[]'
+// 参数 'n' 的类型为 'string'
+// 'parsed' 的类型为 'number[]'
 const parsed = map(['1', '2', '3'], (n) => parseInt(n))
 ```
 
@@ -184,11 +184,11 @@ function longest<Type extends { length: number }>(a: Type, b: Type) {
   }
 }
 
-// longerArray is of type 'number[]'
+// longerArray 的类型为 'number[]'
 const longerArray = longest([1, 2], [1, 2, 3])
-// longerString is of type 'alice' | 'bob'
+// longerString 的类型为 'alice' | 'bob'
 const longerString = longest('alice', 'bob')
-// Error! Numbers don't have a 'length' property
+// 错误！数字没有 'length' 属性
 const notOK = longest(10, 100)
 ```
 
@@ -232,10 +232,10 @@ declare function minimumLength<Type extends { length: number }>(
   minimum: number,
 ): Type
 // ---cut---
-// 'arr' gets value { length: 6 }
+// 'arr' 获取值 { length: 6 }
 const arr = minimumLength([1, 2, 3], 6)
-// and crashes here because arrays have
-// a 'slice' method, but not the returned object!
+// 并且在这里崩溃，因为数组具有
+// 'slice' 方法，但返回的对象没有！
 console.log(arr.slice(0))
 ```
 
@@ -285,9 +285,9 @@ function firstElement2<Type extends any[]>(arr: Type) {
   return arr[0]
 }
 
-// a: number (good)
+// a: number (推荐)
 const a = firstElement1([1, 2, 3])
-// b: any (bad)
+// b: any (不推荐)
 const b = firstElement2([1, 2, 3])
 ```
 
@@ -352,8 +352,8 @@ JavaScript 中的函数经常接受可变数量的参数。
 
 ```ts twoslash
 function f(n: number) {
-  console.log(n.toFixed()) // 0 arguments
-  console.log(n.toFixed(3)) // 1 argument
+  console.log(n.toFixed()) // 0 个参数
+  console.log(n.toFixed(3)) // 1 个参数
 }
 ```
 
@@ -363,8 +363,8 @@ function f(n: number) {
 function f(x?: number) {
   // ...
 }
-f() // OK
-f(10) // OK
+f() // 正常
+f(10) // 正常
 ```
 
 虽然该参数被指定为 `number` 类型，但参数 `x` 的实际类型为 `number | undefined`，因为在 JavaScript 中未传入的参数其值默认为 `undefined`。
@@ -383,7 +383,7 @@ function f(x = 10) {
 ```ts twoslash
 declare function f(x?: number): void
 // ---cut---
-// All OK
+// 全部正常
 f()
 f(10)
 f(undefined)
@@ -421,7 +421,7 @@ myForEach([1, 2, 3], (a, i) => console.log(a, i))
 // @errors: 2532 18048
 function myForEach(arr: any[], callback: (arg: any, index?: number) => void) {
   for (let i = 0; i < arr.length; i++) {
-    // I don't feel like providing the index today
+    // 今天我不想提供 index 参数
     callback(arr[i])
   }
 }
@@ -490,7 +490,7 @@ function fn(x: string): void
 function fn() {
   // ...
 }
-// Expected to be able to call with zero arguments
+// 期望能够以零个参数调用
 fn()
 ```
 
@@ -505,7 +505,7 @@ fn()
 ```ts twoslash
 // @errors: 2394
 function fn(x: boolean): void
-// Argument type isn't right
+// 参数类型不正确
 function fn(x: string): void
 function fn(x: boolean) {}
 ```
@@ -513,7 +513,7 @@ function fn(x: boolean) {}
 ```ts twoslash
 // @errors: 2394
 function fn(x: string): string
-// Return type isn't right
+// 返回类型不正确
 function fn(x: number): boolean
 function fn(x: string | number) {
   return 'oops'
@@ -543,8 +543,8 @@ function len(x: any) {
 declare function len(s: string): number
 declare function len(arr: any[]): number
 // ---cut---
-len('') // OK
-len([0]) // OK
+len('') // 正常
+len([0]) // 正常
 len(Math.random() > 0.5 ? 'hello' : [0])
 ```
 
@@ -624,7 +624,7 @@ const admins = db.filterUsers(() => this.admin)
 当一个函数没有任何 `return` 语句，或者 `return` 语句没有返回任何显式值时，它就是该函数推断出的返回类型：
 
 ```ts twoslash
-// The inferred return type is void
+// 推断的返回类型为 void
 function noop() {
   return
 }
@@ -655,7 +655,7 @@ function noop() {
 ```ts twoslash
 // @errors: 2571 18046
 function f1(a: any) {
-  a.b() // OK
+  a.b() // 正常
 }
 function f2(a: unknown) {
   a.b()
@@ -673,7 +673,7 @@ function safeParse(s: string): unknown {
   return JSON.parse(s)
 }
 
-// Need to be careful with 'obj'!
+// 需要对 'obj' 保持谨慎！
 const obj = safeParse(someRandomString)
 ```
 
@@ -695,11 +695,11 @@ function fail(msg: string): never {
 ```ts twoslash
 function fn(x: string | number) {
   if (typeof x === 'string') {
-    // do something
+    // 执行某些操作
   } else if (typeof x === 'number') {
-    // do something else
+    // 执行其他操作
   } else {
-    x // has type 'never'!
+    x // 类型为 'never'！
   }
 }
 ```
@@ -738,7 +738,7 @@ function doSomething(f: Function) {
 function multiply(n: number, ...m: number[]) {
   return m.map((x) => n * x)
 }
-// 'a' gets value [10, 20, 30, 40]
+// 'a' 获取值 [10, 20, 30, 40]
 const a = multiply(10, 1, 2, 3, 4)
 ```
 
@@ -760,8 +760,8 @@ arr1.push(...arr2)
 
 ```ts twoslash
 // @errors: 2556
-// Inferred type is number[] -- "an array with zero or more numbers",
-// not specifically two numbers
+// 推断的类型为 number[] —— 即“包含零个或多个数字的数组”，
+// 并非具体两个数字
 const args = [8, 5]
 const angle = Math.atan2(...args)
 ```
@@ -769,7 +769,7 @@ const angle = Math.atan2(...args)
 解决这种情况的最佳方式取决于具体代码，但通常来说，使用 `const` 上下文是最直接的解决方案：
 
 ```ts twoslash
-// Inferred as 2-length tuple
+// 推断为长度为 2 的元组
 const args = [8, 5] as const
 // OK
 const angle = Math.atan2(...args)
@@ -808,7 +808,7 @@ function sum({ a, b, c }: { a: number; b: number; c: number }) {
 这种写法可能略显冗长，但你也可以在这里使用命名类型：
 
 ```ts twoslash
-// Same as prior example
+// 与前面的示例相同
 type ABC = { a: number; b: number; c: number }
 function sum({ a, b, c }: ABC) {
   console.log(a + b + c)

@@ -16,10 +16,10 @@ if (someCondition()) {
 } else {
   let temporaryWork = doSomeWork()
   temporaryWork *= 2
-  // forgot to assign to 'result'
+  // 忘记给 'result' 赋值
 }
 
-console.log(result) // error: Variable 'result' is used before being assigned.
+console.log(result) // 错误：变量 'result' 在赋值之前已被使用。
 ```
 
 遗憾的是，在某些情况下控制流分析无法奏效。
@@ -33,13 +33,13 @@ function foo() {
   } else {
     let temporaryWork = doSomeWork()
     temporaryWork *= 2
-    // forgot to assign to 'result'
+    // 忘记给 'result' 赋值
   }
 
   printResult()
 
   function printResult() {
-    console.log(result) // no error here.
+    console.log(result) // 此处没有报错。
   }
 }
 ```
@@ -50,10 +50,10 @@ function foo() {
 function foo() {
   let result: number
 
-  // do work, but forget to assign to 'result'
+  // 执行操作，但忘记给 'result' 赋值
 
   function printResult() {
-    console.log(result) // error: Variable 'result' is used before being assigned.
+    console.log(result) // 错误：变量 'result' 在赋值之前已被使用。
   }
 }
 ```
@@ -74,7 +74,7 @@ function foo() {
 ```ts
 // main.ts
 
-import * as foo from './foo.ts' // <- we need foo.ts here, not foo.js
+import * as foo from './foo.ts' // <- 此处我们需要 foo.ts，而不是 foo.js
 ```
 
 通常情况下，如果我们这样做，TypeScript 会报错，因为它期望我们导入*输出文件*。
@@ -86,13 +86,13 @@ import * as foo from './foo.ts' // <- we need foo.ts here, not foo.js
 当导入路径为*相对路径*（以 `./` 或 `../` 开头）、以 TypeScript 后缀（`.ts`、`.tsx`、`.mts`、`.cts`）结尾，且是非声明文件时，编译器会将该路径重写为对应的 JavaScript 后缀（`.js`、`.jsx`、`.mjs`、`.cjs`）：
 
 ```ts
-// Under --rewriteRelativeImportExtensions...
+// 在 --rewriteRelativeImportExtensions 下...
 
-// these will be rewritten.
+// 这些将被重写。
 import * as foo from './foo.ts'
 import * as bar from '../someFolder/bar.mts'
 
-// these will NOT be rewritten in any way.
+// 这些绝不会以任何方式被重写。
 import * as a from './foo'
 import * as b from 'some-package/file.ts'
 import * as c from '@some-scope/some-package/file.ts'
@@ -137,7 +137,7 @@ let myImport = await import(getPath())
 ```
 
 ```ts
-// Won't be transformed, won't work.
+// 不会被转换，无法运行。
 import * as utilities from '@/utilities.ts'
 ```
 
@@ -154,7 +154,7 @@ import * as utilities from '@/utilities.ts'
 ```
 
 ```ts
-// Won't be transformed, won't work.
+// 不会被转换，无法运行。
 import * as utilities from '#root/utilities.ts'
 ```
 
@@ -252,8 +252,8 @@ project/
 ```json5
 // tsconfig.json
 {
-  // This is a "workspace-style" or "solution-style" tsconfig.
-  // Instead of specifying any files, it just references all the actual projects.
+  // 这是一个“工作区风格”或“解决方案风格”的 tsconfig。
+  // 它没有指定任何文件，而是仅引用所有实际项目。
   files: [],
   references: [
     { path: './src/tsconfig.json' },
@@ -353,17 +353,17 @@ packages
 ```ts
 import myConfig from './myConfig.json'
 //                   ~~~~~~~~~~~~~~~~~
-// ❌ error: Importing a JSON file into an ECMAScript module requires a 'type: "json"' import attribute when 'module' is set to 'NodeNext'.
+// ❌ 错误：当 'module' 设置为 'NodeNext' 时，将 JSON 文件导入 ECMAScript 模块需要 'type: "json"' 导入属性。
 
 import myConfig from './myConfig.json' with { type: 'json' }
 //                                          ^^^^^^^^^^^^^^^^
-// ✅ This is fine because we provided `type: "json"`
+// ✅ 这没有问题，因为我们提供了 `type: "json"`
 ```
 
 在此验证的基础上，TypeScript 将不会生成“命名”导出，并且导入的 JSON 内容将只能通过默认导出访问：
 
 ```ts
-// ✅ This is okay:
+// ✅ 这是可以的：
 import myConfigA from './myConfig.json' with { type: 'json' }
 let version = myConfigA.version
 
@@ -371,10 +371,10 @@ let version = myConfigA.version
 
 import * as myConfigB from './myConfig.json' with { type: 'json' }
 
-// ❌ This is not:
+// ❌ 这不行：
 let version = myConfig.version
 
-// ✅ This is okay:
+// ✅ 这是可以的：
 let version = myConfig.default.version
 ```
 
@@ -484,7 +484,7 @@ export class A {
 declare var p: Promise<number>
 const p2 = p.catch(() => null)
 //                 ~~~~~~~~~~
-// error TS7011: Function expression, which lacks return-type annotation, implicitly has an 'any' return type.
+// 错误 TS7011：缺少返回类型注解的函数表达式隐式具有 'any' 返回类型。
 ```
 
 [更多细节参见此改动](https://github.com/microsoft/TypeScript/pull/59661)。

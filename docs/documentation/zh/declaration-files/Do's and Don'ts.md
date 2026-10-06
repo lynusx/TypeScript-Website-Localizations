@@ -13,14 +13,14 @@ oneline: '编写 d.ts 声明文件的建议'
 这些类型指的是非原始的装箱对象（boxed objects），在 JavaScript 代码中几乎从不会被恰当使用。
 
 ```ts
-/* WRONG */
+/* 错误 */
 function reverse(s: String): String
 ```
 
 ✅ **应当**使用 `number`、`string`、`boolean` 和 `symbol` 类型。
 
 ```ts
-/* OK */
+/* 正确 */
 function reverse(s: string): string
 ```
 
@@ -48,7 +48,7 @@ function reverse(s: string): string
 ❌ **切勿**对返回值会被忽略的回调函数使用 `any` 返回类型：
 
 ```ts
-/* WRONG */
+/* 错误 */
 function fn(x: () => any) {
   x()
 }
@@ -57,7 +57,7 @@ function fn(x: () => any) {
 ✅ **应当**对返回值会被忽略的回调函数使用 `void` 返回类型：
 
 ```ts
-/* OK */
+/* 正确 */
 function fn(x: () => void) {
   x()
 }
@@ -67,8 +67,8 @@ function fn(x: () => void) {
 
 ```ts
 function fn(x: () => void) {
-  var k = x() // oops! meant to do something else
-  k.doSomething() // error, but would be OK if the return type had been 'any'
+  var k = x() // 糟糕！本意是做其他事情
+  k.doSomething() // 错误，但如果返回类型是 'any' 则不会报错
 }
 ```
 
@@ -77,7 +77,7 @@ function fn(x: () => void) {
 ❌ **切勿**在回调函数中使用可选参数，除非你确有此意：
 
 ```ts
-/* WRONG */
+/* 错误 */
 interface Fetcher {
   getObject(done: (data: unknown, elapsedTime?: number) => void): void
 }
@@ -91,7 +91,7 @@ interface Fetcher {
 ✅ **应当**将回调函数的参数编写为非可选（必选）参数：
 
 ```ts
-/* OK */
+/* 正确 */
 interface Fetcher {
   getObject(done: (data: unknown, elapsedTime: number) => void): void
 }
@@ -102,7 +102,7 @@ interface Fetcher {
 ❌ **切勿**编写仅在回调函数参数个数（arity）上有所差异的独立重载：
 
 ```ts
-/* WRONG */
+/* 错误 */
 declare function beforeAll(action: () => void, timeout?: number): void
 declare function beforeAll(
   action: (done: DoneFn) => void,
@@ -113,7 +113,7 @@ declare function beforeAll(
 ✅ **应当**使用最大参数个数编写单个重载：
 
 ```ts
-/* OK */
+/* 正确 */
 declare function beforeAll(
   action: (done: DoneFn) => void,
   timeout?: number,
@@ -130,25 +130,25 @@ declare function beforeAll(
 ❌ **切勿**将更通用的重载放在更具体的重载之前：
 
 ```ts
-/* WRONG */
+/* 错误 */
 declare function fn(x: unknown): unknown
 declare function fn(x: HTMLElement): number
 declare function fn(x: HTMLDivElement): string
 
 var myElem: HTMLDivElement
-var x = fn(myElem) // x: unknown, wat?
+var x = fn(myElem) // x: unknown，怎么回事？
 ```
 
 ✅ **应当**对重载进行排序，将更通用的签名放在更具体的签名之后：
 
 ```ts
-/* OK */
+/* 正确 */
 declare function fn(x: HTMLDivElement): string
 declare function fn(x: HTMLElement): number
 declare function fn(x: unknown): unknown
 
 var myElem: HTMLDivElement
-var x = fn(myElem) // x: string, :)
+var x = fn(myElem) // x: string，:)
 ```
 
 ❔ **原因：** TypeScript 在解析函数调用时会选择*首个匹配的重载*。
@@ -159,7 +159,7 @@ var x = fn(myElem) // x: string, :)
 ❌ **切勿**编写仅在末尾参数上有所差异的多个重载：
 
 ```ts
-/* WRONG */
+/* 错误 */
 interface Example {
   diff(one: string): number
   diff(one: string, two: string): number
@@ -170,7 +170,7 @@ interface Example {
 ✅ **应当**尽可能使用可选参数：
 
 ```ts
-/* OK */
+/* 正确 */
 interface Example {
   diff(one: string, two?: string, three?: boolean): number
 }
@@ -187,8 +187,8 @@ _且允许传入多余的参数_。
 ```ts
 function fn(x: (a: string, b: number, c: number) => void) {}
 var x: Example
-// When written with overloads, OK -- used first overload
-// When written with optionals, correctly an error
+// 使用重载编写时正常 —— 使用了第一个重载
+// 使用可选参数编写时正确报错
 fn(x.diff)
 ```
 
@@ -198,8 +198,8 @@ fn(x.diff)
 
 ```ts
 var x: Example
-// When written with overloads, incorrectly an error because of passing 'undefined' to 'string'
-// When written with optionals, correctly OK
+// 使用重载编写时会错误地报错，因为将 'undefined' 传递给了 'string'
+// 使用可选参数编写时完全正常
 x.diff('something', true ? undefined : 'hour')
 ```
 
@@ -208,7 +208,7 @@ x.diff('something', true ? undefined : 'hour')
 ❌ **切勿**编写仅在某一参数位置上类型不同的重载：
 
 ```ts
-/* WRONG */
+/* 错误 */
 interface Moment {
   utcOffset(): number
   utcOffset(b: number): Moment
@@ -219,7 +219,7 @@ interface Moment {
 ✅ **应当**尽可能使用联合类型：
 
 ```ts
-/* OK */
+/* 正确 */
 interface Moment {
   utcOffset(): number
   utcOffset(b: number | string): Moment
@@ -234,8 +234,8 @@ interface Moment {
 function fn(x: string): Moment
 function fn(x: number): Moment
 function fn(x: number | string) {
-  // When written with separate overloads, incorrectly an error
-  // When written with union types, correctly OK
+  // 使用独立重载编写时会错误地报错
+  // 使用联合类型编写时完全正常
   return moment().utcOffset(x)
 }
 ```

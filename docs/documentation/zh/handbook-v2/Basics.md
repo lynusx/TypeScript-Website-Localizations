@@ -11,11 +11,11 @@ JavaScript 中的每一个值都具有一组可以通过执行不同操作来观
 这听起来有些抽象，举个简单的例子，考虑我们可能会对名为 `message` 的变量执行的一些操作：
 
 ```js
-// Accessing the property 'toLowerCase'
-// on 'message' and then calling it
+// 访问 'message' 上的属性 'toLowerCase'
+// 然后调用它
 message.toLowerCase()
 
-// Calling 'message'
+// 调用 'message'
 message()
 ```
 
@@ -110,7 +110,7 @@ const user = {
   age: 26,
 }
 
-user.location // returns undefined
+user.location // 返回 undefined
 ```
 
 归根结底，静态类型系统必须做出权衡，决定哪些代码应该在其系统中被标记为错误——即使该代码是合法的 JavaScript 且不会立即抛出运行时错误。
@@ -135,11 +135,11 @@ user.location
 // @noErrors
 const announcement = 'Hello World!'
 
-// How quickly can you spot the typos?
+// 你能多快发现拼写错误？
 announcement.toLocaleLowercase()
 announcement.toLocalLowerCase()
 
-// We probably meant to write this...
+// 我们大概本来是想写这个……
 announcement.toLocaleLowerCase()
 ```
 
@@ -149,7 +149,7 @@ announcement.toLocaleLowerCase()
 // @noUnusedLocals
 // @errors: 2365
 function flipCoin() {
-  // Meant to be Math.random()
+  // 本意应为 Math.random()
   return Math.random < 0.5
 }
 ```
@@ -162,7 +162,7 @@ const value = Math.random() < 0.5 ? 'a' : 'b'
 if (value !== 'a') {
   // ...
 } else if (value === 'b') {
-  // Oops, unreachable
+  // 哎呀，不可达
 }
 ```
 
@@ -212,7 +212,7 @@ npm install -g typescript
 现在让我们进入一个空文件夹，并尝试编写我们的第一个 TypeScript 程序：`hello.ts`：
 
 ```ts twoslash
-// Greets the world.
+// 向世界问好。
 console.log('Hello world!')
 ```
 
@@ -235,7 +235,7 @@ tsc hello.ts
 如果我们查看其内容，就能看到 TypeScript 处理 `.ts` 文件后生成的结果：
 
 ```js
-// Greets the world.
+// 向世界问好。
 console.log('Hello world!')
 ```
 
@@ -248,7 +248,7 @@ console.log('Hello world!')
 
 ```ts twoslash
 // @noErrors
-// This is an industrial-grade general-purpose greeter function:
+// 这是一个工业级的通用问候函数：
 function greet(person, date) {
   console.log(`Hello ${person}, today is ${date}!`)
 }

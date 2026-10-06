@@ -53,7 +53,7 @@ type FeatureOptions = OptionsFlags<Features>
 你可以通过添加 `-` 或 `+` 前缀来移除或添加这些修饰符。如果不添加前缀，则默认为 `+`。
 
 ```ts twoslash
-// Removes 'readonly' attributes from a type's properties
+// 从类型属性中移除 'readonly' 属性修饰
 type CreateMutable<Type> = {
   -readonly [Property in keyof Type]: Type[Property]
 }
@@ -68,7 +68,7 @@ type UnlockedAccount = CreateMutable<LockedAccount>
 ```
 
 ```ts twoslash
-// Removes 'optional' attributes from a type's properties
+// 从类型属性中移除 'optional' 属性修饰
 type Concrete<Type> = {
   [Property in keyof Type]-?: Type[Property]
 }
@@ -115,7 +115,7 @@ type LazyPerson = Getters<Person>
 你可以通过条件类型生成 `never` 来过滤掉特定键：
 
 ```ts twoslash
-// Remove the 'kind' property
+// 移除 'kind' 属性
 type RemoveKindField<Type> = {
   [Property in keyof Type as Exclude<Property, 'kind'>]: Type[Property]
 }

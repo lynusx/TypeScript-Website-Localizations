@@ -471,8 +471,8 @@ function createStreetLight<C extends string>(
   // ...
 }
 
-createStreetLight(['red', 'yellow', 'green'], 'red') // OK
-createStreetLight(['red', 'yellow', 'green'], 'blue') // Error
+createStreetLight(['red', 'yellow', 'green'], 'red') // 正常
+createStreetLight(['red', 'yellow', 'green'], 'blue') // 错误
 ```
 
 ## `ThisParameterType<Type>`
@@ -538,7 +538,7 @@ console.log(fiveToHex())
 // @noImplicitThis: true
 type ObjectDescriptor<D, M> = {
   data?: D
-  methods?: M & ThisType<D & M> // Type of 'this' in methods is D & M
+  methods?: M & ThisType<D & M> // methods 中 'this' 的类型为 D & M
 }
 
 function makeObject<D, M>(desc: ObjectDescriptor<D, M>): D & M {
@@ -551,8 +551,8 @@ let obj = makeObject({
   data: { x: 0, y: 0 },
   methods: {
     moveBy(dx: number, dy: number) {
-      this.x += dx // Strongly typed this
-      this.y += dy // Strongly typed this
+      this.x += dx // 具有强类型的 this
+      this.y += dy // 具有强类型的 this
     },
   },
 })

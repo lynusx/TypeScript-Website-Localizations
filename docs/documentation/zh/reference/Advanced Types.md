@@ -46,11 +46,11 @@ declare function getSmallPet(): Fish | Bird
 // ---cut---
 let pet = getSmallPet()
 
-// You can use the 'in' operator to check
+// 你可以使用 'in' 操作符进行检查
 if ('swim' in pet) {
   pet.swim()
 }
-// However, you cannot use property access
+// 但是，你不能使用属性访问
 if (pet.fly) {
   pet.fly()
 }
@@ -110,7 +110,7 @@ function isFish(pet: Fish | Bird): pet is Fish {
   return (pet as Fish).swim !== undefined
 }
 // ---cut---
-// Both calls to 'swim' and 'fly' are now okay.
+// 现在对 'swim' 和 'fly' 的调用都可以正常进行了。
 let pet = getSmallPet()
 
 if (isFish(pet)) {
@@ -136,7 +136,7 @@ function isFish(pet: Fish | Bird): pet is Fish {
 // ---cut---
 const zoo: (Fish | Bird)[] = [getSmallPet(), getSmallPet(), getSmallPet()]
 const underWater1: Fish[] = zoo.filter(isFish)
-// or, equivalently
+// 或者等价地
 const underWater2: Fish[] = zoo.filter<Fish>(isFish)
 const underWater3: Fish[] = zoo.filter<Fish>((pet) => isFish(pet))
 ```
@@ -362,8 +362,8 @@ if (user) {
   user.email.length
 }
 
-// Instead if you are sure that these objects or fields exist, the
-// postfix ! lets you short circuit the nullability
+// 相反，如果你确定这些对象或字段存在，
+// 后缀 ! 允许你直接排除空值可能
 user!.email!.length
 ```
 
@@ -522,7 +522,7 @@ class BasicCalculator {
     this.value *= operand
     return this
   }
-  // ... other operations go here ...
+  // ... 其他操作写在这里 ...
 }
 
 let v = new BasicCalculator(2).multiply(5).add(1).currentValue()
@@ -544,7 +544,7 @@ class BasicCalculator {
     this.value *= operand
     return this
   }
-  // ... other operations go here ...
+  // ... 其他操作写在这里 ...
 }
 // ---cut---
 class ScientificCalculator extends BasicCalculator {
@@ -555,7 +555,7 @@ class ScientificCalculator extends BasicCalculator {
     this.value = Math.sin(this.value)
     return this
   }
-  // ... other operations go here ...
+  // ... 其他操作写在这里 ...
 }
 
 let v = new ScientificCalculator(2).multiply(5).sin().add(1).currentValue()
@@ -595,12 +595,12 @@ let taxi: Car = {
   year: 2014,
 }
 
-// Manufacturer and model are both of type string,
-// so we can pluck them both into a typed string array
+// manufacturer 和 model 都是 string 类型，
+// 所以我们可以将它们提取到一个类型化的 string 数组中
 let makeAndModel: string[] = pluck(taxi, ['manufacturer', 'model'])
 
-// If we try to pluck model and year, we get an
-// array of a union type: (string | number)[]
+// 如果我们尝试提取 model 和 year，我们会得到
+// 一个联合类型的数组：(string | number)[]
 let modelYear = pluck(taxi, ['model', 'year'])
 ```
 
@@ -627,7 +627,7 @@ let carProps: keyof Car
 这意味着编译器会校验你传入 `pluck` 的属性名集合是否正确：
 
 ```ts
-// error, Type '"unknown"' is not assignable to type '"manufacturer" | "model" | "year"'
+// 错误，类型 '"unknown"' 不能赋给类型 '"manufacturer" | "model" | "year"'
 pluck(taxi, ['year', 'unknown'])
 ```
 
@@ -640,7 +640,7 @@ pluck(taxi, ['year', 'unknown'])
 
 ```ts
 function getProperty<T, K extends keyof T>(o: T, propertyName: K): T[K] {
-  return o[propertyName] // o[propertyName] is of type T[K]
+  return o[propertyName] // o[propertyName] 的类型为 T[K]
 }
 ```
 
@@ -650,7 +650,7 @@ function getProperty<T, K extends keyof T>(o: T, propertyName: K): T[K] {
 ```ts twoslash
 // @errors: 2345
 function getProperty<T, K extends keyof T>(o: T, propertyName: K): T[K] {
-  return o[propertyName] // o[propertyName] is of type T[K]
+  return o[propertyName] // o[propertyName] 的类型为 T[K]
 }
 interface Car {
   manufacturer: string
@@ -756,12 +756,12 @@ type ReadonlyPerson = Readonly<Person>
 
 ```ts twoslash
 // @errors: 2693 1005 1128 7061
-// Use this:
+// 应这样使用：
 type PartialWithNewMember<T> = {
   [P in keyof T]?: T[P];
 } & { newMember: boolean }
 
-// This is an error!
+// 这是一个错误！
 type WrongPartialWithNewMember<T> = {
   [P in keyof T]?: T[P];
   newMember: boolean;
@@ -834,7 +834,7 @@ type Proxify<T> = {
 }
 
 function proxify<T>(o: T): Proxify<T> {
-  // ... wrap proxies ...
+  // ... 包装代理 ...
 }
 
 let props = { rooms: 4 }
@@ -920,7 +920,7 @@ T extends U ? X : Y
 ```ts twoslash
 declare function f<T extends boolean>(x: T): T extends true ? string : number
 
-// Type is 'string | number'
+// 类型为 'string | number'
 let x = f(Math.random() < 0.5)
 //  ^?
 ```
@@ -963,10 +963,10 @@ interface Foo {
 declare function f<T>(x: T): T extends Foo ? string : number
 
 function foo<U>(x: U) {
-  // Has type 'U extends Foo ? string : number'
+  // 类型为 'U extends Foo ? string : number'
   let a = f(x)
 
-  // This assignment is allowed though!
+  // 但允许此赋值操作！
   let b: string | number = a
 }
 ```
@@ -1030,9 +1030,9 @@ type T3 = Boxed<string | number[]>
 
 ```ts twoslash
 // @errors: 2300 2322
-// Remove types from T that are assignable to U
+// 从 T 中移除可赋值给 U 的类型
 type Diff<T, U> = T extends U ? never : T
-// Remove types from T that are not assignable to U
+// 从 T 中移除不可赋值给 U 的类型
 type Filter<T, U> = T extends U ? T : never
 
 type T1 = Diff<'a' | 'b' | 'c' | 'd', 'a' | 'c' | 'f'>
@@ -1044,7 +1044,7 @@ type T3 = Diff<string | number | (() => void), Function> // string | number
 type T4 = Filter<string | number | (() => void), Function> // () => void
 //   ^?
 
-// Remove null and undefined from T
+// 从 T 中移除 null 和 undefined
 type NotNullable<T> = Diff<T, null | undefined>
 
 type T5 = NotNullable<string | number | undefined>
@@ -1101,7 +1101,7 @@ type T4 = NonFunctionProperties<Part>
 
 ```ts twoslash
 // @errors: 2456 2315
-type ElementType<T> = T extends any[] ? ElementType<T[number]> : T // Error
+type ElementType<T> = T extends any[] ? ElementType<T[number]> : T // 错误
 ```
 
 ## 条件类型中的类型推断

@@ -62,7 +62,7 @@ export function helper() {
 }
 
 // ./bar.ts
-import { helper } from './foo' // only works in CJS
+import { helper } from './foo' // 仅在 CJS 中可用
 
 helper()
 ```
@@ -71,7 +71,7 @@ helper()
 
 ```ts
 // ./bar.ts
-import { helper } from './foo.js' // works in ESM & CJS
+import { helper } from './foo.js' // 在 ESM 与 CJS 中均可用
 
 helper()
 ```
@@ -105,7 +105,7 @@ export function helper() {
 // ./bar.mts
 import foo from './foo.cjs'
 
-// prints "hello world!"
+// 输出 "hello world!"
 foo.helper()
 ```
 
@@ -120,7 +120,7 @@ export function helper() {
 // ./bar.mts
 import { helper } from './foo.cjs'
 
-// prints "hello world!"
+// 输出 "hello world!"
 helper()
 ```
 
@@ -163,15 +163,15 @@ Node.js 支持[在 `package.json` 中使用新字段 `"exports"` 定义入口点
   "type": "module",
   "exports": {
     ".": {
-      // Entry-point for `import "my-package"` in ESM
+      // ESM 中 `import "my-package"` 的入口点
       "import": "./esm/index.js",
 
-      // Entry-point for `require("my-package") in CJS
+      // CJS 中 `require("my-package")` 的入口点
       "require": "./commonjs/index.cjs",
     },
   },
 
-  // CJS fall-back for older versions of Node.js
+  // 旧版本 Node.js 的 CJS 回退项
   "main": "./commonjs/index.cjs",
 }
 ```
@@ -189,29 +189,29 @@ Node.js 支持[在 `package.json` 中使用新字段 `"exports"` 定义入口点
   "type": "module",
   "exports": {
     ".": {
-      // Entry-point for `import "my-package"` in ESM
+      // ESM 中 `import "my-package"` 的入口点
       "import": {
-        // Where TypeScript will look.
+        // TypeScript 将查找的位置。
         "types": "./types/esm/index.d.ts",
 
-        // Where Node.js will look.
+        // Node.js 将查找的位置。
         "default": "./esm/index.js",
       },
-      // Entry-point for `require("my-package") in CJS
+      // CJS 中 `require("my-package")` 的入口点
       "require": {
-        // Where TypeScript will look.
+        // TypeScript 将查找的位置。
         "types": "./types/commonjs/index.d.cts",
 
-        // Where Node.js will look.
+        // Node.js 将查找的位置。
         "default": "./commonjs/index.cjs",
       },
     },
   },
 
-  // Fall-back for older versions of TypeScript
+  // 旧版本 TypeScript 的回退项
   "types": "./types/index.d.ts",
 
-  // CJS fall-back for older versions of Node.js
+  // 旧版本 Node.js 的 CJS 回退项
   "main": "./commonjs/index.cjs",
 }
 ```
@@ -272,14 +272,14 @@ TypeScript 4.7 现在能够识别出 `obj[key]` 是一个字符串。
 这也意味着在 `--strictPropertyInitialization` 下，TypeScript 可以正确检查计算属性在构造函数体结束时是否已被初始化。
 
 ```ts
-// 'key' has type 'unique symbol'
+// 'key' 具有类型 'unique symbol'
 const key = Symbol()
 
 class C {
   [key]: string
 
   constructor(str: string) {
-    // oops, forgot to set 'this[key]'
+    // 哎呀，忘记设置 'this[key]'
   }
 
   screamString() {
@@ -302,25 +302,25 @@ declare function f<T>(arg: {
   consume: (x: T) => void
 }): void
 
-// Works
+// 正常工作
 f({
   produce: () => 'hello',
   consume: (x) => x.toLowerCase(),
 })
 
-// Works
+// 正常工作
 f({
   produce: (n: string) => n,
   consume: (x) => x.toLowerCase(),
 })
 
-// Was an error, now works.
+// 此前会报错，现在可以正常工作。
 f({
   produce: (n) => n,
   consume: (x) => x.toLowerCase(),
 })
 
-// Was an error, now works.
+// 此前会报错，现在可以正常工作。
 f({
   produce: function () {
     return 'hello'
@@ -328,7 +328,7 @@ f({
   consume: (x) => x.toLowerCase(),
 })
 
-// Was an error, now works.
+// 此前会报错，现在可以正常工作。
 f({
   produce() {
     return 'hello'
@@ -362,7 +362,7 @@ function makeHammerBox(hammer: Hammer) {
   return makeBox(hammer)
 }
 
-// or...
+// 或者...
 
 const makeWrenchBox: (wrench: Wrench) => Box<Wrench> = makeBox
 ```
@@ -381,17 +381,17 @@ const makeWrenchBox = makeBox<Wrench>
 ```ts
 const makeStringBox = makeBox<string>
 
-// TypeScript correctly rejects this.
+// TypeScript 正确地拒绝了此代码。
 makeStringBox(42)
 ```
 
 该逻辑同样适用于诸如 `Array`、`Map` 和 `Set` 之类的构造函数：
 
 ```ts
-// Has type `new () => Map<string, Error>`
+// 类型为 `new () => Map<string, Error>`
 const ErrorMap = Map<string, Error>
 
-// Has type `// Map<string, Error>`
+// 类型为 `Map<string, Error>`
 const errorMap = new ErrorMap()
 ```
 
@@ -429,7 +429,7 @@ type D = FirstIfString<[boolean, number, string]>
 
 ```ts
 type FirstIfString<T> = T extends [string, ...unknown[]]
-  ? // Grab the first type out of `T`
+  ? // 从 `T` 中提取第一个类型
     T[0]
   : never
 ```
@@ -504,12 +504,12 @@ interface State<in out T> {
 ```ts
 interface State<out T> {
   //          ~~~~~
-  // error!
-  // Type 'State<sub-T>' is not assignable to type 'State<super-T>' as implied by variance annotation.
-  //   Types of property 'set' are incompatible.
-  //     Type '(value: sub-T) => void' is not assignable to type '(value: super-T) => void'.
-  //       Types of parameters 'value' and 'value' are incompatible.
-  //         Type 'super-T' is not assignable to type 'sub-T'.
+  // 错误！
+  // 变型注解表明，类型 'State<sub-T>' 不能分配给类型 'State<super-T>'。
+  //   属性 'set' 的类型不兼容。
+  //     类型 '(value: sub-T) => void' 不能分配给类型 '(value: super-T) => void'。
+  //       参数 'value' 与 'value' 的类型不兼容。
+  //         类型 'super-T' 不能分配给类型 'sub-T'。
   get: () => T
   set: (value: T) => void
 }
@@ -532,8 +532,8 @@ type Baz<V> = {
 declare let foo1: Foo<unknown>
 declare let foo2: Foo<string>
 
-foo1 = foo2 // Should be an error but isn't ❌
-foo2 = foo1 // Error - correct ✅
+foo1 = foo2 // 本应报错但并未报错 ❌
+foo2 = foo1 // 报错 —— 正确 ✅
 ```
 
 提供显式标注可以加快这些循环引用处的类型检查并提供更好的准确性。例如，在上述示例中将 `T` 标记为不变有助于阻止有问题的赋值：
@@ -591,7 +591,7 @@ TypeScript 现在允许使用 `/// <reference types="..." />` 指令：
 ```ts
 /// <reference types="pkg" resolution-mode="require" />
 
-// or
+// 或
 
 /// <reference types="pkg" resolution-mode="import" />
 ```
@@ -599,12 +599,12 @@ TypeScript 现在允许使用 `/// <reference types="..." />` 指令：
 此外，在 TypeScript 的 nightly 版本中，`import type` 可以指定导入断言（import assertion）来实现类似的功能：
 
 ```ts
-// Resolve `pkg` as if we were importing with a `require()`
+// 像使用 `require()` 导入一样解析 `pkg`
 import type { TypeFromRequire } from 'pkg' assert {
   'resolution-mode': 'require',
 }
 
-// Resolve `pkg` as if we were importing with an `import`
+// 像使用 `import` 导入一样解析 `pkg`
 import type { TypeFromImport } from 'pkg' assert {
   'resolution-mode': 'import',
 }
@@ -655,32 +655,32 @@ TypeScript 为 JavaScript 和 TypeScript 提供了“整理导入（Organize Imp
 例如，如果你在以下文件上运行“整理导入”：
 
 ```ts
-// local code
+// 本地代码
 import * as bbb from './bbb'
 import * as ccc from './ccc'
 import * as aaa from './aaa'
 
-// built-ins
+// 内置模块
 import * as path from 'path'
 import * as child_process from 'child_process'
 import * as fs from 'fs'
 
-// some code...
+// 某些代码...
 ```
 
 你会得到类似如下的结果：
 
 ```ts
-// local code
+// 本地代码
 import * as child_process from 'child_process'
 import * as fs from 'fs'
-// built-ins
+// 内置模块
 import * as path from 'path'
 import * as aaa from './aaa'
 import * as bbb from './bbb'
 import * as ccc from './ccc'
 
-// some code...
+// 某些代码...
 ```
 
 这……并不理想。诚然，我们的导入按路径排序了，注释和换行符也保留了下来，但并没有按照我们预期的形式排列。很多时候，如果我们按特定方式对导入进行了分组，我们希望能够保持这种分组。
@@ -688,17 +688,17 @@ import * as ccc from './ccc'
 TypeScript 4.7 以感知分组的方式执行“整理导入”。在上述代码上运行它，看起来会更符合你的预期：
 
 ```ts
-// local code
+// 本地代码
 import * as aaa from './aaa'
 import * as bbb from './bbb'
 import * as ccc from './ccc'
 
-// built-ins
+// 内置模块
 import * as child_process from 'child_process'
 import * as fs from 'fs'
 import * as path from 'path'
 
-// some code...
+// 某些代码...
 ```
 
 我们要向 [Minh Quy](https://github.com/MQuy) 致谢，是他提供了[这项功能](https://github.com/microsoft/TypeScript/pull/48330)。
@@ -751,20 +751,20 @@ Spread types may only be created from object types.
 
 ```js
 let str = `hello ${Symbol()}`
-// TypeError: Cannot convert a Symbol value to a string
+// TypeError: 无法将 Symbol 值转换为字符串
 ```
 
 因此，TypeScript 也会报错；此外，TypeScript 现在还会检查被某种方式约束为 symbol 的泛型值是否被用于模板字符串中：
 
 ```ts
 function logKey<S extends string | symbol>(key: S): S {
-  // Now an error.
+  // 现在会报错。
   console.log(`${key} is the key`)
   return key
 }
 
 function get<T, K extends keyof T>(obj: T, key: K) {
-  // Now an error.
+  // 现在会报错。
   console.log(`Grabbing property '${key}'.`)
   return obj[key]
 }
@@ -780,7 +780,7 @@ Implicit conversion of a 'symbol' to a 'string' will fail at runtime. Consider w
 
 ```ts
 function logKey<S extends string | symbol>(key: S): S {
-  // No longer an error.
+  // 不再报错。
   console.log(`${String(key)} is the key`)
   return key
 }
@@ -790,7 +790,7 @@ function logKey<S extends string | symbol>(key: S): S {
 
 ```ts
 function get<T, K extends string & keyof T>(obj: T, key: K) {
-  // No longer an error.
+  // 不再报错。
   console.log(`Grabbing property '${key}'.`)
   return obj[key]
 }
@@ -812,7 +812,7 @@ function get<T, K extends string & keyof T>(obj: T, key: K) {
 
 ```ts
 function overwriteLength(tuple: readonly [string, string, string]) {
-  // Now errors.
+  // 现在会报错。
   tuple.length = 7
 }
 ```

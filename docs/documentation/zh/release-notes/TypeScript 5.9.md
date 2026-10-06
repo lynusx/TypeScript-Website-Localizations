@@ -27,32 +27,32 @@ JSX 用户经常觉得回过头去配置 `--jsx` 是一种不必要的繁琐操�
 
 ```json5
 {
-  // Visit https://aka.ms/tsconfig to read more about this file
+  // 访问 https://aka.ms/tsconfig 阅读关于该文件的更多信息
   compilerOptions: {
-    // File Layout
+    // 文件布局
     // "rootDir": "./src",
     // "outDir": "./dist",
 
-    // Environment Settings
-    // See also https://aka.ms/tsconfig_modules
+    // 环境设置
+    // 另请参阅 https://aka.ms/tsconfig_modules
     module: 'nodenext',
     target: 'esnext',
     types: [],
-    // For nodejs:
+    // 针对 nodejs：
     // "lib": ["esnext"],
     // "types": ["node"],
-    // and npm install -D @types/node
+    // 以及 npm install -D @types/node
 
-    // Other Outputs
+    // 其他输出
     sourceMap: true,
     declaration: true,
     declarationMap: true,
 
-    // Stricter Typechecking Options
+    // 更严格的类型检查选项
     noUncheckedIndexedAccess: true,
     exactOptionalPropertyTypes: true,
 
-    // Style Options
+    // 代码风格选项
     // "noImplicitReturns": true,
     // "noImplicitOverride": true,
     // "noUnusedLocals": true,
@@ -60,7 +60,7 @@ JSX 用户经常觉得回过头去配置 `--jsx` 是一种不必要的繁琐操�
     // "noFallthroughCasesInSwitch": true,
     // "noPropertyAccessFromIndexSignature": true,
 
-    // Recommended Options
+    // 推荐选项
     strict: true,
     jsx: 'react-jsx',
     verbatimModuleSyntax: true,
@@ -107,25 +107,25 @@ export let specialConstant: number
 ```ts
 import defer * as feature from './some-feature.js'
 
-// No side effects have occurred yet
+// 尚未产生任何副作用
 
 // ...
 
-// As soon as `specialConstant` is accessed, the contents of the `feature`
-// module are run and side effects have taken place.
+// 一旦访问 `specialConstant`，`feature` 模块的内容
+// 就会执行并产生副作用。
 console.log(feature.specialConstant) // 42
 ```
 
 由于模块的求值被延迟到你访问其成员时才发生，因此不能在 `import defer` 中使用具名导入或默认导入：
 
 ```ts
-// ❌ Not allowed
+// ❌ 不允许
 import defer { doSomething } from "some-module";
 
-// ❌ Not allowed
+// ❌ 不允许
 import defer defaultExport from "some-module";
 
-// ✅ Only this syntax is supported
+// ✅ 仅支持该语法
 import defer * as feature from "some-module";
 ```
 

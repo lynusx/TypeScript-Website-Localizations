@@ -106,25 +106,25 @@ module.exports = {
     filename: './dist/bundle.js',
   },
 
-  // Enable sourcemaps for debugging webpack's output.
+  // 启用 sourcemap 以调试 webpack 的输出。
   devtool: 'source-map',
 
   resolve: {
-    // Add '.ts' and '.tsx' as resolvable extensions.
+    // 将 '.ts' 和 '.tsx' 添加为可解析的扩展名。
     extensions: ['', '.webpack.js', '.web.js', '.ts', '.tsx', '.js'],
   },
 
   module: {
     rules: [
-      // All files with a '.ts' or '.tsx' extension will be handled by 'ts-loader'.
+      // 所有带有 '.ts' 或 '.tsx' 扩展名的文件都将由 'ts-loader' 处理。
       { test: /\.tsx?$/, loader: 'ts-loader' },
 
-      // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+      // 所有输出的 '.js' 文件的 sourcemap 都将由 'source-map-loader' 重新处理。
       { test: /\.js$/, loader: 'source-map-loader' },
     ],
   },
 
-  // Other options...
+  // 其他配置项...
 }
 ```
 
@@ -168,14 +168,14 @@ module.exports = {
 虽然你可以通过声明以下内容来让 TypeScript 认可它们的存在：
 
 ```ts
-// For Node/CommonJS
+// 适用于 Node/CommonJS
 declare function require(path: string): any
 ```
 
 或者：
 
 ```ts
-// For RequireJS/AMD
+// 适用于 RequireJS/AMD
 declare function define(...args: any[]): any
 ```
 
@@ -395,9 +395,9 @@ TypeScript 自带了一些检查功能，可以为你的程序提供更高的安
 ```ts
 declare var foo: string[] | null
 
-foo.length // error - 'foo' is possibly 'null'
+foo.length // 错误 - 'foo' 可能为 'null'
 
-foo!.length // okay - 'foo!' just has type 'string[]'
+foo!.length // 正常 - 'foo!' 的类型为 'string[]'
 ```
 
 需要提醒的是，当使用 [`strictNullChecks`](/tsconfig#strictNullChecks) 时，你的依赖库可能也需要更新以支持 [`strictNullChecks`](/tsconfig#strictNullChecks)。
@@ -421,7 +421,7 @@ class Point {
 }
 // ...
 
-// Reopen the interface.
+// 重新打开接口定义。
 interface Point {
   distanceFromOrigin(): number
 }

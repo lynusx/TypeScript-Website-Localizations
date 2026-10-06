@@ -195,14 +195,14 @@ interface Backpack<Type> {
   get: () => Type
 }
 
-// This line is a shortcut to tell TypeScript there is a
-// constant called `backpack`, and to not worry about where it came from.
+// 这一行是一种简写方式，用来告诉 TypeScript 存在一个
+// 名为 `backpack` 的常量，不用担心它来自何处。
 declare const backpack: Backpack<string>
 
-// object is a string, because we declared it above as the variable part of Backpack.
+// object 是 string 类型，因为我们上面将它声明为了 Backpack 的可变部分。
 const object = backpack.get()
 
-// Since the backpack variable is a string, you can't pass a number to the add function.
+// 由于 backpack 变量是 string 类型，因此不能将数字传递给 add 函数。
 backpack.add(23)
 ```
 
@@ -222,7 +222,7 @@ function logPoint(p: Point) {
   console.log(`${p.x}, ${p.y}`)
 }
 
-// logs "12, 26"
+// 打印 "12, 26"
 const point = { x: 12, y: 26 }
 logPoint(point)
 ```
@@ -243,10 +243,10 @@ function logPoint(p: Point) {
 }
 // ---cut---
 const point3 = { x: 12, y: 26, z: 89 }
-logPoint(point3) // logs "12, 26"
+logPoint(point3) // 打印 "12, 26"
 
 const rect = { x: 33, y: 3, width: 30, height: 80 }
-logPoint(rect) // logs "33, 3"
+logPoint(rect) // 打印 "33, 3"
 
 const color = { hex: '#187ABF' }
 logPoint(color)
@@ -276,7 +276,7 @@ class VirtualPoint {
 }
 
 const newVPoint = new VirtualPoint(13, 56)
-logPoint(newVPoint) // logs "13, 56"
+logPoint(newVPoint) // 打印 "13, 56"
 ```
 
 只要对象或类具备所有必需的属性，无论其具体实现细节如何，TypeScript 都会认定它们相互匹配。

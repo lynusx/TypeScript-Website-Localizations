@@ -56,7 +56,7 @@ const lengths: (a: string[]) => number[] = arrayMap((s) => s.length)
 ```ts
 let x: Promise<string> = new Promise((resolve) => {
   resolve(10)
-  //      ~~ Error!
+  //      ~~ 错误！
 })
 ```
 
@@ -87,8 +87,8 @@ type A = <T, U>(x: T, y: U) => [T, U]
 type B = <S>(x: S, y: S) => [S, S]
 
 function f(a: A, b: B) {
-  a = b // Error
-  b = a // Ok
+  a = b // 错误
+  b = a // 正常
 }
 ```
 
@@ -140,10 +140,10 @@ const opts = {
   retryOnFail: true,
 }
 
-// Error!
+// 错误！
 sendMessage(opts)
-// No overlap between the type of 'opts' and 'Options' itself.
-// Maybe we meant to use 'data'/'maxRetries' instead of 'payload'/'retryOnFail'.
+// 'opts' 的类型与 'Options' 本身之间没有重叠。
+// 也许我们本意是想使用 'data'/'maxRetries' 而不是 'payload'/'retryOnFail'。
 ```
 
 可以将此理解为 TypeScript 对弱类型"加固"了保证，从而捕获那些原本会被忽略的静默错误。

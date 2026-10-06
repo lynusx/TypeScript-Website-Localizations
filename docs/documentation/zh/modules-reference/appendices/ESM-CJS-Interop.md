@@ -28,7 +28,7 @@ exports.default = 'Hello, world!'
 import hello, { A, B } from './module'
 console.log(hello, A, B)
 
-// transpiles to:
+// 转译为：
 
 const module_1 = require('./module')
 console.log(module_1.default, module_1.A, module_1.B)
@@ -40,7 +40,7 @@ console.log(module_1.default, module_1.A, module_1.B)
 import * as mod from './module'
 console.log(mod.default, mod.A, mod.B)
 
-// transpiles to:
+// 转译为：
 
 const mod = require('./module')
 console.log(mod.default, mod.A, mod.B)
@@ -61,7 +61,7 @@ module.exports = function hello() {
 import * as hello from './exports-function'
 hello()
 
-// transpiles to:
+// 转译为：
 
 const hello = require('./exports-function')
 hello()
@@ -88,11 +88,11 @@ hello()
 让我们回到前文提到的规范合规性问题，即 `import *` 转译为 `require`：
 
 ```ts
-// Invalid according to the spec:
+// 根据规范是无效的：
 import * as hello from './exports-function'
 hello()
 
-// but the transpilation works:
+// 但转译后可以正常工作：
 const hello = require('./exports-function')
 hello()
 ```
@@ -102,8 +102,8 @@ hello()
 ```ts
 import * as hello from './exports-function'
 // TS2497              ^^^^^^^^^^^^^^^^^^^^
-// External module '"./exports-function"' resolves to a non-module entity
-// and cannot be imported using this construct.
+// 外部模块 '"./exports-function"' 解析为一个非模块实体，
+// 无法使用此结构导入。
 ```
 
 当时唯一的变通方案是让用户回退到使用旧版的 TypeScript 导入语法（表示 CommonJS 的 `require`）：
@@ -118,7 +118,7 @@ import hello = require('./exports-function')
 >
 > ```ts
 > declare function $(selector: string): any
-> export = $ // Cannot `import *` this 👍
+> export = $ // 无法对其进行 `import *` 👍
 > ```
 >
 > 但一个本应毫无意义的改动却能让这一无效导入通过类型检查且不报错：
@@ -126,7 +126,7 @@ import hello = require('./exports-function')
 > ```ts
 > declare namespace $ {}
 > declare function $(selector: string): any
-> export = $ // Allowed to `import *` this and call it 😱
+> export = $ // 允许对其进行 `import *` 并调用它 😱
 > ```
 
 与此同时，其他转译器正在探索解决同一问题的方法。当时的思考过程大致如下：
@@ -139,7 +139,7 @@ import hello = require('./exports-function')
    exports.A = {}
    exports.B = {}
    exports.default = 'Hello, world!'
-   // Extra special flag!
+   // 特殊的标志！
    exports.__esModule = true
    ```
    这样在转译默认导入时就可以对该字段进行检查：
@@ -152,13 +152,13 @@ import hello = require('./exports-function')
 `__esModule` 标记最早出现在 Traceur 中，随后很快被 Babel、SystemJS 和 Webpack 采用。TypeScript 在 1.8 中添加了 `allowSyntheticDefaultImports`，允许类型检查器将默认导入直接链接到缺少 `export default` 声明的任何模块类型的 `exports`，而非 `exports.default`。该标志并没有改变导入或导出的输出方式，但它允许默认导入体现出其他转译器处理它们的方式。具体而言，它允许使用默认导入来解析“非模块实体”，而在以前使用 `import *` 则会报错：
 
 ```ts
-// Error:
+// 错误：
 import * as hello from './exports-function'
 
-// Old workaround:
+// 旧的变通方案：
 import hello = require('./exports-function')
 
-// New way, with `allowSyntheticDefaultImports`:
+// 使用 `allowSyntheticDefaultImports` 的新方式：
 import hello from './exports-function'
 ```
 
@@ -175,9 +175,9 @@ import hello from './exports-function'
    import objDefault from './exportEqualsObject'
    import * as objNamespace from './exportEqualsObject'
 
-   // This should be true at runtime, but TypeScript gives an error:
+   // 这在运行时应该为 true，但 TypeScript 报错：
    objNamespace.default === objDefault
-   //           ^^^^^^^ Property 'default' does not exist on type 'typeof import("./exportEqualsObject")'.
+   //           ^^^^^^^ 属性 'default' 不存在于类型 'typeof import("./exportEqualsObject")' 上。
    ```
 3. 最重要的是，`allowSyntheticDefaultImports` 并没有改变 `tsc` 生成的 JavaScript 代码。因此，虽然只要代码被送入 Babel 或 Webpack 等其他工具中，该标志就能提供更准确的类型检查，但对于使用 `tsc` 生成 `--module commonjs` 代码并在 Node.js 中运行的用户来说，它带来了真正的风险。如果他们在遇到 `import *` 报错时启用了 `allowSyntheticDefaultImports`，表面上看似乎修复了问题，但实际上这只是掩盖了构建时的报错，输出的代码在 Node 中运行时依然会崩溃。
 
@@ -211,9 +211,9 @@ exports.default = function doSomething() {
 
 // @Filename: transpile-vs-run-directly.{js/mjs}
 import doSomething from 'dependency'
-// Works after transpilation, but not a function in Node.js ESM:
+// 转译后可以运行，但在 Node.js ESM 中不是一个函数：
 doSomething()
-// Doesn't exist after transpilation, but works in Node.js ESM:
+// 转译后不存在，但在 Node.js ESM 中可以运行：
 doSomething.default()
 ```
 
@@ -230,11 +230,11 @@ exports['worl' + 'd'] = 'hello'
 
 // @Filename: transpile-vs-run-directly.{js/mjs}
 import { hello, world } from './named-exports.cjs'
-// `hello` works, but `world` is missing in Node.js 💥
+// `hello` 正常工作，但 `world` 在 Node.js 中缺失 💥
 
 import mod from './named-exports.cjs'
 mod.world
-// Accessing properties from the default always works ✅
+// 从 default 访问属性始终有效 ✅
 ```
 
 ### 在 Node.js v22 之前无法 `require` 真正的 ES 模块
@@ -249,10 +249,10 @@ export function doSomething() {
 
 // @Filename: dependent.js
 import { doSomething } from 'dependency'
-// ✅ Works if dependent and dependency are both transpiled
-// ✅ Works if dependent and dependency are both true ESM
-// ✅ Works if dependent is true ESM and dependency is transpiled
-// 💥 Crashes if dependent is transpiled and dependency is true ESM
+// ✅ 如果依赖方和被依赖方均经过转译，则正常工作
+// ✅ 如果依赖方和被依赖方均为真正的 ESM，则正常工作
+// ✅ 如果依赖方是真正的 ESM 且被依赖方经过转译，则正常工作
+// 💥 如果依赖方经过转译且被依赖方是真正的 ESM，则会崩溃
 ```
 
 ### 不同的模块解析算法
@@ -268,9 +268,9 @@ export function add(a, b) {
 // @Filename: math.js
 export * from './add'
 //            ^^^^^^^
-// Works when transpiled to CJS,
-// but would have to be "./add.js"
-// in Node.js ESM.
+// 转译为 CJS 时可以工作，
+// 但在 Node.js ESM 中
+// 必须为 "./add.js"。
 ```
 
 ## 结论

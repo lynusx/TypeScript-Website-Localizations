@@ -78,7 +78,7 @@ var win
 /** @type {PromiseLike<string>} */
 var promisedString
 
-// You can specify an HTML Element with DOM properties
+// 你可以指定带有 DOM 属性的 HTML 元素
 /** @type {HTMLElement} */
 var myElement = document.querySelector(selector)
 element.dataset.myData = ''
@@ -116,7 +116,7 @@ var var9
 
 ```js twoslash
 /**
- * A map-like object that maps arbitrary `string` properties to `number`s.
+ * 类似 Map 的对象，将任意 `string` 属性映射为 `number`。
  *
  * @type {Object.<string, number>}
  */
@@ -131,9 +131,9 @@ var arrayLike
 你可以使用 TypeScript 语法或 Google Closure 语法来指定函数类型：
 
 ```js twoslash
-/** @type {function(string, boolean): number} Closure syntax */
+/** @type {function(string, boolean): number} Closure 语法 */
 var sbn
-/** @type {(s: string, b: boolean) => number} TypeScript syntax */
+/** @type {(s: string, b: boolean) => number} TypeScript 语法 */
 var sbn2
 ```
 
@@ -150,11 +150,11 @@ var fn6
 
 ```js twoslash
 /**
- * @type {*} - can be 'any' type
+ * @type {*} - 可以是 'any' 类型
  */
 var star
 /**
- * @type {?} - unknown type (same as 'any')
+ * @type {?} - 未知类型（等同于 'any'）
  */
 var question
 ```
@@ -256,7 +256,7 @@ export class Dog {
 // @filename: main.js
 /** @import { Dog } from "./dog.js" */
 
-const d = new Dog() // error!
+const d = new Dog() // 报错！
 ```
 
 ### `@param` and `@returns`
@@ -265,13 +265,13 @@ const d = new Dog() // error!
 还可以通过用方括号将参数名括起来，将参数声明为可选参数：
 
 ```js twoslash
-// Parameters may be declared in a variety of syntactic forms
+// 可以使用多种语法形式来声明参数
 /**
- * @param {string}  p1 - A string param.
- * @param {string=} p2 - An optional param (Google Closure syntax)
- * @param {string} [p3] - Another optional param (JSDoc syntax).
- * @param {string} [p4="test"] - An optional param with a default value
- * @returns {string} This is the result
+ * @param {string}  p1 - string 类型参数。
+ * @param {string=} p2 - 可选参数（Google Closure 语法）
+ * @param {string} [p3] - 另一个可选参数（JSDoc 语法）。
+ * @param {string} [p4="test"] - 带有默认值的可选参数
+ * @returns {string} 这是返回值
  */
 function stringsStringStrings(p1, p2, p3, p4) {
   // TODO
@@ -287,7 +287,7 @@ function stringsStringStrings(p1, p2, p3, p4) {
 function ps() {}
 
 /**
- * @returns {{ a: string, b: number }} - May use '@returns' as well as '@return'
+ * @returns {{ a: string, b: number }} - 可以使用 '@returns'，也可以使用 '@return'
  */
 function ab() {}
 ```
@@ -299,12 +299,12 @@ function ab() {}
 
 ```js twoslash
 /**
- * @typedef {Object} SpecialType - creates a new type named 'SpecialType'
- * @property {string} prop1 - a string property of SpecialType
- * @property {number} prop2 - a number property of SpecialType
- * @property {number=} prop3 - an optional number property of SpecialType
- * @prop {number} [prop4] - an optional number property of SpecialType
- * @prop {number} [prop5=42] - an optional number property of SpecialType with default
+ * @typedef {Object} SpecialType - 创建名为 'SpecialType' 的新类型
+ * @property {string} prop1 - SpecialType 的 string 属性
+ * @property {number} prop2 - SpecialType 的 number 属性
+ * @property {number=} prop3 - SpecialType 的可选 number 属性
+ * @prop {number} [prop4] - SpecialType 的可选 number 属性
+ * @prop {number} [prop5=42] - SpecialType 带有默认值的可选 number 属性
  */
 
 /** @type {SpecialType} */
@@ -316,10 +316,10 @@ specialTypeObject.prop3
 
 ```js twoslash
 /**
- * @typedef {object} SpecialType1 - creates a new type named 'SpecialType1'
- * @property {string} prop1 - a string property of SpecialType1
- * @property {number} prop2 - a number property of SpecialType1
- * @property {number=} prop3 - an optional number property of SpecialType1
+ * @typedef {object} SpecialType1 - 创建名为 'SpecialType1' 的新类型
+ * @property {string} prop1 - SpecialType1 的 string 属性
+ * @property {number} prop2 - SpecialType1 的 number 属性
+ * @property {number=} prop3 - SpecialType1 的可选 number 属性
  */
 
 /** @type {SpecialType1} */
@@ -331,7 +331,7 @@ var specialTypeObject1
 
 ```js twoslash
 /**
- * @param {Object} options - The shape is the same as SpecialType above
+ * @param {Object} options - 结构与上面的 SpecialType 相同
  * @param {string} options.prop1
  * @param {number} options.prop2
  * @param {number=} options.prop3
@@ -372,7 +372,7 @@ const ok = (s) => !(s.length % 2)
 ```js twoslash
 /**
  * @template T
- * @param {T} x - A generic parameter that flows through to the return type
+ * @param {T} x - 传递至返回类型的泛型参数
  * @returns {T}
  */
 function id(x) {
@@ -398,8 +398,8 @@ const c = id({})
 
 ```js twoslash
 /**
- * @template {string} K - K must be a string or string literal
- * @template {{ serious(): string }} Seriousalizable - must have a serious method
+ * @template {string} K - K 必须是 string 或字符串字面量
+ * @template {{ serious(): string }} Seriousalizable - 必须包含 serious 方法
  * @param {K} key
  * @param {Seriousalizable} object
  */
@@ -452,18 +452,18 @@ class C {
    * @param {number} data
    */
   constructor(data) {
-    // property types can be inferred
+    // 属性类型可以被推断
     this.name = 'foo'
 
-    // or set explicitly
+    // 或显式设置
     /** @type {string | null} */
     this.title = null
 
-    // or simply annotated, if they're set elsewhere
+    // 或者如果它们在其他地方设置，只需添加类型注解
     /** @type {number} */
     this.size
 
-    this.initialize(data) // Should error, initializer expects a string
+    this.initialize(data) // 应当报错，initializer 期望接收一个 string
   }
   /**
    * @param {string} s
@@ -475,9 +475,9 @@ class C {
 
 var c = new C(0)
 
-// C should only be called with new, but
-// because it is JavaScript, this is allowed and
-// considered an 'any'.
+// C 应当仅通过 new 调用，但
+// 因为这是 JavaScript，所以这是允许的且
+// 被视为 'any'。
 var result = C(1)
 ```
 
@@ -594,14 +594,14 @@ class TextBook {
  * @param {number} data
  */
 function C(data) {
-  // property types can be inferred
+  // 属性类型可以被推断
   this.name = 'foo'
 
-  // or set explicitly
+  // 或显式设置
   /** @type {string | null} */
   this.title = null
 
-  // or simply annotated, if they're set elsewhere
+  // 或者如果它们在其他地方设置，只需添加类型注解
   /** @type {number} */
   this.size
 
@@ -636,7 +636,7 @@ var result = C(1)
  * @param {*} e
  */
 function callbackForLater(e) {
-  this.clientHeight = parseInt(e) // should be fine!
+  this.clientHeight = parseInt(e) // 应该没问题！
 }
 ```
 
@@ -664,7 +664,7 @@ apiV
 
 ```ts twoslash
 type Box<T> = { t: T }
-/** @see Box for implementation details */
+/** @see Box 获取实现细节 */
 type Boxify<T> = { [K in keyof T]: Box<T> }
 ```
 
@@ -676,7 +676,7 @@ type Boxify<T> = { [K in keyof T]: Box<T> }
 
 ```ts twoslash
 type Box<T> = { t: T }
-/** @returns A {@link Box} containing the parameter. */
+/** @returns 包含该参数的 {@link Box}。 */
 function box<U>(u: U): Box<U> {
   return { t: u }
 }
@@ -691,7 +691,7 @@ type Pet = {
 }
 
 /**
- * Note: you should implement the {@link Pet.hello} method of Pet.
+ * 注意：你应该实现 Pet 的 {@link Pet.hello} 方法。
  */
 function hello(p: Pet) {
   p.hello()
@@ -707,7 +707,7 @@ type Pet = {
 }
 
 /**
- * Note: you should implement the {@link Pet.hello | hello} method of Pet.
+ * 注意：你应该实现 Pet 的 {@link Pet.hello | hello} 方法。
  */
 function hello(p: Pet) {
   p.hello()
@@ -751,7 +751,7 @@ MathFuncs.add1
 
 ```ts twoslash
 /**
- * Welcome to awesome.ts
+ * 欢迎使用 awesome.ts
  * @author Ian Awesome <i.am.awesome@example.com>
  */
 ```
@@ -767,49 +767,49 @@ class Foo {}
 // ---cut---
 var someObj = {
   /**
-   * @param {string} param1 - JSDocs on property assignments work
+   * @param {string} param1 - 属性赋值上的 JSDoc 同样生效
    */
   x: function (param1) {},
 }
 
 /**
- * As do jsdocs on variable assignments
+ * 变量赋值上的 JSDoc 也同样有效
  * @return {Window}
  */
 let someFunc = function () {}
 
 /**
- * And class methods
- * @param {string} greeting The greeting to use
+ * 类方法也同样如此
+ * @param {string} greeting 要使用的问候语
  */
 Foo.prototype.sayHi = (greeting) => console.log('Hi!')
 
 /**
- * And arrow function expressions
- * @param {number} x - A multiplier
+ * 箭头函数表达式也同样如此
+ * @param {number} x - 乘数
  */
 let myArrow = (x) => x * x
 
 /**
- * Which means it works for function components in JSX too
- * @param {{a: string, b: number}} props - Some param
+ * 这意味着它同样适用于 JSX 中的函数组件
+ * @param {{a: string, b: number}} props - 某些参数
  */
 var fc = (props) => <div>{props.a.charAt(0)}</div>
 
 /**
- * A parameter can be a class constructor, using Google Closure syntax.
+ * 参数可以是类构造函数，使用 Google Closure 语法。
  *
- * @param {{new(...args: any[]): object}} C - The class to register
+ * @param {{new(...args: any[]): object}} C - 要注册的类
  */
 function registerClass(C) {}
 
 /**
- * @param {...string} p1 - A 'rest' arg (array) of strings. (treated as 'any')
+ * @param {...string} p1 - 字符串类型的 'rest' 参数（数组）。（被视为 'any'）
  */
 function fn10(p1) {}
 
 /**
- * @param {...string} p1 - A 'rest' arg (array) of strings. (treated as 'any')
+ * @param {...string} p1 - 字符串类型的 'rest' 参数（数组）。（被视为 'any'）
  */
 function fn9(p1) {
   return p1.join()
@@ -826,7 +826,7 @@ function fn9(p1) {
  */
 var wrong
 /**
- * Use postfix question on the property name instead:
+ * 改为在属性名后使用问号：
  * @type {{ a: string, b?: number }}
  */
 var right
@@ -837,8 +837,8 @@ var right
 ```js twoslash
 /**
  * @type {?number}
- * With strictNullChecks: true  -- number | null
- * With strictNullChecks: false -- number
+ * 当 strictNullChecks 为 true  -- number | null
+ * 当 strictNullChecks 为 false -- number
  */
 var nullable
 ```
@@ -848,8 +848,8 @@ TypeScript 原生语法使用联合类型：
 ```js twoslash
 /**
  * @type {number | null}
- * With strictNullChecks: true  -- number | null
- * With strictNullChecks: false -- number
+ * 当 strictNullChecks 为 true  -- number | null
+ * 当 strictNullChecks 为 false -- number
  */
 var unionNullable
 ```
@@ -859,7 +859,7 @@ var unionNullable
 ```js twoslash
 /**
  * @type {!number}
- * Just has type number
+ * 类型仅为 number
  */
 var normal
 ```

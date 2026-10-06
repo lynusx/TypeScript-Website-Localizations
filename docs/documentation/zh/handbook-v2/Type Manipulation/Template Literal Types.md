@@ -79,7 +79,7 @@ const person = makeWatchedObject({
   age: 26,
 })
 
-// makeWatchedObject has added `on` to the anonymous Object
+// makeWatchedObject 已将 `on` 添加到匿名对象中
 
 person.on('firstNameChanged', (newValue) => {
   console.log(`firstName was changed to ${newValue}!`)
@@ -96,8 +96,8 @@ type PropEventSource<Type> = {
   ): void
 }
 
-/// Create a "watched object" with an `on` method
-/// so that you can watch for changes to properties.
+/// 创建一个带有 `on` 方法的“被监听对象”，
+/// 以便你可以监听属性的更改。
 declare function makeWatchedObject<Type>(
   obj: Type,
 ): Type & PropEventSource<Type>
@@ -124,10 +124,10 @@ const person = makeWatchedObject({
 
 person.on('firstNameChanged', () => {})
 
-// Prevent easy human error (using the key instead of the event name)
+// 防止常见人为错误（使用键名而非事件名称）
 person.on('firstName', () => {})
 
-// It's typo-resistant
+// 能够防范拼写错误
 person.on('frstNameChanged', () => {})
 ```
 

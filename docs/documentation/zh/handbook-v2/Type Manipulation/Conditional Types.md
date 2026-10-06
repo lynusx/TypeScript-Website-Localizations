@@ -45,10 +45,10 @@ type Stuff =
 
 ```ts twoslash
 interface IdLabel {
-  id: number /* some fields */
+  id: number /* 一些字段 */
 }
 interface NameLabel {
-  name: string /* other fields */
+  name: string /* 其他字段 */
 }
 
 function createLabel(id: number): IdLabel
@@ -68,10 +68,10 @@ function createLabel(nameOrId: string | number): IdLabel | NameLabel {
 
 ```ts twoslash
 interface IdLabel {
-  id: number /* some fields */
+  id: number /* 一些字段 */
 }
 interface NameLabel {
-  name: string /* other fields */
+  name: string /* 其他字段 */
 }
 // ---cut---
 type NameOrId<T extends number | string> = T extends number
@@ -83,10 +83,10 @@ type NameOrId<T extends number | string> = T extends number
 
 ```ts twoslash
 interface IdLabel {
-  id: number /* some fields */
+  id: number /* 一些字段 */
 }
 interface NameLabel {
-  name: string /* other fields */
+  name: string /* 其他字段 */
 }
 type NameOrId<T extends number | string> = T extends number
   ? IdLabel
@@ -160,11 +160,11 @@ type DogMessageContents = MessageOf<Dog>
 ```ts twoslash
 type Flatten<T> = T extends any[] ? T[number] : T
 
-// Extracts out the element type.
+// 提取出元素类型。
 type Str = Flatten<string[]>
 //   ^?
 
-// Leaves the type alone.
+// 保持类型不变。
 type Num = Flatten<number>
 //   ^?
 ```
@@ -265,7 +265,7 @@ type StrArrOrNumArr =
 ```ts twoslash
 type ToArrayNonDist<Type> = [Type] extends [any] ? Type[] : never
 
-// 'ArrOfStrOrNum' is no longer a union.
+// 'ArrOfStrOrNum' 不再是联合类型。
 type ArrOfStrOrNum = ToArrayNonDist<string | number>
 //   ^?
 ```

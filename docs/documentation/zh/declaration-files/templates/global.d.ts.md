@@ -79,23 +79,23 @@ window.createGreeting = function (s) {
 你可以参考下方的 DTS 示例模板：
 
 ```ts
-// Type definitions for [~THE LIBRARY NAME~] [~OPTIONAL VERSION NUMBER~]
-// Project: [~THE PROJECT NAME~]
-// Definitions by: [~YOUR NAME~] <[~A URL FOR YOU~]>
+// Type definitions for [~库名称~] [~可选版本号~]
+// Project: [~项目名称~]
+// Definitions by: [~你的姓名~] <[~你的 URL~]>
 
-/*~ If this library is callable (e.g. can be invoked as myLib(3)),
- *~ include those call signatures here.
- *~ Otherwise, delete this section.
+/*~ 如果该库是可调用的（例如可以作为 myLib(3) 调用），
+ *~ 请在此处包含这些调用签名。
+ *~ 否则，请删除此部分。
  */
 declare function myLib(a: string): string
 declare function myLib(a: number): number
 
-/*~ If you want the name of this library to be a valid type name,
- *~ you can do so here.
+/*~ 如果希望该库的名称成为有效的类型名称，
+ *~ 可以在此处声明。
  *~
- *~ For example, this allows us to write 'var x: myLib';
- *~ Be sure this actually makes sense! If it doesn't, just
- *~ delete this declaration and add types inside the namespace below.
+ *~ 例如，这允许我们编写 'var x: myLib'；
+ *~ 请确保这确实符合逻辑！如果不符合，
+ *~ 只需删除此声明，并在下方的命名空间中添加类型即可。
  */
 interface myLib {
   name: string
@@ -103,30 +103,30 @@ interface myLib {
   extras?: string[]
 }
 
-/*~ If your library has properties exposed on a global variable,
- *~ place them here.
- *~ You should also place types (interfaces and type alias) here.
+/*~ 如果你的库在全局变量上暴露了属性，
+ *~ 请将它们放在这里。
+ *~ 你还应该在此处放置类型（接口和类型别名）。
  */
 declare namespace myLib {
-  //~ We can write 'myLib.timeout = 50;'
+  //~ 我们可以编写 'myLib.timeout = 50;'
   let timeout: number
 
-  //~ We can access 'myLib.version', but not change it
+  //~ 我们可以访问 'myLib.version'，但不能修改它
   const version: string
 
-  //~ There's some class we can create via 'let c = new myLib.Cat(42)'
-  //~ Or reference e.g. 'function f(c: myLib.Cat) { ... }
+  //~ 存在某个类，我们可以通过 'let c = new myLib.Cat(42)' 创建实例
+  //~ 或进行引用，例如 'function f(c: myLib.Cat) { ... }'
   class Cat {
     constructor(n: number)
 
-    //~ We can read 'c.age' from a 'Cat' instance
+    //~ 我们可以从 'Cat' 实例中读取 'c.age'
     readonly age: number
 
-    //~ We can invoke 'c.purr()' from a 'Cat' instance
+    //~ 我们可以从 'Cat' 实例上调用 'c.purr()'
     purr(): void
   }
 
-  //~ We can declare a variable as
+  //~ 我们可以将变量声明为
   //~   'var s: myLib.CatSettings = { weight: 5, name: "Maru" };'
   interface CatSettings {
     weight: number
@@ -134,11 +134,11 @@ declare namespace myLib {
     tailLength?: number
   }
 
-  //~ We can write 'const v: myLib.VetID = 42;'
-  //~  or 'const v: myLib.VetID = "bob";'
+  //~ 我们可以编写 'const v: myLib.VetID = 42;'
+  //~  或 'const v: myLib.VetID = "bob";'
   type VetID = string | number
 
-  //~ We can invoke 'myLib.checkCat(c)' or 'myLib.checkCat(c, v);'
+  //~ 我们可以调用 'myLib.checkCat(c)' 或 'myLib.checkCat(c, v);'
   function checkCat(c: Cat, s?: VetID)
 }
 ```

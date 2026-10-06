@@ -32,19 +32,18 @@ class Sprite {
 接下来，你需要一个类型以及一个返回继承自基类的类表达式的工厂函数。
 
 ```ts twoslash
-// To get started, we need a type which we'll use to extend
-// other classes from. The main responsibility is to declare
-// that the type being passed in is a class.
+// 首先，我们需要一个类型，用来作为扩展其他类的基类。
+// 其主要职责是声明传入的类型是一个类。
 
 type Constructor = new (...args: any[]) => {}
 
-// This mixin adds a scale property, with getters and setters
-// for changing it with an encapsulated private property:
+// 此混入添加了一个 scale 属性，并带有 getter 和 setter，
+// 通过封装的私有属性对其进行修改：
 
 function Scale<TBase extends Constructor>(Base: TBase) {
   return class Scaling extends Base {
-    // Mixins may not declare private/protected properties
-    // however, you can use ES2020 private fields
+    // 混入不能声明 private/protected 属性，
+    // 不过，你可以使用 ES2020 私有字段
     _scale = 1
 
     setScale(scale: number) {
@@ -73,8 +72,8 @@ class Sprite {
 type Constructor = new (...args: any[]) => {}
 function Scale<TBase extends Constructor>(Base: TBase) {
   return class Scaling extends Base {
-    // Mixins may not declare private/protected properties
-    // however, you can use ES2020 private fields
+    // 混入不能声明 private/protected 属性，
+    // 不过，你可以使用 ES2020 私有字段
     _scale = 1
 
     setScale(scale: number) {
@@ -87,8 +86,8 @@ function Scale<TBase extends Constructor>(Base: TBase) {
   }
 }
 // ---cut---
-// Compose a new class from the Sprite class,
-// with the Mixin Scale applier:
+// 通过组合 Sprite 类与 Scale 混入应用函数，
+// 生成一个新类：
 const EightBitSprite = Scale(Sprite)
 
 const flappySprite = new EightBitSprite('Bird')
@@ -103,10 +102,9 @@ console.log(flappySprite.scale)
 为了对此建模，我们修改原始的构造函数类型以接受泛型参数。
 
 ```ts twoslash
-// This was our previous constructor:
+// 这是我们之前的构造函数：
 type Constructor = new (...args: any[]) => {}
-// Now we use a generic version which can apply a constraint on
-// the class which this mixin is applied to
+// 现在我们使用泛型版本，它可以对应用该混入的类施加约束
 type GConstructor<T = {}> = new (...args: any[]) => T
 ```
 
@@ -150,9 +148,8 @@ type Loggable = GConstructor<{ print: () => void }>
 function Jumpable<TBase extends Positionable>(Base: TBase) {
   return class Jumpable extends Base {
     jump() {
-      // This mixin will only work if it is passed a base
-      // class which has setPos defined because of the
-      // Positionable constraint.
+      // 由于 Positionable 约束的存在，此混入只有在
+      // 传入定义了 setPos 的基类时才能正常工作。
       this.setPos(0, 20)
     }
   }
@@ -165,7 +162,7 @@ function Jumpable<TBase extends Positionable>(Base: TBase) {
 
 ```ts twoslash
 // @strict: false
-// Each mixin is a traditional ES class
+// 每个混入都是一个传统的 ES 类
 class Jumpable {
   jump() {}
 }
@@ -174,24 +171,23 @@ class Duckable {
   duck() {}
 }
 
-// Including the base
+// 包含基类
 class Sprite {
   x = 0
   y = 0
 }
 
-// Then you create an interface which merges
-// the expected mixins with the same name as your base
+// 然后创建一个与基类同名的接口，
+// 用于合并预期的混入
 interface Sprite extends Jumpable, Duckable {}
-// Apply the mixins into the base class via
-// the JS at runtime
+// 在运行时通过 JS 将混入应用到基类中
 applyMixins(Sprite, [Jumpable, Duckable])
 
 let player = new Sprite()
 player.jump()
 console.log(player.x, player.y)
 
-// This can live anywhere in your codebase:
+// 这段代码可以放在你代码库的任意位置：
 function applyMixins(derivedCtor: any, constructors: any[]) {
   constructors.forEach((baseCtor) => {
     Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {
@@ -220,7 +216,7 @@ TypeScript 编译器通过控制流分析原生支持混入模式。
 ```ts twoslash
 // @experimentalDecorators
 // @errors: 2339
-// A decorator function which replicates the mixin pattern:
+// 一个复刻了混入模式的装饰器函数：
 const Pausable = (target: typeof Player) => {
   return class Pausable extends target {
     shouldFreeze = false
@@ -233,12 +229,11 @@ class Player {
   y = 0
 }
 
-// The Player class does not have the decorator's type merged:
+// Player 类并没有合并装饰器的类型：
 const player = new Player()
 player.shouldFreeze
 
-// The runtime aspect could be manually replicated via
-// type composition or interface merging.
+// 运行时层面可以通过类型组合或接口合并来手动复刻。
 type FreezablePlayer = Player & { shouldFreeze: boolean }
 
 const playerTwo = new Player() as unknown as FreezablePlayer

@@ -44,7 +44,7 @@ _装饰器_（Decorator）是一种特殊类型的声明，它能够附加到[�
 
 ```ts
 function sealed(target) {
-  // do something with 'target' ...
+  // 对 'target' 执行某些操作 ...
 }
 ```
 
@@ -57,11 +57,11 @@ _装饰器工厂_（Decorator Factory）就是一个简单的函数，它返回�
 
 ```ts
 function color(value: string) {
-  // this is the decorator factory, it sets up
-  // the returned decorator function
+  // 这是装饰器工厂，用于配置
+  // 返回的装饰器函数
   return function (target) {
-    // this is the decorator
-    // do something with 'target' and 'value'...
+    // 这是装饰器
+    // 对 'target' 和 'value' 执行某些操作...
   }
 }
 ```
@@ -210,12 +210,12 @@ class BugReport {
 }
 
 const bug = new BugReport("Needs dark mode");
-console.log(bug.title); // Prints "Needs dark mode"
-console.log(bug.type); // Prints "report"
+console.log(bug.title); // 打印 "Needs dark mode"
+console.log(bug.type); // 打印 "report"
 
-// Note that the decorator _does not_ change the TypeScript type
-// and so the new property `reportingURL` is not known
-// to the type system:
+// 请注意，装饰器*不会*改变 TypeScript 类型，
+// 因此类型系统不知道新属性 `reportingURL`
+// 的存在：
 bug.reportingURL;
 ```
 
@@ -569,7 +569,7 @@ line.start = new Point(0, 0)
 // @ts-ignore
 // line.end = {}
 
-// Fails at runtime with:
+// 运行时失败并报错：
 // > Invalid type, got object not Point
 
 ```

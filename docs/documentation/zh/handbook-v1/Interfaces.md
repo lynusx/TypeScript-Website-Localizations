@@ -96,7 +96,7 @@ interface SquareConfig {
 function createSquare(config: SquareConfig): { color: string; area: number } {
   let newSquare = { color: 'white', area: 100 }
   if (config.clor) {
-    // Error: Property 'clor' does not exist on type 'SquareConfig'
+    // 错误：类型 'SquareConfig' 上不存在属性 'clor'
     newSquare.color = config.clor
   }
   if (config.width) {
@@ -131,7 +131,7 @@ interface Point {
 }
 // ---cut---
 let p1: Point = { x: 10, y: 20 }
-p1.x = 5 // error!
+p1.x = 5 // 错误！
 ```
 
 TypeScript comes with a `ReadonlyArray<T>` type that is the same as `Array<T>` with all mutating methods removed, so you can make sure you don't change your arrays after creation:
@@ -141,10 +141,10 @@ TypeScript comes with a `ReadonlyArray<T>` type that is the same as `Array<T>` w
 let a: number[] = [1, 2, 3, 4]
 let ro: ReadonlyArray<number> = a
 
-ro[0] = 12 // error!
-ro.push(5) // error!
-ro.length = 100 // error!
-a = ro // error!
+ro[0] = 12 // 错误！
+ro.push(5) // 错误！
+ro.length = 100 // 错误！
+a = ro // 错误！
 ```
 
 On the last line of the snippet you can see that even assigning the entire `ReadonlyArray` back to a normal array is illegal.
@@ -409,7 +409,7 @@ interface Dog extends Animal {
   breed: string
 }
 
-// Error: indexing with a numeric string might get you a completely separate type of Animal!
+// 错误：使用数字字符串进行索引可能会获得完全不同类型的 Animal！
 interface NotOkay {
   [x: number]: Animal
   [x: string]: Dog
@@ -425,8 +425,8 @@ In the following example, `name`'s type does not match the string index's type, 
 interface NumberDictionary {
   [index: string]: number
 
-  length: number // ok, length is a number
-  name: string // error, the type of 'name' is not a subtype of the indexer
+  length: number // 正常，length 是一个数字
+  name: string // 错误，'name' 的类型不是索引签名的子类型
 }
 ```
 
@@ -436,8 +436,8 @@ However, properties of different types are acceptable if the index signature is 
 interface NumberOrStringDictionary {
   [index: string]: number | string
 
-  length: number // ok, length is a number
-  name: string // ok, name is a string
+  length: number // 正常，length 是一个数字
+  name: string // 正常，name 是一个字符串
 }
 ```
 
@@ -450,7 +450,7 @@ interface ReadonlyStringArray {
 }
 
 let myArray: ReadonlyStringArray = ['Alice', 'Bob']
-myArray[2] = 'Mallory' // error!
+myArray[2] = 'Mallory' // 错误！
 ```
 
 You can't set `myArray[2]` because the index signature is `readonly`.
@@ -467,16 +467,16 @@ interface HeadersResponse {
   date: string
   'content-length': string
 
-  // Permit any property starting with 'x-'.
+  // 允许以 'x-' 开头的任意属性。
   [headerName: `x-${string}`]: string
 }
 
 function handleResponse(r: HeadersResponse) {
-  // Handle known, and x- prefixed
+  // 处理已知属性以及带有 x- 前缀的属性
   const type = r['content-type']
   const poweredBy = r['x-powered-by']
 
-  // Unknown keys without the prefix raise errors
+  // 未带有该前缀的未知属性会报错
   const origin = r.origin
 }
 ```

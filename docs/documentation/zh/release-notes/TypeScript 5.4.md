@@ -13,7 +13,7 @@ TypeScript 通常可以根据你执行的条件检查推断出变量的更具体
 ```ts
 function uppercaseStrings(x: string | number) {
   if (typeof x === 'string') {
-    // TypeScript knows 'x' is a 'string' here.
+    // 此处 TypeScript 已知 'x' 是 'string'。
     return x.toUpperCase()
   }
 }
@@ -30,8 +30,8 @@ function getUrls(url: string | URL, names: string[]) {
   return names.map((name) => {
     url.searchParams.set('name', name)
     //  ~~~~~~~~~~~~
-    // error!
-    // Property 'searchParams' does not exist on type 'string | URL'.
+    // 错误！
+    // 属性 'searchParams' 不存在于类型 'string | URL' 上。
 
     return url.toString()
   })
@@ -56,15 +56,15 @@ function printValueLater(value: string | undefined) {
   }
 
   setTimeout(() => {
-    // Modifying 'value', even in a way that shouldn't affect
-    // its type, will invalidate type refinements in closures.
+    // 修改 'value'（即使以不应影响其类型的方式），
+    // 也会使闭包中的类型细化失效。
     value = value
   }, 500)
 
   setTimeout(() => {
     console.log(value.toUpperCase())
     //          ~~~~~
-    // error! 'value' is possibly 'undefined'.
+    // 错误！'value' 可能为 'undefined'。
   }, 1000)
 }
 ```
@@ -81,10 +81,10 @@ function doSomething<T>(arg: T) {
   // ...
 }
 
-// We can explicitly say that 'T' should be 'string'.
+// 我们可以显式声明 'T' 应为 'string'。
 doSomething<string>('hello!')
 
-// We can also just let the type of 'T' get inferred.
+// 我们也可以直接让 'T' 的类型被推断出来。
 doSomething('hello!')
 ```
 
@@ -105,7 +105,7 @@ createStreetLight(['red', 'yellow', 'green'], 'red')
 在这个函数中，`colors` 应该作为“事实来源（source of truth）”，并描述哪些值可以传递给 `defaultColor`。
 
 ```ts
-// Oops! This is undesirable, but is allowed!
+// 糟糕！这并非所期望的，但被允许！
 createStreetLight(['red', 'yellow', 'green'], 'blue')
 ```
 
@@ -123,8 +123,8 @@ function createStreetLight<C extends string, D extends C>(
 
 createStreetLight(['red', 'yellow', 'green'], 'blue')
 //                                            ~~~~~~
-// error!
-// Argument of type '"blue"' is not assignable to parameter of type '"red" | "yellow" | "green" | undefined'.
+// 错误！
+// 类型 '"blue"' 的参数不能赋值给类型 '"red" | "yellow" | "green" | undefined' 的参数。
 ```
 
 这种方法可行，但略显别扭，因为 `D` 可能在 `createStreetLight` 的签名中不会用于任何其他地方。
@@ -145,8 +145,8 @@ function createStreetLight<C extends string>(
 
 createStreetLight(['red', 'yellow', 'green'], 'blue')
 //                                            ~~~~~~
-// error!
-// Argument of type '"blue"' is not assignable to parameter of type '"red" | "yellow" | "green" | undefined'.
+// 错误！
+// 类型 '"blue"' 的参数不能赋值给类型 '"red" | "yellow" | "green" | undefined' 的参数。
 ```
 
 将 `defaultColor` 的类型排除在推断探索之外，意味着 `"blue"` 绝不会成为推断候选，因此类型检查器可以将其拒绝。
@@ -209,7 +209,7 @@ const myObj: EvenOdds = Object.groupBy(...);
 
 myObj.even;
 //    ~~~~
-// Error to access this under 'strictNullChecks'.
+// 在 'strictNullChecks' 下访问此处会报错。
 ```
 
 这是因为通常无法保证 `groupBy` 会生成*所有*的键。
@@ -225,7 +225,7 @@ TypeScript 提供了一个名为 `bundler` 的 `moduleResolution` 选项，旨�
 该选项的限制之一是它必须与 `--module esnext` 配合使用，从而导致无法使用 `import ... = require(...)` 语法。
 
 ```ts
-// previously errored
+// 此前会报错
 import myModule = require('module/path')
 ```
 
@@ -296,19 +296,19 @@ TypeScript 会将这些路径分别解析为 `[...]/some-package/esm/foo-from-im
 这意味着运行时现在可以更准确地描述导入属性。
 
 ```ts
-// In some global file.
+// 在某个全局文件中。
 interface ImportAttributes {
   type: 'json'
 }
 
-// In some other module
+// 在其他某个模块中
 import * as ns from 'foo' with { type: 'not-json' }
 //                                     ~~~~~~~~~~
-// error!
+// 错误！
 //
-// Type '{ type: "not-json"; }' is not assignable to type 'ImportAttributes'.
-//  Types of property 'type' are incompatible.
-//    Type '"not-json"' is not assignable to type '"json"'.
+// 类型 '{ type: "not-json"; }' 不能赋值给类型 'ImportAttributes'。
+//  属性 'type' 的类型不兼容。
+//    类型 '"not-json"' 不能赋值给类型 '"json"'。
 ```
 
 感谢 [Oleksandr Tarasiuk](https://github.com/a-tarasyuk) 提供了[此项更改](https://github.com/microsoft/TypeScript/pull/56034)。
@@ -368,8 +368,8 @@ TypeScript 5.0 弃用了以下选项和行为：
 type IsArray<T> = T extends any[] ? true : false
 
 function foo<U extends object>(x: IsArray<U>) {
-  let first: true = x // Error
-  let second: false = x // Error, but previously wasn't
+  let first: true = x // 错误
+  let second: false = x // 错误，但此前不会报错
 }
 ```
 
@@ -394,13 +394,13 @@ TypeScript 现在会更激进地化简类型变量与原始类型之间的交叉
 declare function intersect<T, U>(x: T, y: U): T & U
 
 function foo<T extends 'abc' | 'def'>(x: T, str: string, num: number) {
-  // Was 'T & string', now is just 'T'
+  // 原为 'T & string'，现在仅为 'T'
   let a = intersect(x, str)
 
-  // Was 'T & number', now is just 'never'
+  // 原为 'T & number'，现在仅为 'never'
   let b = intersect(x, num)
 
-  // Was '(T & "abc") | (T & "def")', now is just 'T'
+  // 原为 '(T & "abc") | (T & "def")'，现在仅为 'T'
   let c = Math.random() < 0.5 ? intersect(x, 'abc') : intersect(x, 'def')
 }
 ```
@@ -415,7 +415,7 @@ TypeScript 现在能更精确地检查字符串是否可以赋值给模板字符
 function a<T extends { id: string }>() {
   let x: `-${keyof T & string}`
 
-  // Used to error, now doesn't.
+  // 以前会报错，现在不会了。
   x = '-id'
 }
 ```
@@ -476,10 +476,10 @@ namespace Second {
 }
 
 function foo(x: First.SomeEnum, y: Second.SomeEnum) {
-  // Both used to be compatible - no longer the case,
-  // TypeScript errors with something like:
+  // 两者以前兼容 —— 现在不再如此，
+  // TypeScript 会报类似如下的错误：
   //
-  //  Each declaration of 'SomeEnum.B' differs in its value, where '1' was expected but '2' was given.
+  //  'SomeEnum.B' 的各个声明在其值上存在差异，期望为 '1' 但获得了 '2'。
   x = y
   y = x
 }
@@ -505,10 +505,10 @@ namespace Second {
 }
 
 function foo(x: First.SomeEnum, y: Second.SomeEnum) {
-  // Both used to be compatible - no longer the case,
-  // TypeScript errors with something like:
+  // 两者以前兼容 —— 现在不再如此，
+  // TypeScript 会报类似如下的错误：
   //
-  //  One value of 'SomeEnum.B' is the string '"some known string"', and the other is assumed to be an unknown numeric value.
+  //  'SomeEnum.B' 的一个值是字符串 '"some known string"'，而另一个值被假定为未知的数字值。
   x = y
   y = x
 }
@@ -521,9 +521,9 @@ function foo(x: First.SomeEnum, y: Second.SomeEnum) {
 TypeScript 不再允许枚举成员使用 `Infinity`、`-Infinity` 或 `NaN` 作为名称。
 
 ```ts
-// Errors on all of these:
+// 对以下所有情况均报错：
 //
-//  An enum member cannot have a numeric name.
+//  枚举成员不能具有数字名称。
 enum E {
   Infinity = 0,
   '-Infinity' = 1,

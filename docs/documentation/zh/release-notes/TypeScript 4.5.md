@@ -65,11 +65,11 @@ declare function MaybePromise<T>(value: T): T | Promise<T> | PromiseLike<T>
 async function doSomething(): Promise<[number, number]> {
   const result = await Promise.all([MaybePromise(100), MaybePromise(200)])
 
-  // Error!
+  // 错误！
   //
   //    [number | Promise<100>, number | Promise<200>]
   //
-  // is not assignable to type
+  // 不能分配给类型
   //
   //    [number, number]
   return result
@@ -125,7 +125,7 @@ type InfiniteBox<T> = { item: InfiniteBox<T> }
 
 type Unpack<T> = T extends { item: infer U } ? Unpack<U> : T
 
-// error: Type instantiation is excessively deep and possibly infinite.
+// 错误：类型实例化过深，且可能无限。
 type Test = Unpack<InfiniteBox<number>>
 ```
 
@@ -149,7 +149,7 @@ type TrimLeft<T extends string> = T extends ` ${infer Rest}`
   ? TrimLeft<Rest>
   : T
 
-// error: Type instantiation is excessively deep and possibly infinite.
+// 错误：类型实例化过深，且可能无限。
 type Test = TrimLeft<'                                                oops'>
 ```
 
@@ -225,12 +225,12 @@ eval('console.log(new Animal().isDangerous())')
 请注意，当此标志与 [`--isolatedModules`](/tsconfig#isolatedModules) 结合使用时有一项特殊要求：导入的类型*必须*标记为仅类型导入（type-only import），因为一次只处理单个文件的编译器无法判断导入的内容是表面看似未使用的值，还是为了避免运行时崩溃而必须移除的类型。
 
 ```ts
-// Which of these is a value that should be preserved? tsc knows, but `ts.transpileModule`,
-// ts-loader, esbuild, etc. don't, so `isolatedModules` gives an error.
+// 其中哪一个是应该被保留的值？tsc 知道，但 `ts.transpileModule`、
+// ts-loader、esbuild 等不知道，因此 `isolatedModules` 会报错。
 import { someFunc, BaseType } from './some-module.js'
 //                 ^^^^^^^^
-// Error: 'BaseType' is a type and must be imported using a type-only import
-// when 'preserveValueImports' and 'isolatedModules' are both enabled.
+// 错误：当同时启用 'preserveValueImports' 和 'isolatedModules' 时，
+// 'BaseType' 是一个类型，必须使用仅类型导入进行导入。
 ```
 
 这使得 TypeScript 4.5 的另一项特性——[导入名称上的 `type` 修饰符](#type-on-import-names) 显得尤为重要。
@@ -242,12 +242,12 @@ import { someFunc, BaseType } from './some-module.js'
 如前文所述，[`preserveValueImports`](/tsconfig#preserveValueImports) 和 [`isolatedModules`](/tsconfig#isolatedModules) 提出了特殊要求，以确保构建工具在判断是否可以安全丢弃类型导入时不会产生二义性。
 
 ```ts
-// Which of these is a value that should be preserved? tsc knows, but `ts.transpileModule`,
-// ts-loader, esbuild, etc. don't, so `isolatedModules` issues an error.
+// 其中哪一个是应该被保留的值？tsc 知道，但 `ts.transpileModule`、
+// ts-loader、esbuild 等不知道，因此 `isolatedModules` 会报错。
 import { someFunc, BaseType } from './some-module.js'
 //                 ^^^^^^^^
-// Error: 'BaseType' is a type and must be imported using a type-only import
-// when 'preserveValueImports' and 'isolatedModules' are both enabled.
+// 错误：当同时启用 'preserveValueImports' 和 'isolatedModules' 时，
+// 'BaseType' 是一个类型，必须使用仅类型导入进行导入。
 ```
 
 当这些选项组合使用时，我们需要一种方式来表明某个导入可以被合法丢弃。
@@ -305,7 +305,7 @@ class Person {
     return (
       other &&
       typeof other === 'object' &&
-      #name in other && // <- this is new!
+      #name in other && // <- 这是新增特性！
       this.#name === other.#name
     )
   }
@@ -330,8 +330,8 @@ import obj from './something.json' assert { type: 'json' }
 TypeScript 不会检查这些断言的内容，因为它们是宿主环境特有的；TypeScript 会原样保留它们，交由浏览器和运行时去处理（并可能由其抛出错误）：
 
 ```ts
-// TypeScript is fine with this.
-// But your browser? Probably not.
+// TypeScript 允许这样做。
+// 但你的浏览器？很可能不支持。
 import obj from './something.json' assert { type: 'fluffy bunny' }
 ```
 
@@ -354,20 +354,20 @@ TypeScript 4.5 为我们的 JSDoc 支持带来了更丰富的表达能力。
 其中一个例子是 `const` 常量断言。在 TypeScript 中，你可以在字面量后编写 `as const` 来获得更精确且不可变的类型：
 
 ```ts
-// type is { prop: string }
+// 类型为 { prop: string }
 let a = { prop: 'hello' }
 
-// type is { readonly prop: "hello" }
+// 类型为 { readonly prop: "hello" }
 let b = { prop: 'hello' } as const
 ```
 
 在 JavaScript 文件中，你现在可以使用 JSDoc 类型断言来实现同样的效果：
 
 ```ts
-// type is { prop: string }
+// 类型为 { prop: string }
 let a = { prop: 'hello' }
 
-// type is { readonly prop: "hello" }
+// 类型为 { readonly prop: "hello" }
 let b = /** @type {const} */ { prop: 'hello' }
 ```
 
@@ -392,7 +392,7 @@ type Foo<T extends string | number = number> = { prop: T }
  * @property prop {T}
  */
 
-// or
+// 或
 
 /**
  * @template {string | number} [T=number]

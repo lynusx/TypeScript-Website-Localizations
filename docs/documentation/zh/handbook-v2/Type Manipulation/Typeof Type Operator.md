@@ -10,7 +10,7 @@ oneline: '在类型上下文中使用 typeof 运算符。'
 JavaScript 本身就包含可以在*表达式*上下文中使用的 `typeof` 运算符：
 
 ```ts twoslash
-// Prints "string"
+// 打印 "string"
 console.log(typeof 'Hello world')
 ```
 
@@ -65,6 +65,6 @@ TypeScript 刻意限制了可以对其使用 `typeof` 的表达式种类。
 declare const msgbox: (prompt: string) => boolean;
 // type msgbox = any;
 // ---cut---
-// Meant to use = ReturnType<typeof msgbox>
+// 原意是使用 = ReturnType<typeof msgbox>
 let shouldContinue: typeof msgbox("Are you sure you want to continue?");
 ```

@@ -111,7 +111,7 @@ enum BooleanLikeHeterogeneousEnum {
 - 它是枚举中的第一个成员且没有初始化器，此时它被赋值为 `0`：
 
   ```ts twoslash
-  // E.X is constant:
+  // E.X 是常量：
   enum E {
     X,
   }
@@ -121,7 +121,7 @@ enum BooleanLikeHeterogeneousEnum {
   此时当前枚举成员的值将是前一个枚举成员的值加一。
 
   ```ts twoslash
-  // All enum members in 'E1' and 'E2' are constant.
+  // 'E1' 和 'E2' 中的所有枚举成员都是常量。
 
   enum E1 {
     X,
@@ -151,12 +151,12 @@ enum BooleanLikeHeterogeneousEnum {
 
 ```ts twoslash
 enum FileAccess {
-  // constant members
+  // 常量成员
   None,
   Read = 1 << 1,
   Write = 1 << 2,
   ReadWrite = Read | Write,
-  // computed member
+  // 计算成员
   G = '123'.length,
 }
 ```
@@ -247,7 +247,7 @@ function f(obj: { X: number }) {
   return obj.X
 }
 
-// Works, since 'E' has a property named 'X' which is a number.
+// 正常，因为 'E' 拥有一个名为 'X' 且类型为 number 的属性。
 f(E)
 ```
 
@@ -264,7 +264,7 @@ enum LogLevel {
 }
 
 /**
- * This is equivalent to:
+ * 这等价于：
  * type LogLevelStrings = 'ERROR' | 'WARN' | 'INFO' | 'DEBUG';
  */
 type LogLevelStrings = keyof typeof LogLevel
@@ -421,10 +421,10 @@ EDirection.Up
 ODirection.Up
 //         ^?
 
-// Using the enum as a parameter
+// 将枚举用作参数
 function walk(dir: EDirection) {}
 
-// It requires an extra line to pull out the values
+// 需要额外一行代码来提取这些值
 type Direction = (typeof ODirection)[keyof typeof ODirection]
 function run(dir: Direction) {}
 

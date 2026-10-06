@@ -11,7 +11,7 @@ oneline: TypeScript 5.1 发布说明
 
 ```ts
 function foo() {
-  // no return
+  // 没有返回值
 }
 // x = undefined
 let x = foo()
@@ -20,22 +20,22 @@ let x = foo()
 然而，在先前版本的 TypeScript 中，*唯一*可以完全没有 return 语句的函数，只有返回类型为 `void` 和 `any` 的函数。这意味着即便你显式声明“该函数返回 `undefined`”，你也必须包含至少一条 return 语句。
 
 ```ts
-// ✅ fine - we inferred that 'f1' returns 'void'
+// ✅ 正常 —— 我们推断出 'f1' 返回 'void'
 function f1() {
-  // no returns
+  // 没有返回值
 }
-// ✅ fine - 'void' doesn't need a return statement
+// ✅ 正常 —— 'void' 不需要 return 语句
 function f2(): void {
-  // no returns
+  // 没有返回值
 }
-// ✅ fine - 'any' doesn't need a return statement
+// ✅ 正常 —— 'any' 不需要 return 语句
 function f3(): any {
-  // no returns
+  // 没有返回值
 }
-// ❌ error!
-// A function whose declared type is neither 'void' nor 'any' must return a value.
+// ❌ 错误！
+// 声明类型既不是 'void' 也不是 'any' 的函数必须返回值。
 function f4(): undefined {
-  // no returns
+  // 没有返回值
 }
 ```
 
@@ -43,26 +43,26 @@ function f4(): undefined {
 
 ```ts
 declare function takesFunction(f: () => undefined): undefined
-// ❌ error!
-// Argument of type '() => void' is not assignable to parameter of type '() => undefined'.
+// ❌ 错误！
+// 类型为 '() => void' 的参数不能赋值给类型为 '() => undefined' 的参数。
 takesFunction(() => {
-  // no returns
+  // 没有返回值
 })
-// ❌ error!
-// A function whose declared type is neither 'void' nor 'any' must return a value.
+// ❌ 错误！
+// 声明类型既不是 'void' 也不是 'any' 的函数必须返回值。
 takesFunction((): undefined => {
-  // no returns
+  // 没有返回值
 })
-// ❌ error!
-// Argument of type '() => void' is not assignable to parameter of type '() => undefined'.
+// ❌ 错误！
+// 类型为 '() => void' 的参数不能赋值给类型为 '() => undefined' 的参数。
 takesFunction(() => {
   return
 })
-// ✅ works
+// ✅ 正常工作
 takesFunction(() => {
   return undefined
 })
-// ✅ works
+// ✅ 正常工作
 takesFunction((): undefined => {
   return
 })
@@ -73,25 +73,25 @@ takesFunction((): undefined => {
 首先，TypeScript 5.1 现在允许返回 `undefined` 的函数完全不包含 return 语句。
 
 ```ts
-// ✅ Works in TypeScript 5.1!
+// ✅ 在 TypeScript 5.1 中正常工作！
 function f4(): undefined {
-  // no returns
+  // 没有返回值
 }
-// ✅ Works in TypeScript 5.1!
+// ✅ 在 TypeScript 5.1 中正常工作！
 takesFunction((): undefined => {
-  // no returns
+  // 没有返回值
 })
 ```
 
 其次，如果一个函数没有任何 return 表达式，并且被传递给期望接收返回 `undefined` 函数的位置，TypeScript 会将该函数的返回值类型推断为 `undefined`。
 
 ```ts
-// ✅ Works in TypeScript 5.1!
+// ✅ 在 TypeScript 5.1 中正常工作！
 takesFunction(function f() {
   //                 ^ return type is undefined
-  // no returns
+  // 没有返回值
 })
-// ✅ Works in TypeScript 5.1!
+// ✅ 在 TypeScript 5.1 中正常工作！
 takesFunction(function f() {
   //                 ^ return type is undefined
   return
@@ -101,10 +101,10 @@ takesFunction(function f() {
 为了解决另一个类似的痛点，在 TypeScript 的 `--noImplicitReturns` 选项下，*仅*返回 `undefined` 的函数现在也享有与 `void` 类似的例外规则，不再要求每一条代码分支都必须以显式的 `return` 结尾。
 
 ```ts
-// ✅ Works in TypeScript 5.1 under '--noImplicitReturns'!
+// ✅ 在 '--noImplicitReturns' 下的 TypeScript 5.1 中正常工作！
 function f(): undefined {
   if (Math.random()) {
-    // do some stuff...
+    // 处理某些逻辑...
     return
   }
 }
@@ -122,9 +122,9 @@ interface Serializer {
   get value(): string
 }
 declare let box: Serializer
-// Allows writing a 'boolean'
+// 允许写入 'boolean'
 box.value = true
-// Comes out as a 'string'
+// 读取出来为 'string'
 console.log(box.value.toUpperCase())
 ```
 
@@ -143,9 +143,9 @@ TypeScript 5.1 现在允许 `get` 与 `set` 访问器属性拥有完全不相关
 ```ts
 interface CSSStyleRule {
   // ...
-  /** Always reads as a `CSSStyleDeclaration` */
+  /** 始终读取为 `CSSStyleDeclaration` */
   get style(): CSSStyleDeclaration
-  /** Can only write a `string` here. */
+  /** 此处只能写入 `string`。 */
   set style(newValue: string)
   // ...
 }
@@ -156,9 +156,9 @@ interface CSSStyleRule {
 ```ts
 class SafeBox {
   #value: string | undefined
-  // Only accepts strings!
+  // 仅接受字符串！
   set value(newValue: string) {}
-  // Must check for 'undefined'!
+  // 必须检查 'undefined'！
   get value(): string | undefined {
     return this.#value
   }
@@ -176,9 +176,9 @@ TypeScript 在处理 JSX 时的一个痛点，在于它对每个 JSX 元素标�
 作为背景，JSX 元素通常是以下两者之一：
 
 ```tsx
-// A self-closing JSX tag
+// 自闭合 JSX 标签
 <Foo />
-// A regular element with an opening/closing tag
+// 带有开始/结束标签的常规元素
 <Bar></Bar>
 ```
 
@@ -197,8 +197,8 @@ async function Foo() {
 }
 let element = <Foo />
 //             ~~~
-// 'Foo' cannot be used as a JSX component.
-//   Its return type 'Promise<Element>' is not a valid JSX element.
+// 'Foo' 不能用作 JSX 组件。
+//   其返回类型 'Promise<Element>' 不是有效的 JSX 元素。
 ```
 
 为了给库作者提供表达这种需求的能力，TypeScript 5.1 现在会查找名为 `JSX.ElementType` 的类型。`ElementType` 精确指定了哪些类型可以作为 JSX 元素中的合法标签。因此在今天，它的定义可能类似于：
@@ -206,11 +206,11 @@ let element = <Foo />
 ```tsx
 namespace JSX {
     export type ElementType =
-        // All the valid lowercase tags
+        // 所有有效的小写标签
         keyof IntrinsicAttributes
-        // Function components
+        // 函数组件
         (props: any) => Element
-        // Class components
+        // 类组件
         new (props: any) => ElementClass;
     export interface IntrinsicAttributes extends /*...*/ {}
     export type Element = /*...*/;
@@ -226,7 +226,7 @@ TypeScript 现在在使用 JSX 时支持带命名空间的属性名。
 
 ```tsx
 import * as React from 'react'
-// Both of these are equivalent:
+// 这两者是等价的：
 const x = <Foo a:b="hello" />
 const y = <Foo a:b="hello" />
 interface FooProps {
@@ -240,13 +240,13 @@ function Foo(props: FooProps) {
 当名称的第一段为小写名称时，带命名空间的标签名也会以类似的方式在 `JSX.IntrinsicAttributes` 上查找。
 
 ```tsx
-// In some library's code or in an augmentation of that library:
+// 在某个库的代码中或该库的类型扩充中：
 namespace JSX {
   interface IntrinsicElements {
     ['a:b']: { prop: string }
   }
 }
-// In our code:
+// 在我们的代码中：
 let x = <a:b prop="hello!" />
 ```
 
@@ -388,12 +388,12 @@ error TS2688: Cannot find type definition file for 'webpack-env"'.
   "compilerOptions": {
     "types": ["node", "mocha"],
     "typeRoots": [
-      // Keep whatever you had around before.
+      // 保留你之前配置的所有内容。
       "./some-custom-types/",
-      // You might need your local 'node_modules/@types'.
+      // 你可能需要本地的 'node_modules/@types'。
       "./node_modules/@types",
-      // You might also need to specify a shared 'node_modules/@types'
-      // if you're using a "monorepo" layout.
+      // 如果你使用的是 "monorepo" 布局，
+      // 你可能还需要指定共享的 'node_modules/@types'。
       "../../node_modules/@types",
     ],
   },

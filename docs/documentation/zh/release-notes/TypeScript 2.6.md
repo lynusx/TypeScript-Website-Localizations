@@ -23,9 +23,9 @@ TypeScript 2.6 引入了一个新的严格检查标志 [`strictFunctionTypes`](/
 declare let f1: (x: Animal) => void
 declare let f2: (x: Dog) => void
 declare let f3: (x: Cat) => void
-f1 = f2 // Error with --strictFunctionTypes
-f2 = f1 // Ok
-f2 = f3 // Error
+f1 = f2 // 在启用 --strictFunctionTypes 时报错
+f2 = f1 // 正常
+f2 = f3 // 错误
 ```
 
 第一个赋值在默认类型检查模式下是允许的，但在严格函数类型模式下会报错。
@@ -44,8 +44,8 @@ interface Comparer<T> {
 declare let animalComparer: Comparer<Animal>
 declare let dogComparer: Comparer<Dog>
 
-animalComparer = dogComparer // Error
-dogComparer = animalComparer // Ok
+animalComparer = dogComparer // 错误
+dogComparer = animalComparer // 正常
 ```
 
 第一个赋值现在会报错。实际上，`T` 在 `Comparer<T>` 中是逆变的，因为它只出现在函数类型的参数位置。
@@ -65,8 +65,8 @@ interface Comparer<T> {
 declare let animalComparer: Comparer<Animal>
 declare let dogComparer: Comparer<Dog>
 
-animalComparer = dogComparer // Ok because of bivariance
-dogComparer = animalComparer // Ok
+animalComparer = dogComparer // 由于双向协变性（bivariance）而正常
+dogComparer = animalComparer // 正常
 ```
 
 TypeScript 2.6 还改进了逆变位置上的类型推断：
@@ -105,7 +105,7 @@ export function templateObjectFactory() {
   return id`hello world`
 }
 
-let result = templateObjectFactory() === templateObjectFactory() // true in TS 2.6
+let result = templateObjectFactory() === templateObjectFactory() // 在 TS 2.6 中为 true
 ```
 
 生成的代码如下：
@@ -266,6 +266,6 @@ class C {
 
 ```ts
 function f() {
-  f() // Error: 'f' is declared but its value is never read
+  f() // 错误：声明了 'f' 但从未读取其值
 }
 ```

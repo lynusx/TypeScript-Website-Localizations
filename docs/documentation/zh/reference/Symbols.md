@@ -13,7 +13,7 @@ translatable: true
 ```ts
 let sym1 = Symbol()
 
-let sym2 = Symbol('key') // optional string key
+let sym2 = Symbol('key') // 可选的字符串键
 ```
 
 Symbol 是不可变且唯一的。
@@ -22,7 +22,7 @@ Symbol 是不可变且唯一的。
 let sym2 = Symbol('key')
 let sym3 = Symbol('key')
 
-sym2 === sym3 // false, symbols are unique
+sym2 === sym3 // false，symbol 是唯一的
 ```
 
 与字符串一样，Symbol 也可以用作对象属性的键。
@@ -60,13 +60,13 @@ let className = c[getClassNameSymbol]() // "C"
 // @errors: 1332
 declare const sym1: unique symbol
 
-// sym2 can only be a constant reference.
+// sym2 只能是常量引用。
 let sym2: unique symbol = Symbol()
 
-// Works - refers to a unique symbol, but its identity is tied to 'sym1'.
+// 正常 - 引用了一个 unique symbol，但其身份与 'sym1' 绑定。
 let sym3: typeof sym1 = sym1
 
-// Also works.
+// 同样正常。
 class C {
   static readonly StaticSymbol: unique symbol = Symbol()
 }

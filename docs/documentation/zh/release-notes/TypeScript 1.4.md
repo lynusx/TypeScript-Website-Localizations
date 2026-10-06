@@ -22,16 +22,16 @@ interface RunOptions {
 
 ```ts
 var opts: RunOptions = /* ... */;
-opts.commandline = '-hello world'; // OK
-opts.commandline = ['-hello', 'world']; // OK
-opts.commandline = [42]; // Error, number is not string or string[]
+opts.commandline = '-hello world'; // 正常
+opts.commandline = ['-hello', 'world']; // 正常
+opts.commandline = [42]; // 错误，number 不是 string 或 string[]
 ```
 
 当读取联合类型的值时，你可以访问它们之间共享的所有属性：
 
 ```ts
 if (opts.commandline.length === 0) {
-  // OK, string and string[] both have 'length' property
+  // 正常，string 和 string[] 都具有 'length' 属性
   console.log("it's empty")
 }
 ```
@@ -57,27 +57,27 @@ function equal<T>(lhs: T, rhs: T): boolean {
   return lhs === rhs
 }
 
-// Previously: No error
-// New behavior: Error, no best common type between 'string' and 'number'
+// 之前：无错误
+// 新行为：错误，'string' 与 'number' 之间没有最佳公共类型
 var e = equal(42, 'hello')
 ```
 
 有了联合类型之后，你现在可以在函数声明处和调用处分别指定所期望的行为：
 
 ```ts
-// 'choose' function where types must match
+// 类型必须匹配的 'choose' 函数
 function choose1<T>(a: T, b: T): T {
   return Math.random() > 0.5 ? a : b
 }
-var a = choose1('hello', 42) // Error
-var b = choose1<string | number>('hello', 42) // OK
+var a = choose1('hello', 42) // 错误
+var b = choose1<string | number>('hello', 42) // 正常
 
-// 'choose' function where types need not match
+// 类型无需匹配的 'choose' 函数
 function choose2<T, U>(a: T, b: U): T | U {
   return Math.random() > 0.5 ? a : b
 }
-var c = choose2('bar', 'foo') // OK, c: string
-var d = choose2('hello', 42) // OK, d: string|number
+var c = choose2('bar', 'foo') // 正常，c: string
+var d = choose2('hello', 42) // 正常，d: string|number
 ```
 
 ### 更好的类型推断
@@ -86,8 +86,8 @@ var d = choose2('hello', 42) // OK, d: string|number
 
 ```ts
 var x = [1, 'hello'] // x: Array<string|number>
-x[0] = 'world' // OK
-x[0] = false // Error, boolean is not string or number
+x[0] = 'world' // 正常
+x[0] = false // 错误，boolean 不是 string 或 number
 ```
 
 ## `let` 声明
@@ -95,8 +95,8 @@ x[0] = false // Error, boolean is not string or number
 在 JavaScript 中，`var` 声明会被“提升（hoist）”到所在封闭作用域的顶部。这可能会导致令人困惑的 bug：
 
 ```ts
-console.log(x) // meant to write 'y' here
-/* later in the same block */
+console.log(x) // 本意是想在这里写 'y'
+/* 同一块中后续代码 */
 var x = 'hello'
 ```
 
@@ -104,10 +104,10 @@ TypeScript 现已支持 ES6 新增的 `let` 关键字，它声明的变量具有
 
 ```ts
 if (foo) {
-  console.log(x) // Error, cannot refer to x before its declaration
+  console.log(x) // 错误，无法在其声明之前引用 x
   let x = 'hello'
 } else {
-  console.log(x) // Error, x is not declared in this block
+  console.log(x) // 错误，x 未在此块中声明
 }
 ```
 
@@ -119,7 +119,7 @@ TypeScript 支持的另一种新的 ES6 声明类型是 `const`。`const` 变量
 
 ```ts
 const halfPi = Math.PI / 2
-halfPi = 2 // Error, can't assign to a `const`
+halfPi = 2 // 错误，无法给 `const` 赋值
 ```
 
 `const` 仅在目标为 ECMAScript 6（`--target ES6`）时可用。
@@ -150,10 +150,10 @@ var greeting =
 ```ts
 var x: any = /* ... */;
 if(typeof x === 'string') {
-    console.log(x.subtr(1)); // Error, 'subtr' does not exist on 'string'
+    console.log(x.subtr(1)); // 错误，'string' 上不存在 'subtr'
 }
-// x is still any here
-x.unknown(); // OK
+// 此处 x 仍然是 any
+x.unknown(); // 正常
 ```
 
 在联合类型和 `else` 分支中使用 `typeof`：
@@ -161,10 +161,10 @@ x.unknown(); // OK
 ```ts
 var x: string | HTMLElement = /* ... */;
 if(typeof x === 'string') {
-    // x is string here, as shown above
+    // 如上所示，此处 x 为 string
 }
 else {
-    // x is HTMLElement here
+    // 此处 x 为 HTMLElement
     console.log(x.innerHTML);
 }
 ```
@@ -176,10 +176,10 @@ class Dog { woof() { } }
 class Cat { meow() { } }
 var pet: Dog|Cat = /* ... */;
 if (pet instanceof Dog) {
-    pet.woof(); // OK
+    pet.woof(); // 正常
 }
 else {
-    pet.woof(); // Error
+    pet.woof(); // 错误
 }
 ```
 
@@ -226,7 +226,7 @@ enum MyFlags {
   Awesome = 4,
   Best = Neat | Cool | Awesome,
 }
-var b = MyFlags.Best // emits var b = 7;
+var b = MyFlags.Best // 生成 var b = 7;
 ```
 
 ## `-noEmitOnError` 命令行选项

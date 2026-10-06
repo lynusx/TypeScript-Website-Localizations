@@ -13,8 +13,8 @@ TypeScript 4.8 在 `--strictNullChecks` 下带来了一系列正确性和一致�
 
 ```ts
 function f(x: unknown, y: {} | null | undefined) {
-  x = y // always worked
-  y = x // used to error, now works
+  x = y // 始终有效
+  y = x // 此前会报错，现在可以正常工作
 }
 ```
 
@@ -29,8 +29,8 @@ function f(x: unknown, y: {} | null | undefined) {
 
 ```ts
 function foo<T>(x: NonNullable<T>, y: NonNullable<NonNullable<T>>) {
-  x = y // always worked
-  y = x // used to error, now works
+  x = y // 始终有效
+  y = x // 此前会报错，现在可以正常工作
 }
 ```
 
@@ -47,7 +47,7 @@ function narrowUnknownishUnion(x: {} | null | undefined) {
 
 function narrowUnknown(x: unknown) {
   if (x) {
-    x // used to be 'unknown', now '{}'
+    x // 过去为 'unknown'，现在为 '{}'
   } else {
     x // unknown
   }
@@ -62,8 +62,8 @@ function throwIfNullable<T>(value: T): NonNullable<T> {
     throw Error('Nullable value!')
   }
 
-  // Used to fail because 'T' was not assignable to 'NonNullable<T>'.
-  // Now narrows to 'T & {}' and succeeds because that's just 'NonNullable<T>'.
+  // 过去会失败，因为 'T' 无法分配给 'NonNullable<T>'。
+  // 现在收窄为 'T & {}' 并成功，因为这正是 'NonNullable<T>'。
   return value
 }
 ```
@@ -79,8 +79,8 @@ function throwIfNullable<T>(value: T): NonNullable<T> {
 TypeScript 最近引入了一种在条件类型中为 `infer` 类型变量添加 `extends` 约束的方法：
 
 ```ts
-// Grabs the first element of a tuple if it's assignable to 'number',
-// and returns 'never' if it can't find one.
+// 如果元组的第一个元素可分配给 'number' 则提取它，
+// 如果找不到则返回 'never'。
 type TryGetNumberIfFirst<T> = T extends [infer U extends number, ...unknown[]]
   ? U
   : never
@@ -89,13 +89,13 @@ type TryGetNumberIfFirst<T> = T extends [infer U extends number, ...unknown[]]
 如果这些 `infer` 类型出现在模板字符串类型中，并且被约束为原始类型，TypeScript 现在会尝试解析出字面量类型：
 
 ```ts
-// SomeNum used to be 'number'; now it's '100'.
+// SomeNum 过去是 'number'；现在是 '100'。
 type SomeNum = '100' extends `${infer U extends number}` ? U : never
 
-// SomeBigInt used to be 'bigint'; now it's '100n'.
+// SomeBigInt 过去是 'bigint'；现在是 '100n'。
 type SomeBigInt = '100' extends `${infer U extends bigint}` ? U : never
 
-// SomeBool used to be 'boolean'; now it's 'true'.
+// SomeBool 过去是 'boolean'；现在是 'true'。
 type SomeBool = 'true' extends `${infer U extends boolean}` ? U : never
 ```
 
@@ -104,7 +104,7 @@ type SomeBool = 'true' extends `${infer U extends boolean}` ? U : never
 关于这一点需要注意：当 TypeScript 解析出这些字面量类型时，它会贪婪地尝试解析出尽可能多看起来符合相应原始类型的内容；然后，它会检查该原始类型转换回字符串后是否与原字符串内容相匹配。换句话说，TypeScript 会检查从字符串到原始类型、再转换回来的往返过程（round-trip）是否一致。如果无法完全匹配，它将回退到基础原始类型。
 
 ```ts
-// JustNumber is `number` here because TypeScript parses out `"1.0"`, but `String(Number("1.0"))` is `"1"` and doesn't match.
+// JustNumber 在这里是 `number`，因为 TypeScript 解析出了 `"1.0"`，但 `String(Number("1.0"))` 为 `"1"` 且不匹配。
 type JustNumber = '1.0' extends `${infer T extends number}` ? T : never
 ```
 
@@ -133,7 +133,7 @@ if people_at_home == []:
 ```ts
 if (peopleAtHome === []) {
   //  ~~~~~~~~~~~~~~~~~~~
-  // This condition will always return 'false' since JavaScript compares objects by reference, not value.
+  // 此条件将始终返回 'false'，因为 JavaScript 按引用而非值比较对象。
   console.log("here's where I lie, broken inside. </3")
   adoptAnimals()
 }
@@ -196,7 +196,7 @@ TypeScript 4.8 引入了一项编辑器首选项，用于从自动导入中排�
 
 ```jsonc
 {
-  // Note that `javascript.preferences.autoImportFileExcludePatterns` can be specified for JavaScript too.
+  // 注意 `javascript.preferences.autoImportFileExcludePatterns` 也可以针对 JavaScript 进行指定。
   "typescript.preferences.autoImportFileExcludePatterns": [
     "**/node_modules/@types/node",
   ],
@@ -222,16 +222,16 @@ TypeScript 4.8 引入了一项编辑器首选项，用于从自动导入中排�
 一个简单的示例如下：
 
 ```ts
-// Accepts any non-null non-undefined value
+// 接受任何非 null、非 undefined 的值
 function bar(value: {}) {
-  Object.keys(value) // This call throws on null/undefined at runtime.
+  Object.keys(value) // 该调用在运行时遇到 null/undefined 会抛出异常。
 }
 
-// Unconstrained type parameter T...
+// 无约束类型参数 T...
 function foo<T>(x: T) {
-  bar(x) // Used to be allowed, now is an error in 4.8.
+  bar(x) // 过去被允许，现在在 4.8 中会报错。
   //  ~
-  // error: Argument of type 'T' is not assignable to parameter of type '{}'.
+  // 错误：类型为 'T' 的参数不能赋给类型为 '{}' 的参数。
 }
 
 foo(undefined)
@@ -365,7 +365,7 @@ const modifiers = canHaveModifiers(myNode) ? getModifiers(myNode) : undefined
 ```ts
 // @ts-check
 
-// Will fail at runtime because 'SomeType' is not a value.
+// 在运行时会失败，因为 'SomeType' 不是一个值。
 import { someValue, SomeType } from 'some-module'
 
 /**
@@ -377,7 +377,7 @@ export const myValue = someValue
  * @typedef {string | number} MyType
  */
 
-// Will fail at runtime because 'MyType' is not a value.
+// 在运行时会失败，因为 'MyType' 不是一个值。
 export { MyType as MyExportedType }
 ```
 
@@ -430,7 +430,7 @@ TypeScript 4.8 将这些情况标记为错误，除非它们在签名中稍后�
 ```ts
 declare function makePerson(options: { name: string; age: number }): Person
 
-// or
+// 或
 
 declare function makePerson({
   name,

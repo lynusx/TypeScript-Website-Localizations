@@ -142,8 +142,8 @@ declare namespace JSX {
   }
 }
 
-;<foo /> // ok
-;<bar /> // error
+;<foo /> // 正常
+;<bar /> // 错误
 ```
 
 在上面的示例中，`<foo />` 可以正常工作，但 `<bar />` 会报错，因为它未在 `JSX.IntrinsicElements` 上指定。
@@ -165,8 +165,8 @@ declare namespace JSX {
 ```tsx
 import MyComponent from './myComponent'
 
-;<MyComponent /> // ok
-;<SomeOtherComponent /> // error
+;<MyComponent /> // 正常
+;<SomeOtherComponent /> // 错误
 ```
 
 定义基于值的元素有两种方式：
@@ -247,11 +247,11 @@ class MyComponent {
   render() {}
 }
 
-// use a construct signature
+// 使用构造签名
 const myComponent = new MyComponent()
 
-// element class type => MyComponent
-// element instance type => { render: () => void }
+// 元素类类型 => MyComponent
+// 元素实例类型 => { render: () => void }
 
 function MyFactoryFunction() {
   return {
@@ -259,11 +259,11 @@ function MyFactoryFunction() {
   }
 }
 
-// use a call signature
+// 使用调用签名
 const myComponent = MyFactoryFunction()
 
-// element class type => MyFactoryFunction
-// element instance type => { render: () => void }
+// 元素类类型 => MyFactoryFunction
+// 元素实例类型 => { render: () => void }
 ```
 
 元素实例类型值得注意的一点是，它必须能够赋值给 `JSX.ElementClass`，否则会导致错误。
@@ -283,16 +283,16 @@ function MyFactoryFunction() {
   return { render: () => {} }
 }
 
-;<MyComponent /> // ok
-;<MyFactoryFunction /> // ok
+;<MyComponent /> // 正常
+;<MyFactoryFunction /> // 正常
 
 class NotAValidComponent {}
 function NotAValidFactoryFunction() {
   return {}
 }
 
-;<NotAValidComponent /> // error
-;<NotAValidFactoryFunction /> // error
+;<NotAValidComponent /> // 错误
+;<NotAValidFactoryFunction /> // 错误
 ```
 
 ### 属性类型检查
@@ -309,7 +309,7 @@ declare namespace JSX {
   }
 }
 
-// element attributes type for 'foo' is '{bar?: boolean}'
+// 'foo' 的元素属性类型为 '{bar?: boolean}'
 ;<foo bar />
 ```
 
@@ -323,18 +323,18 @@ declare namespace JSX {
 ```tsx
 declare namespace JSX {
   interface ElementAttributesProperty {
-    props // specify the property name to use
+    props // 指定要使用的属性名称
   }
 }
 
 class MyComponent {
-  // specify the property on the element instance type
+  // 在元素实例类型上指定该属性
   props: {
     foo?: string
   }
 }
 
-// element attributes type for 'MyComponent' is '{foo?: string}'
+// 'MyComponent' 的元素属性类型为 '{foo?: string}'
 ;<MyComponent foo="bar" />
 ```
 
@@ -348,12 +348,12 @@ declare namespace JSX {
   }
 }
 
-;<foo requiredProp="bar" /> // ok
-;<foo requiredProp="bar" optionalProp={0} /> // ok
-;<foo /> // error, requiredProp is missing
-;<foo requiredProp={0} /> // error, requiredProp should be a string
-;<foo requiredProp="bar" unknownProp /> // error, unknownProp does not exist
-;<foo requiredProp="bar" some-unknown-prop /> // ok, because 'some-unknown-prop' is not a valid identifier
+;<foo requiredProp="bar" /> // 正常
+;<foo requiredProp="bar" optionalProp={0} /> // 正常
+;<foo /> // 错误，缺少 requiredProp
+;<foo requiredProp={0} /> // 错误，requiredProp 应为 string
+;<foo requiredProp="bar" unknownProp /> // 错误，unknownProp 不存在
+;<foo requiredProp="bar" some-unknown-prop /> // 正常，因为 'some-unknown-prop' 不是合法的标识符
 ```
 
 > 注意：如果属性名不是合法的 JS 标识符（例如 `data-*` 属性），即便它未在元素属性类型中找到，也不会被视为错误。
@@ -364,10 +364,10 @@ declare namespace JSX {
 
 ```tsx
 const props = { requiredProp: 'bar' }
-;<foo {...props} /> // ok
+;<foo {...props} /> // 正常
 
 const badProps = {}
-;<foo {...badProps} /> // error
+;<foo {...badProps} /> // 错误
 ```
 
 ### 子元素类型检查
@@ -379,7 +379,7 @@ const badProps = {}
 ```ts
 declare namespace JSX {
   interface ElementChildrenAttribute {
-    children: {} // specify children name to use
+    children: {} // 指定要使用的 children 名称
   }
 }
 ```
@@ -419,18 +419,18 @@ class Component extends React.Component<PropsType, {}> {
   }
 }
 
-// OK
+// 正常
 <Component name="foo">
   <h1>Hello World</h1>
 </Component>
 
-// Error: children is of type JSX.Element not array of JSX.Element
+// 错误：children 的类型为 JSX.Element，而不是 JSX.Element 数组
 <Component name="bar">
   <h1>Hello World</h1>
   <h2>Hello World</h2>
 </Component>
 
-// Error: children is of type JSX.Element not array of JSX.Element or string.
+// 错误：children 的类型为 JSX.Element，而不是 JSX.Element 数组或 string。
 <Component name="baz">
   <h1>Hello</h1>
   World
@@ -451,11 +451,11 @@ class Component extends React.Component<PropsType, {}> {
 ```ts
 namespace JSX {
     export type ElementType =
-        // All the valid lowercase tags
+        // 所有有效的小写标签
         | keyof IntrinsicElements
-        // Function components
+        // 函数式组件
         | (props: any) => Element
-        // Class components
+        // 类组件
         | new (props: any) => ElementClass;
     export interface IntrinsicAttributes extends /*...*/ {}
     export type Element = /*...*/;
@@ -508,8 +508,8 @@ class MyComponent extends React.Component<Props, {}> {
   }
 }
 
-;<MyComponent foo="bar" /> // ok
-;<MyComponent foo={0} /> // error
+;<MyComponent foo="bar" /> // 正常
+;<MyComponent foo={0} /> // 错误
 ```
 
 ### 配置 JSX

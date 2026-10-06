@@ -20,9 +20,9 @@ export function doSomeWork() {
   const path = '.some_temp_file'
   const file = fs.openSync(path, 'w+')
 
-  // use file...
+  // 使用文件...
 
-  // Close the file and delete it.
+  // 关闭文件并将其删除。
   fs.closeSync(file)
   fs.unlinkSync(path)
 }
@@ -35,17 +35,17 @@ export function doSomeWork() {
   const path = '.some_temp_file'
   const file = fs.openSync(path, 'w+')
 
-  // use file...
+  // 使用文件...
   if (someCondition()) {
-    // do some more work...
+    // 执行更多操作...
 
-    // Close the file and delete it.
+    // 关闭文件并将其删除。
     fs.closeSync(file)
     fs.unlinkSync(path)
     return
   }
 
-  // Close the file and delete it.
+  // 关闭文件并将其删除。
   fs.closeSync(file)
   fs.unlinkSync(path)
 }
@@ -59,14 +59,14 @@ export function doSomeWork() {
   const file = fs.openSync(path, 'w+')
 
   try {
-    // use file...
+    // 使用文件...
 
     if (someCondition()) {
-      // do some more work...
+      // 执行更多操作...
       return
     }
   } finally {
-    // Close the file and delete it.
+    // 关闭文件并将其删除。
     fs.closeSync(file)
     fs.unlinkSync(path)
   }
@@ -87,10 +87,10 @@ class TempFile implements Disposable {
     this.#handle = fs.openSync(path, 'w+')
   }
 
-  // other methods
+  // 其他方法
 
   [Symbol.dispose]() {
-    // Close the file and delete it.
+    // 关闭文件并将其删除。
     fs.closeSync(this.#handle)
     fs.unlinkSync(this.#path)
   }
@@ -121,10 +121,10 @@ export function doSomeWork() {
 export function doSomeWork() {
   using file = new TempFile('.some_temp_file')
 
-  // use file...
+  // 使用文件...
 
   if (someCondition()) {
-    // do some more work...
+    // 执行更多操作...
     return
   }
 }
@@ -157,22 +157,22 @@ function func() {
   using e = loggy('e')
   return
 
-  // Unreachable.
-  // Never created, never disposed.
+  // 不可达。
+  // 从未创建，从未释放。
   using f = loggy('f')
 }
 
 func()
-// Creating a
-// Creating b
-// Creating c
-// Creating d
-// Disposing d
-// Disposing c
-// Creating e
-// Disposing e
-// Disposing b
-// Disposing a
+// 创建 a
+// 创建 b
+// 创建 c
+// 创建 d
+// 释放 d
+// 释放 c
+// 创建 e
+// 释放 e
+// 释放 b
+// 释放 a
 ```
 
 `using` 声明具备容错机制；如果在作用域执行过程中抛出错误，该错误会在资源释放完成后重新抛出。另一方面，函数体本身可能按预期执行完毕，但 `Symbol.dispose` 却可能抛出异常。在这种情况下，该异常同样会被重新抛出。
@@ -204,7 +204,7 @@ try {
   func()
 } catch (e: any) {
   console.log(e.name) // SuppressedError
-  console.log(e.message) // An error was suppressed during disposal.
+  console.log(e.message) // 释放期间抑制了一个错误。
 
   console.log(e.error.name) // ErrorA
   console.log(e.error.message) // Error from a
@@ -220,7 +220,7 @@ try {
 
 ```ts
 async function doWork() {
-  // Do fake work for half a second.
+  // 模拟执行半秒钟的操作。
   await new Promise((resolve) => setTimeout(resolve, 500))
 }
 
@@ -244,22 +244,22 @@ async function func() {
   await using e = loggy('e')
   return
 
-  // Unreachable.
-  // Never created, never disposed.
+  // 不可达。
+  // 从未创建，从未释放。
   await using f = loggy('f')
 }
 
 func()
-// Constructing a
-// Constructing b
-// Constructing c
-// Constructing d
-// Disposing (async) d
-// Disposing (async) c
-// Constructing e
-// Disposing (async) e
-// Disposing (async) b
-// Disposing (async) a
+// 构造 a
+// 构造 b
+// 构造 c
+// 构造 d
+// 释放（异步）d
+// 释放（异步）c
+// 构造 e
+// 释放（异步）e
+// 释放（异步）b
+// 释放（异步）a
 ```
 
 如果你期望他人以一致的方式执行清理逻辑，依据 `Disposable` 和 `AsyncDisposable` 来定义类型可以使你的代码更加易用。实际上，生态中已有大量现存类型拥有 `dispose()` 或 `close()` 方法。例如，Visual Studio Code API 就定义了[自己的 `Disposable` 接口](https://code.visualstudio.com/api/references/vscode-api#Disposable)。浏览器以及 Node.js、Deno、Bun 等运行时中的 API，也可能会选择针对已经具有清理方法的对象（如文件句柄、连接等）支持 `Symbol.dispose` 和 `Symbol.asyncDispose`。
@@ -276,10 +276,10 @@ class TempFile implements Disposable {
     this.#handle = fs.openSync(path, 'w+')
   }
 
-  // other methods
+  // 其他方法
 
   [Symbol.dispose]() {
-    // Close the file and delete it.
+    // 关闭文件并将其删除。
     fs.closeSync(this.#handle)
     fs.unlinkSync(this.#path)
   }
@@ -288,10 +288,10 @@ class TempFile implements Disposable {
 export function doSomeWork() {
   using file = new TempFile('.some_temp_file')
 
-  // use file...
+  // 使用文件...
 
   if (someCondition()) {
-    // do some more work...
+    // 执行更多操作...
     return
   }
 }
@@ -312,10 +312,10 @@ function doSomeWork() {
     fs.unlinkSync(path)
   })
 
-  // use file...
+  // 使用文件...
 
   if (someCondition()) {
-    // do some more work...
+    // 执行更多操作...
     return
   }
 
@@ -540,27 +540,27 @@ type Pair<T> = [first: T, second: T]
 然而，TypeScript 此前有一条规则：元组不能混用带标签和不带标签的元素。换言之，元组中的元素要么全都没有标签，要么全都必须有标签。
 
 ```ts
-// ✅ fine - no labels
+// ✅ 正常 —— 无标签
 type Pair1<T> = [T, T]
 
-// ✅ fine - all fully labeled
+// ✅ 正常 —— 全部带有完整标签
 type Pair2<T> = [first: T, second: T]
 
-// ❌ previously an error
+// ❌ 此前报错
 type Pair3<T> = [first: T, T]
 //                         ~
-// Tuple members must all have names
-// or all not have names.
+// 元组成员必须全部具有名称
+// 或全部不具有名称。
 ```
 
 对于剩余元素而言，这可能很繁琐，因为我们被迫不得不加上类似 `rest` 或 `tail` 这样的标签。
 
 ```ts
-// ❌ previously an error
+// ❌ 此前报错
 type TwoOrMore_A<T> = [first: T, second: T, ...T[]]
 //                                          ~~~~~~
-// Tuple members must all have names
-// or all not have names.
+// 元组成员必须全部具有名称
+// 或全部不具有名称。
 
 // ✅
 type TwoOrMore_B<T> = [first: T, second: T, rest: ...T[]]
@@ -574,7 +574,7 @@ type HasNoLabels = [number, number]
 type Merged = [...HasNoLabels, ...HasLabels]
 //   ^ [number, number, string, string]
 //
-//     'a' and 'b' were lost in 'Merged'
+//     'a' 和 'b' 在 'Merged' 中丢失
 ```
 
 在 TypeScript 5.2 中，元组标签“非全即无”的限制已被解除。现在，在将具名元组展开到未具名元组中时，语言也能够保留标签。
@@ -589,11 +589,11 @@ type Merged = [...HasNoLabels, ...HasLabels]
 declare let array: string[] | number[]
 
 array.filter((x) => !!x)
-//    ~~~~~~ error!
-// This expression is not callable.
-//   Each member of the union type '...' has signatures,
-//   but none of those signatures are compatible
-//   with each other.
+//    ~~~~~~ 错误！
+// 此表达式不可调用。
+//   联合类型 '...' 的每个成员都有签名，
+//   但这些签名彼此之间
+//   均不兼容。
 ```
 
 在此示例中，TypeScript 会尝试查看 `filter` 的各个版本在 `string[]` 和 `number[]` 之间是否相互兼容。由于缺乏合理的策略，TypeScript 只能两手一摊表示“这行不通”。

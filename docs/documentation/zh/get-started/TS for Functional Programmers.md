@@ -72,7 +72,7 @@ TypeScript 为这些内置类型提供了对应的原始类型：
    ```ts
    let fst: (a: any, b: any) => any = (a, b) => a
 
-   // or more precisely:
+   // 或者更准确地说：
 
    let fst: <T, U>(a: T, b: U) => T = (a, b) => a
    ```

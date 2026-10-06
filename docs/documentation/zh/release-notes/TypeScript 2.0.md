@@ -20,25 +20,25 @@ TypeScript 有两种特殊类型：Null 和 Undefined，分别对应值 `null` �
 ##### 示例
 
 ```ts
-// Compiled with --strictNullChecks
+// 在启用 --strictNullChecks 下编译
 let x: number
 let y: number | undefined
 let z: number | null | undefined
-x = 1 // Ok
-y = 1 // Ok
-z = 1 // Ok
-x = undefined // Error
-y = undefined // Ok
-z = undefined // Ok
-x = null // Error
-y = null // Error
-z = null // Ok
-x = y // Error
-x = z // Error
-y = x // Ok
-y = z // Error
-z = x // Ok
-z = y // Ok
+x = 1 // 正常
+y = 1 // 正常
+z = 1 // 正常
+x = undefined // 错误
+y = undefined // 正常
+z = undefined // 正常
+x = null // 错误
+y = null // 错误
+z = null // 正常
+x = y // 错误
+x = z // 错误
+y = x // 正常
+y = z // 错误
+z = x // 正常
+z = y // 正常
 ```
 
 ## 赋值前使用检查
@@ -48,17 +48,17 @@ z = y // Ok
 ##### 示例
 
 ```ts
-// Compiled with --strictNullChecks
+// 在启用 --strictNullChecks 下编译
 let x: number
 let y: number | null
 let z: number | undefined
-x // Error, reference not preceded by assignment
-y // Error, reference not preceded by assignment
-z // Ok
+x // 错误，引用前未进行赋值
+y // 错误，引用前未进行赋值
+z // 正常
 x = 1
 y = null
-x // Ok
-y // Ok
+x // 正常
+y // 正常
 ```
 
 编译器通过执行_基于控制流的类型分析_来检查变量是否已确定被赋值。详情见后文。
@@ -68,9 +68,9 @@ y // Ok
 可选参数和可选属性会自动在其类型中加入 `undefined`，即使其类型注解没有显式包含 `undefined`。例如，以下两种类型是等价的：
 
 ```ts
-// Compiled with --strictNullChecks
-type T1 = (x?: number) => string // x has type number | undefined
-type T2 = (x?: number | undefined) => string // x has type number | undefined
+// 在启用 --strictNullChecks 下编译
+type T1 = (x?: number) => string // x 的类型为 number | undefined
+type T2 = (x?: number | undefined) => string // x 的类型为 number | undefined
 ```
 
 ## 非 null 与非 undefined 类型保护
@@ -80,16 +80,16 @@ type T2 = (x?: number | undefined) => string // x has type number | undefined
 ##### 示例
 
 ```ts
-// Compiled with --strictNullChecks
+// 在启用 --strictNullChecks 下编译
 declare function f(x: number): string
 let x: number | null | undefined
 if (x) {
-  f(x) // Ok, type of x is number here
+  f(x) // 正常，此处 x 的类型为 number
 } else {
-  f(x) // Error, type of x is number? here
+  f(x) // 错误，此处 x 的类型为 number?
 }
-let a = x != null ? f(x) : '' // Type of a is string
-let b = x && f(x) // Type of b is string | 0 | null | undefined
+let a = x != null ? f(x) : '' // a 的类型为 string
+let b = x && f(x) // b 的类型为 string | 0 | null | undefined
 ```
 
 非 null 与非 undefined 类型保护可以使用 `==`、`!=`、`===` 或 `!==` 运算符与 `null` 或 `undefined` 进行比较，例如 `x != null` 或 `x === undefined`。对目标变量类型的影响准确反映了 JavaScript 语义（例如，双等号运算符无论指定的是哪个值，都会同时检查两者；而三等号运算符只检查指定的那个值）。
@@ -110,7 +110,7 @@ interface Options {
 
 function foo(options?: Options) {
   if (options && options.location && options.location.x) {
-    const x = options.location.x // Type of x is number
+    const x = options.location.x // x 的类型为 number
   }
 }
 ```
@@ -124,22 +124,22 @@ function foo(options?: Options) {
 表达式运算符允许操作数类型包含 `null` 和/或 `undefined`，但始终产生非 null、非 undefined 类型的值。
 
 ```ts
-// Compiled with --strictNullChecks
+// 在启用 --strictNullChecks 下编译
 function sum(a: number | null, b: number | null) {
-  return a + b // Produces value of type number
+  return a + b // 产生类型为 number 的值
 }
 ```
 
 `&&` 运算符会根据左操作数类型中存在的情况，将 `null` 和/或 `undefined` 添加到右操作数的类型中；`||` 运算符则会从结果联合类型中同时移除左操作数类型中的 `null` 和 `undefined`。
 
 ```ts
-// Compiled with --strictNullChecks
+// 在启用 --strictNullChecks 下编译
 interface Entity {
   name: string
 }
 let x: Entity | null
-let s = x && x.name // s is of type string | null
-let y = x || { name: 'test' } // y is of type Entity
+let s = x && x.name // s 的类型为 string | null
+let y = x || { name: 'test' } // y 的类型为 Entity
 ```
 
 ## 类型拓宽
@@ -147,7 +147,7 @@ let y = x || { name: 'test' } // y is of type Entity
 在严格空值检查模式下，`null` 和 `undefined` 类型**不会**被拓宽为 `any`。
 
 ```ts
-let z = null // Type of z is null
+let z = null // z 的类型为 null
 ```
 
 在普通类型检查模式下，`z` 的推断类型因拓宽而为 `any`；但在严格空值检查模式下，`z` 的推断类型为 `null`（因此，在没有类型注解的情况下，`null` 是 `z` 唯一可能的值）。
@@ -157,14 +157,14 @@ let z = null // Type of z is null
 新增的后缀表达式运算符 `!` 可用于断言其操作数在类型检查器无法判断该事实的上下文中为非 null 且非 undefined。具体而言，操作 `x!` 会产生一个排除了 `null` 和 `undefined` 的 `x` 类型值。与 `<T>x` 和 `x as T` 形式的类型断言类似，非空断言运算符 `!` 在生成的 JavaScript 代码中会被直接移除。
 
 ```ts
-// Compiled with --strictNullChecks
+// 在启用 --strictNullChecks 下编译
 function validateEntity(e?: Entity) {
-  // Throw exception if e is null or invalid entity
+  // 如果 e 为 null 或无效实体则抛出异常
 }
 
 function processEntity(e?: Entity) {
   validateEntity(e)
-  let s = e!.name // Assert that e is non-null and access name
+  let s = e!.name // 断言 e 非空并访问 name
 }
 ```
 
@@ -183,18 +183,18 @@ TypeScript 2.0 为局部变量和参数实现了基于控制流的类型分析�
 ```ts
 function foo(x: string | number | boolean) {
   if (typeof x === 'string') {
-    x // type of x is string here
+    x // 此处 x 的类型为 string
     x = 1
-    x // type of x is number here
+    x // 此处 x 的类型为 number
   }
-  x // type of x is number | boolean here
+  x // 此处 x 的类型为 number | boolean
 }
 
 function bar(x: string | number) {
   if (typeof x === 'number') {
     return
   }
-  x // type of x is string here
+  x // 此处 x 的类型为 string
 }
 ```
 
@@ -205,7 +205,7 @@ function test(x: string | null) {
   if (x === null) {
     return
   }
-  x // type of x is string in remainder of function
+  x // 函数剩余部分中 x 的类型为 string
 }
 ```
 
@@ -213,15 +213,15 @@ function test(x: string | null) {
 
 ```ts
 function mumble(check: boolean) {
-  let x: number // Type doesn't permit undefined
-  x // Error, x is undefined
+  let x: number // 类型不允许为 undefined
+  x // 错误，x 为 undefined
   if (check) {
     x = 1
-    x // Ok
+    x // 正常
   }
-  x // Error, x is possibly undefined
+  x // 错误，x 可能为 undefined
   x = 2
-  x // Ok
+  x // 正常
 }
 ```
 
@@ -251,9 +251,8 @@ interface Circle {
 type Shape = Square | Rectangle | Circle
 
 function area(s: Shape) {
-  // In the following switch statement, the type of s is narrowed in each case clause
-  // according to the value of the discriminant property, thus allowing the other properties
-  // of that variant to be accessed without a type assertion.
+  // 在接下来的 switch 语句中，根据判别式属性的值，s 的类型在每个 case 子句中都被收窄，
+  // 从而允许在无需类型断言的情况下访问该变体的其他属性。
   switch (s.kind) {
     case 'square':
       return s.size * s.size
@@ -300,17 +299,17 @@ TypeScript 2.0 引入了新的原始类型 `never`，用于表示永不出现的
 以下是返回 `never` 的函数示例：
 
 ```ts
-// Function returning never must have unreachable end point
+// 返回 never 的函数必须具有无法到达的终点
 function error(message: string): never {
   throw new Error(message)
 }
 
-// Inferred return type is never
+// 推断的返回类型为 never
 function fail() {
   return error('Something failed')
 }
 
-// Function returning never must have unreachable end point
+// 返回 never 的函数必须具有无法到达的终点
 function infiniteLoop(): never {
   while (true) {}
 }
@@ -319,7 +318,7 @@ function infiniteLoop(): never {
 以下是使用返回 `never` 的函数的示例：
 
 ```ts
-// Inferred return type is number
+// 推断的返回类型为 number
 function move1(direction: 'up' | 'down') {
   switch (direction) {
     case 'up':
@@ -330,7 +329,7 @@ function move1(direction: 'up' | 'down') {
   return error('Should never get here')
 }
 
-// Inferred return type is number
+// 推断的返回类型为 number
 function move2(direction: 'up' | 'down') {
   return direction === 'up'
     ? 1
@@ -339,7 +338,7 @@ function move2(direction: 'up' | 'down') {
       : error('Should never get here')
 }
 
-// Inferred return type is T
+// 推断的返回类型为 T
 function check<T>(x: T | undefined) {
   return x || error('Undefined value')
 }
@@ -383,12 +382,12 @@ interface Point {
 }
 
 var p1: Point = { x: 10, y: 20 }
-p1.x = 5 // Error, p1.x is read-only
+p1.x = 5 // 错误，p1.x 是只读的
 
 var p2 = { x: 1, y: 1 }
-var p3: Point = p2 // Ok, read-only alias for p2
-p3.x = 5 // Error, p3.x is read-only
-p2.x = 5 // Ok, but also changes p3.x because of aliasing
+var p3: Point = p2 // 正常，p2 的只读别名
+p3.x = 5 // 错误，p3.x 是只读的
+p2.x = 5 // 正常，但由于别名引用也会修改 p3.x
 ```
 
 ```ts
@@ -396,7 +395,7 @@ class Foo {
   readonly a = 1
   readonly b: string
   constructor() {
-    this.b = 'hello' // Assignment permitted in constructor
+    this.b = 'hello' // 允许在构造函数中赋值
   }
 }
 ```
@@ -404,10 +403,10 @@ class Foo {
 ```ts
 let a: Array<number> = [0, 1, 2, 3, 4]
 let b: ReadonlyArray<number> = a
-b[5] = 5 // Error, elements are read-only
-b.push(5) // Error, no push method (because it mutates array)
-b.length = 3 // Error, length is read-only
-a = b // Error, mutating methods are missing
+b[5] = 5 // 错误，元素是只读的
+b.push(5) // 错误，没有 push 方法（因为会修改数组）
+b.length = 3 // 错误，length 是只读的
+a = b // 错误，缺少变更方法
 ```
 
 ## 为函数指定 `this` 的类型
@@ -418,7 +417,7 @@ a = b // Error, mutating methods are missing
 
 ```ts
 function f(this: void) {
-  // make sure `this` is unusable in this standalone function
+  // 确保 `this` 在此独立函数中不可用
 }
 ```
 
@@ -442,12 +441,12 @@ interface UIElement {
 class Handler {
   info: string
   onClickBad(this: Handler, e: Event) {
-    // oops, used this here. using this callback would crash at runtime
+    // 糟糕，这里使用了 this。使用此回调在运行时会崩溃
     this.info = e.message
   }
 }
 let h = new Handler()
-uiElement.addClickListener(h.onClickBad) // error!
+uiElement.addClickListener(h.onClickBad) // 错误！
 ```
 
 ## `--noImplicitThis`
@@ -609,7 +608,7 @@ declare module '*!text' {
   const content: string
   export default content
 }
-// Some do it the other way around.
+// 有些则是相反的方式。
 declare module 'json!*' {
   const value: any
   export default value
@@ -637,7 +636,7 @@ declare module 'myLibrary/*'
 ```ts
 import { readFile } from "myLibrary/fileSystem/readFile`;
 
-readFile(); // readFile is 'any'
+readFile(); // readFile 的类型为 'any'
 ```
 
 ## 支持 UMD 模块定义
@@ -658,7 +657,7 @@ export as namespace mathLib;
 ```ts
 import { isPrime } from 'math-lib'
 isPrime(2)
-mathLib.isPrime(2) // ERROR: can't use the global definition from inside a module
+mathLib.isPrime(2) // 错误：无法在模块内部使用全局定义
 ```
 
 也可以作为全局变量使用，但只能在脚本中使用（脚本是没有导入或导出的文件）。
@@ -680,7 +679,7 @@ class Bar {
   f() {
     return 1
   }
-  g?(): number // Body of optional method can be omitted
+  g?(): number // 可选方法的方法体可以省略
   h?() {
     return 2
   }
@@ -721,7 +720,7 @@ class Singleton {
   }
 }
 
-let e = new Singleton() // Error: constructor of 'Singleton' is private.
+let e = new Singleton() // 错误：'Singleton' 的构造函数是私有的。
 let v = Singleton.getInstance()
 ```
 
@@ -756,8 +755,8 @@ const headers = {
   'Content-Type': 'application/x-www-form-urlencoded',
 }
 
-httpService('', { 'Content-Type': 'application/x-www-form-urlencoded' }) // Ok
-httpService('', headers) // Now ok, previously wasn't
+httpService('', { 'Content-Type': 'application/x-www-form-urlencoded' }) // 正常
+httpService('', headers) // 现在正常，以前不支持
 ```
 
 ## 使用 `--lib` 引入内置类型声明
@@ -806,11 +805,11 @@ TypeScript 2.0 新增了两个标志，帮助你保持代码库整洁。[`noUnus
 
 ```ts
 import B, { readFile } from './b'
-//     ^ Error: `B` declared but never used
+//     ^ 错误：声明了 `B` 但从未使用
 readFile()
 
 export function write(message: string, args: string[]) {
-  //                                 ^^^^  Error: 'arg' declared but never used.
+  //                                 ^^^^  错误：声明了 'arg' 但从未使用。
   console.log(message)
 }
 ```
@@ -819,7 +818,7 @@ export function write(message: string, args: string[]) {
 
 ```ts
 function returnNull(_a) {
-  // OK
+  // 正常
   return null
 }
 ```
@@ -843,14 +842,14 @@ TypeScript 2.0 起，编译器会在 `./moduleA.ts` 或 `./moduleA.d.t` 中查�
 ```ts
 function foo(
   bar: Bar,
-  baz: Baz, // trailing commas are OK in parameter lists
+  baz: Baz, // 参数列表中允许尾随逗号
 ) {
-  // Implementation...
+  // 实现...
 }
 
 foo(
   bar,
-  baz, // and in argument lists
+  baz, // 实参列表中同样允许
 )
 ```
 
@@ -876,7 +875,7 @@ interface Error {
 interface Error {
   code?: string
   path?: string
-  stack?: string // OK
+  stack?: string // 正常
 }
 ```
 

@@ -35,10 +35,10 @@ translatable: true
 
 ```json tsconfig
 "compilerOptions": {
-  // Ensure that .d.ts files are created by tsc, but not .js files
+  // 确保由 tsc 创建 .d.ts 文件，但不创建 .js 文件
   "declaration": true,
   "emitDeclarationOnly": true,
-  // Ensure that Babel can safely transpile files in the TypeScript project
+  // 确保 Babel 可以在 TypeScript 项目中安全转译文件
   "isolatedModules": true
 }
 ```

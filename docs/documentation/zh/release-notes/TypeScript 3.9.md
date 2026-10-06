@@ -23,9 +23,9 @@ async function visitZoo(
   sealExhibit: Promise<Seal | undefined>,
 ) {
   let [lion, seal] = await Promise.all([lionExhibit, sealExhibit])
-  lion.roar() // uh oh
+  lion.roar() // 糟糕
   //  ~~~~
-  // Object is possibly 'undefined'.
+  // 对象可能为 'undefined'。
 }
 ```
 
@@ -65,7 +65,7 @@ function doStuff(abc: string, xyz: string) {
   assert(typeof abc === 'string')
   assert(typeof xyz === 'string')
 
-  // do some stuff
+  // 执行某些操作
 }
 ```
 
@@ -82,7 +82,7 @@ expect(() => {
 ```ts
 doStuff(123, 456)
 //          ~~~
-// error: Type 'number' is not assignable to type 'string'.
+// 错误：类型 'number' 不能赋值给类型 'string'。
 ```
 
 这就是为什么 TypeScript 3.9 带来了一项新特性：`// @ts-expect-error` 注释。
@@ -137,11 +137,11 @@ function hasImportantPermissions(): boolean {
   // ...
 }
 
-// Oops!
+// 糟糕！
 if (hasImportantPermissions) {
   //  ~~~~~~~~~~~~~~~~~~~~~~~
-  // This condition will always return true since the function is always defined.
-  // Did you mean to call it instead?
+  // 此条件将始终返回 true，因为该函数始终已定义。
+  // 你是不是想调用它？
   deleteAllTheImportantFiles()
 }
 ```
@@ -160,9 +160,9 @@ function getAllFiles(startFileName: string) {
   function traverse(currentPath: string) {
     return isDirectory
       ? //     ~~~~~~~~~~~
-        // This condition will always return true
-        // since the function is always defined.
-        // Did you mean to call it instead?
+        // 此条件将始终返回 true，
+        // 因为该函数始终已定义。
+        // 你是不是想调用它？
         listFilesOfDirectory(currentPath).forEach(traverse)
       : result.push(currentPath)
   }
@@ -210,10 +210,10 @@ const maxValue = 100
 
 /*start*/
 for (let i = 0; i <= maxValue; i++) {
-  // First get the squared value.
+  // 首先获取平方值。
   let square = i ** 2
 
-  // Now print the squared value.
+  // 现在打印平方值。
   console.log(square)
 }
 /*end*/
@@ -228,9 +228,9 @@ printSquares()
 
 function printSquares() {
   for (let i = 0; i <= maxValue; i++) {
-    // First get the squared value.
+    // 首先获取平方值。
     let square = i ** 2
-    // Now print the squared value.
+    // 现在打印平方值。
     console.log(square)
   }
 }
@@ -248,10 +248,10 @@ printSquares()
 
 function printSquares() {
   for (let i = 0; i <= maxValue; i++) {
-    // First get the squared value.
+    // 首先获取平方值。
     let square = i ** 2
 
-    // Now print the squared value.
+    // 现在打印平方值。
     console.log(square)
   }
 }
@@ -266,10 +266,10 @@ function printSquares() {
 有时我们可能会忘记返回函数中最后一条语句的值，尤其是在给箭头函数添加花括号时：
 
 ```ts
-// before
+// 之前
 let f1 = () => 42
 
-// oops - not the same!
+// 糟糕 - 并不相同！
 let f2 = () => {
   42
 }
@@ -353,7 +353,7 @@ Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
 ```tsx
 let directions = <span>Navigate to: Menu Bar > Tools > Options</span>;
 //                                           ~       ~
-// Unexpected token. Did you mean `{'>'}` or `&gt;`?
+// 意外的标记。你指的是 `{'>'}` 还是 `&gt;`？
 ```
 
 该错误消息附带了一个便捷的快速修复功能；感谢 [Alexander Tarasyuk](https://github.com/a-tarasyuk)，如果存在大量错误，[你可以批量应用这些更改](https://github.com/microsoft/TypeScript/pull/37436)。
@@ -364,7 +364,7 @@ let directions = <span>Navigate to: Menu Bar > Tools > Options</span>;
 
 ```ts
 interface A {
-  a: number // notice this is 'number'
+  a: number // 注意这里是 'number'
 }
 
 interface B {
@@ -372,7 +372,7 @@ interface B {
 }
 
 interface C {
-  a?: boolean // notice this is 'boolean'
+  a?: boolean // 注意这里是 'boolean'
   b: string
 }
 
@@ -440,7 +440,7 @@ Property 'kind' does not exist on type 'never'.
 
 ```ts
 function foo<T extends any>(arg: T) {
-  arg.spfjgerijghoied // no error!
+  arg.spfjgerijghoied // 无错误！
 }
 ```
 
@@ -450,7 +450,7 @@ function foo<T extends any>(arg: T) {
 function foo<T extends any>(arg: T) {
   arg.spfjgerijghoied
   //  ~~~~~~~~~~~~~~~
-  // Property 'spfjgerijghoied' does not exist on type 'T'.
+  // 类型 'T' 上不存在属性 'spfjgerijghoied'。
 }
 ```
 

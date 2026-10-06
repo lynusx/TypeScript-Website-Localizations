@@ -27,7 +27,7 @@ setVerticalAlignment('middel')
 type Options = {
   [K in 'noImplicitAny' | 'strictNullChecks' | 'strictFunctionTypes']?: boolean
 }
-// same as
+// 等同于
 //   type Options = {
 //       noImplicitAny?: boolean,
 //       strictNullChecks?: boolean,
@@ -68,7 +68,7 @@ type SeussFish = `${Quantity | Color} fish`
 type VerticalAlignment = 'top' | 'middle' | 'bottom'
 type HorizontalAlignment = 'left' | 'center' | 'right'
 
-// Takes
+// 可传入
 //   | "top-left"    | "top-center"    | "top-right"
 //   | "middle-left" | "middle-center" | "middle-right"
 //   | "bottom-left" | "bottom-center" | "bottom-right"
@@ -77,9 +77,9 @@ declare function setAlignment(
   value: `${VerticalAlignment}-${HorizontalAlignment}`,
 ): void
 
-setAlignment('top-left') // works!
-setAlignment('top-middel') // error!
-setAlignment('top-pot') // error! but good doughnuts if you're ever in Seattle
+setAlignment('top-left') // 正常！
+setAlignment('top-middel') // 错误！
+setAlignment('top-pot') // 错误！但如果你来西雅图的话，这家的甜甜圈很不错
 ```
 
 虽然在实际开发中存在**大量**此类 API 的用例，但这仍然算是一个简单的示例，因为我们本可以手动把它们列出来。
@@ -91,7 +91,7 @@ setAlignment('top-pot') // error! but good doughnuts if you're ever in Seattle
 ```ts
 let person = makeWatchedObject({
   firstName: 'Homer',
-  age: 42, // give-or-take
+  age: 42, // 大概
   location: 'Springfield',
 })
 
@@ -108,8 +108,8 @@ type PropEventSource<T> = {
   on(eventName: `${string & keyof T}Changed`, callback: () => void): void
 }
 
-/// Create a "watched object" with an 'on' method
-/// so that you can watch for changes to properties.
+/// 创建一个带有 'on' 方法的“被监听对象”，
+/// 以便你可以监听属性的变更。
 declare function makeWatchedObject<T>(obj: T): T & PropEventSource<T>
 ```
 
@@ -123,15 +123,15 @@ type PropEventSource<T> = {
 declare function makeWatchedObject<T>(obj: T): T & PropEventSource<T>
 let person = makeWatchedObject({
   firstName: 'Homer',
-  age: 42, // give-or-take
+  age: 42, // 大概
   location: 'Springfield',
 })
 
 // ---cut---
-// error!
+// 错误！
 person.on('firstName', () => {})
 
-// error!
+// 错误！
 person.on('frstNameChanged', () => {})
 ```
 
@@ -154,13 +154,13 @@ let person = makeWatchedObject({
   location: 'Springfield',
 })
 
-// works! 'newName' is typed as 'string'
+// 正常！'newName' 的类型为 'string'
 person.on('firstNameChanged', (newName) => {
-  // 'newName' has the type of 'firstName'
+  // 'newName' 的类型与 'firstName' 相同
   console.log(`new name is ${newName.toUpperCase()}`)
 })
 
-// works! 'newAge' is typed as 'number'
+// 正常！'newAge' 的类型为 'number'
 person.on('ageChanged', (newAge) => {
   if (newAge < 0) {
     console.log('warning! negative age')
@@ -197,7 +197,7 @@ type HELLO = EnthusiasticGreeting<'hello'>
 type Options = {
   [K in 'noImplicitAny' | 'strictNullChecks' | 'strictFunctionTypes']?: boolean
 }
-// same as
+// 等同于
 //   type Options = {
 //       noImplicitAny?: boolean,
 //       strictNullChecks?: boolean,
@@ -208,7 +208,7 @@ type Options = {
 或者基于其他对象类型创建新的对象类型：
 
 ```ts
-/// 'Partial<T>' is the same as 'T', but with each property marked optional.
+/// 'Partial<T>' 与 'T' 相同，但每个属性都被标记为可选。
 type Partial<T> = {
   [K in keyof T]?: T[K]
 }
@@ -222,7 +222,7 @@ type Partial<T> = {
 type MappedTypeWithNewKeys<T> = {
   [K in keyof T as NewKeyType]: T[K]
   //            ^^^^^^^^^^^^^
-  //            This is the new syntax!
+  //            这是新语法！
 }
 ```
 
@@ -247,7 +247,7 @@ type LazyPerson = Getters<Person>
 这意味着在某些情况下你不再需要使用额外的 `Omit` 辅助类型。
 
 ```ts twoslash
-// Remove the 'kind' property
+// 移除 'kind' 属性
 type RemoveKindField<T> = {
   [K in keyof T as Exclude<K, 'kind'>]: T[K]
 }
@@ -285,7 +285,7 @@ function deepFlatten<T extends readonly unknown[]>(x: T): ElementType<T>[] {
   throw 'not implemented'
 }
 
-// All of these return the type 'number[]':
+// 以下所有均返回类型 'number[]'：
 deepFlatten([1, 2, 3])
 deepFlatten([[1], [2, 3]])
 deepFlatten([[1], [[2]], [[[3]]]])
@@ -296,7 +296,7 @@ deepFlatten([[1], [[2]], [[[3]]]])
 ```ts
 type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T
 
-/// Like `promise.then(...)`, but more accurate in types.
+/// 类似于 `promise.then(...)`，但在类型上更精确。
 declare function customThen<T, U>(
   p: Promise<T>,
   onFulfilled: (value: Awaited<T>) => U,
@@ -324,7 +324,7 @@ interface Options {
   path: string
   permissions: number
 
-  // Extra properties are caught by this index signature.
+  // 额外的属性会被该索引签名捕获。
   [propName: string]: string | number
 }
 
@@ -332,8 +332,8 @@ function checkOptions(opts: Options) {
   opts.path // string
   opts.permissions // number
 
-  // These are all allowed too!
-  // They have the type 'string | number'.
+  // 这些也都是允许的！
+  // 它们的类型是 'string | number'。
   opts.yadda.toString()
   opts['foo bar baz'].toString()
   opts[Math.random()].toString()
@@ -357,7 +357,7 @@ interface Options {
   path: string
   permissions: number
 
-  // Extra properties are caught by this index signature.
+  // 额外的属性会被该索引签名捕获。
   [propName: string]: string | number
 }
 // ---cut---
@@ -365,18 +365,18 @@ function checkOptions(opts: Options) {
   opts.path // string
   opts.permissions // number
 
-  // These are not allowed with noUncheckedIndexedAccess
+  // 在启用 noUncheckedIndexedAccess 时这些是不允许的
   opts.yadda.toString()
   opts['foo bar baz'].toString()
   opts[Math.random()].toString()
 
-  // Checking if it's really there first.
+  // 先检查它是否确实存在。
   if (opts.yadda) {
     console.log(opts.yadda.toString())
   }
 
-  // Basically saying "trust me I know what I'm doing"
-  // with the '!' non-null assertion operator.
+  // 使用 '!' 非空断言运算符，
+  // 基本上表示“相信我，我知道自己在做什么”。
   opts.yadda!.toString()
 }
 ```
@@ -387,7 +387,7 @@ function checkOptions(opts: Options) {
 // @errors: 2532 18048
 // @noUncheckedIndexedAccess
 function screamLines(strs: string[]) {
-  // This will have issues
+  // 这会出现问题
   for (let i = 0; i < strs.length; i++) {
     console.log(strs[i].toUpperCase())
   }
@@ -399,12 +399,12 @@ function screamLines(strs: string[]) {
 ```ts twoslash
 // @noUncheckedIndexedAccess
 function screamLines(strs: string[]) {
-  // This works fine
+  // 这样正常运行
   for (const str of strs) {
     console.log(str.toUpperCase())
   }
 
-  // This works fine
+  // 这样正常运行
   strs.forEach((str) => {
     console.log(str.toUpperCase())
   })
@@ -608,7 +608,7 @@ function copyOwner(pet?: Animal) {
   }
 }
 
-// We could also use optional chaining here:
+// 此处我们也可以使用可选链：
 
 function copyOwner(pet?: Animal) {
   return {

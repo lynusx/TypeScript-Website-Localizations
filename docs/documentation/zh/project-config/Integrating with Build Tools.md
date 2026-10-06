@@ -258,8 +258,8 @@ npm install --save-dev svelte-preprocess
 import preprocess from 'svelte-preprocess'
 
 const config = {
-  // Consult https://github.com/sveltejs/svelte-preprocess
-  // for more information about preprocessors
+  // 请参阅 https://github.com/sveltejs/svelte-preprocess
+  // 了解有关预处理器的更多信息
   preprocess: preprocess(),
 }
 

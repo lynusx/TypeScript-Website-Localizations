@@ -80,29 +80,29 @@ type T22 = Boxed<string | number[]> // BoxedValue<string> | BoxedArray<number>;
 条件类型的分布式特性可以方便地用于**过滤**联合类型：
 
 ```ts
-type Diff<T, U> = T extends U ? never : T // Remove types from T that are assignable to U
-type Filter<T, U> = T extends U ? T : never // Remove types from T that are not assignable to U
+type Diff<T, U> = T extends U ? never : T // 从 T 中移除可赋值给 U 的类型
+type Filter<T, U> = T extends U ? T : never // 从 T 中移除不可赋值给 U 的类型
 
 type T30 = Diff<'a' | 'b' | 'c' | 'd', 'a' | 'c' | 'f'> // "b" | "d"
 type T31 = Filter<'a' | 'b' | 'c' | 'd', 'a' | 'c' | 'f'> // "a" | "c"
 type T32 = Diff<string | number | (() => void), Function> // string | number
 type T33 = Filter<string | number | (() => void), Function> // () => void
 
-type NonNullable<T> = Diff<T, null | undefined> // Remove null and undefined from T
+type NonNullable<T> = Diff<T, null | undefined> // 从 T 中移除 null 和 undefined
 
 type T34 = NonNullable<string | number | undefined> // string | number
 type T35 = NonNullable<string | string[] | null | undefined> // string | string[]
 
 function f1<T>(x: T, y: NonNullable<T>) {
-  x = y // Ok
-  y = x // Error
+  x = y // 正常
+  y = x // 错误
 }
 
 function f2<T extends string | undefined>(x: T, y: NonNullable<T>) {
-  x = y // Ok
-  y = x // Error
-  let s1: string = x // Error
-  let s2: string = y // Ok
+  x = y // 正常
+  y = x // 错误
+  let s1: string = x // 错误
+  let s2: string = y // 正常
 }
 ```
 
@@ -138,7 +138,7 @@ type T43 = NonFunctionProperties<Part> // { id: number, name: string, subparts: 
 ##### 示例
 
 ```ts
-type ElementType<T> = T extends any[] ? ElementType<T[number]> : T // Error
+type ElementType<T> = T extends any[] ? ElementType<T[number]> : T // 错误
 ```
 
 ## 条件类型中的类型推断
@@ -203,7 +203,7 @@ type T30 = ReturnType<typeof foo> // string | number
 `infer` 声明不能用于普通类型参数的约束子句中：
 
 ```ts
-type ReturnType<T extends (...args: any[]) => infer R> = R // Error, not supported
+type ReturnType<T extends (...args: any[]) => infer R> = R // 错误，不支持
 ```
 
 但是，可以通过在约束中去掉类型变量、改用条件类型来达到相同的效果：
@@ -253,14 +253,14 @@ type T13 = ReturnType<<T extends U, U extends number[]>() => T> // number[]
 type T14 = ReturnType<typeof f1> // { a: number, b: string }
 type T15 = ReturnType<any> // any
 type T16 = ReturnType<never> // any
-type T17 = ReturnType<string> // Error
-type T18 = ReturnType<Function> // Error
+type T17 = ReturnType<string> // 错误
+type T18 = ReturnType<Function> // 错误
 
 type T20 = InstanceType<typeof C> // C
 type T21 = InstanceType<any> // any
 type T22 = InstanceType<never> // any
-type T23 = InstanceType<string> // Error
-type T24 = InstanceType<Function> // Error
+type T23 = InstanceType<string> // 错误
+type T24 = InstanceType<Function> // 错误
 ```
 
 > 注意：`Exclude` 类型是[此处](https://github.com/Microsoft/TypeScript/issues/12215#issuecomment-307871458)建议的 `Diff` 类型的官方实现。我们之所以采用 `Exclude` 这个名称，是为了避免破坏现有已定义 `Diff` 的代码，而且我们认为该名称更能准确表达该类型的语义。我们并未包含 `Omit<T, K>` 类型，因为它可以很简明地编写为 `Pick<T, Exclude<keyof T, K>>`。
@@ -276,14 +276,14 @@ TypeScript 2.8 增加了映射类型添加或移除特定修饰符的能力。
 #### 示例
 
 ```ts
-type MutableRequired<T> = { -readonly [P in keyof T]-?: T[P] } // Remove readonly and ?
-type ReadonlyPartial<T> = { +readonly [P in keyof T]+?: T[P] } // Add readonly and ?
+type MutableRequired<T> = { -readonly [P in keyof T]-?: T[P] } // 移除 readonly 和 ?
+type ReadonlyPartial<T> = { +readonly [P in keyof T]+?: T[P] } // 添加 readonly 和 ?
 ```
 
 没有 `+` 或 `-` 前缀的修饰符等同于带 `+` 前缀的修饰符。因此，上面的 `ReadonlyPartial<T>` 类型等同于：
 
 ```ts
-type ReadonlyPartial<T> = { readonly [P in keyof T]?: T[P] } // Add readonly and ?
+type ReadonlyPartial<T> = { readonly [P in keyof T]?: T[P] } // 添加 readonly 和 ?
 ```
 
 利用这一能力，`lib.d.ts` 新增了 `Required<T>` 类型。
@@ -300,8 +300,8 @@ type Required<T> = { [P in keyof T]-?: T[P] }
 ##### 示例
 
 ```ts
-type Foo = { a?: string } // Same as { a?: string | undefined }
-type Bar = Required<Foo> // Same as { a: string }
+type Foo = { a?: string } // 等同于 { a?: string | undefined }
+type Bar = Required<Foo> // 等同于 { a: string }
 ```
 
 ## 改进 `keyof` 对交叉类型的处理
@@ -331,14 +331,14 @@ TypeScript 2.8 新增了对更多 `.js` 文件命名空间模式的识别支持�
 顶层的空对象字面量声明，与函数和类一样，现在会被识别为 JavaScript 中的命名空间声明。
 
 ```js
-var ns = {} // recognized as a declaration for a namespace `ns`
-ns.constant = 1 // recognized as a declaration for var `constant`
+var ns = {} // 被识别为命名空间 `ns` 的声明
+ns.constant = 1 // 被识别为变量 `constant` 的声明
 ```
 
 顶层的赋值语句应表现相同的行为，也就是说，不强制要求使用 `var` 或 `const` 声明：
 
 ```js
-app = {} // does NOT need to be `var app = {}`
+app = {} // 不需要是 `var app = {}`
 app.C = class {}
 app.f = function () {}
 app.prop = 1

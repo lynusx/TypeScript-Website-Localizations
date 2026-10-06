@@ -33,10 +33,10 @@ JS“随处运行”的特性使其成为跨平台开发的极具吸引力的选
 
   ```js
   if ('' == 0) {
-    // It is! But why??
+    // 确实如此！但为什么呢？？
   }
   if (1 < x < 3) {
-    // True for *any* value of x!
+    // 对 x 的*任何*值都为 true！
   }
   ```
 
@@ -44,7 +44,7 @@ JS“随处运行”的特性使其成为跨平台开发的极具吸引力的选
 
   ```js
   const obj = { width: 10, height: 15 }
-  // Why is this NaN? Spelling is hard!
+  // 为什么这是 NaN？拼写太难了！
   const area = obj.width * obj.heigth
   ```
 

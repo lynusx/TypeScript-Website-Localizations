@@ -39,16 +39,16 @@ TypeScript 是 JavaScript 的类型化超集，并且它自带了 DOM API 的类
 我们来看一段将 `<p>Hello, World!</p>` 元素添加到 `#app` 元素中的 TypeScript 脚本：
 
 ```ts
-// 1. Select the div element using the id property
+// 1. 使用 id 属性选择 div 元素
 const app = document.getElementById('app')
 
-// 2. Create a new <p></p> element programmatically
+// 2. 以编程方式创建新的 <p></p> 元素
 const p = document.createElement('p')
 
-// 3. Add the text content
+// 3. 添加文本内容
 p.textContent = 'Hello, World!'
 
-// 4. Append the p element to the div element
+// 4. 将 p 元素追加到 div 元素中
 app?.appendChild(p)
 ```
 
@@ -166,14 +166,14 @@ div.childNodes
 
 ```ts
 /**
- * Returns the first element that is a descendant of node that matches selectors.
+ * 返回作为匹配选择器的节点的第一个后代元素。
  */
 querySelector<K extends keyof HTMLElementTagNameMap>(selectors: K): HTMLElementTagNameMap[K] | null;
 querySelector<K extends keyof SVGElementTagNameMap>(selectors: K): SVGElementTagNameMap[K] | null;
 querySelector<E extends Element = Element>(selectors: string): E | null;
 
 /**
- * Returns all element descendants of node that match selectors.
+ * 返回匹配选择器的节点的所有后代元素。
  */
 querySelectorAll<K extends keyof HTMLElementTagNameMap>(selectors: K): NodeListOf<HTMLElementTagNameMap[K]>;
 querySelectorAll<K extends keyof SVGElementTagNameMap>(selectors: K): NodeListOf<SVGElementTagNameMap[K]>;
@@ -191,8 +191,8 @@ querySelectorAll<E extends Element = Element>(selectors: string): NodeListOf<E>;
   <li>Third times a charm.</li>
 </ul>
 
-const first = document.querySelector('li') // returns the first li element
-const all = document.querySelectorAll('li') // returns the list of all li elements
+const first = document.querySelector('li') // 返回第一个 li 元素
+const all = document.querySelectorAll('li') // 返回所有 li 元素的列表
 ```
 
 ## 想了解更多内容？

@@ -21,7 +21,7 @@ class Dog {
 }
 
 let pet: Pet
-// OK, because of structural typing
+// 正常，因为结构化类型系统
 pet = new Dog()
 ```
 
@@ -44,7 +44,7 @@ interface Pet {
 }
 
 let pet: Pet
-// dog's inferred type is { name: string; owner: string; }
+// dog 推断出的类型为 { name: string; owner: string; }
 let dog = { name: 'Lassie', owner: 'Rudd Weatherwax' }
 pet = dog
 ```
@@ -64,7 +64,7 @@ let dog = { name: 'Lassie', owner: 'Rudd Weatherwax' }
 function greet(pet: Pet) {
   console.log('Hello, ' + pet.name)
 }
-greet(dog) // OK
+greet(dog) // 正常
 ```
 
 请注意，`dog` 包含一个额外的 `owner` 属性，但这并不会引发错误。
@@ -75,7 +75,7 @@ greet(dog) // OK
 例如，因为我们显式指定了 `dog` 的类型为 `Pet`，所以以下代码是无效的：
 
 ```ts
-let dog: Pet = { name: 'Lassie', owner: 'Rudd Weatherwax' } // Error
+let dog: Pet = { name: 'Lassie', owner: 'Rudd Weatherwax' } // 错误
 ```
 
 ## 比较两个函数
@@ -87,8 +87,8 @@ let dog: Pet = { name: 'Lassie', owner: 'Rudd Weatherwax' } // Error
 let x = (a: number) => 0
 let y = (b: number, s: string) => 0
 
-y = x // OK
-x = y // Error
+y = x // 正常
+x = y // 错误
 ```
 
 要检查 `x` 是否可以赋值给 `y`，我们首先查看参数列表。
@@ -106,10 +106,10 @@ x = y // Error
 ```ts
 let items = [1, 2, 3]
 
-// Don't force these extra parameters
+// 不要强行要求这些额外的参数
 items.forEach((item, index, array) => console.log(item))
 
-// Should be OK!
+// 应该正常！
 items.forEach((item) => console.log(item))
 ```
 
@@ -119,8 +119,8 @@ items.forEach((item) => console.log(item))
 let x = () => ({ name: 'Alice' })
 let y = () => ({ name: 'Alice', location: 'Seattle' })
 
-x = y // OK
-y = x // Error, because x() lacks a location property
+x = y // 正常
+y = x // 错误，因为 x() 缺少 location 属性
 ```
 
 类型系统要求源函数的返回类型必须是目标类型返回类型的子类型。
@@ -152,17 +152,17 @@ function listenEvent(eventType: EventType, handler: (n: Event) => void) {
   /* ... */
 }
 
-// Unsound, but useful and common
+// 不健全，但实用且常见
 listenEvent(EventType.Mouse, (e: MyMouseEvent) => console.log(e.x + ',' + e.y))
 
-// Undesirable alternatives in presence of soundness
+// 追求健全性时的不理想替代方案
 listenEvent(EventType.Mouse, (e: Event) =>
   console.log((e as MyMouseEvent).x + ',' + (e as MyMouseEvent).y),
 )
 listenEvent(EventType.Mouse, ((e: MyMouseEvent) =>
   console.log(e.x + ',' + e.y)) as (e: Event) => void)
 
-// Still disallowed (clear error). Type safety enforced for wholly incompatible types
+// 仍然不允许（明确报错）。对于完全不兼容的类型强制保证类型安全
 listenEvent(EventType.Mouse, (e: number) => console.log(e))
 ```
 
@@ -181,13 +181,13 @@ listenEvent(EventType.Mouse, (e: number) => console.log(e))
 
 ```ts
 function invokeLater(args: any[], callback: (...args: any[]) => void) {
-  /* ... Invoke callback with 'args' ... */
+  /* ... 使用 'args' 调用回调 ... */
 }
 
-// Unsound - invokeLater "might" provide any number of arguments
+// 不健全 - invokeLater “可能”会提供任意数量的参数
 invokeLater([1, 2], (x, y) => console.log(x + ', ' + y))
 
-// Confusing (x and y are actually required) and undiscoverable
+// 令人困惑（实际上需要 x 和 y）且难以发现
 invokeLater([1, 2], (x?, y?) => console.log(x + ', ' + y))
 ```
 
@@ -212,7 +212,7 @@ enum Color {
 }
 
 let status = Status.Ready
-status = Color.Green // Error
+status = Color.Green // 错误
 ```
 
 ## 类
@@ -235,8 +235,8 @@ class Size {
 let a: Animal
 let s: Size
 
-a = s // OK
-s = a // OK
+a = s // 正常
+s = a // 正常
 ```
 
 ### 类中的私有成员和受保护成员
@@ -255,7 +255,7 @@ interface Empty<T> {}
 let x: Empty<number>
 let y: Empty<string>
 
-x = y // OK, because y matches structure of x
+x = y // 正常，因为 y 匹配 x 的结构
 ```
 
 在上面的代码中，`x` 和 `y` 是兼容的，因为它们的结构并没有以产生差异的方式使用类型实参。
@@ -268,7 +268,7 @@ interface NotEmpty<T> {
 let x: NotEmpty<number>
 let y: NotEmpty<string>
 
-x = y // Error, because x and y are not compatible
+x = y // 错误，因为 x 和 y 不兼容
 ```
 
 通过这种方式，指定了类型实参的泛型类型的行为与非泛型类型完全相同。
@@ -287,7 +287,7 @@ let reverse = function <U>(y: U): U {
   // ...
 }
 
-identity = reverse // OK, because (x: any) => any matches (y: any) => any
+identity = reverse // 正常，因为 (x: any) => any 匹配 (y: any) => any
 ```
 
 ## 高级主题

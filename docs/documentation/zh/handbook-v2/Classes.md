@@ -50,7 +50,7 @@ class Point {
 }
 
 const pt = new Point()
-// Prints 0, 0
+// 打印 0, 0
 console.log(`${pt.x}, ${pt.y}`)
 ```
 
@@ -95,7 +95,7 @@ TypeScript 不会分析你在构造函数中调用的方法来检测初始化行
 
 ```ts twoslash
 class OKGreeter {
-  // Not initialized, but no error
+  // 未初始化，但没有报错
   name!: string
 }
 ```
@@ -140,7 +140,7 @@ class Point {
   x: number
   y: number
 
-  // Normal signature with defaults
+  // 带有默认值的常规签名
   constructor(x = 0, y = 0) {
     this.x = x
     this.y = y
@@ -153,11 +153,11 @@ class Point {
   x: number = 0
   y: number = 0
 
-  // Constructor overloads
+  // 构造函数重载
   constructor(x: number, y: number)
   constructor(xy: string)
   constructor(x: string | number, y: number = 0) {
-    // Code logic here
+    // 此处编写代码逻辑
   }
 }
 ```
@@ -179,7 +179,7 @@ class Base {
 
 class Derived extends Base {
   constructor() {
-    // Prints a wrong value in ES5; throws exception in ES6
+    // 在 ES5 中打印错误的值；在 ES6 中抛出异常
     console.log(this.k)
     super()
   }
@@ -224,7 +224,7 @@ class C {
   x: string = 'hello'
 
   m() {
-    // This is trying to modify 'x' from line 1, not the class property
+    // 这是试图修改第 1 行的 'x'，而不是类属性
     x = 'world'
   }
 }
@@ -267,7 +267,7 @@ class Thing {
   set size(value: string | number | boolean) {
     let num = Number(value)
 
-    // Don't allow NaN, Infinity, etc
+    // 不允许 NaN、Infinity 等
 
     if (!Number.isFinite(num)) {
       this._size = 0
@@ -340,7 +340,7 @@ interface Checkable {
 
 class NameChecker implements Checkable {
   check(s) {
-    // Notice no error here
+    // 注意此处没有报错
     return s.toLowerCase() === 'ok'
     //         ^?
   }
@@ -392,9 +392,9 @@ class Dog extends Animal {
 }
 
 const d = new Dog()
-// Base class method
+// 基类方法
 d.move()
-// Derived class method
+// 派生类方法
 d.woof(3)
 ```
 
@@ -448,9 +448,9 @@ class Base {
 class Derived extends Base {}
 const d = new Derived()
 // ---cut---
-// Alias the derived instance through a base class reference
+// 通过基类引用给派生类实例起别名
 const b: Base = d
-// No problem
+// 没问题
 b.greet()
 ```
 
@@ -465,7 +465,7 @@ class Base {
 }
 
 class Derived extends Base {
-  // Make this parameter required
+  // 将该参数设为必填
   greet(name: string) {
     console.log(`Hello, ${name.toUpperCase()}`)
   }
@@ -481,7 +481,7 @@ declare class Base {
 declare class Derived extends Base {}
 // ---cut---
 const b: Base = new Derived()
-// Crashes because "name" will be undefined
+// 会崩溃，因为 "name" 为 undefined
 b.greet()
 ```
 
@@ -506,8 +506,8 @@ class AnimalHouse {
 }
 
 class DogHouse extends AnimalHouse {
-  // Does not emit JavaScript code,
-  // only ensures the types are correct
+  // 不生成 JavaScript 代码，
+  // 仅确保类型正确
   declare resident: Dog
   constructor(dog: Dog) {
     super(dog)
@@ -532,7 +532,7 @@ class Derived extends Base {
   name = 'derived'
 }
 
-// Prints "base", not "derived"
+// 打印 "base"，而不是 "derived"
 const d = new Derived()
 ```
 
@@ -584,7 +584,7 @@ class MsgError extends Error {
   constructor(m: string) {
     super(m)
 
-    // Set the prototype explicitly.
+    // 显式设置原型。
     Object.setPrototypeOf(this, MsgError.prototype)
   }
 
@@ -638,13 +638,13 @@ class Greeter {
 
 class SpecialGreeter extends Greeter {
   public howdy() {
-    // OK to access protected member here
+    // 此处可以正常访问受保护成员
     console.log('Howdy, ' + this.getName())
     //                          ^^^^^^^^^^^^^^
   }
 }
 const g = new SpecialGreeter()
-g.greet() // OK
+g.greet() // 正常
 g.getName()
 ```
 
@@ -658,11 +658,11 @@ class Base {
   protected m = 10
 }
 class Derived extends Base {
-  // No modifier, so default is 'public'
+  // 无修饰符，因此默认是 'public'
   m = 15
 }
 const d = new Derived()
-console.log(d.m) // OK
+console.log(d.m) // 正常
 ```
 
 请注意，`Derived` 本来就能够自由读取和写入 `m`，因此这并不会实质性地改变这种情况的“安全性”。
@@ -705,7 +705,7 @@ class Base {
   private x = 0
 }
 const b = new Base()
-// Can't access from outside the class
+// 无法从类外部访问
 console.log(b.x)
 ```
 
@@ -717,7 +717,7 @@ class Base {
 // ---cut---
 class Derived extends Base {
   showX() {
-    // Can't access in subclasses
+    // 无法在子类中访问
     console.log(this.x)
   }
 }
@@ -747,7 +747,7 @@ class A {
   private x = 10
 
   public sameAs(other: A) {
-    // No error
+    // 无错误
     return other.x === this.x
   }
 }
@@ -766,9 +766,9 @@ class MySafe {
 ```
 
 ```js
-// In a JavaScript file...
+// 在 JavaScript 文件中...
 const s = new MySafe()
-// Will print 12345
+// 将打印 12345
 console.log(s.secretKey)
 ```
 
@@ -782,10 +782,10 @@ class MySafe {
 
 const s = new MySafe()
 
-// Not allowed during type checking
+// 类型检查期间不允许
 console.log(s.secretKey)
 
-// OK
+// 正常
 console.log(s['secretKey'])
 ```
 
@@ -895,15 +895,15 @@ TypeScript（以及 JavaScript）中并没有类似 C# 那样被称为 `static c
 例如，在 TypeScript 中我们不需要“静态类”语法，因为普通对象（甚至顶层函数）就能同样完美地完成这项工作：
 
 ```ts twoslash
-// Unnecessary "static" class
+// 不必要的 "static" 类
 class MyStaticClass {
   static doSomething() {}
 }
 
-// Preferred (alternative 1)
+// 推荐写法（替代方案 1）
 function doSomething() {}
 
-// Preferred (alternative 2)
+// 推荐写法（替代方案 2）
 const MyHelperObject = {
   dosomething() {},
 }
@@ -992,7 +992,7 @@ const obj = {
   getName: c.getName,
 }
 
-// Prints "obj", not "MyClass"
+// 打印 "obj"，而不是 "MyClass"
 console.log(obj.getName())
 ```
 
@@ -1021,7 +1021,7 @@ class MyClass {
 }
 const c = new MyClass()
 const g = c.getName
-// Prints "MyClass" instead of crashing
+// 打印 "MyClass" 而不是崩溃
 console.log(g())
 ```
 
@@ -1039,14 +1039,14 @@ console.log(g())
 ```ts twoslash
 type SomeType = any
 // ---cut---
-// TypeScript input with 'this' parameter
+// 带有 'this' 参数的 TypeScript 输入
 function fn(this: SomeType, x: number) {
   /* ... */
 }
 ```
 
 ```js
-// JavaScript output
+// JavaScript 输出
 function fn(x) {
   /* ... */
 }
@@ -1064,10 +1064,10 @@ class MyClass {
   }
 }
 const c = new MyClass()
-// OK
+// 正常
 c.getName()
 
-// Error, would crash
+// 错误，会导致崩溃
 const g = c.getName
 console.log(g())
 ```
@@ -1235,7 +1235,7 @@ class Params {
     protected y: number,
     private z: number,
   ) {
-    // No body necessary
+    // 无需函数体
   }
 }
 const a = new Params(1, 2, 3)
@@ -1347,7 +1347,7 @@ abstract class Base {
 }
 // ---cut---
 class Derived extends Base {
-  // forgot to do anything
+  // 忘记执行任何操作
 }
 ```
 
@@ -1381,7 +1381,7 @@ TypeScript 正确地提示你正在尝试实例化一个抽象类。
 ```ts twoslash
 declare const greet: any, Base: any
 // ---cut---
-// Bad!
+// 不推荐！
 greet(Base)
 ```
 
@@ -1426,7 +1426,7 @@ class Point2 {
   y = 0
 }
 
-// OK
+// 正常
 const p: Point1 = new Point2()
 ```
 
@@ -1445,7 +1445,7 @@ class Employee {
   salary: number
 }
 
-// OK
+// 正常
 const p: Person = new Employee()
 ```
 
@@ -1459,10 +1459,10 @@ const p: Person = new Employee()
 class Empty {}
 
 function fn(x: Empty) {
-  // can't do anything with 'x', so I won't
+  // 对 'x' 做不了任何操作，所以我就不写了
 }
 
-// All OK!
+// 全部正常！
 fn(window)
 fn({})
 fn(fn)

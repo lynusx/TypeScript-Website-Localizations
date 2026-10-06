@@ -11,22 +11,22 @@ disable_toc: true
 在本地运行 `tsc` 将编译由最近的 `tsconfig.json` 定义的项目，或者你也可以通过传入所需文件的 glob 来编译一组 TypeScript 文件。当在命令行中指定了输入文件时，`tsconfig.json` 文件将被忽略。
 
 ```sh
-# Run a compile based on a backwards look through the fs for a tsconfig.json
+# 基于在文件系统中向后查找 tsconfig.json 来执行编译
 tsc
 
-# Emit JS for just the index.ts with the compiler defaults
+# 仅使用编译器默认设置针对 index.ts 输出 JS
 tsc index.ts
 
-# Emit JS for any .ts files in the folder src, with the default settings
+# 使用默认设置针对 src 文件夹中的所有 .ts 文件输出 JS
 tsc src/*.ts
 
-# Emit files referenced in with the compiler settings from tsconfig.production.json
+# 使用 tsconfig.production.json 中的编译器设置输出引用的文件
 tsc --project tsconfig.production.json
 
-# Emit d.ts files for a js file with showing compiler options which are booleans
+# 为 js 文件输出 d.ts 文件，同时显示布尔类型的编译器选项
 tsc index.js --declaration --emitDeclarationOnly
 
-# Emit a single .js file from two files via compiler options which take string arguments
+# 通过接受字符串参数的编译器选项，从两个文件输出单个 .js 文件
 tsc app.ts util.ts --target esnext --outfile index.js
 ```
 

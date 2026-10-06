@@ -18,24 +18,24 @@ translatable: true
 ```json5
 {
   compilerOptions: {
-    // This is not a complete template; it only
-    // shows relevant module-related settings.
-    // Be sure to set other important options
-    // like `target`, `lib`, and `strict`.
+    // 这不是一个完整的模板；它仅展示
+    // 与模块相关的设置。
+    // 请务必配置其他重要选项，
+    // 如 `target`、`lib` 和 `strict`。
 
-    // Required
+    // 必需
     module: 'esnext',
     moduleResolution: 'bundler',
     esModuleInterop: true,
 
-    // Consult your bundler’s documentation
+    // 请查阅打包工具的文档
     customConditions: ['module'],
 
-    // Recommended
-    noEmit: true, // or `emitDeclarationOnly`
+    // 推荐
+    noEmit: true, // 或 `emitDeclarationOnly`
     allowImportingTsExtensions: true,
     allowArbitraryExtensions: true,
-    verbatimModuleSyntax: true, // or `isolatedModules`
+    verbatimModuleSyntax: true, // 或 `isolatedModules`
   },
 }
 ```
@@ -47,20 +47,20 @@ translatable: true
 ```json5
 {
   compilerOptions: {
-    // This is not a complete template; it only
-    // shows relevant module-related settings.
-    // Be sure to set other important options
-    // like `target`, `lib`, and `strict`.
+    // 这不是一个完整的模板；它仅展示
+    // 与模块相关的设置。
+    // 请务必配置其他重要选项，
+    // 如 `target`、`lib` 和 `strict`。
 
-    // Required
+    // 必需
     module: 'nodenext',
 
-    // Implied by `"module": "nodenext"`:
+    // 由 `"module": "nodenext"` 隐式启用：
     // "moduleResolution": "nodenext",
     // "esModuleInterop": true,
     // "target": "esnext",
 
-    // Recommended
+    // 推荐
     verbatimModuleSyntax: true,
   },
 }
@@ -82,21 +82,21 @@ TypeScript 目前没有专门针对该场景的选项，但你可以结合使用
 // tsconfig.json
 {
   compilerOptions: {
-    // This is not a complete template; it only
-    // shows relevant module-related settings.
-    // Be sure to set other important options
-    // like `target`, `lib`, and `strict`.
+    // 这不是一个完整的模板；它仅展示
+    // 与模块相关的设置。
+    // 请务必配置其他重要选项，
+    // 如 `target`、`lib` 和 `strict`。
 
-    // Combined with `"type": "module"` in a local package.json,
-    // this enforces including file extensions on relative path imports.
+    // 与本地 package.json 中的 `"type": "module"` 配合使用时，
+    // 这将强制在相对路径导入中包含文件扩展名。
     module: 'nodenext',
     paths: {
-      // Point TS to local types for remote URLs:
+      // 将 TS 指向远程 URL 对应的本地类型：
       'https://esm.sh/lodash@4.17.21': [
         './node_modules/@types/lodash/index.d.ts',
       ],
-      // Optional: point bare specifier imports to an empty file
-      // to prohibit importing from node_modules specifiers not listed here:
+      // 可选：将裸说明符导入指向一个空文件，
+      // 以禁止从此处未列出的 node_modules 说明符导入：
       '*': ['./empty-file.ts'],
     },
   },
@@ -108,7 +108,7 @@ TypeScript 目前没有专门针对该场景的选项，但你可以结合使用
 ```ts
 import {} from 'lodash'
 //             ^^^^^^^^
-// File '/project/empty-file.ts' is not a module. ts(2306)
+// 文件 '/project/empty-file.ts' 不是一个模块。ts(2306)
 ```
 
 或者，你也可以使用 [import maps](https://github.com/WICG/import-maps) 在浏览器中明确将裸说明符（bare specifier）列表映射到 URL，同时依靠 `nodenext` 默认的 node_modules 查找机制或 `paths`，引导 TypeScript 找到这些裸说明符导入对应的类型声明文件：
@@ -125,8 +125,8 @@ import {} from 'lodash'
 
 ```ts
 import {} from 'lodash'
-// Browser: https://esm.sh/lodash@4.17.21
-// TypeScript: ./node_modules/@types/lodash/index.d.ts
+// 浏览器：https://esm.sh/lodash@4.17.21
+// TypeScript：./node_modules/@types/lodash/index.d.ts
 ```
 
 ## 我正在编写库
@@ -139,7 +139,7 @@ import {} from 'lodash'
 {
   compilerOptions: {
     module: 'node18',
-    target: 'es2020', // set to the *lowest* target you support
+    target: 'es2020', // 设置为你所支持的 *最低* target
     strict: true,
     verbatimModuleSyntax: true,
     declaration: true,

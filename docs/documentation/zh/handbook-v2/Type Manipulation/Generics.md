@@ -126,7 +126,7 @@ function loggingIdentity<Type>(arg: Type[]): Type[] {
 
 ```ts twoslash {1}
 function loggingIdentity<Type>(arg: Array<Type>): Array<Type> {
-  console.log(arg.length) // Array has a .length, so no more error
+  console.log(arg.length) // 数组具有 .length，因此不再报错
   return arg
 }
 ```
@@ -277,7 +277,7 @@ interface Lengthwise {
 }
 
 function loggingIdentity<Type extends Lengthwise>(arg: Type): Type {
-  console.log(arg.length) // Now we know it has a .length property, so no more error
+  console.log(arg.length) // 现在我们知道它具有 .length 属性，因此不再报错
   return arg
 }
 ```
@@ -464,8 +464,8 @@ interface AnimalProducer {
   make(): Animal
 }
 
-// A CatProducer can be used anywhere an
-// Animal producer is expected
+// CatProducer 可以用于任何
+// 期望 Animal 生产者的地方
 interface CatProducer {
   make(): Cat
 }
@@ -482,17 +482,17 @@ TypeScript 采用结构化类型系统，因此在比较两个类型时（例如
 如果发生这种情况，你可以为类型参数添加型变注解（variance annotation）以强制指定某种型变：
 
 ```ts
-// Contravariant annotation
+// 逆变标注
 interface Consumer<in T> {
   consume: (arg: T) => void
 }
 
-// Covariant annotation
+// 协变标注
 interface Producer<out T> {
   make(): T
 }
 
-// Invariant annotation
+// 不变标注
 interface ProducerConsumer<in out T> {
   consume: (arg: T) => void
   make(): T
@@ -508,15 +508,14 @@ interface ProducerConsumer<in out T> {
 例如，你不能使用型变注解来“强制”使某个类型真正成为不变的（invariant）：
 
 ```ts
-// DON'T DO THIS - variance annotation
-// does not match structural behavior
+// 请勿这样做 —— 型变标注
+// 与结构化行为不匹配
 interface Producer<in out T> {
   make(): T
 }
 
-// Not a type error -- this is a structural
-// comparison, so variance annotations are
-// not in effect
+// 不是类型错误 —— 这是一个结构化
+// 比较，因此型变标注不会生效
 const p: Producer<string | number> = {
   make(): number {
     return 42
@@ -547,7 +546,7 @@ TypeScript 使用基于实例化的比较还是结构化比较并不是一项规
 如果注解的型变明显有误，TypeScript 将会报错：
 
 ```ts
-// Error, this interface is definitely contravariant on T
+// 错误，此接口在 T 上绝对是逆变的
 interface Foo<out T> {
   consume: (arg: T) => void
 }

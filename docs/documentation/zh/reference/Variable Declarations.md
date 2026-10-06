@@ -49,7 +49,7 @@ function f() {
 }
 
 var g = f()
-g() // returns '11'
+g() // 返回 '11'
 ```
 
 在上面的例子中，`g` 捕获了在 `f` 中声明的变量 `a`。
@@ -71,7 +71,7 @@ function f() {
   }
 }
 
-f() // returns '2'
+f() // 返回 '2'
 ```
 
 ### 作用域规则
@@ -88,8 +88,8 @@ function f(shouldInitialize: boolean) {
   return x
 }
 
-f(true) // returns '10'
-f(false) // returns 'undefined'
+f(true) // 返回 '10'
+f(false) // 返回 'undefined'
 ```
 
 有些读者看到这个例子可能会感到诧异。
@@ -175,8 +175,8 @@ for (var i = 0; i < 10; i++) {
 
 ```ts
 for (var i = 0; i < 10; i++) {
-  // capture the current state of 'i'
-  // by invoking a function with its current value
+  // 通过使用 'i' 的当前值调用函数
+  // 来捕获 'i' 的当前状态
   ;(function (i) {
     setTimeout(function () {
       console.log(i)
@@ -209,12 +209,12 @@ function f(input: boolean) {
   let a = 100
 
   if (input) {
-    // Still okay to reference 'a'
+    // 依然可以引用 'a'
     let b = a + 1
     return b
   }
 
-  // Error: 'b' doesn't exist here
+  // 错误：此处不存在 'b'
   return b
 }
 ```
@@ -231,7 +231,7 @@ try {
   console.log('Oh well.')
 }
 
-// Error: 'e' doesn't exist here
+// 错误：此处不存在 'e'
 console.log(e)
 ```
 
@@ -240,7 +240,7 @@ console.log(e)
 这只是一种专业说法，用来表明你不能在 `let` 语句之前访问它们；幸运的是，TypeScript 会明确提示这一点。
 
 ```ts
-a++ // illegal to use 'a' before it's declared;
+a++ // 在声明之前使用 'a' 是非法的；
 let a
 ```
 
@@ -250,12 +250,12 @@ let a
 
 ```ts
 function foo() {
-  // okay to capture 'a'
+  // 可以捕获 'a'
   return a
 }
 
-// illegal call 'foo' before 'a' is declared
-// runtimes should throw an error here
+// 在声明 'a' 之前调用 'foo' 是非法的
+// 运行时应在此处抛出错误
 foo()
 
 let a
@@ -284,19 +284,19 @@ function f(x) {
 
 ```ts
 let x = 10
-let x = 20 // error: can't re-declare 'x' in the same scope
+let x = 20 // 错误：不能在同一作用域内重复声明 'x'
 ```
 
 两个变量并不一定都需要是块级作用域变量，TypeScript 才会报错。
 
 ```ts
 function f(x) {
-  let x = 100 // error: interferes with parameter declaration
+  let x = 100 // 错误：与参数声明冲突
 }
 
 function g() {
   let x = 100
-  var x = 100 // error: can't have both declarations of 'x'
+  var x = 100 // 错误：不能同时存在两个 'x' 的声明
 }
 ```
 
@@ -313,8 +313,8 @@ function f(condition, x) {
   return x
 }
 
-f(false, 0) // returns '0'
-f(true, 0) // returns '100'
+f(false, 0) // 返回 '0'
+f(true, 0) // 返回 '100'
 ```
 
 在更深层嵌套的作用域中引入新名称的行为称为*变量遮蔽*（shadowing）。
@@ -414,13 +414,13 @@ const kitty = {
   numLives: numLivesForCat,
 }
 
-// Error
+// 错误
 kitty = {
   name: 'Danielle',
   numLives: numLivesForCat,
 }
 
-// all "okay"
+// 都“正常”
 kitty.name = 'Rory'
 kitty.name = 'Kitty'
 kitty.name = 'Cat'
@@ -457,8 +457,8 @@ TypeScript 支持的另一个 ECMAScript 2015 特性是解构。
 ```ts
 let input = [1, 2]
 let [first, second] = input
-console.log(first) // outputs 1
-console.log(second) // outputs 2
+console.log(first) // 输出 1
+console.log(second) // 输出 2
 ```
 
 这创建了两个名为 `first` 和 `second` 的新变量。
@@ -472,7 +472,7 @@ second = input[1]
 解构同样适用于已声明的变量：
 
 ```ts
-// swap variables
+// 交换变量
 ;[first, second] = [second, first]
 ```
 
@@ -490,23 +490,23 @@ f([1, 2])
 
 ```ts
 let [first, ...rest] = [1, 2, 3, 4]
-console.log(first) // outputs 1
-console.log(rest) // outputs [ 2, 3, 4 ]
+console.log(first) // 输出 1
+console.log(rest) // 输出 [ 2, 3, 4 ]
 ```
 
 当然，既然这是 JavaScript，你完全可以忽略后面不关心的尾部元素：
 
 ```ts
 let [first] = [1, 2, 3, 4]
-console.log(first) // outputs 1
+console.log(first) // 输出 1
 ```
 
 或者忽略其他位置的元素：
 
 ```ts
 let [, second, , fourth] = [1, 2, 3, 4]
-console.log(second) // outputs 2
-console.log(fourth) // outputs 4
+console.log(second) // 输出 2
+console.log(fourth) // 输出 4
 ```
 
 ### 元组解构
@@ -522,14 +522,14 @@ let [a, b, c] = tuple // a: number, b: string, c: boolean
 超出元组元素范围进行解构会导致错误：
 
 ```ts
-let [a, b, c, d] = tuple // Error, no element at index 3
+let [a, b, c, d] = tuple // 错误，索引 3 处没有元素
 ```
 
 与数组一样，你可以使用 `...` 解构元组的剩余部分，从而得到一个更短的元组：
 
 ```ts
 let [a, ...bc] = tuple // bc: [string, boolean]
-let [a, b, c, ...d] = tuple // d: [], the empty tuple
+let [a, b, c, ...d] = tuple // d: [], 空元组
 ```
 
 或者忽略尾部元素，或其他位置的元素：
@@ -639,9 +639,9 @@ f()
 function f({ a, b = 0 } = { a: '' }): void {
   // ...
 }
-f({ a: 'yes' }) // ok, default b = 0
-f() // ok, default to { a: "" }, which then defaults b = 0
-f({}) // error, 'a' is required if you supply an argument
+f({ a: 'yes' }) // 正常，默认 b = 0
+f() // 正常，默认为 { a: "" }，进而默认 b = 0
+f({}) // 错误，如果提供了参数，则 'a' 是必填的
 ```
 
 请谨慎使用解构。
@@ -697,8 +697,8 @@ class C {
 }
 let c = new C()
 let clone = { ...c }
-clone.p // ok
-clone.m() // error!
+clone.p // 正常
+clone.m() // 错误！
 ```
 
 其次，TypeScript 编译器不允许展开泛型函数中的类型参数。
@@ -715,7 +715,7 @@ clone.m() // error!
 function f() {
   using x = new C()
   doSomethingWith(x)
-} // `x[Symbol.dispose]()` is called
+} // 调用了 `x[Symbol.dispose]()`
 ```
 
 在运行时，这*大致*等价于以下代码的效果：
@@ -738,16 +738,16 @@ function f() {
   using file = await openFile()
   file.write(text)
   doSomethingThatMayThrow()
-} // `file` is disposed, even if an error is thrown
+} // 即使抛出错误，`file` 也会被释放
 ```
 
 或者用于追踪（tracing）等有界操作：
 
 ```ts
 function f() {
-  using activity = new TraceActivity('f') // traces entry into function
+  using activity = new TraceActivity('f') // 追踪进入函数
   // ...
-} // traces exit of function
+} // 追踪退出函数
 ```
 
 与 `var`、`let` 和 `const` 不同，`using` 声明不支持解构。
@@ -783,12 +783,12 @@ function f() {
 你可以通过实现 `Disposable` 接口来表明你生成的类或对象是可释放的：
 
 ```ts
-// from the default lib:
+// 来自默认库：
 interface Disposable {
   [Symbol.dispose](): void
 }
 
-// usage:
+// 用法：
 class TraceActivity implements Disposable {
   readonly name: string
   constructor(name: string) {
@@ -807,7 +807,7 @@ function f() {
 }
 
 f()
-// prints:
+// 打印：
 //   Entering: f
 //   Hello world!
 //   Exiting: f
@@ -820,7 +820,7 @@ f()
 ```ts
 async function f() {
   await using x = new C()
-} // `await x[Symbol.asyncDispose]()` is invoked
+} // 调用了 `await x[Symbol.asyncDispose]()`
 ```
 
 当控制流离开包含 `await using` 声明的代码块时，它会调用并 _await_ 其值的 `[Symbol.asyncDispose]()` 方法。这支持异步清理操作，例如数据库事务执行回滚或提交，或者文件流在关闭前将所有待写入数据刷新（flush）到存储中。
@@ -832,12 +832,12 @@ async function f() {
 正如 `using` 依赖于实现 `Disposable` 的对象一样，`await using` 依赖于实现 `AsyncDisposable` 的对象：
 
 ```ts
-// from the default lib:
+// 来自默认库：
 interface AsyncDisposable {
   [Symbol.asyncDispose]: PromiseLike<void>
 }
 
-// usage:
+// 用法：
 class DatabaseTransaction implements AsyncDisposable {
   public success = false
   private db: Database | undefined
@@ -874,9 +874,9 @@ async function transfer(
   if (await debitAccount(db, account1, amount)) {
     await creditAccount(db, account2, amount)
   }
-  // if an exception is thrown before this line, the transaction will roll back
+  // 如果在此行之前抛出异常，事务将回滚
   tx.success = true
-  // now the transaction will commit
+  // 现在事务将被提交
 }
 ```
 
@@ -887,11 +887,11 @@ async function transfer(
 ```ts
 {
   await using x = getResourceSynchronously()
-} // performs `await x[Symbol.asyncDispose]()`
+} // 执行 `await x[Symbol.asyncDispose]()`
 
 {
   await using y = await getResourceAsynchronously()
-} // performs `await y[Symbol.asyncDispose]()`
+} // 执行 `await y[Symbol.asyncDispose]()`
 ```
 
 ### `await using` 与 `return`
@@ -905,7 +905,7 @@ function g() {
 
 async function f() {
   await using x = new C()
-  return g() // missing an `await`
+  return g() // 缺少 `await`
 }
 ```
 
@@ -914,7 +914,7 @@ async function f() {
 ```ts
 async function f() {
   try {
-    return g() // also reports an unhandled rejection
+    return g() // 同样会报告未处理的 rejection
   } finally {
     await somethingElse()
   }

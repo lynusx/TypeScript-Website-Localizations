@@ -132,17 +132,17 @@ TypeScript 3.0 引入了全新的顶类型 `unknown`。
 ##### 示例
 
 ```ts
-// In an intersection everything absorbs unknown
+// 在交叉类型中，任何类型都会吸收 unknown
 
 type T00 = unknown & null // null
 type T01 = unknown & undefined // undefined
-type T02 = unknown & null & undefined // null & undefined (which becomes never)
+type T02 = unknown & null & undefined // null & undefined（最终变为 never）
 type T03 = unknown & string // string
 type T04 = unknown & string[] // string[]
 type T05 = unknown & unknown // unknown
 type T06 = unknown & any // any
 
-// In a union an unknown absorbs everything
+// 在联合类型中，unknown 会吸收任何类型
 
 type T10 = unknown | null // unknown
 type T11 = unknown | undefined // unknown
@@ -152,47 +152,47 @@ type T14 = unknown | string[] // unknown
 type T15 = unknown | unknown // unknown
 type T16 = unknown | any // any
 
-// Type variable and unknown in union and intersection
+// 联合与交叉类型中的类型变量与 unknown
 
 type T20<T> = T & {} // T & {}
 type T21<T> = T | {} // T | {}
 type T22<T> = T & unknown // T
 type T23<T> = T | unknown // unknown
 
-// unknown in conditional types
+// 条件类型中的 unknown
 
-type T30<T> = unknown extends T ? true : false // Deferred
-type T31<T> = T extends unknown ? true : false // Deferred (so it distributes)
+type T30<T> = unknown extends T ? true : false // 延迟解析
+type T31<T> = T extends unknown ? true : false // 延迟解析（以便进行分发）
 type T32<T> = never extends T ? true : false // true
-type T33<T> = T extends never ? true : false // Deferred
+type T33<T> = T extends never ? true : false // 延迟解析
 
-// keyof unknown
+// unknown 的 keyof
 
 type T40 = keyof any // string | number | symbol
 type T41 = keyof unknown // never
 
-// Only equality operators are allowed with unknown
+// unknown 仅允许使用相等性运算符
 
 function f10(x: unknown) {
   x == 5
   x !== 10
-  x >= 0 // Error
-  x + 1 // Error
-  x * 2 // Error
-  ;-x // Error
-  ;+x // Error
+  x >= 0 // 错误
+  x + 1 // 错误
+  x * 2 // 错误
+  ;-x // 错误
+  ;+x // 错误
 }
 
-// No property accesses, element accesses, or function calls
+// 禁止属性访问、元素访问或函数调用
 
 function f11(x: unknown) {
-  x.foo // Error
-  x[5] // Error
-  x() // Error
-  new x() // Error
+  x.foo // 错误
+  x[5] // 错误
+  x() // 错误
+  new x() // 错误
 }
 
-// typeof, instanceof, and user defined type predicates
+// typeof、instanceof 以及用户自定义类型谓词
 
 declare function isFunction(x: unknown): x is Function
 
@@ -208,13 +208,13 @@ function f20(x: unknown) {
   }
 }
 
-// Homomorphic mapped type over unknown
+// 针对 unknown 的同态映射类型
 
 type T50<T> = { [P in keyof T]: number }
 type T51 = T50<any> // { [x: string]: number }
 type T52 = T50<unknown> // {}
 
-// Anything is assignable to unknown
+// 任何类型均可赋值给 unknown
 
 function f21<T>(pAny: any, pNever: never, pT: T) {
   let x: unknown
@@ -228,41 +228,41 @@ function f21<T>(pAny: any, pNever: never, pT: T) {
   x = pT
 }
 
-// unknown assignable only to itself and any
+// unknown 仅可赋值给自身和 any
 
 function f22(x: unknown) {
   let v1: any = x
   let v2: unknown = x
-  let v3: object = x // Error
-  let v4: string = x // Error
-  let v5: string[] = x // Error
-  let v6: {} = x // Error
-  let v7: {} | null | undefined = x // Error
+  let v3: object = x // 错误
+  let v4: string = x // 错误
+  let v5: string[] = x // 错误
+  let v6: {} = x // 错误
+  let v7: {} | null | undefined = x // 错误
 }
 
-// Type parameter 'T extends unknown' not related to object
+// 类型参数 'T extends unknown' 与 object 无关
 
 function f23<T extends unknown>(x: T) {
-  let y: object = x // Error
+  let y: object = x // 错误
 }
 
-// Anything but primitive assignable to { [x: string]: unknown }
+// 除了原始类型外，任何类型均可赋值给 { [x: string]: unknown }
 
 function f24(x: { [x: string]: unknown }) {
   x = {}
   x = { a: 5 }
   x = [1, 2, 3]
-  x = 123 // Error
+  x = 123 // 错误
 }
 
-// Locals of type unknown always considered initialized
+// unknown 类型的局部变量始终被视为已初始化
 
 function f25() {
   let x: unknown
   let y = x
 }
 
-// Spread of unknown causes result to be unknown
+// 展开 unknown 会导致结果为 unknown
 
 function f26(x: {}, y: unknown, z: any) {
   let o1 = { a: 42, ...x } // { a: number }
@@ -270,20 +270,20 @@ function f26(x: {}, y: unknown, z: any) {
   let o3 = { a: 42, ...x, ...y, ...z } // any
 }
 
-// Functions with unknown return type don't need return expressions
+// 返回类型为 unknown 的函数不需要 return 表达式
 
 function f27(): unknown {}
 
-// Rest type cannot be created from unknown
+// 无法从 unknown 创建 rest 类型
 
 function f28(x: unknown) {
-  let { ...a } = x // Error
+  let { ...a } = x // 错误
 }
 
-// Class properties of type unknown don't need definite assignment
+// unknown 类型的类属性不需要确定赋值断言
 
 class C1 {
-  a: string // Error
+  a: string // 错误
   b: unknown
   c: any
 }
@@ -312,7 +312,7 @@ export class Greet extends React.Component<Props> {
   static defaultProps = { name: 'world' }
 }
 
-// Type-checks! No type assertions needed!
+// 类型检查通过！无需类型断言！
 let el = <Greet />
 ```
 

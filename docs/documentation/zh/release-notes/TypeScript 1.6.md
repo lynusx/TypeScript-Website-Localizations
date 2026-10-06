@@ -20,7 +20,7 @@ TypeScript 1.6 引入了全新的 `.tsx` 文件扩展名。
 
 ```ts
 var x = <any>foo
-// is equivalent to:
+// 等价于：
 var x = foo as any
 ```
 
@@ -41,8 +41,8 @@ class MyComponent extends React.Component<Props, {}> {
   }
 }
 
-<MyComponent name="bar" />; // OK
-<MyComponent name={0} />; // error, `name` is not a number
+<MyComponent name="bar" />; // 正常
+<MyComponent name={0} />; // 错误，`name` 不是数字
 ```
 
 #### 使用其他 JSX 框架
@@ -195,7 +195,7 @@ let Point = class {
     return Math.sqrt(this.x * this.x + this.y * this.y)
   }
 }
-var p = new Point(3, 4) // p has anonymous class type
+var p = new Point(3, 4) // p 具有匿名类类型
 console.log(p.length())
 ```
 
@@ -208,12 +208,12 @@ TypeScript 1.6 增加了对类继承求值结果为构造函数的任意表达�
 示例：
 
 ```ts
-// Extend built-in types
+// 继承内置类型
 
 class MyArray extends Array<number> {}
 class MyError extends Error {}
 
-// Extend computed base class
+// 继承计算基类
 
 class ThingA {
   getGreeting() {
@@ -260,9 +260,9 @@ abstract class Base {
   }
 }
 
-let x = new Base() // Error, 'Base' is abstract
+let x = new Base() // 错误，'Base' 是抽象类
 
-// Error, must either be 'abstract' or implement concrete 'getThing'
+// 错误，必须要么声明为 'abstract'，要么实现具体的 'getThing'
 class Derived1 extends Base {}
 
 class Derived2 extends Base {
@@ -270,14 +270,14 @@ class Derived2 extends Base {
     return 'hello'
   }
   foo() {
-    super.getThing() // Error: cannot invoke abstract members through 'super'
+    super.getThing() // 错误：无法通过 'super' 调用抽象成员
   }
 }
 
-var x = new Derived2() // OK
-var y: Base = new Derived2() // Also OK
-y.getThing() // OK
-y.getOtherThing() // OK
+var x = new Derived2() // 正常
+var y: Base = new Derived2() // 同样正常
+y.getThing() // 正常
+y.getOtherThing() // 正常
 ```
 
 ## 泛型类型别名
@@ -307,17 +307,17 @@ TypeScript 1.6 实施了更严格的对象字面量赋值检查，旨在捕获�
 
 ```ts
 var x: { foo: number }
-x = { foo: 1, baz: 2 } // Error, excess property `baz`
+x = { foo: 1, baz: 2 } // 错误，多余的属性 `baz`
 
 var y: { foo: number; bar?: number }
-y = { foo: 1, baz: 2 } // Error, excess or misspelled property `baz`
+y = { foo: 1, baz: 2 } // 错误，多余或拼写错误的属性 `baz`
 ```
 
 类型可以通过包含索引签名来显式允许存在多余属性：
 
 ```ts
 var x: { foo: number; [x: string]: any }
-x = { foo: 1, baz: 2 } // Ok, `baz` matched by index signature
+x = { foo: 1, baz: 2 } // 正常，`baz` 匹配索引签名
 ```
 
 ## ES6 生成器
@@ -329,9 +329,9 @@ TypeScript 1.6 增加了在面向 ES6 时的生成器支持。
 ```ts
 function* g(): Iterable<string> {
   for (var i = 0; i < 100; i++) {
-    yield '' // string is assignable to string
+    yield '' // string 可赋值给 string
   }
-  yield* otherStringGenerator() // otherStringGenerator must be iterable and element type assignable to string
+  yield* otherStringGenerator() // otherStringGenerator 必须是可迭代的，且元素类型可赋值给 string
 }
 ```
 
@@ -341,9 +341,9 @@ function* g(): Iterable<string> {
 ```ts
 function* g() {
   for (var i = 0; i < 100; i++) {
-    yield '' // infer string
+    yield '' // 推断为 string
   }
-  yield* otherStringGenerator() // infer element type of otherStringGenerator
+  yield* otherStringGenerator() // 推断 otherStringGenerator 的元素类型
 }
 ```
 
@@ -361,25 +361,25 @@ _async 函数_ 必须提供指向兼容 `Promise` 类型的返回类型注解。
 ```ts
 var p: Promise<number> = /* ... */;
 async function fn(): Promise<number> {
-  var i = await p; // suspend execution until 'p' is settled. 'i' has type "number"
+  var i = await p; // 暂停执行，直到 'p' 状态变为 settled。'i' 的类型为 "number"
   return 1 + i;
 }
 
-var a = async (): Promise<number> => 1 + await p; // suspends execution.
-var a = async () => 1 + await p; // suspends execution. return type is inferred as "Promise<number>" when compiling with --target ES6
+var a = async (): Promise<number> => 1 + await p; // 暂停执行。
+var a = async () => 1 + await p; // 暂停执行。使用 --target ES6 编译时返回类型推断为 "Promise<number>"
 var fe = async function(): Promise<number> {
-  var i = await p; // suspend execution until 'p' is settled. 'i' has type "number"
+  var i = await p; // 暂停执行，直到 'p' 状态变为 settled。'i' 的类型为 "number"
   return 1 + i;
 }
 
 class C {
   async m(): Promise<number> {
-    var i = await p; // suspend execution until 'p' is settled. 'i' has type "number"
+    var i = await p; // 暂停执行，直到 'p' 状态变为 settled。'i' 的类型为 "number"
     return 1 + i;
   }
 
   async get p(): Promise<number> {
-    var i = await p; // suspend execution until 'p' is settled. 'i' has type "number"
+    var i = await p; // 暂停执行，直到 'p' 状态变为 settled。'i' 的类型为 "number"
     return 1 + i;
   }
 }
@@ -418,8 +418,8 @@ interface Foo {
 }
 
 function bar(foo: Foo) {
-  foo.x = 1 // OK, declared in the class Foo
-  foo.y = '1' // OK, declared in the interface Foo
+  foo.x = 1 // 正常，在类 Foo 中声明
+  foo.y = '1' // 正常，在接口 Foo 中声明
 }
 ```
 
@@ -438,7 +438,7 @@ function isCat(a: any): a is Cat {
 
 var x: Cat | Dog
 if (isCat(x)) {
-  x.meow() // OK, x is Cat in this block
+  x.meow() // 正常，在此块中 x 为 Cat
 }
 ```
 

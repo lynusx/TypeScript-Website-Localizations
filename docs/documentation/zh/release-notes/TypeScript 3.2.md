@@ -14,10 +14,10 @@ function foo(a: number, b: string): string {
   return a + b
 }
 
-let a = foo.apply(undefined, [10]) // error: too few arguments
-let b = foo.apply(undefined, [10, 20]) // error: 2nd argument is a number
-let c = foo.apply(undefined, [10, 'hello', 30]) // error: too many arguments
-let d = foo.apply(undefined, [10, 'hello']) // okay! returns a string
+let a = foo.apply(undefined, [10]) // 错误：参数太少
+let b = foo.apply(undefined, [10, 20]) // 错误：第 2 个参数是数字
+let c = foo.apply(undefined, [10, 'hello', 30]) // 错误：参数太多
+let d = foo.apply(undefined, [10, 'hello']) // 正常！返回字符串
 ```
 
 这是通过在 `lib.d.ts` 中引入两个新类型 `CallableFunction` 和 `NewableFunction` 来实现的。这两个类型分别针对常规函数和构造函数，包含了专用于 `bind`、`call` 和 `apply` 的泛型方法声明。这些声明利用泛型 rest 参数（参见 #24897）以强类型方式捕获并反映参数列表。在 [`strictBindCallApply`](/tsconfig#strictBindCallApply) 模式下，这些声明将取代 `Function` 类型所提供的（非常宽泛的）声明。
@@ -88,11 +88,11 @@ TypeScript 中的 BigInt 支持引入了一个名为 `bigint`（全部小写）�
 你可以通过调用 `BigInt()` 函数，或者在任何整数字面量末尾添加 `n` 写出 BigInt 字面量来获取 `bigint`：
 
 ```ts
-let foo: bigint = BigInt(100) // the BigInt function
-let bar: bigint = 100n // a BigInt literal
+let foo: bigint = BigInt(100) // BigInt 函数
+let bar: bigint = 100n // BigInt 字面量
 
-// *Slaps roof of fibonacci function*
-// This bad boy returns ints that can get *so* big!
+// *拍了拍 fibonacci 函数的车顶*
+// 这个大家伙能返回*超级大*的整数！
 function fibonacci(n: bigint) {
   let result = 1n
   for (let last = 0n, i = 0n; i < n; i++) {
@@ -112,17 +112,17 @@ fibonacci(10000n)
 declare let foo: number
 declare let bar: bigint
 
-foo = bar // error: Type 'bigint' is not assignable to type 'number'.
-bar = foo // error: Type 'number' is not assignable to type 'bigint'.
+foo = bar // 错误：类型 'bigint' 不能赋值给类型 'number'。
+bar = foo // 错误：类型 'number' 不能赋值给类型 'bigint'。
 ```
 
 正如 ECMAScript 规范所规定，在算术运算中混合使用 `number` 和 `bigint` 是错误的。
 必须显式将值转换为 `BigInt`。
 
 ```ts
-console.log(3.141592 * 10000n) // error
-console.log(3145 * 10n) // error
-console.log(BigInt(3145) * 10n) // okay!
+console.log(3.141592 * 10000n) // 错误
+console.log(3145 * 10n) // 错误
+console.log(BigInt(3145) * 10n) // 正常！
 ```
 
 同样需要注意的是，使用 `typeof` 运算符时，`bigint` 会产生一个新的字符串：字符串 `"bigint"`。
@@ -166,11 +166,11 @@ type Result<T> = { error: Error; data: null } | { error: null; data: T }
 
 function unwrap<T>(result: Result<T>) {
   if (result.error) {
-    // Here 'error' is non-null
+    // 此处 'error' 非空
     throw result.error
   }
 
-  // Now 'data' is non-null
+  // 此时 'data' 非空
   return result.data
 }
 ```
@@ -184,7 +184,7 @@ TypeScript 3.2 现在支持从 `node_modules` 解析 `tsconfig.json`。当在 `t
   "extends": "@my-team/tsconfig-base",
   "include": ["./**/*"],
   "compilerOptions": {
-    // Override certain options on a project-by-project basis.
+    // 根据各个具体项目覆盖特定选项。
     "strictBindCallApply": false,
   },
 }
@@ -213,12 +213,12 @@ Object.defineProperty(obj, 'x', { value: 'hello', writable: false })
 
 obj.x.toLowercase()
 //    ~~~~~~~~~~~
-//    error:
-//     Property 'toLowercase' does not exist on type 'string'.
-//     Did you mean 'toLowerCase'?
+//    错误：
+//     类型 'string' 上不存在属性 'toLowercase'。
+//     你指的是 'toLowerCase' 吗？
 
 obj.x = 'world'
 //  ~
-//  error:
-//   Cannot assign to 'x' because it is a read-only property.
+//  错误：
+//   无法分配给 'x'，因为它是只读属性。
 ```

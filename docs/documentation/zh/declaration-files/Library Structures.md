@@ -94,7 +94,7 @@ define(..., ['someLib'], function(someLib) {
 
 ```js
 const x = require('foo')
-// Note: calling 'x' as a function
+// 注意：将 'x' 作为函数调用
 const y = x(42)
 ```
 
@@ -102,7 +102,7 @@ const y = x(42)
 
 ```js
 const x = require('bar')
-// Note: using 'new' operator on the imported variable
+// 注意：对导入的变量使用 'new' 运算符
 const y = new x('hello')
 ```
 
@@ -149,17 +149,17 @@ function createGreeting(s) {
 或者像这样：
 
 ```js
-// Web
+// Web 环境
 window.createGreeting = function (s) {
   return 'Hello, ' + s
 }
 
-// Node
+// Node 环境
 global.createGreeting = function (s) {
   return 'Hello, ' + s
 }
 
-// Potentially any runtime
+// 适用于任何潜在的运行时环境
 globalThis.createGreeting = function (s) {
   return 'Hello, ' + s
 }
@@ -301,7 +301,7 @@ declare namespace cats {
 而*不要*这样写：
 
 ```ts
-// at top-level
+// 顶层作用域
 interface CatsKittySettings {}
 ```
 

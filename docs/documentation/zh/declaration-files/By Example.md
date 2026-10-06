@@ -160,7 +160,7 @@ declare namespace GreetingLib {
 
 ```ts
 declare namespace GreetingLib.Options {
-  // Refer to via GreetingLib.Options.Log
+  // 通过 GreetingLib.Options.Log 引用
   interface Log {
     verbose?: boolean
   }
@@ -225,7 +225,7 @@ _声明_
 如果变量具有块级作用域，也可以使用 `declare let`。
 
 ```ts
-/** The number of widgets present */
+/** 当前小部件（widget）的数量 */
 declare var foo: number
 ```
 

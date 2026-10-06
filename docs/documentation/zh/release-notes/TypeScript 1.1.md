@@ -19,10 +19,10 @@ module MyControllers {
     animals: Animal[]
   }
   export class ZooController {
-    // Used to be an error (cannot expose ZooScope), but now is only
-    // an error when trying to generate .d.ts files
+    // 过去会导致错误（无法暴露 ZooScope），但现在仅在
+    // 尝试生成 .d.ts 文件时报错
     constructor(public $scope: ZooScope) {}
-    /* more code */
+    /* 更多代码 */
   }
 }
 ```

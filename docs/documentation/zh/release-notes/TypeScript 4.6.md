@@ -20,8 +20,8 @@ class Derived extends Base {
   someProperty = true
 
   constructor() {
-    // error!
-    // have to call 'super()' first because it needs to initialize 'someProperty'.
+    // 错误！
+    // 必须先调用 'super()'，因为它需要初始化 'someProperty'。
     doSomeStuff()
     super()
   }
@@ -45,11 +45,11 @@ type Action =
 
 function processAction(action: Action) {
   if (action.kind === 'NumberContents') {
-    // `action.payload` is a number here.
+    // 此时 `action.payload` 是一个数字。
     let num = action.payload * 2
     // ...
   } else if (action.kind === 'StringContents') {
-    // `action.payload` is a string here.
+    // 此时 `action.payload` 是一个字符串。
     const str = action.payload.trim()
     // ...
   }
@@ -105,10 +105,10 @@ interface Target {
 
 function check(source: Source, target: Target) {
   target = source
-  // error!
-  // Type 'Source' is not assignable to type 'Target'.
-  //   Types of property 'prop' are incompatible.
-  //     Type 'string' is not assignable to type 'number'.
+  // 错误！
+  // 类型 'Source' 不能分配给类型 'Target'。
+  //   属性 'prop' 的类型不兼容。
+  //     类型 'string' 不能分配给类型 'number'。
 }
 ```
 
@@ -184,13 +184,13 @@ function processRecord<K extends keyof TypeMap>(record: UnionRecord<K>) {
   record.f(record.v)
 }
 
-// This call used to have issues - now works!
+// 该调用过去曾存在问题 —— 现在可以正常工作！
 processRecord({
   kind: 'string',
   v: 'hello!',
 
-  // 'val' used to implicitly have the type 'string | number | boolean',
-  // but now is correctly inferred to just 'string'.
+  // 'val' 过去曾隐式具有类型 'string | number | boolean'，
+  // 但现在被正确推断为仅 'string'。
   f: (val) => {
     console.log(val.toUpperCase())
   },
@@ -224,10 +224,10 @@ type Func = (...args: ['a', number] | ['b', string]) => void
 
 const f1: Func = (kind, payload) => {
   if (kind === 'a') {
-    payload.toFixed() // 'payload' narrowed to 'number'
+    payload.toFixed() // 'payload' 被收窄为 'number'
   }
   if (kind === 'b') {
-    payload.toUpperCase() // 'payload' narrowed to 'string'
+    payload.toUpperCase() // 'payload' 被收窄为 'string'
   }
 }
 
@@ -275,8 +275,8 @@ export const el = _jsx('div', { children: 'foo' }, void 0)
 
 ```js
 /**
- * @param x The first operand
- * @param y The second operand
+ * @param x 第一个操作数
+ * @param y 第二个操作数
  */
 function add(x, y) {
   return x + y
@@ -288,8 +288,8 @@ function add(x, y) {
 
 ```js
 /**
- * @param x {number} The first operand
- * @param y {number} The second operand
+ * @param x {number} 第一个操作数
+ * @param y {number} 第二个操作数
  */
 function add(a, b) {
   return a + b
@@ -315,13 +315,13 @@ TypeScript 扩展了其在 JavaScript 文件中的语法和绑定错误检查范
 ```ts
 const foo = 1234
 //    ~~~
-// error: Cannot redeclare block-scoped variable 'foo'.
+// 错误：无法重新声明块作用域变量 'foo'。
 
 // ...
 
 const foo = 5678
 //    ~~~
-// error: Cannot redeclare block-scoped variable 'foo'.
+// 错误：无法重新声明块作用域变量 'foo'。
 ```
 
 再比如，TypeScript 会提示修饰符是否被错误使用：
@@ -330,7 +330,7 @@ const foo = 5678
 function container() {
   export function foo() {
     //  ~~~~~~
-    // error: Modifiers cannot appear here.
+    // 错误：修饰符不能出现在此处。
   }
 }
 ```
@@ -368,8 +368,8 @@ class Thing {
 function foo<T extends Thing>(x: T) {
   let { someProperty, ...rest } = x
 
-  // Used to work, is now an error!
-  // Property 'someMethod' does not exist on type 'Omit<T, "someProperty" | "someMethod">'.
+  // 过去可以运行，现在会报错！
+  // 类型 'Omit<T, "someProperty" | "someMethod">' 上不存在属性 'someMethod'。
   rest.someMethod()
 }
 ```
@@ -392,8 +392,8 @@ class Thing {
   someOtherMethod() {
     let { someProperty, ...rest } = this
 
-    // Used to work, is now an error!
-    // Property 'someMethod' does not exist on type 'Omit<T, "someProperty" | "someMethod">'.
+    // 过去可以运行，现在会报错！
+    // 类型 'Omit<T, "someProperty" | "someMethod">' 上不存在属性 'someMethod'。
     rest.someMethod()
   }
 }

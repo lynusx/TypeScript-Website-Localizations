@@ -87,13 +87,13 @@ TypeScript 此前没有专门表示非原始类型的类型，即不是 `number`
 ```ts
 declare function create(o: object | null): void
 
-create({ prop: 0 }) // OK
-create(null) // OK
+create({ prop: 0 }) // 正常
+create(null) // 正常
 
-create(42) // Error
-create('string') // Error
-create(false) // Error
-create(undefined) // Error
+create(42) // 错误
+create('string') // 错误
+create(false) // 错误
+create(undefined) // 错误
 ```
 
 ## `new.target` 支持
@@ -107,8 +107,8 @@ create(undefined) // Error
 ```ts
 class CustomError extends Error {
   constructor(message?: string) {
-    super(message) // 'Error' breaks prototype chain here
-    Object.setPrototypeOf(this, new.target.prototype) // restore prototype chain
+    super(message) // 'Error' 在此处打破了原型链
+    Object.setPrototypeOf(this, new.target.prototype) // 恢复原型链
   }
 }
 ```
@@ -120,8 +120,8 @@ var CustomError = (function (_super) {
   __extends(CustomError, _super)
   function CustomError() {
     var _newTarget = this.constructor
-    var _this = _super.apply(this, arguments) // 'Error' breaks prototype chain here
-    _this.__proto__ = _newTarget.prototype // restore prototype chain
+    var _this = _super.apply(this, arguments) // 'Error' 在此处打破了原型链
+    _this.__proto__ = _newTarget.prototype // 恢复原型链
     return _this
   }
   return CustomError
@@ -133,7 +133,7 @@ var CustomError = (function (_super) {
 ```ts
 function f() {
   if (new.target) {
-    /* called via 'new' */
+    /* 通过 'new' 调用 */
   }
 }
 ```
@@ -144,7 +144,7 @@ function f() {
 function f() {
   var _newTarget = this && this instanceof f ? this.constructor : void 0
   if (_newTarget) {
-    /* called via 'new' */
+    /* 通过 'new' 调用 */
   }
 }
 ```

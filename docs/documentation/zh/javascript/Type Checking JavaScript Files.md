@@ -26,11 +26,11 @@ class C {
   }
   method() {
     this.constructorOnly = false
-    this.constructorUnknown = 'plunkbat' // ok, constructorUnknown is string | undefined
-    this.methodOnly = 'ok' // ok, but methodOnly could also be undefined
+    this.constructorUnknown = 'plunkbat' // 正常，constructorUnknown 的类型为 string | undefined
+    this.methodOnly = 'ok' // 正常，但 methodOnly 也可以是 undefined
   }
   method2() {
-    this.methodOnly = true // also, ok, methodOnly's type is string | boolean | undefined
+    this.methodOnly = true // 同样正常，methodOnly 的类型为 string | boolean | undefined
   }
 }
 ```
@@ -52,7 +52,7 @@ class C {
 }
 
 let c = new C()
-c.prop = 0 // OK
+c.prop = 0 // 正常
 c.count = 'string'
 ```
 
@@ -71,7 +71,7 @@ function C() {
 }
 C.prototype.method = function () {
   this.constructorOnly = false
-  this.constructorUnknown = 'plunkbat' // OK, the type is string | undefined
+  this.constructorUnknown = 'plunkbat' // 正常，类型为 string | undefined
 }
 ```
 
@@ -82,10 +82,10 @@ C.prototype.method = function () {
 同样，`require` 函数调用会被识别为模块导入。例如：
 
 ```js
-// same as `import module "fs"`
+// 等同于 `import module "fs"`
 const fs = require('fs')
 
-// same as `export function readFile`
+// 等同于 `export function readFile`
 module.exports.readFile = function (f) {
   return fs.readFileSync(f)
 }
@@ -137,11 +137,11 @@ var ns = (function (n) {
 })()
 ns.CONST = 1
 
-// defaulting to global
+// 默认指向 global
 var assign =
   assign ||
   function () {
-    // code goes here
+    // 代码写在这里
   }
 assign.extra = 1
 ```
@@ -155,7 +155,7 @@ assign.extra = 1
 
 ```js twoslash
 var obj = { a: 1 }
-obj.b = 2 // Allowed
+obj.b = 2 // 允许
 ```
 
 对象字面量的行为就像它们具有索引签名 `[x:string]: any` 一样，这使得它们可以被视为开放的映射（open map）而非封闭的对象。
@@ -206,9 +206,9 @@ function bar(a, b) {
   console.log(a + ' ' + b)
 }
 
-bar(1) // OK, second argument considered optional
+bar(1) // 正常，第二个参数被视为可选参数
 bar(1, 2)
-bar(1, 2, 3) // Error, too many arguments
+bar(1, 2, 3) // 错误，参数过多
 ```
 
 带有 JSDoc 注解的函数不受此规则限制。
@@ -216,7 +216,7 @@ bar(1, 2, 3) // Error, too many arguments
 
 ```js twoslash
 /**
- * @param {string} [somebody] - Somebody's name.
+ * @param {string} [somebody] - 某人的姓名。
  */
 function sayHello(somebody) {
   if (!somebody) {
@@ -234,7 +234,7 @@ sayHello()
 
 ```js twoslash
 /** @param {...number} args */
-function sum(/* numbers */) {
+function sum(/* 数字 */) {
   var total = 0
   for (var i = 0; i < arguments.length; i++) {
     total += arguments[i]
@@ -257,7 +257,7 @@ import { Component } from 'react'
 
 class MyComponent extends Component {
   render() {
-    this.props.b // Allowed, since this.props is of type any
+    this.props.b // 允许，因为 this.props 的类型为 any
   }
 }
 ```
@@ -272,7 +272,7 @@ import { Component } from 'react'
  */
 class MyComponent extends Component {
   render() {
-    this.props.b // Error: b does not exist on {a:number}
+    this.props.b // 错误：属性 b 不存在于 {a:number} 上
   }
 }
 ```
@@ -285,14 +285,14 @@ JSDoc 中未指定的类型参数默认为 `any`：
 /** @type{Array} */
 var x = []
 
-x.push(1) // OK
-x.push('string') // OK, x is of type Array<any>
+x.push(1) // 正常
+x.push('string') // 正常，x 的类型为 Array<any>
 
 /** @type{Array.<number>} */
 var y = []
 
-y.push(1) // OK
-y.push('string') // Error, string is not assignable to number
+y.push(1) // 正常
+y.push('string') // 错误，string 不能赋值给 number
 ```
 
 ### 在函数调用中

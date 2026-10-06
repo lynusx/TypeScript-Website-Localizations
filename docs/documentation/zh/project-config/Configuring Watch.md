@@ -22,28 +22,28 @@ translatable: true
 
 ```json tsconfig
 {
-  // Some typical compiler options
+  // 一些典型的编译器选项
   "compilerOptions": {
     "target": "es2020",
     "moduleResolution": "node"
     // ...
   },
 
-  // NEW: Options for file/directory watching
+  // 新增：文件/目录监视选项
   "watchOptions": {
-    // Use native file system events for files and directories
+    // 对文件和目录使用原生文件系统事件
     "watchFile": "useFsEvents",
     "watchDirectory": "useFsEvents",
 
-    // Poll files for updates more frequently
-    // when they're updated a lot.
+    // 当文件频繁更新时，
+    // 更频繁地轮询文件更新。
     "fallbackPolling": "dynamicPriority",
 
-    // Don't coalesce watch notification
+    // 不要合并监视通知
     "synchronousWatchDirectory": true,
 
-    // Finally, two additional settings for reducing the amount of possible
-    // files to track  work from these directories
+    // 最后，还有两个额外的设置用于减少
+    // 从这些目录中需要跟踪的文件数量
     "excludeDirectories": ["**/node_modules", "_build"],
     "excludeFiles": ["build/fileWhichChangesOften.ts"]
   }

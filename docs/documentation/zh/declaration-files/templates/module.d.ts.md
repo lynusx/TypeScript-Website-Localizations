@@ -124,11 +124,11 @@ function fastify() {
 
 fastify.FastifyInstance = FastifyInstance
 
-// Allows for { fastify }
+// 支持 { fastify }
 fastify.fastify = fastify
-// Allows for strict ES Module support
+// 支持严格的 ES 模块支持
 fastify.default = fastify
-// Sets the default export
+// 设置默认导出
 module.exports = fastify
 ```
 
@@ -184,14 +184,14 @@ export function getArrayMetadata<ArrType>(
 例如，你需要描述的类型可能足够复杂，以至于选择在 `.d.ts` 中使用命名空间对其进行组织：
 
 ```ts
-// This represents the JavaScript class which would be available at runtime
+// 这表示在运行时可用的 JavaScript 类
 export class API {
   constructor(baseURL: string)
   getInfo(opts: API.InfoRequest): API.InfoResponse
 }
 
-// This namespace is merged with the API class and allows for consumers, and this file
-// to have types which are nested away in their own sections.
+// 该命名空间与 API 类合并，允许使用者以及本文件
+// 拥有嵌套在各自独立部分中的类型。
 declare namespace API {
   export interface InfoRequest {
     id: string
@@ -219,35 +219,35 @@ export as namespace moduleName
 为了让你了解所有这些部分是如何组合在一起的，以下是一个在创建新模块时可作为起点的参考 `.d.ts`：
 
 ```ts
-// Type definitions for [~THE LIBRARY NAME~] [~OPTIONAL VERSION NUMBER~]
-// Project: [~THE PROJECT NAME~]
-// Definitions by: [~YOUR NAME~] <[~A URL FOR YOU~]>
+// Type definitions for [~库名称~] [~可选版本号~]
+// Project: [~项目名称~]
+// Definitions by: [~你的姓名~] <[~你的 URL~]>
 
-/*~ This is the module template file. You should rename it to index.d.ts
- *~ and place it in a folder with the same name as the module.
- *~ For example, if you were writing a file for "super-greeter", this
- *~ file should be 'super-greeter/index.d.ts'
+/*~ 这是模块模板文件。你应该将其重命名为 index.d.ts
+ *~ 并放置在与该模块同名的文件夹中。
+ *~ 例如，如果你正在为 "super-greeter" 编写文件，
+ *~ 该文件应为 'super-greeter/index.d.ts'
  */
 
-/*~ If this module is a UMD module that exposes a global variable 'myLib' when
- *~ loaded outside a module loader environment, declare that global here.
- *~ Otherwise, delete this declaration.
+/*~ 如果该模块是一个 UMD 模块，在模块加载器环境之外加载时
+ *~ 暴露了一个全局变量 'myLib'，请在此声明该全局变量。
+ *~ 否则，请删除此声明。
  */
 export as namespace myLib
 
-/*~ If this module exports functions, declare them like so.
+/*~ 如果该模块导出函数，请像这样声明它们。
  */
 export function myFunction(a: string): string
 export function myOtherFunction(a: number): number
 
-/*~ You can declare types that are available via importing the module */
+/*~ 你可以声明通过导入该模块即可使用的类型 */
 export interface SomeType {
   name: string
   length: number
   extras?: string[]
 }
 
-/*~ You can declare properties of the module using const, let, or var */
+/*~ 你可以使用 const、let 或 var 声明模块的属性 */
 export const myField: number
 ```
 

@@ -18,7 +18,7 @@ TypeScript 现已为原生支持 ES6 生成器（Generator）的引擎（例如 
 ```ts
 'use strict'
 
-// printDelayed is a 'Promise<void>'
+// printDelayed 的类型为 'Promise<void>'
 async function printDelayed(elements: string[]) {
   for (const element of elements) {
     await delay(400)
@@ -132,7 +132,7 @@ import calc from './ScientificCalculator'
 let v = new calc(0.5)
   .square()
   .divide(2)
-  .sin() // Error: 'BasicCalculator' has no 'sin' method.
+  .sin() // 错误：'BasicCalculator' 没有 'sin' 方法。
   .currentValue()
 ```
 
@@ -187,23 +187,23 @@ TypeScript 1.7 使得带有对象字面量或数组字面量初始值设定项�
 ##### 示例
 
 ```ts
-// Type of f1 is (arg?: { x?: number, y?: number }) => void
+// f1 的类型为 (arg?: { x?: number, y?: number }) => void
 function f1({ x = 0, y = 0 } = {}) {}
 
-// And can be called as:
+// 并且可以如下方式调用：
 f1()
 f1({})
 f1({ x: 1 })
 f1({ y: 1 })
 f1({ x: 1, y: 1 })
 
-// Type of f2 is (arg?: (x: number, y?: number) => void
+// f2 的类型为 (arg?: (x: number, y?: number) => void
 function f2({ x, y = 0 } = { x: 0 }) {}
 
 f2()
-f2({}) // Error, x not optional
+f2({}) // 错误，x 不是可选的
 f2({ x: 1 })
-f2({ y: 1 }) // Error, x not optional
+f2({ y: 1 }) // 错误，x 不是可选的
 f2({ x: 1, y: 1 })
 ```
 

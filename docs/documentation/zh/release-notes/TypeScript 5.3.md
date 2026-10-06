@@ -12,16 +12,16 @@ TypeScript 5.3 支持了最新的[导入属性（import attributes）](https://g
 导入属性的一个用例是向运行时提供有关模块预期格式的信息。
 
 ```ts
-// We only want this to be interpreted as JSON,
-// not a runnable/malicious JavaScript file with a `.json` extension.
+// 我们只希望将其解释为 JSON，
+// 而不是带有 `.json` 扩展名的可运行/恶意 JavaScript 文件。
 import obj from './something.json' with { type: 'json' }
 ```
 
 TypeScript 不会检查这些属性的具体内容，因为它们是由宿主环境决定的；TypeScript 只是保留它们，以便浏览器和运行时能够进行处理（并可能报错）。
 
 ```ts
-// TypeScript is fine with this.
-// But your browser? Probably not.
+// TypeScript 可以接受此写法。
+// 但你的浏览器？很可能不行。
 import * as foo from './foo.js' with { type: 'fluffy bunny' }
 ```
 
@@ -66,12 +66,12 @@ const obj = await import('./something.json', {
 但鉴于*[导入属性](#import-attributes)*可以指导解析，而且我们确实看到了合理的用例，TypeScript 5.3 现在正式为 `import type` 支持了 `resolution-mode` 属性。
 
 ```ts
-// Resolve `pkg` as if we were importing with a `require()`
+// 按照使用 `require()` 导入的方式解析 `pkg`
 import type { TypeFromRequire } from 'pkg' with {
   'resolution-mode': 'require',
 }
 
-// Resolve `pkg` as if we were importing with an `import`
+// 按照使用 `import` 导入的方式解析 `pkg`
 import type { TypeFromImport } from 'pkg' with {
   'resolution-mode': 'import',
 }
@@ -110,17 +110,17 @@ TypeScript 5.3 现在可以根据 `switch (true)` 中每个 `case` 子句的条�
 function f(x: unknown) {
   switch (true) {
     case typeof x === 'string':
-      // 'x' is a 'string' here
+      // 此处 'x' 是 'string'
       console.log(x.toUpperCase())
-    // falls through...
+    // fallthrough 穿透...
 
     case Array.isArray(x):
-      // 'x' is a 'string | any[]' here.
+      // 此处 'x' 是 'string | any[]'。
       console.log(x.length)
-    // falls through...
+    // fallthrough 穿透...
 
     default:
-    // 'x' is 'unknown' here.
+    // 此处 'x' 是 'unknown'。
     // ...
   }
 }
@@ -154,7 +154,7 @@ function isA(x: MyType): x is A {
 
 function someFn(x: MyType) {
   if (isA(x) === true) {
-    console.log(x.a) // works!
+    console.log(x.a) // 正常！
   }
 }
 ```
@@ -169,7 +169,7 @@ JavaScript 中有一个稍显小众的特性：可以重写 `instanceof` 运算�
 ```js
 class Weirdo {
   static [Symbol.hasInstance](testedValue) {
-    // wait, what?
+    // 等等，什么？
     return testedValue === undefined
   }
 }
@@ -217,12 +217,12 @@ class Point implements PointLike {
 
 function f(value: unknown) {
   if (value instanceof Point) {
-    // Can access both of these - correct!
+    // 可以访问这两项 —— 正确！
     value.x
     value.y
 
-    // Can't access this - we have a 'PointLike',
-    // but we don't *actually* have a 'Point'.
+    // 无法访问此项 —— 我们拥有的是 'PointLike'，
+    // 但我们并*没有*真正的 'Point'。
     value.distanceFromOrigin()
   }
 }
@@ -254,7 +254,7 @@ class Derived extends Base {
 }
 
 new Derived().someMethod()
-// Prints:
+// 输出：
 //   Derived method called!
 //   Base method called!
 ```
@@ -271,14 +271,14 @@ class Base {
 
 class Derived extends Base {
   someOtherMethod() {
-    // These act identically.
+    // 这两者的行为完全相同。
     this.someMethod()
     super.someMethod()
   }
 }
 
 new Derived().someOtherMethod()
-// Prints:
+// 输出：
 //   someMethod called!
 //   someMethod called!
 ```
@@ -301,7 +301,7 @@ class Derived extends Base {
 
 new Derived().someOtherMethod()
 // 💥
-// Doesn't work because 'super.someMethod' is 'undefined'.
+// 无法运行，因为 'super.someMethod' 是 'undefined'。
 ```
 
 TypeScript 5.3 现在会更严格地检查 `super` 属性访问/方法调用，以确认它们是否对应于类字段。

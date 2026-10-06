@@ -12,7 +12,7 @@ TypeScript 2.7 新增了对在类型上声明常量命名属性的支持，包�
 ##### 示例
 
 ```ts
-// Lib
+// 库
 export const SERIALIZE = Symbol('serialize-method-key')
 
 export interface Serializable {
@@ -21,7 +21,7 @@ export interface Serializable {
 ```
 
 ```ts
-// consumer
+// 使用方
 
 import { SERIALIZE, Serializable } from 'lib'
 
@@ -45,8 +45,8 @@ let x = {
   [Bar]: 'hello',
 }
 
-let a = x[Foo] // has type 'number'
-let b = x[Bar] // has type 'string'
+let a = x[Foo] // 类型为 'number'
+let b = x[Bar] // 类型为 'string'
 ```
 
 ## `unique symbol`
@@ -59,16 +59,16 @@ let b = x[Bar] // has type 'string'
 ##### 示例
 
 ```ts
-// Works
+// 正常
 declare const Foo: unique symbol
 
-// Error! 'Bar' isn't a constant.
+// 错误！'Bar' 不是常量。
 let Bar: unique symbol = Symbol()
 
-// Works - refers to a unique symbol, but its identity is tied to 'Foo'.
+// 正常 - 引用了一个 unique symbol，但其标识与 'Foo' 绑定。
 let Baz: typeof Foo = Foo
 
-// Also works.
+// 同样正常。
 class C {
   static readonly StaticSymbol: unique symbol = Symbol()
 }
@@ -82,7 +82,7 @@ class C {
 const Foo = Symbol()
 const Bar = Symbol()
 
-// Error: can't compare two unique symbols.
+// 错误：无法比较两个 unique symbol。
 if (Foo === Bar) {
   // ...
 }
@@ -100,8 +100,8 @@ class C {
   bar = 'hello'
   baz: boolean
   //  ~~~
-  //  Error! Property 'baz' has no initializer and is not definitely assigned in the
-  //         constructor.
+  //  错误！属性 'baz' 没有初始值设定项，并且未在构造函数中
+  //         明确赋值。
 
   constructor() {
     this.foo = 42
@@ -117,8 +117,8 @@ class C {
 class C {
   foo!: number
   // ^
-  // Notice this '!' modifier.
-  // This is the "definite assignment assertion"
+  // 注意这个 '!' 修饰符。
+  // 这就是“显式赋值断言”
 
   constructor() {
     this.initialize()
@@ -144,7 +144,7 @@ let x: number
 initialize()
 console.log(x + x)
 //          ~   ~
-// Error! Variable 'x' is used before being assigned.
+// 错误！变量 'x' 在赋值前被使用。
 
 function initialize() {
   x = 10
@@ -154,11 +154,11 @@ function initialize() {
 使用确定性赋值断言，可以通过在声明时追加 `!` 来断言 `x` 确实已被赋值：
 
 ```ts
-// Notice the '!'
+// 注意 '!'
 let x!: number
 initialize()
 
-// No error!
+// 无错误！
 console.log(x + x)
 
 function initialize() {
@@ -172,7 +172,7 @@ function initialize() {
 let x: number
 initialize()
 
-// No error!
+// 无错误！
 console.log(x! + x!)
 
 function initialize() {
@@ -198,7 +198,7 @@ TypeScript 2.7 起，不同元数的元组之间不再可以相互赋值。
 interface NumStrTuple extends Array<number | string> {
   0: number
   1: string
-  length: 2 // using the numeric literal type '2'
+  length: 2 // 使用数字字面量类型 '2'
 }
 ```
 
@@ -274,19 +274,19 @@ class D extends A {
 class E extends D {}
 
 let x1 = !true ? new A() : new B() // A
-let x2 = !true ? new B() : new C() // B | C (previously B)
-let x3 = !true ? new C() : new D() // C | D (previously C)
+let x2 = !true ? new B() : new C() // B | C（此前为 B）
+let x3 = !true ? new C() : new D() // C | D（此前为 C）
 
 let a1 = [new A(), new B(), new C(), new D(), new E()] // A[]
-let a2 = [new B(), new C(), new D(), new E()] // (B | C | D)[] (previously B[])
+let a2 = [new B(), new C(), new D(), new E()] // (B | C | D)[]（此前为 B[]）
 
 function f1(x: B | C | D) {
   if (x instanceof B) {
-    x // B (previously B | D)
+    x // B（此前为 B | D）
   } else if (x instanceof C) {
     x // C
   } else {
-    x // D (previously never)
+    x // D（此前为 never）
   }
 }
 ```

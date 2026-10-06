@@ -19,8 +19,8 @@ function* foo() {
 let iter = foo()
 let curr = iter.next()
 if (curr.done) {
-  // TypeScript 3.5 and prior thought this was a 'string | number'.
-  // It should know it's 'string' since 'done' was 'true'!
+  // TypeScript 3.5 及之前版本认为其类型为 'string | number'。
+  // 它应当知道其类型为 'string'，因为 'done' 为 'true'！
   curr.value
 }
 ```
@@ -35,7 +35,7 @@ function* bar() {
 
 let iter = bar()
 iter.next()
-iter.next(123) // oops! runtime error!
+iter.next(123) // 糟糕！运行时错误！
 ```
 
 在 TypeScript 3.6 中，检查器现在知道在第一个示例中 `curr.value` 的正确类型应为 `string`，并且在最后一个示例中调用 `next()` 时会正确报错。
@@ -45,7 +45,7 @@ iter.next(123) // oops! runtime error!
 
 ```ts
 interface Iterator<T, TReturn = any, TNext = undefined> {
-  // Takes either 0 or 1 arguments - doesn't accept 'undefined'
+  // 接收 0 个或 1 个参数 - 不接受 'undefined'
   next(...args: [] | [TNext]): IteratorResult<T, TReturn>
   return?(value?: TReturn): IteratorResult<T, TReturn>
   throw?(e?: any): IteratorResult<T, TReturn>
@@ -95,8 +95,8 @@ function* foo() {
 }
 
 let x = foo()
-x.next() // first call to 'next' is always ignored
-x.next(42) // error! 'number' is not assignable to 'string'
+x.next() // 对 'next' 的首次调用始终会被忽略
+x.next(42) // 错误！'number' 不能赋值给 'string'
 ```
 
 如果你希望更加明确，还可以使用显式返回类型来约束可以返回、产出以及从 `yield` 表达式中计算求出的值的类型。
@@ -104,9 +104,9 @@ x.next(42) // error! 'number' is not assignable to 'string'
 
 ```ts
 /**
- * - yields numbers
- * - returns strings
- * - can be passed in booleans
+ * - 生成数字
+ * - 返回字符串
+ * - 可以传入布尔值
  */
 function* counter(): Generator<number, string, boolean> {
   let i = 0
@@ -126,7 +126,7 @@ while (!curr.done) {
 }
 console.log(curr.value.toUpperCase())
 
-// prints:
+// 输出：
 //
 // 0
 // 1
@@ -190,9 +190,9 @@ declare function displayUser(user: User): void
 async function f() {
   displayUser(getUserData())
   //              ~~~~~~~~~~~~~
-  // Argument of type 'Promise<User>' is not assignable to parameter of type 'User'.
+  // 类型为 'Promise<User>' 的参数不能赋给类型为 'User' 的参数。
   //   ...
-  // Did you forget to use 'await'?
+  // 你是不是忘了使用 'await'？
 }
 ```
 
@@ -203,9 +203,9 @@ async function f() {
 async function getCuteAnimals() {
   fetch('https://reddit.com/r/aww.json').json()
   //   ~~~~
-  // Property 'json' does not exist on type 'Promise<Response>'.
+  // 类型 'Promise<Response>' 上不存在属性 'json'。
   //
-  // Did you forget to use 'await'?
+  // 你是不是忘了使用 'await'？
 }
 ```
 
@@ -216,7 +216,7 @@ async function getCuteAnimals() {
 在输出目标为 ES2015 及更高版本时，TypeScript 3.6 对标识符中的 Unicode 字符提供了更好的支持。
 
 ```ts
-const 𝓱𝓮𝓵𝓵𝓸 = 'world' // previously disallowed, now allowed in '--target es2015'
+const 𝓱𝓮𝓵𝓵𝓸 = 'world' // 此前不允许，现在在 '--target es2015' 下允许
 ```
 
 ## SystemJS 中的 `import.meta` 支持
@@ -224,11 +224,11 @@ const 𝓱𝓮𝓵𝓵𝓸 = 'world' // previously disallowed, now allowed in '-
 当 `module` 目标设置为 `system` 时，TypeScript 3.6 支持将 `import.meta` 转换为 `context.meta`。
 
 ```ts
-// This module:
+// 该模块：
 
 console.log(import.meta.url)
 
-// gets turned into the following:
+// 转换为以下内容：
 
 System.register([], function (exports, context) {
   return {
@@ -250,7 +250,7 @@ System.register([], function (exports, context) {
 
 ```ts
 declare class Foo {
-  // Allowed in 3.6+.
+  // 在 3.6+ 中允许。
   get x(): number
   set x(val: number)
 }

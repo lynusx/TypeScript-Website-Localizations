@@ -128,7 +128,7 @@ We can alternatively write the sample example this way:
 
 ```ts twoslash
 function loggingIdentity<T>(arg: Array<T>): Array<T> {
-  console.log(arg.length) // Array has a .length, so no more error
+  console.log(arg.length) // 数组具有 .length，因此不再报错
   return arg
 }
 ```
@@ -279,7 +279,7 @@ interface Lengthwise {
 }
 
 function loggingIdentity<T extends Lengthwise>(arg: T): T {
-  console.log(arg.length) // Now we know it has a .length property, so no more error
+  console.log(arg.length) // 现在我们知道它具有 .length 属性，因此不再报错
   return arg
 }
 ```

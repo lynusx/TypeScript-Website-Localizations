@@ -29,14 +29,14 @@ TypeScript 识别出 `typeof arg === "string"` 检查并将其视为类型守卫
 然而，如果我们把该条件提取到一个名为 `argIsString` 的常量中，会发生什么呢？
 
 ```ts
-// In TS 4.3 and below
+// 在 TS 4.3 及更早版本中
 
 function foo(arg: unknown) {
   const argIsString = typeof arg === 'string'
   if (argIsString) {
     console.log(arg.toUpperCase())
     //              ~~~~~~~~~~~
-    // Error! Property 'toUpperCase' does not exist on type 'unknown'.
+    // 错误！类型 'unknown' 上不存在属性 'toUpperCase'。
   }
 }
 ```
@@ -60,10 +60,10 @@ type Shape =
 function area(shape: Shape): number {
   const isCircle = shape.kind === 'circle'
   if (isCircle) {
-    // We know we have a circle here!
+    // 此时我们确定这是一个圆形！
     return Math.PI * shape.radius ** 2
   } else {
-    // We know we're left with a square here!
+    // 此时我们确定剩下的是正方形！
     return shape.sideLength ** 2
   }
 }
@@ -76,14 +76,14 @@ type Shape =
   { kind: 'circle'; radius: number } | { kind: 'square'; sideLength: number }
 
 function area(shape: Shape): number {
-  // Extract out the 'kind' field first.
+  // 先提取出 'kind' 字段。
   const { kind } = shape
 
   if (kind === 'circle') {
-    // We know we have a circle here!
+    // 此时我们确定这是一个圆形！
     return Math.PI * shape.radius ** 2
   } else {
-    // We know we're left with a square here!
+    // 此时我们确定剩下的是正方形！
     return shape.sideLength ** 2
   }
 }
@@ -99,7 +99,7 @@ function doSomeChecks(
 ) {
   const mustDoWork = inputA && inputB && shouldDoExtraWork
   if (mustDoWork) {
-    // We can access 'string' properties on both 'inputA' and 'inputB'!
+    // 我们可以同时访问 'inputA' 和 'inputB' 上的 'string' 属性！
     const upperA = inputA.toUpperCase()
     const upperB = inputB.toUpperCase()
     // ...
@@ -150,11 +150,11 @@ interface BooleanDictionary {
 
 declare let myDict: BooleanDictionary
 
-// Valid to assign boolean values
+// 允许赋值布尔值
 myDict['foo'] = true
 myDict['bar'] = false
 
-// Error, "oops" isn't a boolean
+// 错误，"oops" 不是布尔值
 myDict['baz'] = 'oops'
 ```
 
@@ -164,7 +164,7 @@ myDict['baz'] = 'oops'
 
 ```ts
 // @errors: 2322 2375
-// This is part of TypeScript's definition of the built-in Array type.
+// 这是 TypeScript 内置 Array 类型定义的一部分。
 interface Array<T> {
   [index: number]: T
 
@@ -173,10 +173,10 @@ interface Array<T> {
 
 let arr = new Array<string>()
 
-// Valid
+// 有效
 arr[0] = 'hello!'
 
-// Error, expecting a 'string' value here
+// 错误，此处期望一个 'string' 值
 arr[1] = 123
 ```
 
@@ -201,7 +201,7 @@ const blue = Symbol('blue')
 
 let colors: Colors = {}
 
-// Assignment of a number is allowed
+// 允许赋值数字
 colors[red] = 255
 let redVal = colors[red]
 //  ^?
@@ -228,7 +228,7 @@ let a: Options = {
 }
 
 interface OptionsWithDataProps extends Options {
-  // Permit any property starting with 'data-'.
+  // 允许以 'data-' 开头的任何属性。
   [optName: `data-${string}`]: unknown
 }
 
@@ -237,8 +237,8 @@ let b: OptionsWithDataProps = {
   height: 100,
   'data-blah': true,
 
-  // Fails for a property which is not known, nor
-  // starts with 'data-'
+  // 对于既非已知属性，也不以
+  // 'data-' 开头的属性，将会报错
   'unknown-property': true,
 }
 ```
@@ -257,7 +257,7 @@ interface Data {
   [optName: string | symbol]: any
 }
 
-// Equivalent to
+// 等同于
 
 interface Data {
   [optName: string]: any
@@ -274,12 +274,12 @@ interface Data {
 
 ```ts
 try {
-  // Who knows what this might throw...
+  // 谁知道这可能会抛出什么...
   executeSomeThirdPartyCode()
 } catch (err) {
   // err: any
-  console.error(err.message) // Allowed, because 'any'
-  err.thisWillProbablyFail() // Allowed, because 'any' :(
+  console.error(err.message) // 允许，因为是 'any'
+  err.thisWillProbablyFail() // 允许，因为是 'any' :(
 }
 ```
 
@@ -299,10 +299,10 @@ try {
 } catch (err) {
   // err: unknown
 
-  // Error! Property 'message' does not exist on type 'unknown'.
+  // 错误！类型 'unknown' 上不存在属性 'message'。
   console.error(err.message)
 
-  // Works! We can narrow 'err' from 'unknown' to 'Error'.
+  // 正常工作！我们可以将 'err' 从 'unknown' 收窄为 'Error'。
   if (err instanceof Error) {
     console.error(err.message)
   }
@@ -328,7 +328,7 @@ declare function executeSomeThirdPartyCode(): void;
 try {
   executeSomeThirdPartyCode();
 } catch (err: any) {
-  console.error(err.message); // Works again!
+  console.error(err.message); // 再次正常工作！
 }
 ```
 
@@ -362,7 +362,7 @@ interface Person {
 ```ts
 const p: Person = {
   name: 'Daniel',
-  age: undefined, // This is okay by default.
+  age: undefined, // 默认情况下这是允许的。
 }
 ```
 
@@ -381,10 +381,10 @@ interface Person {
   age?: number
 }
 // ---cut---
-// With 'exactOptionalPropertyTypes' on:
+// 启用 'exactOptionalPropertyTypes' 后：
 const p: Person = {
   name: 'Daniel',
-  age: undefined, // Error! undefined isn't a number
+  age: undefined, // 错误！undefined 不是数字
 }
 ```
 
@@ -404,7 +404,7 @@ declare function someCondition(): boolean
 class Foo {
   static count = 0
 
-  // This is a static block:
+  // 这是一个静态块：
   static {
     if (someCondition()) {
       Foo.count++
@@ -440,7 +440,7 @@ class Foo {
 请注意，一个类可以拥有多个 `static` 块，它们会按照书写顺序依次执行：
 
 ```ts twoslash
-// Prints:
+// 输出：
 //    1
 //    2
 //    3
@@ -573,7 +573,7 @@ TypeScript 4.4 支持了*内联提示*（inlay hints），可以在你的代码�
 具体来说，在以下示例中，当调用 `fooModule.foo()` 时，`foo()` 方法会将 `this` 的值设置为 `fooModule`。
 
 ```ts
-// Imagine this is our imported module, and it has an export named 'foo'.
+// 假设这是我们导入的模块，且它包含一个名为 'foo' 的导出。
 let fooModule = {
   foo() {
     console.log(this)
@@ -587,14 +587,14 @@ fooModule.foo()
 因此，TypeScript 4.4 在调用导入函数时特意通过以下代码生成方式丢弃了 `this` 值：
 
 ```ts
-// Imagine this is our imported module, and it has an export named 'foo'.
+// 假设这是我们导入的模块，且它包含一个名为 'foo' 的导出。
 let fooModule = {
   foo() {
     console.log(this)
   },
 }
 
-// Notice we're actually calling '(0, fooModule.foo)' now, which is subtly different.
+// 注意我们现在实际上调用的是 '(0, fooModule.foo)'，这有着细微的差别。
 ;(0, fooModule.foo)()
 ```
 
@@ -628,7 +628,7 @@ async function foo(): Promise<boolean> {
 async function bar(): Promise<string> {
   const fooResult = foo()
   if (fooResult) {
-    // <- error! :D
+    // <- 错误！:D
     return 'true'
   }
   return 'false'
@@ -644,7 +644,7 @@ async function foo(): Promise<boolean> {
 
 async function bar(): Promise<string> {
   if (foo()) {
-    // <- no error :(
+    // <- 无错误 :(
     return 'true'
   }
   return 'false'
@@ -662,7 +662,7 @@ TypeScript 4.4 现在对这两种情况都会报告错误。
 abstract class C {
   abstract prop = 1;
   //       ~~~~
-  // Property 'prop' cannot have an initializer because it is marked abstract.
+  // 属性 'prop' 不能有初始化器，因为它被标记为 abstract。
 }
 ```
 

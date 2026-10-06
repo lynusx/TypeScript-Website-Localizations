@@ -13,13 +13,13 @@ oneline: TypeScript 3.3 发布说明
 type Fruit = 'apple' | 'orange'
 type Color = 'red' | 'orange'
 
-type FruitEater = (fruit: Fruit) => number // eats and ranks the fruit
-type ColorConsumer = (color: Color) => string // consumes and describes the colors
+type FruitEater = (fruit: Fruit) => number // 消费水果并对其进行评级
+type ColorConsumer = (color: Color) => string // 消费颜色并对其进行描述
 
 declare let f: FruitEater | ColorConsumer
 
-// Cannot invoke an expression whose type lacks a call signature.
-//   Type 'FruitEater | ColorConsumer' has no compatible call signatures.ts(2349)
+// 无法调用其类型缺少调用签名的表达式。
+//   类型 'FruitEater | ColorConsumer' 没有兼容的调用签名。ts(2349)
 f('orange')
 ```
 
@@ -31,16 +31,16 @@ f('orange')
 type Fruit = 'apple' | 'orange'
 type Color = 'red' | 'orange'
 
-type FruitEater = (fruit: Fruit) => number // eats and ranks the fruit
-type ColorConsumer = (color: Color) => string // consumes and describes the colors
+type FruitEater = (fruit: Fruit) => number // 消费水果并对其进行评级
+type ColorConsumer = (color: Color) => string // 消费颜色并对其进行描述
 
 declare let f: FruitEater | ColorConsumer
 
-f('orange') // It works! Returns a 'number | string'.
+f('orange') // 正常工作！返回 'number | string'。
 
-f('apple') // error - Argument of type '"apple"' is not assignable to parameter of type '"orange"'.
+f('apple') // 错误 - 类型 '"apple"' 的参数不能赋值给类型 '"orange"' 的参数。
 
-f('red') // error - Argument of type '"red"' is not assignable to parameter of type '"orange"'.
+f('red') // 错误 - 类型 '"red"' 的参数不能赋值给类型 '"orange"' 的参数。
 ```
 
 在 TypeScript 3.3 中，这些签名的参数会被_交叉_（intersect）在一起，从而创建一个新签名。
@@ -69,8 +69,8 @@ interface Cat {
 const catOrDogArray: Dog[] | Cat[] = []
 
 catOrDogArray.forEach((animal) => {
-  //                ~~~~~~ error!
-  // Parameter 'animal' implicitly has an 'any' type.
+  //                ~~~~~~ 错误！
+  // 参数 'animal' 隐式具有 'any' 类型。
 })
 ```
 

@@ -21,7 +21,7 @@ class Thing {
   set size(value) {
     let num = Number(value)
 
-    // Don't allow NaN and stuff.
+    // 不允许 NaN 等值。
     if (!Number.isFinite(num)) {
       this.#size = 0
       return
@@ -63,7 +63,7 @@ class Thing {
   set size(value: string | number | boolean) {
     let num = Number(value)
 
-    // Don't allow NaN and stuff.
+    // 不允许 NaN 等值。
     if (!Number.isFinite(num)) {
       this.#size = 0
       return
@@ -88,7 +88,7 @@ class Thing {
   set size(value: string | number | boolean) {
     let num = Number(value)
 
-    // Don't allow NaN and stuff.
+    // 不允许 NaN 等值。
     if (!Number.isFinite(num)) {
       this.#size = 0
       return
@@ -100,12 +100,12 @@ class Thing {
 // ---cut---
 let thing = new Thing()
 
-// Assigning other types to `thing.size` works!
+// 将其他类型赋值给 `thing.size` 也能正常工作！
 thing.size = 'hello'
 thing.size = true
 thing.size = 42
 
-// Reading `thing.size` always produces a number!
+// 读取 `thing.size` 总是会产生一个数字！
 let mySize: number = thing.size
 ```
 
@@ -125,7 +125,7 @@ function makeThing(): Thing {
     set size(value: string | number | boolean) {
       let num = Number(value)
 
-      // Don't allow NaN and stuff.
+      // 不允许 NaN 等值。
       if (!Number.isFinite(num)) {
         size = 0
         return
@@ -140,7 +140,7 @@ function makeThing(): Thing {
 事实上，我们还向接口和对象类型添加了语法，以支持属性上不同的读取/写入类型。
 
 ```ts
-// Now valid!
+// 现在有效！
 interface Thing {
   get size(): number
   set size(value: number | string | boolean)
@@ -250,8 +250,8 @@ class Base {
 }
 
 class Derived extends Base {
-  // Oops! We weren't trying to override here,
-  // we just needed to write a local helper method.
+  // 哎呀！我们并不是要在这里进行重写，
+  // 我们只是想编写一个本地辅助方法。
   someHelperMethod() {
     // ...
   }
@@ -276,7 +276,7 @@ type Color = 'red' | 'blue'
 type Quantity = 'one' | 'two'
 
 type SeussFish = `${Quantity | Color} fish`
-// same as
+// 等同于
 //   type SeussFish = "one fish" | "two fish"
 //                  | "red fish" | "blue fish";
 ```
@@ -287,7 +287,7 @@ type SeussFish = `${Quantity | Color} fish`
 declare let s1: `${number}-${number}-${number}`
 declare let s2: `1-2-3`
 
-// Works!
+// 正常工作！
 s1 = s2
 ```
 
@@ -296,7 +296,7 @@ s1 = s2
 
 ```ts
 function bar(s: string): `hello ${string}` {
-  // Previously an error, now works!
+  // 此前会报错，现在可以正常工作！
   return `hello ${s}`
 }
 ```
@@ -307,8 +307,8 @@ function bar(s: string): `hello ${string}` {
 declare let s: string
 declare function f<T extends string>(x: T): T
 
-// Previously: string
-// Now       : `hello ${string}`
+// 此前：string
+// 现在：`hello ${string}`
 let x2 = f(`hello ${s}`)
 ```
 
@@ -340,7 +340,7 @@ declare let s4: `1-${number}-3`
 declare let s5: `1-2-${number}`
 declare let s6: `${number}-2-${number}`
 
-// Now *all of these* work!
+// 现在*所有这些*都可以正常工作！
 s1 = s2
 s1 = s3
 s1 = s4
@@ -383,8 +383,8 @@ class Foo {
   }
 
   publicMethod() {
-    // These work.
-    // We can access private-named members inside this class.
+    // 这些可以正常工作。
+    // 我们可以在该类内部访问私有命名的成员。
     this.#someMethod()
     return this.#someValue
   }
@@ -392,15 +392,15 @@ class Foo {
 
 new Foo().#someMethod()
 //        ~~~~~~~~~~~
-// error!
-// Property '#someMethod' is not accessible
-// outside class 'Foo' because it has a private identifier.
+// 错误！
+// 属性 '#someMethod' 在类 'Foo' 外部不可访问，
+// 因为它具有私有标识符。
 
 new Foo().#someValue
 //        ~~~~~~~~~~
-// error!
-// Property '#someValue' is not accessible
-// outside class 'Foo' because it has a private identifier.
+// 错误！
+// 属性 '#someValue' 在类 'Foo' 外部不可访问，
+// 因为它具有私有标识符。
 ```
 
 更广泛地，静态成员现在也可以拥有私有名称。
@@ -414,9 +414,9 @@ class Foo {
 
 Foo.#someMethod()
 //  ~~~~~~~~~~~
-// error!
-// Property '#someMethod' is not accessible
-// outside class 'Foo' because it has a private identifier.
+// 错误！
+// 属性 '#someMethod' 在类 'Foo' 外部不可访问，
+// 因为它具有私有标识符。
 ```
 
 该特性由彭博社（Bloomberg）的朋友在[一个 Pull Request](https://github.com/microsoft/TypeScript/pull/42458) 中贡献——由 [Titian Cernicova-Dragomir](https://github.com/dragomirtitian) 和 [Kubilay Kahveci](https://github.com/mkubilayk) 编写，并得到了 [Joey Watts](https://github.com/joeywatts)、[Rob Palmer](https://github.com/robpalme) 与 [Tim McClure](https://github.com/tim-mc) 的专业支持与协助。
@@ -433,7 +433,7 @@ abstract class C {
   }
 }
 
-// Has the type '[a: string, b: number]'.
+// 类型为 '[a: string, b: number]'。
 type CParams = ConstructorParameters<typeof C>
 ```
 
@@ -444,7 +444,7 @@ type MyConstructorOf<T> = {
     abstract new(...args: any[]): T;
 }
 
-// or using the shorthand syntax:
+// 或使用简写语法：
 
 type MyConstructorOf<T> = abstract new (...args: any[]) => T;
 ```
@@ -465,13 +465,13 @@ function makeUnique<T>(
   collection: Set<T> | T[],
   comparer: (x: T, y: T) => number,
 ): Set<T> | T[] {
-  // Early bail-out if we have a Set.
-  // We assume the elements are already unique.
+  // 如果是 Set 则提前退出。
+  // 我们假定其元素已经是唯一的。
   if (collection instanceof Set) {
     return collection
   }
 
-  // Sort the array, then remove consecutive duplicates.
+  // 对数组进行排序，然后移除相邻的重复项。
   collection.sort(comparer)
   for (let i = 0; i < collection.length; i++) {
     let j = i
@@ -503,34 +503,34 @@ function makeUnique<T, C extends Set<T> | T[]>(
   collection: C,
   comparer: (x: T, y: T) => number,
 ): C {
-  // Early bail-out if we have a Set.
-  // We assume the elements are already unique.
+  // 如果是 Set 则提前退出。
+  // 我们假定其元素已经是唯一的。
   if (collection instanceof Set) {
     return collection
   }
 
-  // Sort the array, then remove consecutive duplicates.
+  // 对数组进行排序，然后移除相邻的重复项。
   collection.sort(comparer)
   //         ~~~~
-  // error: Property 'sort' does not exist on type 'C'.
+  // 错误：类型 'C' 上不存在属性 'sort'。
   for (let i = 0; i < collection.length; i++) {
     //                             ~~~~~~
-    // error: Property 'length' does not exist on type 'C'.
+    // 错误：类型 'C' 上不存在属性 'length'。
     let j = i
     while (
       j < collection.length &&
       comparer(collection[i], collection[j + 1]) === 0
     ) {
       //                    ~~~~~~
-      // error: Property 'length' does not exist on type 'C'.
+      // 错误：类型 'C' 上不存在属性 'length'。
       //                                       ~~~~~~~~~~~~~  ~~~~~~~~~~~~~~~~~
-      // error: Element implicitly has an 'any' type because expression of type 'number'
-      //        can't be used to index type 'Set<T> | T[]'.
+      // 错误：元素隐式具有 'any' 类型，因为类型为 'number' 的表达式
+      //        不能用于索引类型 'Set<T> | T[]'。
       j++
     }
     collection.splice(i + 1, j - i)
     //         ~~~~~~
-    // error: Property 'splice' does not exist on type 'C'.
+    // 错误：类型 'C' 上不存在属性 'splice'。
   }
   return collection
 }
@@ -553,23 +553,23 @@ function makeUnique<T>(
   collection: Set<T> | T[],
   comparer: (x: T, y: T) => number,
 ): Set<T> | T[] {
-  // Early bail-out if we have a Set.
-  // We assume the elements are already unique.
+  // 如果是 Set 则提前退出。
+  // 我们假定其元素已经是唯一的。
   if (collection instanceof Set) {
     return collection
     //     ~~~~~~~~~~
-    // error: Type 'Set<T>' is not assignable to type 'C'.
-    //          'Set<T>' is assignable to the constraint of type 'C', but
-    //          'C' could be instantiated with a different subtype of constraint 'Set<T> | T[]'.
+    // 错误：类型 'Set<T>' 不能分配给类型 'C'。
+    //          'Set<T>' 可分配给类型 'C' 的约束，但是
+    //          'C' 可能会使用约束 'Set<T> | T[]' 的不同子类型进行实例化。
   }
 
   // ...
 
   return collection
   //     ~~~~~~~~~~
-  // error: Type 'T[]' is not assignable to type 'C'.
-  //          'T[]' is assignable to the constraint of type 'C', but
-  //          'C' could be instantiated with a different subtype of constraint 'Set<T> | T[]'.
+  // 错误：类型 'T[]' 不能分配给类型 'C'。
+  //          'T[]' 可分配给类型 'C' 的约束，但是
+  //          'C' 可能会使用约束 'Set<T> | T[]' 的不同子类型进行实例化。
 }
 ```
 
@@ -597,10 +597,10 @@ async function foo(): Promise<boolean> {
 async function bar(): Promise<string> {
   if (foo()) {
     //  ~~~~~
-    // Error!
-    // This condition will always return true since
-    // this 'Promise<boolean>' appears to always be defined.
-    // Did you forget to use 'await'?
+    // 错误！
+    // 此条件将始终返回 true，因为
+    // 该 'Promise<boolean>' 似乎始终已定义。
+    // 你是否忘记了使用 'await'？
     return 'true'
   }
   return 'false'
@@ -618,16 +618,16 @@ class Foo {
   hello = 'hello'
   world = 1234;
 
-  // This is an index signature:
+  // 这是一个索引签名：
   [propName: string]: string | number | undefined
 }
 
 let instance = new Foo()
 
-// Valid assignment
+// 有效赋值
 instance['whatever'] = 42
 
-// Has type 'string | number | undefined'.
+// 类型为 'string | number | undefined'。
 let x = instance['something']
 ```
 
@@ -642,10 +642,10 @@ class Foo {
   static [propName: string]: string | number | undefined
 }
 
-// Valid.
+// 有效。
 Foo['whatever'] = 42
 
-// Has type 'string | number | undefined'
+// 类型为 'string | number | undefined'
 let x = Foo['something']
 ```
 
@@ -655,9 +655,9 @@ let x = Foo['something']
 class Foo {
   static prop = true
   //     ~~~~
-  // Error! Property 'prop' of type 'boolean'
-  // is not assignable to string index type
-  // 'string | number | undefined'.
+  // 错误！类型为 'boolean' 的属性 'prop'
+  // 不能分配给字符串索引类型
+  // 'string | number | undefined'。
 
   static [propName: string]: string | number | undefined
 }
@@ -731,16 +731,16 @@ TypeScript 现在能够理解 `@link` 标签，并将尝试解析它们所链接
 
 ```ts
 /**
- * To be called 70 to 80 days after {@link plantCarrot}.
+ * 在 {@link plantCarrot} 之后 70 到 80 天调用。
  */
 function harvestCarrot(carrot: Carrot) {}
 
 /**
- * Call early in spring for best results. Added in v2.1.0.
- * @param seed Make sure it's a carrot seed!
+ * 早春播种以获得最佳效果。添加于 v2.1.0。
+ * @param seed 确保这是一颗胡萝卜种子！
  */
 function plantCarrot(seed: Seed) {
-  // TODO: some gardening
+  // TODO: 做一些园艺工作
 }
 ```
 
@@ -787,11 +787,11 @@ declare var p: Promise<number>
 
 if (p) {
   //  ~
-  // Error!
-  // This condition will always return true since
-  // this 'Promise<number>' appears to always be defined.
+  // 错误！
+  // 此条件将始终返回 true，因为
+  // 该 'Promise<number>' 似乎始终已定义。
   //
-  // Did you forget to use 'await'?
+  // 你是否忘记了使用 'await'？
 }
 ```
 
@@ -811,7 +811,7 @@ enum E {
 }
 
 function doSomething(x: E) {
-  // Error! This condition will always return 'false' since the types 'E' and '-1' have no overlap.
+  // 错误！此条件将始终返回 'false'，因为类型 'E' 和 '-1' 没有重叠。
   if (x === -1) {
     // ...
   }
@@ -826,7 +826,7 @@ enum E {
   B = 1,
 }
 
-// Include -1 in the type, if we're really certain that -1 can come through.
+// 如果确实确定可能传入 -1，则在类型中包含 -1。
 function doSomething(x: E | -1) {
   if (x === -1) {
     // ...
@@ -843,7 +843,7 @@ enum E {
 }
 
 function doSomething(x: E) {
-  // Use a type assertion on 'x' because we know we're not actually just dealing with values from 'E'.
+  // 对 'x' 使用类型断言，因为我们知道此时处理的不仅是 'E' 中的值。
   if ((x as number) === -1) {
     // ...
   }
@@ -854,7 +854,7 @@ function doSomething(x: E) {
 
 ```ts
 enum E {
-  // the leading + on 0 opts TypeScript out of inferring a union enum.
+  // 0 前面的 + 使 TypeScript 不再将其推断为联合枚举。
   A = +0,
   B = 1,
 }

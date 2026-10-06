@@ -14,7 +14,7 @@ let input = '...'
 try {
   JSON.parse(input)
 } catch {
-  // ^ Notice that our `catch` clause doesn't declare a variable.
+  // ^ 注意我们的 `catch` 子句没有声明变量。
   console.log('Invalid JSON given\n\n' + input)
 }
 ```
