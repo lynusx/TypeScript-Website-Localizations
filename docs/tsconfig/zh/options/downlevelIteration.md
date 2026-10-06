@@ -68,14 +68,14 @@ for (const s of str) {
 这是一个数组展开：
 
 ```js
-// Make a new array whose elements are 1 followed by the elements of arr2
+// 创建一个新数组，其元素为 1，后跟 arr2 的元素
 const arr = [1, ...arr2]
 ```
 
 从描述上看，降级到 ES5 似乎很简单：
 
 ```js
-// The same, right?
+// 效果相同，对吧？
 const arr = [1].concat(arr2)
 ```
 
@@ -84,17 +84,17 @@ const arr = [1].concat(arr2)
 例如，如果源数组缺少一个或多个元素（即存在空洞），展开语法会将每个空元素替换为 `undefined`，而 `.concat` 则会保留空位。
 
 ```js
-// Make an array where the element at index 1 is missing
+// 创建一个索引 1 处缺失元素的数组
 let arrayWithHole = ['a', , 'c']
 let spread = [...arrayWithHole]
 let concatenated = [].concat(arrayWithHole)
 
 console.log(arrayWithHole)
-// [ 'a', <1 empty item>, 'c' ]
+// [ 'a', <1 个空项>, 'c' ]
 console.log(spread)
 // [ 'a', undefined, 'c' ]
 console.log(concatenated)
-// [ 'a', <1 empty item>, 'c' ]
+// [ 'a', <1 个空项>, 'c' ]
 ```
 
 与 `for / of` 一样，`downlevelIteration` 会使用 `Symbol.iterator`（如果存在）来更准确地模拟 ES 6 行为。

@@ -10,7 +10,7 @@ oneline: '为具有隐式 `any` 类型的表达式和声明启用错误报告。
 ```ts twoslash
 // @noImplicitAny: false
 function fn(s) {
-  // No error?
+  // 没有报错？
   console.log(s.subtr(3))
 }
 fn(42)

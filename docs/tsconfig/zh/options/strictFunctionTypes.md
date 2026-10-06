@@ -15,9 +15,9 @@ function fn(x: string) {
 
 type StringOrNumberFunc = (ns: string | number) => void
 
-// Unsafe assignment
+// 不安全的赋值
 let func: StringOrNumberFunc = fn
-// Unsafe call - will crash
+// 不安全的调用 —— 会导致崩溃
 func(10)
 ```
 
@@ -31,7 +31,7 @@ function fn(x: string) {
 
 type StringOrNumberFunc = (ns: string | number) => void
 
-// Unsafe assignment is prevented
+// 不安全的赋值被阻止
 let func: StringOrNumberFunc = fn
 ```
 
@@ -47,7 +47,7 @@ function fn(x: string) {
   console.log('Hello, ' + x.toLowerCase())
 }
 
-// Ultimately an unsafe assignment, but not detected
+// 归根结底是一个不安全的赋值，但未被检测到
 const m: Methodish = {
   func: fn,
 }

@@ -9,7 +9,7 @@ oneline: '禁用在编译输出中生成类似 `__extends` 的自定义辅助函
 
 ```ts twoslash
 const getAPI = async (url: string) => {
-  // Get API
+  // 请求 API
   return {}
 }
 ```
@@ -20,7 +20,7 @@ const getAPI = async (url: string) => {
 // @showEmit
 // @target: ES5
 const getAPI = async (url: string) => {
-  // Get API
+  // 请求 API
   return {}
 }
 ```
@@ -32,7 +32,7 @@ const getAPI = async (url: string) => {
 // @target: ES5
 // @noEmitHelpers
 const getAPI = async (url: string) => {
-  // Get API
+  // 请求 API
   return {}
 }
 ```

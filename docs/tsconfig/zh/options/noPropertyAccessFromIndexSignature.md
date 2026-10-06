@@ -12,12 +12,12 @@ oneline: '强制要求对使用索引类型声明的键使用索引访问器。'
 declare function getSettings(): GameSettings
 // ---cut---
 interface GameSettings {
-  // Known up-front properties
+  // 预先已知的属性
   speed: 'fast' | 'medium' | 'slow'
   quality: 'high' | 'low'
 
-  // Assume anything unknown to the interface
-  // is a string.
+  // 假定该接口中任何未知的属性
+  // 都是 string。
   [key: string]: string
 }
 
@@ -27,8 +27,8 @@ settings.speed
 settings.quality
 //       ^?
 
-// Unknown key accessors are allowed on
-// this object, and are `string`
+// 该对象上允许使用未知的键访问器，
+// 且其类型为 `string`
 settings.username
 //       ^?
 ```
@@ -49,7 +49,7 @@ const settings = getSettings()
 settings.speed
 settings.quality
 
-// This would need to be settings["username"];
+// 此处需要写为 settings["username"];
 settings.username
 //       ^?
 ```

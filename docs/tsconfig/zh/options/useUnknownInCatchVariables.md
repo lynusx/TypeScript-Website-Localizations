@@ -10,8 +10,8 @@ TypeScript 4.0 增加了将 catch 子句中的变量类型从 `any` 更改为 `u
 try {
   // ...
 } catch (err: unknown) {
-  // We have to verify err is an
-  // error before using it as one.
+  // 我们必须先验证 err 是一个
+  // Error，然后才能将其作为 Error 使用。
   if (err instanceof Error) {
     console.log(err.message)
   }

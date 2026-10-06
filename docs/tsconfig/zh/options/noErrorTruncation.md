@@ -20,7 +20,7 @@ var x: {
   propertyWithAnExceedinglyLongName8: string
 }
 
-// String representation of type of 'x' should be truncated in error message
+// 在错误信息中，'x' 的类型字符串表示应该被截断
 var s: string = x
 ```
 
@@ -40,6 +40,6 @@ var x: {
   propertyWithAnExceedinglyLongName8: string
 }
 
-// String representation of type of 'x' should be truncated in error message
+// 在错误信息中，'x' 的类型字符串表示应该被截断
 var s: string = x
 ```

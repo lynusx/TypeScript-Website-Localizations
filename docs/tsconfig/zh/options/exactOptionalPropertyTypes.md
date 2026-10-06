@@ -9,7 +9,7 @@ oneline: '按字面定义解释可选属性类型，而不是自动添加 `undef
 
 ```ts
 interface UserDefaults {
-  // The absence of a value represents 'system'
+  // 值的缺失表示 'system'
   colorThemeOverride?: 'dark' | 'light'
 }
 ```
@@ -32,6 +32,6 @@ const settings = getUserSettings()
 settings.colorThemeOverride = 'dark'
 settings.colorThemeOverride = 'light'
 
-// But not:
+// 但不能这样赋值：
 settings.colorThemeOverride = undefined
 ```

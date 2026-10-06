@@ -22,7 +22,7 @@ function LogMethod(
 class Demo {
   @LogMethod
   public foo(bar: number) {
-    // do nothing
+    // 空操作
   }
 }
 
@@ -47,7 +47,7 @@ function LogMethod(
 class Demo {
   @LogMethod
   public foo(bar: number) {
-    // do nothing
+    // 空操作
   }
 }
 
@@ -73,7 +73,7 @@ function LogMethod(
 class Demo {
   @LogMethod
   public foo(bar: number) {
-    // do nothing
+    // 空操作
   }
 }
 

@@ -25,7 +25,7 @@ export default css
 // App.tsx
 import styles from './app.css'
 
-styles.cookieBanner // string
+styles.cookieBanner // string 类型
 ```
 
 默认情况下，此类导入会报错，以提醒你 TypeScript 无法理解该文件类型，且你的运行时环境可能不支持导入它。

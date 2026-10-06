@@ -46,10 +46,10 @@ export { Car } from './car'
 我们可以通过使用 `type` 修饰符，明确指出某个导入或导出仅用于类型分析，并可在 JavaScript 文件中完全丢弃。
 
 ```ts
-// This statement can be dropped entirely in JS output
+// 该语句在 JS 输出中可以被完全丢弃
 import type * as car from './car'
 
-// The named import/export 'Car' can be dropped in JS output
+// 具名导入/导出 'Car' 在 JS 输出中可以被丢弃
 import { type Car } from './car'
 export { type Car } from './car'
 ```
@@ -63,13 +63,13 @@ TypeScript 5.0 引入了一个名为 `--verbatimModuleSyntax` 的新选项来简
 任何使用了 `type` 修饰符的内容都会被彻底丢弃。
 
 ```ts
-// Erased away entirely.
+// 被彻底擦除。
 import type { A } from 'a'
 
-// Rewritten to 'import { b } from "bcd";'
+// 重写为 'import { b } from "bcd";'
 import { b, type c, type d } from 'bcd'
 
-// Rewritten to 'import {} from "xyz";'
+// 重写为 'import {} from "xyz";'
 import { type xyz } from 'xyz'
 ```
 

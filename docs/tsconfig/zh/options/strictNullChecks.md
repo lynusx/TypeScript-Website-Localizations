@@ -44,13 +44,13 @@ console.log(loggedInUser.age)
 第二个示例之所以失败，是因为数组的 `find` 函数大致可以简化如下：
 
 ```ts
-// When strictNullChecks: true
+// 当 strictNullChecks 为 true 时
 type Array = {
   find(predicate: (value: any, index: number) => boolean): S | undefined
 }
 
-// When strictNullChecks: false the undefined is removed from the type system,
-// allowing you to write code which assumes it always found a result
+// 当 strictNullChecks 为 false 时，undefined 会从类型系统中移除，
+// 允许你编写假定总能找到结果的代码
 type Array = {
   find(predicate: (value: any, index: number) => boolean): S
 }

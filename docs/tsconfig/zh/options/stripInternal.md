@@ -9,12 +9,12 @@ oneline: '禁止为 JSDoc 注释中带有 `@internal` 的代码生成声明。'
 
 ```ts twoslash
 /**
- * Days available in a week
+ * 一周中可用的天数
  * @internal
  */
 export const daysInAWeek = 7
 
-/** Calculate how much someone earns in a week */
+/** 计算某人在一周内的收入 */
 export function weeklySalary(dayRate: number) {
   return daysInAWeek * dayRate
 }
@@ -27,12 +27,12 @@ export function weeklySalary(dayRate: number) {
 // @showEmit
 // @declaration
 /**
- * Days available in a week
+ * 一周中可用的天数
  * @internal
  */
 export const daysInAWeek = 7
 
-/** Calculate how much someone earns in a week */
+/** 计算某人在一周内的收入 */
 export function weeklySalary(dayRate: number) {
   return daysInAWeek * dayRate
 }
@@ -46,12 +46,12 @@ export function weeklySalary(dayRate: number) {
 // @showEmit
 // @declaration
 /**
- * Days available in a week
+ * 一周中可用的天数
  * @internal
  */
 export const daysInAWeek = 7
 
-/** Calculate how much someone earns in a week */
+/** 计算某人在一周内的收入 */
 export function weeklySalary(dayRate: number) {
   return daysInAWeek * dayRate
 }

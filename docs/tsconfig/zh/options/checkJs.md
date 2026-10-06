@@ -8,7 +8,7 @@ oneline: '在进行类型检查的 JavaScript 文件中启用错误报告。'
 例如，根据 TypeScript 内置的 `parseFloat` 类型定义，以下是一段不正确的 JavaScript 代码：
 
 ```js
-// parseFloat only takes a string
+// parseFloat 只接受字符串
 module.exports.pi = parseFloat(3.142)
 ```
 

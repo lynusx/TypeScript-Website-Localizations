@@ -10,19 +10,19 @@ interface EnvironmentVars {
   NAME: string
   OS: string
 
-  // Unknown properties are covered by this index signature.
+  // 未知属性由该索引签名覆盖。
   [propName: string]: string
 }
 
 declare const env: EnvironmentVars
 
-// Declared as existing
+// 已声明为存在
 const sysName = env.NAME
 const os = env.OS
 //    ^?
 
-// Not declared, but because of the index
-// signature, then it is considered a string
+// 未声明，但由于索引签名的存在，
+// 因此被视为 string
 const nodeEnv = env.NODE_ENV
 //    ^?
 ```
@@ -34,20 +34,20 @@ interface EnvironmentVars {
   NAME: string
   OS: string
 
-  // Unknown properties are covered by this index signature.
+  // 未知属性由该索引签名覆盖。
   [propName: string]: string
 }
 // @noUncheckedIndexedAccess
 // ---cut---
 declare const env: EnvironmentVars
 
-// Declared as existing
+// 已声明为存在
 const sysName = env.NAME
 const os = env.OS
 //    ^?
 
-// Not declared, but because of the index
-// signature, then it is considered a string
+// 未声明，但由于索引签名的存在，
+// 因此被视为 string
 const nodeEnv = env.NODE_ENV
 //    ^?
 ```

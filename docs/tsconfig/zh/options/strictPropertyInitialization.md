@@ -16,7 +16,7 @@ class UserAccount {
 
   constructor(name: string) {
     this.name = name
-    // Note that this.email is not set
+    // 注意未对 this.email 进行赋值
   }
 }
 ```

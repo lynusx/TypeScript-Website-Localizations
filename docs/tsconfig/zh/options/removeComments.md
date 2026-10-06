@@ -8,7 +8,7 @@ oneline: '禁止生成注释。'
 例如，这是一个带有 JSDoc 注释的 TypeScript 文件：
 
 ```ts
-/** The translation of 'Hello world' into Portuguese */
+/** 'Hello world' 的葡萄牙语翻译 */
 export const helloWorldPTBR = 'Olá Mundo'
 ```
 
@@ -17,7 +17,7 @@ export const helloWorldPTBR = 'Olá Mundo'
 ```ts twoslash
 // @showEmit
 // @removeComments: true
-/** The translation of 'Hello world' into Portuguese */
+/** 'Hello world' 的葡萄牙语翻译 */
 export const helloWorldPTBR = 'Olá Mundo'
 ```
 
@@ -26,7 +26,7 @@ export const helloWorldPTBR = 'Olá Mundo'
 ```ts twoslash
 // @showEmit
 // @removeComments: false
-/** The translation of 'Hello world' into Portuguese */
+/** 'Hello world' 的葡萄牙语翻译 */
 export const helloWorldPTBR = 'Olá Mundo'
 ```
 

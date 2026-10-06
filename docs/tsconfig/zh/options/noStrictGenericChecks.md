@@ -12,8 +12,8 @@ type A = <T, U>(x: T, y: U) => [T, U]
 type B = <S>(x: S, y: S) => [S, S]
 
 function f(a: A, b: B) {
-  b = a // Ok
-  a = b // Error
+  b = a // 正常
+  a = b // 报错
 }
 ```
 

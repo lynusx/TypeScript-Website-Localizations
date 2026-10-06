@@ -15,7 +15,7 @@ oneline: '禁用未使用的标签的错误报告。'
 // @errors: 7028
 // @allowUnusedLabels: false
 function verifyAge(age: number) {
-  // Forgot 'return' statement
+  // 遗漏了 'return' 语句
   if (age > 18) {
     verified: true
   }

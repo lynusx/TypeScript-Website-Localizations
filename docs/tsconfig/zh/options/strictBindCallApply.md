@@ -9,7 +9,7 @@ oneline: '检查 `bind`、`call` 和 `apply` 方法的参数是否与原函数�
 // @strictBindCallApply: true
 // @errors: 2345
 
-// With strictBindCallApply on
+// 当 strictBindCallApply 开启时
 function fn(x: string) {
   return parseInt(x)
 }
@@ -24,11 +24,11 @@ const n2 = fn.call(undefined, false)
 ```ts twoslash
 // @strictBindCallApply: false
 
-// With strictBindCallApply off
+// 当 strictBindCallApply 关闭时
 function fn(x: string) {
   return parseInt(x)
 }
 
-// Note: No error; return type is 'any'
+// 注意：没有报错；返回类型为 'any'
 const n = fn.call(undefined, false)
 ```

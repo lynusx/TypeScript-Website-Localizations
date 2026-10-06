@@ -16,31 +16,31 @@ oneline: '禁止使用不属于 ECMAScript 的运行时语法结构。'
 - `<prefix>` 前缀风格的类型断言
 
 ```ts
-// ❌ error: An `import ... = require(...)` alias
+// ❌ 错误：`import ... = require(...)` 别名
 import foo = require('foo')
 
-// ❌ error: A namespace with runtime code.
+// ❌ 错误：包含运行时代码的 namespace。
 namespace container {
   foo.method()
 
   export type Bar = string
 }
 
-// ❌ error: An `import =` alias
+// ❌ 错误：`import =` 别名
 import Bar = container.Bar
 
 class Point {
-  // ❌ error: Parameter properties
+  // ❌ 错误：参数属性
   constructor(
     public x: number,
     public y: number,
   ) {}
 }
 
-// ❌ error: An `export =` assignment.
+// ❌ 错误：`export =` 赋值。
 export = Point
 
-// ❌ error: An enum declaration.
+// ❌ 错误：enum 声明。
 enum Direction {
   Up,
   Down,
@@ -48,7 +48,7 @@ enum Direction {
   Right,
 }
 
-// ❌ error: <prefix>-style type assertion.
+// ❌ 错误：<prefix> 前缀风格的类型断言。
 const num = <number>1
 ```
 
@@ -61,7 +61,7 @@ const num = <number>1
 class C {
     constructor(public x: number) { }
     //          ~~~~~~~~~~~~~~~~
-    // error! This syntax is not allowed when 'erasableSyntaxOnly' is enabled.
+    // 错误！启用 'erasableSyntaxOnly' 时不允许使用该语法。
     }
 }
 ```

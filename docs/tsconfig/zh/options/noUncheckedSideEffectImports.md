@@ -30,8 +30,8 @@ export function Button() {
 ```ts
 import 'oops-this-module-does-not-exist'
 //     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// error: Cannot find module 'oops-this-module-does-not-exist' or its corresponding
-//        type declarations.
+// 错误：找不到模块 'oops-this-module-does-not-exist' 或其对应的
+//       类型声明。
 ```
 
 启用此选项后，某些原本能正常运行的代码可能会收到错误提示，例如上述 CSS 示例。为了解决这一问题，对于只想为静态资源编写副作用 `import` 的用户，更好的方式是编写包含通配符说明符的*环境模块声明（ambient module declaration）*。该声明可以放在全局文件中，内容类似于：
@@ -39,7 +39,7 @@ import 'oops-this-module-does-not-exist'
 ```ts
 // ./src/globals.d.ts
 
-// Recognize all CSS files as module imports.
+// 将所有 CSS 文件识别为模块导入。
 declare module '*.css' {}
 ```
 

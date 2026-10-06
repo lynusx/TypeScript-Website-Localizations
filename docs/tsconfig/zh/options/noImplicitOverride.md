@@ -10,13 +10,13 @@ oneline: '确保派生类中重写基类成员的方法都标记有 override 修
 ```ts twoslash
 class Album {
   download() {
-    // Default behavior
+    // 默认行为
   }
 }
 
 class SharedAlbum extends Album {
   download() {
-    // Override to get info from many sources
+    // 重写以从多个数据源获取信息
   }
 }
 ```
@@ -26,19 +26,19 @@ class SharedAlbum extends Album {
 ```ts twoslash
 class Album {
   setup() {
-    // Default behavior
+    // 默认行为
   }
 }
 
 class MLAlbum extends Album {
   setup() {
-    // Override to get info from algorithm
+    // 重写以从算法获取信息
   }
 }
 
 class SharedAlbum extends Album {
   download() {
-    // Override to get info from many sources
+    // 重写以从多个数据源获取信息
   }
 }
 ```
